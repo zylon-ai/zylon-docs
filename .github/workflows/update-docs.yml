@@ -1,0 +1,39 @@
+name: Update API Specs
+
+on:
+  schedule:
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'API host'
+        required: false
+        default: 'https://demo.zylon.ai'
+
+jobs:
+  update-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run update-spec.sh
+        run: |
+          docs_host=${{ github.event.inputs.host || 'https://demo.zylon.ai' }}
+          bash ./update-spec.sh "$docs_host"
+
+      - name: Commit changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "Update API specs"
+          git push

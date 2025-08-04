@@ -1,8 +1,13 @@
 cd $(dirname $0) || exit 1
 cd api-reference || exit 1
 
-curl -q https://zylon.me/api/openapi.json -o workspace.json || exit 1
-curl -q https://zylon.me/gpt/openapi.json -o pgpt.json || exit 1
+host=$1
+if [ -z "$host" ]; then
+  host="https://zylon.me"
+fi
+
+curl -q $host/api/openapi.json -o workspace.json || exit 1
+curl -q $host/gpt/openapi.json -o pgpt.json || exit 1
 
 function jq-i() {
     # jq in place
@@ -39,7 +44,7 @@ if [ "$out" != "[]" ]; then
 fi
 
 mkdir -p workspace/
-npx @mintlify/scraping@latest openapi-file workspace.json -o workspace/
+npx --yes @mintlify/scraping@latest openapi-file workspace.json -o workspace/
 
-mkdir -p pgpt
-npx @mintlify/scraping@latest openapi-file pgpt.json -o pgpt/
+mkdir -p pgpt/
+npx --yes @mintlify/scraping@latest openapi-file pgpt.json -o pgpt/

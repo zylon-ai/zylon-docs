@@ -143,10 +143,9 @@
             "description" : "Successful logout",
             "headers" : { },
             "content" : {
-              "application/json" : {
+              "text/plain" : {
                 "schema" : {
-                  "type" : "string",
-                  "title" : "String"
+                  "type" : "string"
                 }
               }
             }
@@ -171,8 +170,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.core.authentication.token.ApiTokenDTO"
-                  },
-                  "title" : "ArrayList<ApiTokenDTO>"
+                  }
                 }
               }
             }
@@ -196,7 +194,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-07-23T11:43:27.995087Z"
+                    "valid_until" : "2026-08-04T17:06:45.833715Z"
                   }
                 }
               }
@@ -231,8 +229,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -240,10 +237,9 @@
             "description" : "Confirmation of token deletion",
             "headers" : { },
             "content" : {
-              "application/json" : {
+              "text/plain" : {
                 "schema" : {
-                  "type" : "string",
-                  "title" : "String"
+                  "type" : "string"
                 }
               }
             }
@@ -290,8 +286,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AccountDTO"
-                  },
-                  "title" : "ArrayList<AccountDTO>"
+                  }
                 }
               }
             }
@@ -313,8 +308,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -368,8 +362,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -399,8 +392,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -443,8 +435,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "page",
@@ -454,9 +445,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "page_size",
@@ -466,9 +455,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "page_order",
@@ -478,8 +465,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "after",
@@ -489,8 +475,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "before",
@@ -500,8 +485,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "first",
@@ -511,9 +495,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "last",
@@ -523,9 +505,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "total_count",
@@ -535,8 +515,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -546,7 +525,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.core.http.PageDTO"
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.user.UserDTO__"
                 }
               }
             }
@@ -599,8 +578,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -632,8 +610,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -665,8 +642,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "page",
@@ -676,9 +652,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "page_size",
@@ -688,9 +662,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "page_order",
@@ -700,8 +672,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "after",
@@ -711,8 +682,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "before",
@@ -722,8 +692,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "first",
@@ -733,9 +702,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "last",
@@ -745,9 +712,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "total_count",
@@ -757,8 +722,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -768,7 +732,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.core.http.PageDTO"
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.project.ProjectDTO__"
                 }
               }
             }
@@ -790,8 +754,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "latest",
@@ -801,9 +764,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         } ],
         "responses" : {
@@ -816,8 +777,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
-                  },
-                  "title" : "ArrayList<ArtifactDTO>"
+                  }
                 }
               }
             }
@@ -842,8 +802,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.UserIntegrationDTO"
-                  },
-                  "title" : "ArrayList<UserIntegrationDTO>"
+                  }
                 }
               }
             }
@@ -893,8 +852,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -914,8 +872,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -946,8 +903,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -965,8 +921,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -984,8 +939,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1003,8 +957,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1034,8 +987,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1066,8 +1018,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "page",
@@ -1077,9 +1028,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "page_size",
@@ -1089,9 +1038,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "page_order",
@@ -1101,8 +1048,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "after",
@@ -1112,8 +1058,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "before",
@@ -1123,8 +1068,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "first",
@@ -1134,9 +1078,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "last",
@@ -1146,9 +1088,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "total_count",
@@ -1158,8 +1098,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -1169,7 +1108,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.core.http.PageDTO"
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.project.ProjectMemberDTO__"
                 }
               }
             }
@@ -1189,8 +1128,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1214,8 +1152,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectMemberDTO"
-                  },
-                  "title" : "ArrayList<ProjectMemberDTO>"
+                  }
                 }
               }
             }
@@ -1235,8 +1172,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1260,8 +1196,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectMemberDTO"
-                  },
-                  "title" : "ArrayList<ProjectMemberDTO>"
+                  }
                 }
               }
             }
@@ -1283,8 +1218,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "userId",
@@ -1294,8 +1228,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1325,8 +1258,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "userId",
@@ -1336,8 +1268,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1369,8 +1300,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "interactionId",
@@ -1380,8 +1310,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1399,8 +1328,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "interactionId",
@@ -1410,8 +1338,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1431,8 +1358,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "include",
@@ -1444,8 +1370,7 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields"
-            },
-            "title" : "ArrayList<InteractionIncludeFields>"
+            }
           }
         }, {
           "name" : "pageParams",
@@ -1453,10 +1378,7 @@
           "required" : false,
           "deprecated" : false,
           "explode" : false,
-          "schema" : {
-            "type" : "object",
-            "title" : "*"
-          }
+          "schema" : { }
         }, {
           "name" : "threadId",
           "in" : "query",
@@ -1464,8 +1386,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1483,8 +1404,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1535,8 +1455,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "state",
@@ -1566,9 +1485,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "page_size",
@@ -1578,9 +1495,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "page_order",
@@ -1590,8 +1505,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "after",
@@ -1601,8 +1515,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "before",
@@ -1612,8 +1525,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "first",
@@ -1623,9 +1535,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "last",
@@ -1635,9 +1545,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "total_count",
@@ -1647,8 +1555,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : { },
@@ -1666,8 +1573,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1698,8 +1604,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "threadId",
@@ -1709,8 +1614,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1728,8 +1632,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "threadId",
@@ -1739,8 +1642,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1769,8 +1671,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "threadId",
@@ -1780,8 +1681,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -1801,8 +1701,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1833,8 +1732,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "state",
@@ -1894,8 +1792,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           }
         }, {
           "name" : "filter_by_text",
@@ -1905,8 +1802,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "parent_id",
@@ -1916,8 +1812,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           }
         }, {
           "name" : "filter_by_parent",
@@ -1927,8 +1822,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         }, {
           "name" : "sub_type",
@@ -1948,9 +1842,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "page_size",
@@ -1960,9 +1852,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "page_order",
@@ -1972,8 +1862,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "after",
@@ -1983,8 +1872,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "before",
@@ -1994,8 +1882,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "first",
@@ -2005,9 +1892,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "last",
@@ -2017,9 +1902,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         }, {
           "name" : "total_count",
@@ -2029,8 +1912,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2040,7 +1922,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.core.http.PageDTO"
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__"
                 }
               }
             }
@@ -2060,8 +1942,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -2104,8 +1985,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2115,8 +1995,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         }, {
           "name" : "include_content",
@@ -2126,8 +2005,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2157,8 +2035,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2168,8 +2045,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "requestBody" : {
@@ -2210,8 +2086,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2221,8 +2096,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2254,8 +2128,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2265,8 +2138,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2274,10 +2146,9 @@
             "description" : "Returns a secure URL to download the artifact content",
             "headers" : { },
             "content" : {
-              "application/json" : {
+              "text/plain" : {
                 "schema" : {
-                  "type" : "string",
-                  "title" : "String"
+                  "type" : "string"
                 }
               }
             }
@@ -2299,8 +2170,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2310,8 +2180,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2343,8 +2212,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2354,8 +2222,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -2363,10 +2230,9 @@
             "description" : "Returns the parsed content of the artifact as a string in markdown format",
             "headers" : { },
             "content" : {
-              "application/json" : {
+              "text/plain" : {
                 "schema" : {
-                  "type" : "string",
-                  "title" : "String"
+                  "type" : "string"
                 }
               }
             }
@@ -2388,8 +2254,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifactId",
@@ -2399,8 +2264,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         } ],
         "responses" : { },
@@ -2440,8 +2304,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -2462,13 +2325,11 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "createdBy",
+          "name" : "created_by",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
@@ -2476,37 +2337,32 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "endDate",
+          "name" : "end_date",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "include",
           "in" : "query",
-          "required" : false,
+          "required" : true,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.audit.AuditQueryIncludeFields"
-            },
-            "title" : "ArrayList<AuditQueryIncludeFields>"
+            }
           }
         }, {
-          "name" : "nodeIds",
+          "name" : "node_ids",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
@@ -2514,31 +2370,97 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "pageParams",
+          "name" : "page",
+          "in" : "query",
+          "description" : "The page number to retrieve (1-based index)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "The number of items per page",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_order",
+          "in" : "query",
+          "description" : "The order of the items on the page (ASC or DESC)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.sql.SortOrder"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor to start after for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "The cursor to start before for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "first",
+          "in" : "query",
+          "description" : "The number of items to return after the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "last",
+          "in" : "query",
+          "description" : "The number of items to return before the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "total_count",
+          "in" : "query",
+          "description" : "Whether to return the total count of items",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "start_date",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "object",
-            "title" : "*"
-          }
-        }, {
-          "name" : "startDate",
-          "in" : "query",
-          "required" : false,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         } ],
         "responses" : { },
@@ -2558,8 +2480,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "actions",
@@ -2570,13 +2491,11 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "createdBy",
+          "name" : "created_by",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
@@ -2584,37 +2503,32 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "endDate",
+          "name" : "end_date",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "include",
           "in" : "query",
-          "required" : false,
+          "required" : true,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.audit.AuditQueryIncludeFields"
-            },
-            "title" : "ArrayList<AuditQueryIncludeFields>"
+            }
           }
         }, {
-          "name" : "nodeIds",
+          "name" : "node_ids",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
@@ -2622,31 +2536,97 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "type" : "string"
+            }
           }
         }, {
-          "name" : "pageParams",
+          "name" : "page",
+          "in" : "query",
+          "description" : "The page number to retrieve (1-based index)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "The number of items per page",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_order",
+          "in" : "query",
+          "description" : "The order of the items on the page (ASC or DESC)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.sql.SortOrder"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor to start after for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "The cursor to start before for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "first",
+          "in" : "query",
+          "description" : "The number of items to return after the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "last",
+          "in" : "query",
+          "description" : "The number of items to return before the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "total_count",
+          "in" : "query",
+          "description" : "Whether to return the total count of items",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "start_date",
           "in" : "query",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "object",
-            "title" : "*"
-          }
-        }, {
-          "name" : "startDate",
-          "in" : "query",
-          "required" : false,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         } ],
         "responses" : { },
@@ -2666,8 +2646,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "userId",
@@ -2677,8 +2656,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -2698,8 +2676,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : { },
@@ -2741,9 +2718,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "end_date",
@@ -2753,9 +2728,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "limit",
@@ -2765,9 +2738,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         } ],
         "responses" : {
@@ -2780,8 +2751,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.analytics.RankingActiveProjectDTO"
-                  },
-                  "title" : "ArrayList<RankingActiveProjectDTO>"
+                  }
                 }
               }
             }
@@ -2803,9 +2773,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "end_date",
@@ -2815,9 +2783,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "limit",
@@ -2827,9 +2793,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         } ],
         "responses" : {
@@ -2842,8 +2806,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.analytics.RankingActiveUsersDTO"
-                  },
-                  "title" : "ArrayList<RankingActiveUsersDTO>"
+                  }
                 }
               }
             }
@@ -2865,9 +2828,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "end_date",
@@ -2877,9 +2838,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         }, {
           "name" : "type",
@@ -2889,8 +2848,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -2903,8 +2861,7 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/components/schemas/ai.zylon.backend.server.app.analytics.TimeseriesDTO"
-                  },
-                  "title" : "ArrayList<TimeseriesDTO>"
+                  }
                 }
               }
             }
@@ -2926,8 +2883,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "project_id",
@@ -2937,8 +2893,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         }, {
           "name" : "artifact_id",
@@ -2948,8 +2903,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -3115,8 +3069,32 @@
     "/v1/app/integration/confluence/{integrationId}/refresh_token" : {
       "post" : {
         "tags" : [ ],
-        "parameters" : [ ],
-        "responses" : { },
+        "summary" : "Refresh OpenID token for an integration",
+        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to refresh the token for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "The request to refresh the token has been accepted",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -3153,8 +3131,32 @@
     "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
       "post" : {
         "tags" : [ ],
-        "parameters" : [ ],
-        "responses" : { },
+        "summary" : "Refresh OpenID token for an integration",
+        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to refresh the token for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "The request to refresh the token has been accepted",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -3172,59 +3174,73 @@
   "components" : {
     "schemas" : {
       "ai.zylon.backend.server.app.account.LoginWithCredentialsDTO" : {
-        "type" : "object",
         "properties" : {
           "email" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "password" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         },
-        "required" : [ "email", "password" ],
-        "title" : "LoginWithCredentialsDTO"
+        "required" : [ "email", "password" ]
       },
-      "ai.zylon.backend.server.app.account.AuthProviderName" : {
-        "type" : "string",
-        "enum" : [ "Token", "Mock", "AccountSession", "UserSession", "Credentials", "Google", "Microsoft", "Confluence", "SharePoint" ],
-        "title" : "AuthProviderName"
-      },
-      "ai.zylon.backend.server.app.user.UserDTO" : {
-        "type" : "object",
+      "ai.zylon.backend.server.app.account.AccountDTO" : {
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "NodeId"
-          },
-          "org_id" : {
-            "type" : "string",
-            "title" : "NodeId"
-          },
-          "account_id" : {
-            "type" : "string",
-            "title" : "NodeId"
-          },
-          "profile_picture" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "email" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "given_name" : {
+            "type" : "string"
+          },
+          "family_name" : {
+            "type" : "string"
+          },
+          "provider" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AuthProviderName"
+          },
+          "users" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+            }
+          }
+        },
+        "required" : [ "email", "id", "name", "provider" ]
+      },
+      "ai.zylon.backend.server.app.account.AuthProviderName" : {
+        "enum" : [ "Token", "Mock", "AccountSession", "UserSession", "Credentials", "Google", "Microsoft", "Confluence", "SharePoint" ]
+      },
+      "ai.zylon.backend.server.app.user.UserDTO" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "org_id" : {
+            "type" : "string"
+          },
+          "account_id" : {
+            "type" : "string"
+          },
+          "profile_picture" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
           },
           "job_position_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "job_position_description" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "state" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserState"
@@ -3233,317 +3249,226 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
-            },
-            "title" : "ArrayList<RoleName>"
+            }
           },
           "created_at" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "account_id", "created_at", "email", "id", "name", "org_id", "roles", "state" ],
-        "title" : "UserDTO"
+        "required" : [ "account_id", "created_at", "email", "id", "name", "org_id", "roles", "state" ]
       },
       "ai.zylon.backend.server.app.user.UserState" : {
-        "type" : "string",
-        "enum" : [ "Active", "Inactive" ],
-        "title" : "UserState"
+        "enum" : [ "Active", "Inactive" ]
       },
       "ai.zylon.backend.core.authorization.RoleName" : {
-        "type" : "string",
-        "enum" : [ "AppGuest", "AppMember", "AppAdmin", "AppOwner", "SuperAdmin", "AccountOwner" ],
-        "title" : "RoleName"
-      },
-      "ai.zylon.backend.server.app.account.AccountDTO" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "title" : "NodeId"
-          },
-          "email" : {
-            "type" : "string",
-            "title" : "String"
-          },
-          "name" : {
-            "type" : "string",
-            "title" : "String"
-          },
-          "given_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "family_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "provider" : {
-            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AuthProviderName"
-          },
-          "users" : {
-            "type" : [ "null", "array" ],
-            "items" : {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
-            },
-            "title" : "ArrayList<UserDTO>"
-          }
-        },
-        "required" : [ "email", "id", "name", "provider" ],
-        "title" : "AccountDTO"
+        "enum" : [ "AppGuest", "AppMember", "AppAdmin", "AppOwner", "SuperAdmin", "AccountOwner" ]
       },
       "ai.zylon.backend.server.app.account.CreateCredentialsAccountDTO" : {
-        "type" : "object",
         "properties" : {
           "email" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "password" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         },
-        "required" : [ "email", "password" ],
-        "title" : "CreateCredentialsAccountDTO"
+        "required" : [ "email", "password" ]
       },
       "ai.zylon.backend.core.authentication.token.ApiTokenDTO" : {
-        "type" : "object",
         "properties" : {
           "token" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "hashed_token" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "token_email" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "last_used_at" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "created_at" : {
-            "type" : "string",
-            "title" : "Instant"
+            "type" : "string"
           },
           "valid_until" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           }
         },
-        "required" : [ "created_at", "hashed_token", "token_email" ],
-        "title" : "ApiTokenDTO"
+        "required" : [ "created_at", "hashed_token", "last_used_at", "token_email", "valid_until" ]
       },
       "ai.zylon.backend.core.authentication.token.CreateApiTokenDTO" : {
-        "type" : "object",
         "properties" : {
           "revoke_existing" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "valid_until" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           }
-        },
-        "required" : [ "revoke_existing" ],
-        "title" : "CreateApiTokenDTO"
+        }
       },
-      "ai.zylon.backend.core.http.PageDTO" : {
-        "type" : "object",
+      "page_array_ai.zylon.backend.server.app.user.UserDTO__" : {
         "properties" : {
           "data" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
-            },
-            "title" : "ArrayList<ArtifactDTO>"
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+            }
           },
           "next_cursor" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "previous_cursor" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "has_next_page" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "has_previous_page" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "total_count" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "data", "has_next_page", "has_previous_page" ],
-        "title" : "PageDTO"
-      },
-      "ai.zylon.backend.core.authentication.UserInfo" : {
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "title" : "String"
-          },
-          "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "given_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "family_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          },
-          "picture" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
-          }
-        },
-        "required" : [ "email" ],
-        "title" : "UserInfo"
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
       },
       "ai.zylon.backend.server.app.user.CreateUserDTO" : {
-        "type" : "object",
         "properties" : {
           "account_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "role" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
           },
           "user_info" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.core.authentication.UserInfo"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.core.authentication.UserInfo"
           }
         },
-        "required" : [ "account_id", "role" ],
-        "title" : "CreateUserDTO"
+        "required" : [ "account_id", "role" ]
+      },
+      "ai.zylon.backend.core.authentication.UserInfo" : {
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "given_name" : {
+            "type" : "string"
+          },
+          "family_name" : {
+            "type" : "string"
+          },
+          "picture" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "email" ]
       },
       "ai.zylon.backend.server.app.user.UpdateUserDTO" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "role" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
           },
           "profile_picture_file_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "profile_picture_content_type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "profile_picture_content_length" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "profile_picture" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
+          }
+        }
+      },
+      "page_array_ai.zylon.backend.server.app.project.ProjectDTO__" : {
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
+            }
+          },
+          "next_cursor" : {
+            "type" : "string"
+          },
+          "previous_cursor" : {
+            "type" : "string"
+          },
+          "has_next_page" : {
+            "type" : "boolean"
+          },
+          "has_previous_page" : {
+            "type" : "boolean"
+          },
+          "total_count" : {
+            "type" : "number"
           }
         },
-        "title" : "UpdateUserDTO"
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
       },
       "ai.zylon.backend.server.app.project.ProjectDTO" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "goal" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "default_member_role" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
           },
           "default_role_enabled" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "deadline" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "visibility" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectVisibility"
           },
           "member_count" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "members" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectMemberDTO"
-            },
-            "title" : "ArrayList<ProjectMemberDTO>"
+            }
           },
           "project_context" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "answer_context" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "is_pinned" : {
-            "type" : [ "null", "boolean" ],
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         },
-        "required" : [ "default_member_role", "default_role_enabled", "id", "name", "visibility" ],
-        "title" : "ProjectDTO"
+        "required" : [ "deadline", "default_member_role", "default_role_enabled", "id", "member_count", "name", "visibility" ]
       },
       "ai.zylon.backend.server.app.project.member.ProjectMemberRole" : {
-        "type" : "string",
-        "enum" : [ "Viewer", "Commenter", "Editor", "Admin", "Owner" ],
-        "title" : "ProjectMemberRole"
+        "enum" : [ "Viewer", "Commenter", "Editor", "Admin", "Owner" ]
       },
       "ai.zylon.backend.server.app.project.ProjectVisibility" : {
-        "type" : "string",
-        "enum" : [ "Public", "Private" ],
-        "title" : "ProjectVisibility"
+        "enum" : [ "Public", "Private" ]
       },
       "ai.zylon.backend.server.app.project.ProjectMemberDTO" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "role" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
@@ -3552,47 +3477,33 @@
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           },
           "is_project_member" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         },
-        "required" : [ "id", "is_project_member", "role", "user" ],
-        "title" : "ProjectMemberDTO"
+        "required" : [ "id", "is_project_member", "role", "user" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactDTO" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "parent_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "child_count" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           },
           "project_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "project" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
           },
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "description" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "type" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactType"
@@ -3604,319 +3515,223 @@
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactState"
           },
           "error" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactError"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactError"
           },
           "ingest_status" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactIngestStatus"
           },
           "ingest_warnings" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactWarning"
-            },
-            "title" : "ArrayList<ArtifactWarning>"
+            }
           },
           "ingest_progress" : {
-            "type" : [ "null", "number" ],
-            "format" : "float",
-            "title" : "Float"
+            "type" : "number"
           },
           "has_content" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "content" : {
-            "type" : [ "null", "string" ],
-            "title" : "Base64ByteArray"
+            "type" : "string"
           },
           "raw_content" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "integration_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "external_url" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
-          "config" : {
-            "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-          },
+          "config" : { },
           "file_uri" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "artifact_references" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
-            },
-            "title" : "ArrayList<ArtifactDTO>"
+            }
           },
           "keep_file_after_ingestion" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "created_by" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           },
           "created_at" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "updated_at" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "child_count", "config", "created_at", "has_content", "id", "ingest_status", "keep_file_after_ingestion", "name", "project_id", "source", "state", "type", "updated_at" ],
-        "title" : "ArtifactDTO"
+        "required" : [ "config", "created_at", "has_content", "id", "ingest_status", "keep_file_after_ingestion", "name", "project_id", "source", "state", "type", "updated_at" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactType" : {
-        "type" : "string",
-        "enum" : [ "InlineText", "Document", "Folder", "Summary", "Composition", "SmartDoc", "Link", "BulkQA" ],
-        "title" : "ArtifactType"
+        "enum" : [ "InlineText", "Document", "Folder", "Summary", "Composition", "SmartDoc", "Link", "BulkQA" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactSource" : {
-        "type" : "string",
-        "enum" : [ "User", "SharePoint", "Confluence", "Claromentis", "FileSystem", "Mock" ],
-        "title" : "ArtifactSource"
+        "enum" : [ "User", "SharePoint", "Confluence", "Claromentis", "FileSystem", "Mock" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactState" : {
-        "type" : "string",
-        "enum" : [ "Initializing", "Processing", "Draft", "Deleted", "Published", "Unavailable", "Error" ],
-        "title" : "ArtifactState"
+        "enum" : [ "Initializing", "Processing", "Draft", "Deleted", "Published", "Unavailable", "Error" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactError" : {
-        "type" : "string",
-        "enum" : [ "Unknown", "InternalError", "MismatchedType", "InvalidExtension", "MaxNodes", "Malformed", "Encrypted", "NoValidFile", "NoValidNodes" ],
-        "title" : "ArtifactError"
+        "enum" : [ "Unknown", "InternalError", "MismatchedType", "InvalidExtension", "MaxNodes", "Malformed", "Encrypted", "NoValidFile", "NoValidNodes" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactIngestStatus" : {
-        "type" : "string",
-        "enum" : [ "NotApplicable", "NotStarted", "Processing", "Parsing", "Storing", "Done", "Error" ],
-        "title" : "ArtifactIngestStatus"
+        "enum" : [ "NotApplicable", "NotStarted", "Processing", "Parsing", "Storing", "Done", "Error" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactWarning" : {
-        "type" : "string",
-        "enum" : [ "Unknown", "BigSize", "ExceedsRecommendedPages", "SpecialConfig", "NoContent", "UnprocessableContent", "DescendantHasError" ],
-        "title" : "ArtifactWarning"
-      },
-      "kotlinx.serialization.json.JsonElement" : {
-        "type" : "object",
-        "properties" : { },
-        "title" : "JsonElement"
+        "enum" : [ "Unknown", "BigSize", "ExceedsRecommendedPages", "SpecialConfig", "NoContent", "UnprocessableContent", "DescendantHasError" ]
       },
       "ai.zylon.backend.server.app.integration.UserIntegrationDTO" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "user_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "org_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "type" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactSource"
           },
-          "provider_data" : {
-            "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-          },
+          "provider_data" : { },
           "created_at" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "updated_at" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "created_at", "id", "org_id", "provider_data", "type", "updated_at", "user_id" ],
-        "title" : "UserIntegrationDTO"
+        "required" : [ "created_at", "id", "org_id", "provider_data", "type", "updated_at", "user_id" ]
       },
       "ai.zylon.backend.server.app.organization.UpdateOrgDTO" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "context" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "clear_context" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "email_regex" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "logo_file_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "logo_content_type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "logo_content_length" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
-        },
-        "required" : [ "clear_context" ],
-        "title" : "UpdateOrgDTO"
+        }
       },
       "ai.zylon.backend.server.app.project.TransferProjectDTO" : {
-        "type" : "object",
         "properties" : {
           "old_owner_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "new_owner_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           }
         },
-        "required" : [ "new_owner_id", "old_owner_id" ],
-        "title" : "TransferProjectDTO"
+        "required" : [ "new_owner_id", "old_owner_id" ]
+      },
+      "ai.zylon.backend.server.app.project.ProjectChatDTO" : {
+        "properties" : {
+          "artifact_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "all_artifacts" : {
+            "type" : "boolean"
+          },
+          "pgpt" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest"
+          }
+        },
+        "required" : [ "pgpt" ]
       },
       "ai.zylon.koala.privategpt.ChatRequest" : {
-        "type" : "object",
         "properties" : {
           "messages" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageInput"
-            },
-            "title" : "ArrayList<MessageInput>"
+            }
           },
           "stream" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "tools" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.tool.Tool"
-            },
-            "title" : "ArrayList<Tool>"
+            }
           },
           "tool_choice" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.ToolChoice"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.ToolChoice"
           },
           "mcp_servers" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.McpServer"
-            },
-            "title" : "ArrayList<McpServer>"
+            }
           },
           "response_format" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.ResponseFormat"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.ResponseFormat"
           },
           "system" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.System"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.System"
           },
           "thinking" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.Thinking"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.Thinking"
           },
           "priority" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           },
           "seed" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "min_p" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "top_p" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "temperature" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "top_k" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           },
           "repetition_penalty" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "presence_penalty" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "frequency_penalty" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "max_tokens" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
-        },
-        "required" : [ "messages", "stream" ],
-        "title" : "ChatRequest"
+        }
       },
       "ai.zylon.koala.model.message.MessageInput" : {
-        "type" : "object",
         "properties" : {
           "role" : {
             "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageInputRole"
@@ -3925,27 +3740,23 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
-            },
-            "title" : "ArrayList<ContentBlock>"
+            }
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "content", "role" ],
-        "title" : "MessageInput"
+        "required" : [ "content", "role" ]
       },
       "ai.zylon.koala.model.message.MessageInputRole" : {
-        "type" : "string",
-        "enum" : [ "system", "user", "assistant", "tool" ],
-        "title" : "MessageInputRole"
+        "enum" : [ "system", "user", "assistant", "tool" ]
       },
       "ai.zylon.koala.model.message.ContentBlock" : {
-        "anyOf" : [ {
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "oneOf" : [ {
           "$ref" : "#/components/schemas/image"
         }, {
           "$ref" : "#/components/schemas/source"
@@ -3959,668 +3770,470 @@
           "$ref" : "#/components/schemas/tool_result"
         }, {
           "$ref" : "#/components/schemas/tool_use"
-        } ],
-        "title" : "ContentBlock"
+        } ]
       },
       "image" : {
-        "type" : "object",
         "properties" : {
           "data" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "mime_type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "data" ],
-        "title" : "image"
+        "required" : [ "data" ]
       },
       "source" : {
-        "type" : "object",
         "properties" : {
           "sources" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
-            },
-            "title" : "ArrayList<PGPTSource>"
+            }
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
-        },
-        "required" : [ "sources" ],
-        "title" : "source"
+        }
       },
       "ai.zylon.koala.model.message.PGPTSource" : {
-        "type" : "object",
         "properties" : {
           "object" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "id" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "score" : {
-            "type" : [ "null", "number" ],
-            "format" : "double",
-            "title" : "Double"
+            "type" : "number"
           },
           "document" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.Document"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.Document"
           },
           "text" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "content_type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "previous_texts" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           },
           "next_texts" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           },
           "metadata" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.SourceMetadata"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.SourceMetadata"
           }
         },
-        "required" : [ "object" ],
-        "title" : "PGPTSource"
+        "required" : [ "object" ]
       },
       "ai.zylon.koala.model.message.PGPTSource.Document" : {
-        "type" : "object",
         "properties" : {
           "object" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "artifact" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "doc_metadata" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.DocMetadata"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.DocMetadata"
           }
         },
-        "required" : [ "object" ],
-        "title" : "Document"
+        "required" : [ "object" ]
       },
       "ai.zylon.koala.model.message.PGPTSource.DocMetadata" : {
-        "type" : "object",
         "properties" : {
           "file_name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "file_type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           }
-        },
-        "title" : "DocMetadata"
+        }
       },
       "ai.zylon.koala.model.message.PGPTSource.SourceMetadata" : {
-        "type" : "object",
         "properties" : {
           "title" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "page" : {
-            "type" : [ "null", "integer" ],
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           },
           "shorter_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           }
-        },
-        "title" : "SourceMetadata"
+        }
       },
       "tldr" : {
-        "type" : "object",
         "properties" : {
           "content" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
-            },
-            "title" : "ArrayList<ContentBlock>"
+            }
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "content" ],
-        "title" : "tldr"
+        "required" : [ "content" ]
       },
       "text" : {
-        "type" : "object",
         "properties" : {
           "text" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "citations" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTCitation"
-            },
-            "title" : "ArrayList<PGPTCitation>"
+            }
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
-        },
-        "required" : [ "text" ],
-        "title" : "text"
+        }
       },
       "ai.zylon.koala.model.message.PGPTCitation" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "index" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "artifact_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "source_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           }
-        },
-        "title" : "PGPTCitation"
+        }
       },
       "thinking" : {
-        "type" : "object",
         "properties" : {
           "thinking" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "citations" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTCitation"
-            },
-            "title" : "ArrayList<PGPTCitation>"
+            }
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
-        },
-        "required" : [ "thinking" ],
-        "title" : "thinking"
+        }
       },
       "tool_result" : {
-        "type" : "object",
         "properties" : {
           "tool_use_id" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "content" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
-            },
-            "title" : "ArrayList<ContentBlock>"
+            }
           },
           "is_error" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "content", "is_error", "tool_use_id" ],
-        "title" : "tool_result"
+        "required" : [ "content", "tool_use_id" ]
       },
       "tool_use" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "input" : {
             "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "additionalProperties" : { }
           },
           "start_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "stop_timestamp" : {
-            "type" : [ "null", "string" ],
-            "title" : "Instant"
+            "type" : "string"
           },
           "_meta" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "id", "input", "name" ],
-        "title" : "tool_use"
+        "required" : [ "id", "input", "name" ]
       },
       "ai.zylon.koala.model.tool.Tool" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "type" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "description" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "inputSchema" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.model.tool.Tool.Input"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.tool.Tool.Input"
           }
         },
-        "required" : [ "name" ],
-        "title" : "Tool"
+        "required" : [ "name" ]
       },
       "ai.zylon.koala.model.tool.Tool.Input" : {
-        "type" : "object",
         "properties" : {
           "properties" : {
             "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "additionalProperties" : { }
           },
           "required" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           },
           "type" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
-        },
-        "required" : [ "properties", "type" ],
-        "title" : "Input"
+        }
       },
       "ai.zylon.koala.privategpt.ChatRequest.ToolChoice" : {
-        "type" : "object",
         "properties" : {
           "type" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "disable_parallel_tool_use" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
-        },
-        "required" : [ "disable_parallel_tool_use", "type" ],
-        "title" : "ToolChoice"
+        }
       },
       "ai.zylon.koala.privategpt.McpServer" : {
-        "type" : "object",
         "properties" : {
           "url" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "authorization_token" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "tool_configuration" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.McpServer.ToolConfiguration"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.McpServer.ToolConfiguration"
           },
           "type" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         },
-        "required" : [ "type", "url" ],
-        "title" : "McpServer"
+        "required" : [ "url" ]
       },
       "ai.zylon.koala.privategpt.McpServer.ToolConfiguration" : {
-        "type" : "object",
         "properties" : {
           "enabled" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "allowed_tools" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "ArrayList<String>"
+              "type" : "string"
+            }
           }
-        },
-        "required" : [ "enabled" ],
-        "title" : "ToolConfiguration"
+        }
       },
       "ai.zylon.koala.privategpt.ChatRequest.ResponseFormat" : {
-        "type" : "object",
         "properties" : {
           "type" : {
             "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.ResponseFormat.ResponseFormatType"
           },
           "json_schema" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           }
         },
-        "required" : [ "type" ],
-        "title" : "ResponseFormat"
+        "required" : [ "type" ]
       },
       "ai.zylon.koala.privategpt.ChatRequest.ResponseFormat.ResponseFormatType" : {
-        "type" : "string",
-        "enum" : [ "text", "json_schema" ],
-        "title" : "ResponseFormatType"
+        "enum" : [ "text", "json_schema" ]
       },
       "ai.zylon.koala.privategpt.ChatRequest.System" : {
-        "type" : "object",
         "properties" : {
           "use_default_prompt" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "text" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "citations" : {
             "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.System.Citations"
           }
-        },
-        "required" : [ "citations", "use_default_prompt" ],
-        "title" : "System"
+        }
       },
       "ai.zylon.koala.privategpt.ChatRequest.System.Citations" : {
-        "type" : "object",
         "properties" : {
           "enabled" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
-        },
-        "required" : [ "enabled" ],
-        "title" : "Citations"
+        }
       },
       "ai.zylon.koala.privategpt.ChatRequest.Thinking" : {
-        "type" : "object",
         "properties" : {
           "enabled" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
-        },
-        "required" : [ "enabled" ],
-        "title" : "Thinking"
+        }
       },
-      "ai.zylon.backend.server.app.project.ProjectChatDTO" : {
-        "type" : "object",
+      "page_array_ai.zylon.backend.server.app.project.ProjectMemberDTO__" : {
         "properties" : {
-          "artifact_ids" : {
+          "data" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectMemberDTO"
+            }
           },
-          "all_artifacts" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+          "next_cursor" : {
+            "type" : "string"
           },
-          "pgpt" : {
-            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest"
+          "previous_cursor" : {
+            "type" : "string"
+          },
+          "has_next_page" : {
+            "type" : "boolean"
+          },
+          "has_previous_page" : {
+            "type" : "boolean"
+          },
+          "total_count" : {
+            "type" : "number"
           }
         },
-        "required" : [ "all_artifacts", "artifact_ids", "pgpt" ],
-        "title" : "ProjectChatDTO"
-      },
-      "ai.zylon.backend.server.app.project.CreateProjectMemberDTO" : {
-        "type" : "object",
-        "properties" : {
-          "user_id" : {
-            "type" : "string",
-            "title" : "NodeId"
-          },
-          "role" : {
-            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
-          }
-        },
-        "required" : [ "role", "user_id" ],
-        "title" : "CreateProjectMemberDTO"
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
       },
       "ai.zylon.backend.server.app.project.AddProjectMembersDTO" : {
-        "type" : "object",
         "properties" : {
           "members" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.CreateProjectMemberDTO"
-            },
-            "title" : "ArrayList<CreateProjectMemberDTO>"
+            }
           }
         },
-        "required" : [ "members" ],
-        "title" : "AddProjectMembersDTO"
+        "required" : [ "members" ]
       },
-      "ai.zylon.backend.server.app.project.UpdateProjectMemberDTO" : {
-        "type" : "object",
+      "ai.zylon.backend.server.app.project.CreateProjectMemberDTO" : {
         "properties" : {
           "user_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "role" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
-            } ]
-          },
-          "is_pinned" : {
-            "type" : [ "null", "boolean" ],
-            "title" : "Boolean"
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
           }
         },
-        "required" : [ "user_id" ],
-        "title" : "UpdateProjectMemberDTO"
+        "required" : [ "role", "user_id" ]
       },
       "ai.zylon.backend.server.app.project.UpdateProjectMembersDTO" : {
-        "type" : "object",
         "properties" : {
           "members" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.UpdateProjectMemberDTO"
-            },
-            "title" : "ArrayList<UpdateProjectMemberDTO>"
+            }
           }
         },
-        "required" : [ "members" ],
-        "title" : "UpdateProjectMembersDTO"
+        "required" : [ "members" ]
+      },
+      "ai.zylon.backend.server.app.project.UpdateProjectMemberDTO" : {
+        "properties" : {
+          "user_id" : {
+            "type" : "string"
+          },
+          "role" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
+          },
+          "is_pinned" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "user_id" ]
       },
       "ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields" : {
-        "type" : "string",
-        "enum" : [ "User" ],
-        "title" : "InteractionIncludeFields"
-      },
-      "ai.zylon.backend.server.app.agent.AgentType" : {
-        "type" : "string",
-        "enum" : [ "Default", "ProjectDeepResearch" ],
-        "title" : "AgentType"
+        "enum" : [ "User" ]
       },
       "ai.zylon.backend.server.app.project.interaction.CreateInteractionDTO" : {
-        "type" : "object",
         "properties" : {
           "thread_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "all_artifacts" : {
-            "type" : [ "null", "boolean" ],
-            "title" : "Boolean"
+            "type" : "boolean"
           },
           "artifact_ids" : {
-            "type" : [ "null", "array" ],
+            "type" : "array",
             "items" : {
-              "type" : "string",
-              "title" : "NodeId"
-            },
-            "title" : "ArrayList<NodeId>"
+              "type" : "string"
+            }
           },
           "pgpt" : {
             "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest"
@@ -4628,68 +4241,74 @@
           "agent" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.agent.AgentType"
           }
-        },
-        "required" : [ "agent", "pgpt" ],
-        "title" : "CreateInteractionDTO"
+        }
+      },
+      "ai.zylon.backend.server.app.agent.AgentType" : {
+        "enum" : [ "Default", "ProjectDeepResearch" ]
       },
       "ai.zylon.backend.server.app.project.thread.ThreadState" : {
-        "type" : "string",
-        "enum" : [ "Active", "Deleted" ],
-        "title" : "ThreadState"
+        "enum" : [ "Active", "Deleted" ]
       },
       "ai.zylon.backend.server.app.project.thread.ThreadIncludeFields" : {
-        "type" : "string",
-        "enum" : [ "User" ],
-        "title" : "ThreadIncludeFields"
-      },
-      "ai.zylon.backend.server.app.project.thread.ThreadVisibility" : {
-        "type" : "string",
-        "enum" : [ "Public", "Private" ],
-        "title" : "ThreadVisibility"
+        "enum" : [ "User" ]
       },
       "ai.zylon.backend.server.app.project.thread.UpdateThreadDTO" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "visibility" : {
-            "oneOf" : [ {
-              "type" : "null"
-            }, {
-              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.thread.ThreadVisibility"
-            } ]
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.thread.ThreadVisibility"
           }
-        },
-        "title" : "UpdateThreadDTO"
+        }
+      },
+      "ai.zylon.backend.server.app.project.thread.ThreadVisibility" : {
+        "enum" : [ "Public", "Private" ]
       },
       "ai.zylon.backend.server.app.project.thread.CreateThreadDTO" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "visibility" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.thread.ThreadVisibility"
           }
         },
-        "required" : [ "name", "visibility" ],
-        "title" : "CreateThreadDTO"
+        "required" : [ "name", "visibility" ]
       },
       "ai.zylon.backend.server.app.QueryOrderBy" : {
-        "type" : "string",
-        "enum" : [ "Alphabetical" ],
-        "title" : "QueryOrderBy"
+        "enum" : [ "Alphabetical" ]
       },
       "org.jetbrains.exposed.sql.SortOrder" : {
-        "type" : "string",
-        "enum" : [ "ASC", "DESC", "ASC_NULLS_FIRST", "DESC_NULLS_FIRST", "ASC_NULLS_LAST", "DESC_NULLS_LAST" ],
-        "title" : "SortOrder"
+        "enum" : [ "ASC", "DESC", "ASC_NULLS_FIRST", "DESC_NULLS_FIRST", "ASC_NULLS_LAST", "DESC_NULLS_LAST" ]
+      },
+      "page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__" : {
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
+            }
+          },
+          "next_cursor" : {
+            "type" : "string"
+          },
+          "previous_cursor" : {
+            "type" : "string"
+          },
+          "has_next_page" : {
+            "type" : "boolean"
+          },
+          "has_previous_page" : {
+            "type" : "boolean"
+          },
+          "total_count" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
       },
       "ai.zylon.backend.server.app.project.artifact.CreateArtifactDTO" : {
-        "type" : "object",
         "properties" : {
           "type" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactType"
@@ -4698,258 +4317,182 @@
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactSource"
           },
           "name" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "parent_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "integration_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "external_url" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "description" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "raw_content" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "keep_file_after_ingestion" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           },
-          "config" : {
-            "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-          }
+          "config" : { }
         },
-        "required" : [ "config", "keep_file_after_ingestion", "name", "source", "type" ],
-        "title" : "CreateArtifactDTO"
+        "required" : [ "config", "name", "type" ]
       },
       "ai.zylon.backend.server.app.project.artifact.UpdateArtifactDTO" : {
-        "type" : "object",
         "properties" : {
           "name" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "parent_id" : {
-            "type" : [ "null", "string" ],
-            "title" : "NodeId"
+            "type" : "string"
           },
           "external_url" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "config" : {
-            "type" : [ "null", "object" ],
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/kotlinx.serialization.json.JsonElement"
-            },
-            "title" : "JsonObject<String,JsonElement>"
+            "type" : "object",
+            "additionalProperties" : { }
           },
           "description" : {
-            "type" : [ "null", "string" ],
-            "title" : "String"
+            "type" : "string"
           },
           "content" : {
-            "type" : [ "null", "string" ],
-            "title" : "Base64ByteArray"
+            "type" : "string"
           }
-        },
-        "title" : "UpdateArtifactDTO"
-      },
-      "ai.zylon.backend.server.app.ApplicationFeature" : {
-        "type" : "string",
-        "enum" : [ "Summary", "Composition", "AnswerHub", "CompositionSection" ],
-        "title" : "ApplicationFeature"
+        }
       },
       "ai.zylon.backend.server.app.feedback.CreateFeedbackDTO" : {
-        "type" : "object",
         "properties" : {
           "target_id" : {
-            "type" : "string",
-            "title" : "NodeId"
+            "type" : "string"
           },
           "feature" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.ApplicationFeature"
           },
           "score" : {
-            "type" : "integer",
-            "format" : "int32",
-            "title" : "Int"
+            "type" : "number"
           }
         },
-        "required" : [ "feature", "score", "target_id" ],
-        "title" : "CreateFeedbackDTO"
+        "required" : [ "feature", "score", "target_id" ]
+      },
+      "ai.zylon.backend.server.app.ApplicationFeature" : {
+        "enum" : [ "Summary", "Composition", "AnswerHub", "CompositionSection" ]
       },
       "ai.zylon.backend.server.app.audit.AuditQueryIncludeFields" : {
-        "type" : "string",
-        "enum" : [ "User" ],
-        "title" : "AuditQueryIncludeFields"
+        "enum" : [ "User" ]
       },
       "ai.zylon.backend.server.app.analytics.AnalyticsTotalsDTO" : {
-        "type" : "object",
         "properties" : {
           "projects_total" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "threads_total" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "interactions_total" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "agent_flows_total" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "uploaded_artifacts_total" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "agent_flows_total", "interactions_total", "projects_total", "threads_total", "uploaded_artifacts_total" ],
-        "title" : "AnalyticsTotalsDTO"
+        "required" : [ "agent_flows_total", "interactions_total", "projects_total", "threads_total", "uploaded_artifacts_total" ]
       },
       "ai.zylon.backend.server.app.analytics.RankingActiveProjectDTO" : {
-        "type" : "object",
         "properties" : {
           "project" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
           },
           "interactions_created" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "agent_flows_created" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "agent_flows_created", "interactions_created", "project" ],
-        "title" : "RankingActiveProjectDTO"
+        "required" : [ "agent_flows_created", "interactions_created", "project" ]
       },
       "ai.zylon.backend.server.app.analytics.RankingActiveUsersDTO" : {
-        "type" : "object",
         "properties" : {
           "user" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           },
           "interactions_created" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           },
           "agent_flows_created" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "agent_flows_created", "interactions_created", "user" ],
-        "title" : "RankingActiveUsersDTO"
+        "required" : [ "agent_flows_created", "interactions_created", "user" ]
       },
       "ai.zylon.backend.server.app.analytics.TimeseriesDTO" : {
-        "type" : "object",
         "properties" : {
           "date" : {
-            "type" : "string",
-            "title" : "LocalDate"
+            "type" : "string"
           },
           "value" : {
-            "type" : "integer",
-            "format" : "int64",
-            "title" : "Long"
+            "type" : "number"
           }
         },
-        "required" : [ "date", "value" ],
-        "title" : "TimeseriesDTO"
+        "required" : [ "date", "value" ]
       },
       "ai.zylon.backend.server.app.miscellaneous.ResourceIsSafeToModifyDTO" : {
-        "type" : "object",
         "properties" : {
           "has_linked_artifacts" : {
-            "type" : "boolean",
-            "title" : "Boolean"
+            "type" : "boolean"
           }
         },
-        "required" : [ "has_linked_artifacts" ],
-        "title" : "ResourceIsSafeToModifyDTO"
+        "required" : [ "has_linked_artifacts" ]
       },
       "health" : {
-        "type" : "object",
         "properties" : {
           "status" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "uptime" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "commit" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           }
         },
-        "required" : [ "commit", "status", "uptime" ],
-        "title" : "health"
-      },
-      "ai.zylon.backend.core.license.LicenseProvider" : {
-        "type" : "string",
-        "enum" : [ "Zylon", "Replicated" ],
-        "title" : "LicenseProvider"
+        "required" : [ "commit", "status", "uptime" ]
       },
       "license" : {
-        "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "email" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "valid_until" : {
-            "type" : "string",
-            "title" : "Instant"
+            "type" : "string"
           },
           "product" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "string"
           },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "LinkedHashMap<String,String>"
+              "type" : "string"
+            }
           },
           "provider" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.core.license.LicenseProvider"
           }
         },
-        "required" : [ "email", "id", "metadata", "product", "provider", "valid_until" ],
-        "title" : "license"
+        "required" : [ "email", "id", "metadata", "product", "provider", "valid_until" ]
+      },
+      "ai.zylon.backend.core.license.LicenseProvider" : {
+        "enum" : [ "Zylon", "Replicated" ]
       }
     },
     "examples" : { }

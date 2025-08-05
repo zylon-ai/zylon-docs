@@ -1,8 +1,9 @@
 name: Update API Specs
 
 on:
-  schedule:
-    - cron: '0 19 * * *'
+# Disabled for now
+#  schedule:
+#    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       host:

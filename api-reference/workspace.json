@@ -194,7 +194,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-05T16:17:03.320813Z"
+                    "valid_until" : "2026-08-05T16:25:53.719057Z"
                   }
                 }
               }
@@ -843,7 +843,7 @@
     "/v1/app/project/{projectId}/leave" : {
       "post" : {
         "tags" : [ "project" ],
-        "summary" : "Leaves a project",
+        "summary" : "Leave a project",
         "description" : "Allows a user to leave a project they are currently a member of. This will remove them from the project and revoke their access.",
         "parameters" : [ {
           "name" : "projectId",
@@ -984,6 +984,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "The details to update the project with",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.UpdateProjectDTO"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : { },
         "deprecated" : false
       }

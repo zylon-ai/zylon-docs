@@ -85,7 +85,7 @@
         "tab": "Changelog",
         "icon": "list",
         "pages": [
-          "changelog/changelog"
+          "changelog"
         ]
       }
     ]

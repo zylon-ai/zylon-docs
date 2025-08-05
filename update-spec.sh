@@ -22,5 +22,5 @@ function sed-i() {
     rm -f $2.tmp
 }
 
-mint openapi-check api-reference/workspace.json || exit 1
-mint openapi-check api-reference/pgpt.json || exit 1
+mint openapi-check workspace.json || exit 1
+mint openapi-check pgpt.json || exit 1

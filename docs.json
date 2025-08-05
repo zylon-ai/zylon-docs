@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "aspen",
+  "theme": "palm",
   "name": "Zylon",
   "colors": {
     "primary": "#796ABF",
@@ -37,28 +37,16 @@
     }
   },
   "navigation": {
-    "tabs": [
+    "dropdowns": [
       {
-        "tab": "ZylonGPT API",
-        "groups": [
-          {
-            "group": "OpenAPI Spec",
-            "openapi": {
-              "source": "/api-reference/pgpt.json"
-            }
-          }
-        ]
+        "dropdown": "ZylonGPT API",
+        "icon": "code",
+        "openapi": "/api-reference/pgpt.json"
       },
       {
-        "tab": "Workspace API",
-        "groups": [
-          {
-            "group": "OpenAPI Spec",
-            "openapi": {
-              "source": "/api-reference/workspace.json"
-            }
-          }
-        ]
+        "dropdown": "Workspace API",
+        "icon": "code",
+        "openapi": "/api-reference/workspace.json"
       }
     ]
   },

@@ -194,7 +194,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-05T09:30:25.233187Z"
+                    "valid_until" : "2026-08-05T12:24:09.007407Z"
                   }
                 }
               }
@@ -1316,7 +1316,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "The interaction details",
+            "description" : "Interaction details",
             "headers" : { },
             "content" : {
               "application/json" : {
@@ -1354,7 +1354,19 @@
             "type" : "string"
           }
         } ],
-        "responses" : { },
+        "responses" : {
+          "200" : {
+            "description" : "Confirmation of interaction deletion",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -1402,13 +1414,25 @@
             "type" : "string"
           }
         } ],
-        "responses" : { },
+        "responses" : {
+          "200" : {
+            "description" : "Paginated list of interactions",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.project.interaction.InteractionDTO__"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       },
       "post" : {
         "tags" : [ "interaction" ],
-        "summary" : "Create a new interaction",
-        "description" : "Create a new interaction within a project and stream the result",
+        "summary" : "Create interaction",
+        "description" : "Create a new interaction within a project",
         "parameters" : [ {
           "name" : "projectId",
           "in" : "path",
@@ -1421,7 +1445,7 @@
           }
         } ],
         "requestBody" : {
-          "description" : "Details of the interaction to create",
+          "description" : "The details of the interaction to create",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1431,7 +1455,96 @@
           },
           "required" : false
         },
-        "responses" : { },
+        "responses" : {
+          "201" : {
+            "description" : "Created interaction details",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/project/{projectId}/interaction/{interactionId}/cancel" : {
+      "post" : {
+        "tags" : [ "interaction" ],
+        "summary" : "Cancel interaction",
+        "description" : "Cancel an ongoing interaction by its ID within a project",
+        "parameters" : [ {
+          "name" : "projectId",
+          "in" : "path",
+          "description" : "The ID of the project containing the interaction",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "interactionId",
+          "in" : "path",
+          "description" : "The ID of the interaction to cancel",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/project/{projectId}/interaction/{interactionId}/stream" : {
+      "get" : {
+        "tags" : [ "interaction" ],
+        "summary" : "Stream interaction events",
+        "description" : "Stream events for a specific interaction by its ID within a project",
+        "parameters" : [ {
+          "name" : "projectId",
+          "in" : "path",
+          "description" : "The ID of the project containing the interaction",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "interactionId",
+          "in" : "path",
+          "description" : "The ID of the interaction to stream",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Stream of MessageOutputEvent",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputEvent"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -3063,7 +3176,7 @@
     },
     "/v1/app/integration/confluence/login" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID login for Confluence",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -3073,7 +3186,7 @@
     },
     "/v1/app/integration/confluence/{integrationId}/login" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID login for Confluence",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -3083,7 +3196,7 @@
     },
     "/v1/app/integration/confluence/{integrationId}/refresh_token" : {
       "post" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "Refresh OpenID token for an integration",
         "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
         "parameters" : [ {
@@ -3115,7 +3228,7 @@
     },
     "/v1/app/integration/confluence/callback" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID callback for Confluence",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -3125,7 +3238,7 @@
     },
     "/v1/app/integration/sharepoint/login" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID login for SharePoint",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -3135,7 +3248,7 @@
     },
     "/v1/app/integration/sharepoint/{integrationId}/login" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID login for SharePoint",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -3145,7 +3258,7 @@
     },
     "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
       "post" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "Refresh OpenID token for an integration",
         "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
         "parameters" : [ {
@@ -3177,7 +3290,7 @@
     },
     "/v1/app/integration/sharepoint/callback" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID callback for SharePoint",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -4514,6 +4627,32 @@
       "ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields" : {
         "enum" : [ "User" ]
       },
+      "page_array_ai.zylon.backend.server.app.project.interaction.InteractionDTO__" : {
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
+            }
+          },
+          "next_cursor" : {
+            "type" : "string"
+          },
+          "previous_cursor" : {
+            "type" : "string"
+          },
+          "has_next_page" : {
+            "type" : "boolean"
+          },
+          "has_previous_page" : {
+            "type" : "boolean"
+          },
+          "total_count" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
+      },
       "ai.zylon.backend.server.app.project.interaction.CreateInteractionDTO" : {
         "properties" : {
           "thread_id" : {
@@ -4538,6 +4677,282 @@
       },
       "ai.zylon.backend.server.app.agent.AgentType" : {
         "enum" : [ "Default", "ProjectDeepResearch" ]
+      },
+      "ai.zylon.koala.model.message.MessageOutputEvent" : {
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/content_block_delta"
+        }, {
+          "$ref" : "#/components/schemas/content_block_start"
+        }, {
+          "$ref" : "#/components/schemas/content_block_stop"
+        }, {
+          "$ref" : "#/components/schemas/done"
+        }, {
+          "$ref" : "#/components/schemas/error"
+        }, {
+          "$ref" : "#/components/schemas/message_delta"
+        }, {
+          "$ref" : "#/components/schemas/message_start"
+        }, {
+          "$ref" : "#/components/schemas/message_stop"
+        }, {
+          "$ref" : "#/components/schemas/content_block_synthetic"
+        } ]
+      },
+      "content_block_delta" : {
+        "properties" : {
+          "block_id" : {
+            "type" : "string"
+          },
+          "delta" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlockDelta"
+          }
+        },
+        "required" : [ "block_id", "delta" ]
+      },
+      "ai.zylon.koala.model.message.ContentBlockDelta" : {
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/input_json_delta"
+        }, {
+          "$ref" : "#/components/schemas/source_delta"
+        }, {
+          "$ref" : "#/components/schemas/tldr_delta"
+        }, {
+          "$ref" : "#/components/schemas/text_delta"
+        }, {
+          "$ref" : "#/components/schemas/thinking_delta"
+        } ]
+      },
+      "input_json_delta" : {
+        "properties" : {
+          "partial_json" : {
+            "type" : "string"
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        },
+        "required" : [ "partial_json" ]
+      },
+      "source_delta" : {
+        "properties" : {
+          "sources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
+            }
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        }
+      },
+      "tldr_delta" : {
+        "properties" : {
+          "tldr" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        },
+        "required" : [ "tldr" ]
+      },
+      "text_delta" : {
+        "properties" : {
+          "text" : {
+            "type" : "string"
+          },
+          "citations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTCitation"
+            }
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        }
+      },
+      "thinking_delta" : {
+        "properties" : {
+          "thinking" : {
+            "type" : "string"
+          },
+          "citations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTCitation"
+            }
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        }
+      },
+      "content_block_start" : {
+        "properties" : {
+          "block_id" : {
+            "type" : "string"
+          },
+          "content_block" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
+          }
+        },
+        "required" : [ "block_id", "content_block" ]
+      },
+      "content_block_stop" : {
+        "properties" : {
+          "block_id" : {
+            "type" : "string"
+          },
+          "stop_timestamp" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "block_id" ]
+      },
+      "done" : { },
+      "error" : {
+        "properties" : {
+          "error" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputEvent.Error.ErrorDetail"
+          }
+        }
+      },
+      "message_delta" : {
+        "properties" : {
+          "delta" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputDelta"
+          }
+        },
+        "required" : [ "delta" ]
+      },
+      "ai.zylon.koala.model.message.MessageOutputDelta" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "created" : {
+            "type" : "number"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "stop_reason" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputStopReason"
+          },
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
+            }
+          },
+          "usage" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.CompletionUsage"
+          }
+        }
+      },
+      "message_start" : {
+        "properties" : {
+          "message" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutput"
+          }
+        },
+        "required" : [ "message" ]
+      },
+      "message_stop" : { },
+      "content_block_synthetic" : {
+        "properties" : {
+          "block_id" : {
+            "type" : "string"
+          },
+          "block" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
+          }
+        },
+        "required" : [ "block", "block_id" ]
       },
       "ai.zylon.backend.server.app.project.thread.ThreadState" : {
         "enum" : [ "Active", "Deleted" ]

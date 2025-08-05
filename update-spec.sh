@@ -5,6 +5,7 @@ host=$1
 if [ -z "$host" ]; then
   host="https://zylon.me"
 fi
+server="$host/api"
 
 curl -s $host/api/openapi.json -o workspace.json || exit 1
 curl -s $host/gpt/openapi.json -o pgpt.json || exit 1
@@ -21,30 +22,5 @@ function sed-i() {
     rm -f $2.tmp
 }
 
-query='.paths
-         | to_entries
-         | map({path: .key, methods: (.value | to_entries
-             | map(select(.value.summary | not)
-             | {method: .key, operation: .value}))})
-         | map(select(.methods != []))'
-
-# Validate all endpoints have a summary
-out="$(jq -r $query workspace.json)"
-if [ "$out" != "[]" ]; then
-    echo "Workspace endpoints missing summaries"
-    echo "$out"
-    exit 1
-fi
-
-out="$(jq -r $query pgpt.json)"
-if [ "$out" != "[]" ]; then
-    echo "PGPT endpoints missing summaries"
-    echo "$out"
-    exit 1
-fi
-
-mkdir -p workspace/
-npx --yes @mintlify/scraping@latest openapi-file workspace.json -o workspace/
-
-mkdir -p pgpt/
-npx --yes @mintlify/scraping@latest openapi-file pgpt.json -o pgpt/
+mint openapi-check api-reference/workspace.json || exit 1
+mint openapi-check api-reference/pgpt.json || exit 1

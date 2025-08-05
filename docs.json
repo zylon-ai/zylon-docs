@@ -1,49 +1,66 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "aspen",
+  "name": "Zylon",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#796ABF",
+    "light": "#796ABF",
+    "dark": "#E8C468"
   },
+  "description": "The truly Private AI platform for the Enterprise\nThe only self-contained and ready-to-go AI platform that runs in your own servers, allowing you to maintain data sovereignty",
   "favicon": "/favicon.png",
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "appearance": {
+    "default": "light"
+  },
+  "background": {
+    "decoration": "gradient"
+  },
+  "contextual": {
+    "options": [
+      "copy"
+    ]
+  },
+  "api": {
+    "playground": {
+      "display": "simple"
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "python",
+        "javascript"
+      ],
+      "defaults": "required"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Workspace API",
+        "tab": "ZylonGPT API",
         "groups": [
           {
-            "group": "Workspace",
+            "group": "OpenAPI Spec",
             "openapi": {
-              "source": "/api-reference/workspace.json",
-              "directory": "api-reference"
+              "source": "/api-reference/pgpt.json"
             }
           }
         ]
       },
       {
-        "tab": "PrivateGPT API",
+        "tab": "Workspace API",
         "groups": [
           {
-            "group": "PrivateGPT",
+            "group": "OpenAPI Spec",
             "openapi": {
-              "source": "/api-reference/pgpt.json",
-              "directory": "api-reference"
+              "source": "/api-reference/workspace.json"
             }
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Blog",
-          "href": "https://www.zylon.ai/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -55,11 +72,16 @@
         "label": "Support",
         "href": "mailto:dev@zylon.ai"
       }
-    ]
+    ],
+    "primary": {
+      "label": "Request a Demo",
+      "href": "https://cal.com/zylon/demo?source=docs",
+      "type": "button"
+    }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
+      "x": "https://x.com/zylonprivategpt",
       "github": "https://github.com/zylon-ai",
       "linkedin": "https://www.linkedin.com/company/zylon-privategpt/"
     }

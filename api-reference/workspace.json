@@ -194,7 +194,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-04T17:06:45.833715Z"
+                    "valid_until" : "2026-08-05T09:30:25.233187Z"
                   }
                 }
               }
@@ -826,6 +826,7 @@
         "description" : "Update the organization details for the currently authenticated user. This endpoint supports both JSON and multipart form data formats.",
         "parameters" : [ ],
         "requestBody" : {
+          "description" : "The organization details to update. Can be sent as JSON or multipart form data.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1313,7 +1314,19 @@
             "type" : "string"
           }
         } ],
-        "responses" : { },
+        "responses" : {
+          "200" : {
+            "description" : "The interaction details",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       },
       "delete" : {
@@ -1429,6 +1442,7 @@
         "description" : "Routes for chat interactions",
         "parameters" : [ ],
         "requestBody" : {
+          "description" : "The chat request containing the input message and other parameters",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -2278,6 +2292,7 @@
         "description" : "Create feedback for a target node",
         "parameters" : [ ],
         "requestBody" : {
+          "description" : "The feedback to create",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -3544,7 +3559,21 @@
           "external_url" : {
             "type" : "string"
           },
-          "config" : { },
+          "config" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          },
           "file_uri" : {
             "type" : "string"
           },
@@ -3601,7 +3630,21 @@
           "type" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactSource"
           },
-          "provider_data" : { },
+          "provider_data" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          },
           "created_at" : {
             "type" : "number"
           },
@@ -3744,7 +3787,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "content", "role" ]
@@ -3788,7 +3845,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "data" ]
@@ -3809,7 +3880,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         }
       },
@@ -3904,7 +3989,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "content" ]
@@ -3928,7 +4027,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         }
       },
@@ -3967,7 +4080,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         }
       },
@@ -3993,7 +4120,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "content", "tool_use_id" ]
@@ -4008,7 +4149,21 @@
           },
           "input" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           },
           "start_timestamp" : {
             "type" : "string"
@@ -4018,7 +4173,21 @@
           },
           "_meta" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "id", "input", "name" ]
@@ -4044,7 +4213,21 @@
         "properties" : {
           "properties" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           },
           "required" : {
             "type" : "array",
@@ -4110,7 +4293,21 @@
           },
           "json_schema" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           }
         },
         "required" : [ "type" ]
@@ -4217,6 +4414,102 @@
           }
         },
         "required" : [ "user_id" ]
+      },
+      "ai.zylon.backend.server.app.project.interaction.InteractionDTO" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "project_id" : {
+            "type" : "string"
+          },
+          "thread_id" : {
+            "type" : "string"
+          },
+          "state" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionState"
+          },
+          "user_input" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageInput"
+          },
+          "assistant_output" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutput"
+          },
+          "artifact_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "all_artifacts" : {
+            "type" : "boolean"
+          },
+          "created_at" : {
+            "type" : "number"
+          },
+          "created_by" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+          }
+        },
+        "required" : [ "assistant_output", "created_at", "id", "project_id", "state", "thread_id", "user_input" ]
+      },
+      "ai.zylon.backend.server.app.project.interaction.InteractionState" : {
+        "enum" : [ "Processing", "Completed", "Error" ]
+      },
+      "ai.zylon.koala.model.message.MessageOutput" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "created" : {
+            "type" : "number"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "stop_reason" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputStopReason"
+          },
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.ContentBlock"
+            }
+          },
+          "usage" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.CompletionUsage"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.MessageOutputEvent.Error.ErrorDetail"
+            }
+          }
+        }
+      },
+      "ai.zylon.koala.model.message.MessageOutputStopReason" : {
+        "enum" : [ "stop", "error", "cancelled" ]
+      },
+      "ai.zylon.koala.model.message.CompletionUsage" : {
+        "properties" : {
+          "input_tokens" : {
+            "type" : "number"
+          },
+          "output_tokens" : {
+            "type" : "number"
+          }
+        }
+      },
+      "ai.zylon.koala.model.message.MessageOutputEvent.Error.ErrorDetail" : {
+        "properties" : {
+          "type" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "message", "type" ]
       },
       "ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields" : {
         "enum" : [ "User" ]
@@ -4337,9 +4630,198 @@
           "keep_file_after_ingestion" : {
             "type" : "boolean"
           },
-          "config" : { }
+          "config" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          }
         },
         "required" : [ "config", "name", "type" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig" : {
+        "properties" : {
+          "file_name" : {
+            "type" : "string"
+          },
+          "content_length" : {
+            "type" : "number"
+          },
+          "content_type" : {
+            "type" : "string"
+          },
+          "metadata" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          }
+        },
+        "required" : [ "content_type", "file_name" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig" : {
+        "properties" : {
+          "metadata" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          }
+        }
+      },
+      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig" : {
+        "properties" : {
+          "questions" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Result"
+            }
+          },
+          "artifact_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "detail" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Detail"
+          },
+          "style" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Style"
+          },
+          "organization_context" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "artifact_ids", "detail", "instructions", "questions", "style" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Result" : {
+        "properties" : {
+          "question" : {
+            "type" : "string"
+          },
+          "response" : {
+            "type" : "string"
+          },
+          "sources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
+            }
+          }
+        },
+        "required" : [ "question", "response", "sources" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Detail" : {
+        "enum" : [ "Concise", "Moderate", "Comprehensive" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Style" : {
+        "enum" : [ "Expert", "Neutral", "Simple" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig" : {
+        "properties" : {
+          "artifact_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "style" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionStyle"
+          },
+          "detail" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionDetailLevel"
+          },
+          "organization_context" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "artifact_ids", "detail", "instructions", "style" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.composition.CompositionStyle" : {
+        "enum" : [ "Expert", "Neutral", "Simple" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.composition.CompositionDetailLevel" : {
+        "enum" : [ "KeyPoints", "ShortPieces", "LongPieces" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO" : {
+        "properties" : {
+          "artifact_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "style" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryStyle"
+          },
+          "detail" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryDetailLevel"
+          },
+          "instructions" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "artifact_ids", "detail", "instructions", "style" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.summary.SummaryStyle" : {
+        "enum" : [ "Casual", "Professional", "Original", "Simplified", "Expert", "Neutral", "Simple" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.summary.SummaryDetailLevel" : {
+        "enum" : [ "Detailed", "Standard", "Complete", "InDepth", "Overview", "Highlights", "KeyPoints", "ShortPieces", "LongPieces" ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO" : {
+        "properties" : {
+          "original_artifact_id" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "original_artifact_id" ]
       },
       "ai.zylon.backend.server.app.project.artifact.UpdateArtifactDTO" : {
         "properties" : {
@@ -4354,7 +4836,21 @@
           },
           "config" : {
             "type" : "object",
-            "additionalProperties" : { }
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
           },
           "description" : {
             "type" : "string"

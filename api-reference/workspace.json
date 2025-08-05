@@ -194,7 +194,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-05T12:24:09.007407Z"
+                    "valid_until" : "2026-08-05T16:17:03.320813Z"
                   }
                 }
               }
@@ -925,7 +925,30 @@
             "type" : "string"
           }
         } ],
-        "responses" : { },
+        "requestBody" : {
+          "description" : "The details to update the project with",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.UpdateProjectDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The updated project",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       },
       "delete" : {
@@ -971,7 +994,30 @@
         "summary" : "Creates a new project",
         "description" : "Create a new project with the specified details. The user creating the project will automatically become the owner.",
         "parameters" : [ ],
-        "responses" : { },
+        "requestBody" : {
+          "description" : "Project details",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.CreateProjectDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The created project",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -3803,6 +3849,23 @@
         },
         "required" : [ "new_owner_id", "old_owner_id" ]
       },
+      "ai.zylon.backend.server.app.project.CreateProjectDTO" : {
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "goal" : {
+            "type" : "string"
+          },
+          "deadline" : {
+            "type" : "number"
+          },
+          "visibility" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectVisibility"
+          }
+        },
+        "required" : [ "name" ]
+      },
       "ai.zylon.backend.server.app.project.ProjectChatDTO" : {
         "properties" : {
           "artifact_ids" : {
@@ -4452,6 +4515,34 @@
         "properties" : {
           "enabled" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "ai.zylon.backend.server.app.project.UpdateProjectDTO" : {
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "goal" : {
+            "type" : "string"
+          },
+          "deadline" : {
+            "type" : "string"
+          },
+          "default_member_role" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.member.ProjectMemberRole"
+          },
+          "default_role_enabled" : {
+            "type" : "boolean"
+          },
+          "visibility" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectVisibility"
+          },
+          "project_context" : {
+            "type" : "string"
+          },
+          "answer_context" : {
+            "type" : "string"
           }
         }
       },

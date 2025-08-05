@@ -16,49 +16,49 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 1. First of all you need to login into https://portal.azure.com/#home console dashboard
 2. Click `Microsoft Entra Id`
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image.png)
+![image.png](/operator-manual/openid-images/image.png)
 
 1. Register a new App. Click on `App registrations` on the left menu.
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%201.png)
+![image.png](/operator-manual/openid-images/image%201.png)
 
 1. Click on `New Registration`.
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%202.png)
+![image.png](/operator-manual/openid-images/image%202.png)
 
 1. A new window will open and you will need to add the following information
 - ⚠️ Redirect URI type is **web**⚠️
 - Domain: `https://zylon.company.com/api/v1/auth/microsoft/callback`. Replace `zylon.company.com` with the domain where Zylon is hosted (It is the same domain as in the config file located in `/etc/zylon/zylon-conf.yaml`).
 - Supported account types: All account types are supported. Choose based on your specific needs.
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%203.png)
+![image.png](/operator-manual/openid-images/image%203.png)
 
 - In case you want to change it later you can do so in the `Application Overview`
     
-    ![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%204.png)
+    ![image.png](/operator-manual/openid-images/image%204.png)
     
 
 1. Save the following values that will be used later in the config file for Zylon.
 - Application (client) ID
 - Directory (tenant) ID
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%205.png)
+![image.png](/operator-manual/openid-images/image%205.png)
 
 1. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%206.png)
+![image.png](/operator-manual/openid-images/image%206.png)
 
 1. Click on `New client secret` and add the required information
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%207.png)
+![image.png](/operator-manual/openid-images/image%207.png)
 
 1. Copy the `Value` for client secret.
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%208.png)
+![image.png](/operator-manual/openid-images/image%208.png)
 
 1. Verify that the `User.read`  permission is granted. Click on `API Permissions` on the left menu. You should see it there by default. In case it is missing, grant it.
 
-![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%209.png)
+![image.png](/operator-manual/openid-images/image%209.png)
 
 1. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
 

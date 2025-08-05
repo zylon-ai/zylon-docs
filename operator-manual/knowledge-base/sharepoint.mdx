@@ -1,17 +1,12 @@
 # Sharepoint
 
-Owner: Francisco Durdin
-Last edited time: May 29, 2025 9:26 AM
-
-# Sharepoint
-
 To integrate with SharePoint, you need to **create an Azure AD application** that acts as a bridge between Zylon ↔ SharePoint and **configure Zylon** to use this Microsoft application.
 
 This guide walks you through integrating SharePoint with Zylon using Microsoft’s OAuth 2.0 flow via Azure Active Directory. This enables Zylon to securely access your SharePoint resources using delegated permissions.
 
 ## Create an Azure AD app
 
-First you need an Azure AD application. We recommend to use a non personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on Sharepoint but has the right permissions to setup the app that will serve as a bridge between Zylon and Sharepoint.
+First you need an Azure AD application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on Sharepoint but has the right permissions to setup the app that will serve as a bridge between Zylon and Sharepoint.
 
 1. Go to [https://entra.microsoft.com](https://entra.microsoft.com/).
     
@@ -23,7 +18,7 @@ First you need an Azure AD application. We recommend to use a non personal accou
 3. On Supported Account types choose `Accounts in this organizational directory only`
 4. Under `Redirect URI` → Select `Web` and add the followings redirect URL
 
-```jsx
+```
 https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
 ```
 

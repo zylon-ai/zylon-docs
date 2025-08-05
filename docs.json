@@ -36,7 +36,6 @@
       "defaults": "required"
     }
   },
-
   "navigation": {
     "tabs": [
       {
@@ -52,8 +51,22 @@
           {
             "group": "Installation",
             "pages": [
+              "operator-manual/hardware-requirements",
               "operator-manual/install",
-              "operator-manual/ports-and-dns"
+              "operator-manual/ports-and-dns",
+              "operator-manual/troubleshoot",
+              "operator-manual/uninstall",
+              "operator-manual/backup",
+              "operator-manual/openid",
+              {
+                "group": "Knowledge Base",
+                "pages": [
+                  "operator-manual/knowledge-base/sharepoint",
+                  "operator-manual/knowledge-base/confluence",
+                  "operator-manual/knowledge-base/file-system",
+                  "operator-manual/knowledge-base/claromentis"
+                ]
+              }
             ]
           }
         ]
@@ -85,7 +98,7 @@
         "tab": "Changelog",
         "icon": "list",
         "pages": [
-          "changelog"
+          "changelog/index"
         ]
       }
     ]

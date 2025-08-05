@@ -1,0 +1,129 @@
+# Low-level API
+
+Owner: Ivan Martinez Toro
+Last edited time: July 11, 2025 11:21 AM
+
+# Enable the API
+
+The low-level API is disabled by default.
+
+In order to enable the low-level API of Zylon, you just need to edit your config file at `/etc/zylon-conf.yaml` and add `exposeIngress: true` in `zylonGPT`:
+
+```yaml
+zylonGPT:
+	exposeIngress: true
+```
+
+From that moment on, the API will be available under
+
+`https://<zylon.company.com>/gpt/v1/`. 
+
+Replace `<zylon.company.com>` with the domain where Zylon is hosted (It is the same domain as in the config file located in `/etc/zylon/zylon-conf.yaml`).
+
+Example API call:
+
+```bash
+curl -X 'POST' \
+  'https://staging.zylon.ai/gpt/v1/messages' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "messages": [
+        {
+            "role": "user",
+            "content": "How do you fry an egg?"
+        }
+    ]
+}'
+```
+
+The interactive API documentation is available at `https://<zylon.company.com>/gpt/docs`
+
+You can test the API directly from the docs, using the "try it out" button.
+
+<aside>
+⚠️
+
+**Important security note**: the API has no authentication enabled by default. Therefore once you expose it with the config above, anyone with access to the API could query any document ingested in Zylon. Therefore only use this low-level API in your dev deployment or for temporary actions like stress tests. 
+
+</aside>
+
+# Low-level API main concepts
+
+<aside>
+⚠️
+
+The low-level API is subject to change to include improvements and support new functionalities.
+
+</aside>
+
+## **Introduction**
+
+This API describes Zylon’s AI layer’s API. The API exposes high-level primitives that allow developers to build AI apps and workflows on top of Zylon’s Private AI platform.
+
+This guide contains the Main Concepts, APIs and Object Schemas.
+
+---
+
+## **Main Concepts**
+
+The API covers different functional building blocks:
+
+- Ingestion: /ingest/* APIs allow to incorporate texts and documents as context for the application. There are two important concepts to understand during ingestion, that will be used in the rest of APIs:
+    - Artifact: is the identifier of the file or piece of text being ingested.
+    - Collection: is used to group artifacts together.
+    
+    Both `artifact` and `collection` will be used to specify the context to be used in the different contextual APIs like completions or summarization. For that filtering, the object ContextFilter is used (see reference at the bottom of this guide).
+    
+    During ingestion, `metatada` can be specified to, for example, tag documents. That `metadata` can be used as part of the ContextFilter too.
+    
+
+```
+  "context_filter": {
+    "collection": "collection_name",
+    "artifacts": [
+      "artifact_id_1, artifact_id_2"
+    ],
+    "metadata_filter": [
+      {
+        "key": "file_id",
+        "operator": "==",
+        "value": "artifact_id_1"
+      }
+    ]
+  }
+
+```
+
+- Deletion: /delete is used to remove ingested context.
+- Completions: /completions and /chat/completions allow to interact with the LLM optionally using the context coming from one or more ingested files.
+- Chunks: /chunks runs a semantic retrieval over the selected context given a certain query. Useful to implement quick semantic search functionalities.
+- Embeddings: /embeddings get a vector representation of a given input.
+- Recipes: higher-level built-in functional workflows ready to be used.
+    - Summarize: given a text or a set of artifacts, and an optional instruction, will create and return a summary. It is not limited by the context window of the models, as it internally implements a recursive split+summarize algorithm.
+    - Report (beta): given a text or set of artifacts, and an instruction, will generate a report by first infering the sections of the report based on the instruction, and later filling in the sections with content from the available context.
+- Health: /health tests if the service is up.
+
+### **Sync vs Async**
+
+All APIs are sync by default. Some of them -the ones that can take more time to execute- have an async version:
+
+- /async/ingest/uri
+- /async/delete
+- /async/summarize
+- /async/report
+
+When an async API is invoked, an asynchronous task is created and queued, and the task id is returned:
+
+`{"task_id":"33732728-d456-4e43-bbbe-6b4e2c2eab2c"}`
+
+Tasks are executed by Zylon workers.
+
+All async APIs have a related endpoint that returns the status of the task and its result, once it is available
+
+- /ingest/tasks/{task_id}
+- /delete/tasks/{task_id}
+- /summarize/tasks/{task_id}
+- /report/tasks/{task_id}
+
+Async tasks can also post updates to an amqp queue defined in the `callback` property when creating the task.

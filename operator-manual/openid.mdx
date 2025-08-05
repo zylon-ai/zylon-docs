@@ -1,0 +1,102 @@
+# OpenID Integrations (SSO)
+
+Owner: Ricardo Rodríguez
+Last edited time: July 24, 2025 10:14 AM
+
+## Microsoft Account
+
+### Add a new application for Zylon
+
+The objective is to obtain 3 values that will be used to configure Zylon to be able log in with a Microsoft Account.
+
+- `Application (client) ID`
+- `Directory (tenant) ID`
+- `Client Secret`
+
+1. First of all you need to login into https://portal.azure.com/#home console dashboard
+2. Click `Microsoft Entra Id`
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image.png)
+
+1. Register a new App. Click on `App registrations` on the left menu.
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%201.png)
+
+1. Click on `New Registration`.
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%202.png)
+
+1. A new window will open and you will need to add the following information
+- ⚠️ Redirect URI type is **web**⚠️
+- Domain: `https://zylon.company.com/api/v1/auth/microsoft/callback`. Replace `zylon.company.com` with the domain where Zylon is hosted (It is the same domain as in the config file located in `/etc/zylon/zylon-conf.yaml`).
+- Supported account types: All account types are supported. Choose based on your specific needs.
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%203.png)
+
+- In case you want to change it later you can do so in the `Application Overview`
+    
+    ![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%204.png)
+    
+
+1. Save the following values that will be used later in the config file for Zylon.
+- Application (client) ID
+- Directory (tenant) ID
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%205.png)
+
+1. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%206.png)
+
+1. Click on `New client secret` and add the required information
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%207.png)
+
+1. Copy the `Value` for client secret.
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%208.png)
+
+1. Verify that the `User.read`  permission is granted. Click on `API Permissions` on the left menu. You should see it there by default. In case it is missing, grant it.
+
+![image.png](OpenID%20Integrations%20(SSO)%2019600531e9a7806c9802fc6ac9c06e8a/image%209.png)
+
+1. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
+
+> ⚠️ The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important ⚠️
+> 
+
+```yaml
+auth:
+  microsoft:
+    enabled: true
+    redirectUri: "https://zylon.company.com/api/v1/auth/microsoft/callback"
+    tenantId: "6ee0......"
+    clientId: "8c7d......"
+    clientSecret: ".RS8Q~....."
+```
+
+- `redirectUri` → value generated on [step 5](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md).
+- `tenantId` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 6](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
+- `clientId` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 6](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
+- `clientSecret` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 9](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
+
+Run the following command to refresh the configuration
+
+```yaml
+sudo zylon-cli update
+```
+
+Now you should see the Microsoft Account SSO 
+
+> ⚠️ In case you don’t see the Microsoft Account button to log in, clear the browser cache.
+> 
+
+### How to manage users
+
+To limit the number of users that are able to log into Zylon check the following link, by default everybody in the Directory can access Zylon and will be granted the `member` role
+
+[https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/what-is-access-management](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/what-is-access-management)
+
+## Google
+
+🚧 WIP 🚧

@@ -36,17 +36,57 @@
       "defaults": "required"
     }
   },
+
   "navigation": {
-    "dropdowns": [
+    "tabs": [
       {
-        "dropdown": "ZylonGPT API",
-        "icon": "code",
-        "openapi": "/api-reference/pgpt.json"
+        "tab": "Operator Manual",
+        "icon": "wrench",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "operator-manual/index"
+            ]
+          },
+          {
+            "group": "Installation",
+            "pages": [
+              "operator-manual/install",
+              "operator-manual/ports-and-dns"
+            ]
+          }
+        ]
       },
       {
-        "dropdown": "Workspace API",
+        "tab": "Developer Platform",
         "icon": "code",
-        "openapi": "/api-reference/workspace.json"
+        "groups": [
+          {
+            "group": "API Documentation",
+            "icon": "book",
+            "pages": [
+              "api-reference/how-to-use"
+            ]
+          },
+          {
+            "group": "ZylonGPT API",
+            "icon": "terminal",
+            "openapi": "/api-reference/pgpt.json"
+          },
+          {
+            "group": "Workspace API",
+            "icon": "terminal",
+            "openapi": "/api-reference/workspace.json"
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "icon": "list",
+        "pages": [
+          "changelog/changelog"
+        ]
       }
     ]
   },
@@ -72,6 +112,11 @@
       "x": "https://x.com/zylonprivategpt",
       "github": "https://github.com/zylon-ai",
       "linkedin": "https://www.linkedin.com/company/zylon-privategpt/"
+    }
+  },
+  "errors": {
+    "404": {
+      "redirect": false
     }
   }
 }

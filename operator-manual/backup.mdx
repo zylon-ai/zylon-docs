@@ -1,0 +1,146 @@
+# Backups and Disaster Recovery
+
+Owner: Ricardo Rodríguez
+Last edited time: May 30, 2025 9:41 PM
+
+Zylon is prepared to be fully backed up and restored in case of hardware failure or disaster recovery situations.
+
+There are multiple ways to approach the problem: a single full disk copy and a Velero based solution.
+
+## Full disk backup
+
+Since most Zylon installations run in a single node, it’s perfectly valid to do a traditional full disk backup with a tool like Clonezilla or similar. 
+
+Store the image in a cold storage and in case of recovery simply replace the disk contents. Zylon should went back to the moment in the time the snapshot was taken.
+
+Note that this is only possible if Zylon is running in a single kubernetes node; multi node setups MUST use Velero as a backup strategy.
+
+## Data backup using the zylon-cli
+
+### Backup command:
+
+`sudo zylon-cli backup [--keep-last N]`
+
+Will take a snapshot of Zylon data and save it it to the local machine.
+
+### Restore command:
+
+`sudo zylon-cli restore [--backup-file path-to-backup]`
+
+Will restore Zylon state to the moment in time the snapshot was taken. By default, the latest backup will be used, but a given snapshot can be specified too.
+
+ 
+
+This basic backups will snapshot Zylon state and save the contents as a .tar.gz to the `/var/backups/zylon` folder with the date of the backup as file name. 
+
+> ⚠️ You should consider copying backup files file to a different machine in case of disk failure.
+> 
+
+By default, only the last 10 backups are preserved.
+
+**During the backup process, Zylon will be offline.** Depending on the amount of documents you have uploaded this process might take several minutes.
+
+### Putting backups on schedule
+
+You can add this backups on a schedule automatically, run `sudo crontab -e` to open the cron editor and add the backup like
+
+For example, this backup will be performed every Saturday at 4am
+
+```jsx
+
+0 4 * * 6 sudo zylon-cli backup --keep-last 5 -y >> /var/log/zylon-backup.log 2>&1
+```
+
+## Velero
+
+[Velero](https://velero.io/) is the standard way to backup kubernetes clusters. It allows automation and only backs up the required cluster and application information.
+
+> Note that in case of disk failure a Velero backup won’t restore the cluster, Nvidia drivers, and other tools required to run Zylon. To recover from that scenario perform a regular setup of Zylon followed by the backup restoration process.
+> 
+
+To enable Velero backups you **must:**
+
+### 1. Install Velero CLI
+
+```bash
+https://velero.io/docs/v1.3.0/velero-install/
+```
+
+After the command succeeds, the `velero` binary should be available in your path.
+
+### 2. Provide a valid object storage solution.
+
+This is the storage where the backups will be stored and ideally should be a completely separate machine.
+
+A list of common providers are:
+
+- AWS s3
+- Google Cloud Storage
+- Azure Blob storage
+- A self hosted minio server
+- Full list of providers here: https://velero.io/docs/v1.15/supported-providers/
+
+A initial backup of Zylon will take a minimum of 20GB of storage and will grow as you upload documents and generate more data.
+
+Check the `setup instructions` for your provider of choice at the table https://velero.io/docs/v1.15/supported-providers/. 
+
+You might need to follow several steps like creating a AWS user in case of s3, configuring some permissions and so on. If you need guidance during the process contact the Zylon team.
+
+### 3. Install Velero in the Zylon kubernetes cluster
+
+Velero CLI will take care of *most* of the work to enable backups inside the cluster. However, in order to properly backup Zylon using Velero, several flags MUST be passed during the installation, in particular these flags are mandatory:
+
+```bash
+--features=EnableCSI
+--use-node-agent
+```
+
+For example, a installation of Velero that uses AWS S3 as storage will have a configuration file located in `/etc/zylon/velero.txt` with the content:
+
+```bash
+[default]
+aws_access_key_id = AKIA5...
+aws_secret_access_key = kuBsP9dc0...
+```
+
+Then Velero will be installed with the following command:
+
+```bash
+velero install --provider aws \
+		--bucket backup \
+		--secret-file /etc/zylon/velero.txt \
+		--plugins velero/velero-plugin-for-aws:v1.10.0 \
+		--backup-location-config region=us-east-1 \
+		--use-volume-snapshots=true \
+		--features=EnableCSI \
+    --use-node-agent \
+		--snapshot-location-config region=us-east-1,s3ForcePathStyle="true"
+```
+
+The process is slightly different for each provider, make sure you are selecting the right velero plugin, proper credentials and that the mandatory flags required by Zylon are passed.
+
+### 4. Patch Velero for k0s
+
+Zylon uses k0s internally as a kubernetes cluster. Velero needs a small patch to enable backups. Run the following command so Velero can discover all the pods that need to be backed up:
+
+```bash
+kubectl patch daemonset node-agent \
+		--namespace velero --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/volumes/0/hostPath/path", "value": "/var/lib/k0s/kubelet/pods"}]'
+```
+
+### 5. Create a backup of the Zylon namespace
+
+Backup process creation also requires mandatory flags, in this case, the following flags MUST be passed
+
+```bash
+--include-namespaces zylon 
+--default-volumes-to-fs-backup
+```
+
+For example, setting up a initial backup could be done by running:
+
+```bash
+velero backup create my-first-backup --include-namespaces zylon --default-volumes-to-fs-backup
+```
+
+There are many backup and restoration strategies that go beyond the scope of this manual, for more information about them refer to the official docs: https://velero.io/docs/v1.15/

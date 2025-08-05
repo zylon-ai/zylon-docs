@@ -1,0 +1,67 @@
+---
+title: Ports and DNS configuration
+---
+# Ports and DNS configuration
+
+Owner: Ricardo Rodríguez
+Last edited time: July 22, 2025 3:33 PM
+
+### Ports
+
+These ports **must be open** in order to make Zylon work:
+
+- 80: Default http port. Only used during SSL certification generation with https://letsencrypt.org/. If you intend to provide your own SSL certificates this port is optional.
+- 443: Default https port. Used for the rest of traffic.
+
+Map traffic to ports 80 and 443
+
+- Zylon Port 80 ↔ Host port 80
+- Zylon Port 443 ↔ Host port 443
+
+Additional / Temporarily open ports:
+
+- 22: SSH port. During installation and initial setup, this port should be open so your IT team or Zylon operations team can help you get the application running. As a general security practice, you should close this port as soon as the installation is complete.
+- 6443: Kubernetes API service. To help our team further debug your installation, you can also open port 6443 **temporarily**. All connections to the Kubernetes service are authenticated, having this port open does not put your data at risk. During the time the port is open it will allow Zylon Operations team to access your machine.
+
+### DNS configuration
+
+The following requirements are needed for Zylon to work:
+
+- Choose a domain for Zylon, for example: `zylon.company.com.` A domain name is required for a secure connection.
+- Configure DNS entries so `zylon.company.com` point to the machine that has Zylon installed
+
+After you have installed Zylon in your environment some extra steps need to be performed to be able to access it over the internet (or VPN). 
+
+Take this points into consideration:
+
+- The web application is running locally in the user’s web browser.
+- The server is running in the machine where it was installed.
+- You **MUST** configure SSL/HTTPS yourself or delegate Zylon to automatically do it for you
+- Do **NOT** activate SSL redirect unless you plan to provide custom SSL certificates.
+
+During the installation, a domain was chosen to be the entry point of Zylon. This will be used as the `host` parameter in the configuration (for example [`zylon.company.com`](http://zylon.company.com)) 
+
+```yaml
+# /var/zylon/zylon-conf.yaml
+# ...
+ingress:
+  host: "zylon.company.com"
+# ...
+```
+
+### Example DNS configuration
+
+Zylon is installed in a machine with IP `32.41.12.123` . Your DNS entry could look like the following:
+
+```bash
+**# DNS configuration for an EC2 hosted in AWS
+zylon.company.com. 1800 IN CNAME ec2-32-41-12-123.compute-1.amazonaws.com.
+
+# Similar with an A Record, using the IP directly 
+zylon.company.com. 1800 IN A** 32.41.12.123
+```
+
+```bash
+**# DNS configuration for an A Record, using the IP directly 
+zylon.otacv.com. 1800 IN A** 32.41.12.123
+```

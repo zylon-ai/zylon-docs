@@ -1,0 +1,147 @@
+# Confluence
+
+Owner: Pablo Orgaz
+Last edited time: March 21, 2025 11:59 AM
+
+# Confluence
+
+To integrate with confluence, you need to **create an Atlassian application** that will act as a bridge between Zylon ↔ Confluence and **configure Zylon** to use the brand new Atlassian application
+
+## Create an Atlassian app
+
+First you need an atlassian account that will be the owner of the application. We recommend to use a non personal account. This account does not need to have access to any Space as it will serve as a bridge between Zylon and Confluence.
+
+1. Go to [https://developer.atlassian.com/console/myapps/](https://developer.atlassian.com/console/myapps/)
+    
+    Click `Create` → `OAuth 2.0 integration`
+    
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image.png)
+
+1. Provide a meaningful name for the Application.
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%201.png)
+
+1. On distribution:
+    - In the left menu navigate to `Distribution`
+    - Click on `Edit`
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%202.png)
+
+1. On distribution status:
+- Select the `Sharing` checkbox.
+- Enter a vendor name or choose the option `Use your own name`.
+- If you have a privacy policy, provide the link to it. If not, use the default link: [`https://example.com/privacy`](https://example.com/privacy), which is intended for internal use.
+- For the question "Does your app store personal data?", select `No`
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%203.png)
+
+1.  On permissions: 
+- In the left menu, navigate to **`Permissions`**.
+- Click **`Add`** for **`Confluence API`**.
+- The page refreshes automatically, and a new **`Configure`** button should appear. If it does not, refresh the page manually.
+- Click **`Configure`**.
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%204.png)
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%205.png)
+
+1. Click `Granual scopes` and then on `Edit scopes` 
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%206.png)
+
+1. Add one by one the following permissions. You can search them pasting the values into the field with a magnifying glass.
+    
+    There needs to be a total of `10` scopes added that you can review before saving.
+    
+
+```bash
+        read:content:confluence,
+        read:content-details:confluence,
+        read:space-details:confluence,
+        read:page:confluence,
+        read:attachment:confluence,
+        read:blogpost:confluence,
+        read:custom-content:confluence,
+        read:space:confluence,
+        read:space.permission:confluence,
+        read:folder:confluence,
+
+```
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%207.png)
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%208.png)
+
+1. On authorization:
+- In the left menu, navigate to **`Authorization`**.
+- Click **`Add`** for **`OAuth 2.0 (3LO)`**.
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%209.png)
+
+1. In authorization:
+- In the **`Callback URL`** field, enter:
+`https://zylon.company.com/api/app/integration/confluence/callback`Replace **`zylon.company.com`** with the hostname where Zylon is installed on your server.
+- Click **`Save changes`**.
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%2010.png)
+
+1. On settings:
+- In the left menu, navigate to `Settings`. Copy the two values listed under **`Authentication details`**:
+    - Client ID
+    - Secret
+
+You will need these values for the next step: [Configure Zylon to use Atlassian Application](https://www.notion.so/Configure-Zylon-to-use-Atlassian-Application-19e00531e9a78026896ae201cb7e2cf3?pvs=21) 
+
+![image.png](Confluence%201bd00531e9a78044abfdfcbad95408d1/image%2011.png)
+
+## Configure Zylon to use Atlassian Application
+
+With the values we have acquired in [step 10](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21), you need to edit Zylon config file located in `/etc/zylon/zylon-conf.yaml` 
+
+> ⚠️ The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important ⚠️
+> 
+
+Add the following snippet to the bottom of the file
+
+```bash
+integration:
+  confluence:
+    enabled: true
+    clientId: ""
+    clientSecret: ""
+    redirectUri: ""  
+
+```
+
+And fill the properties with the values generated previously:
+
+- clientId → value generated on [step 10](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21)
+- clientSecret → value generated on [step 10](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21)
+- redirectUri → same value as [step 9](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21)
+
+Save and close `/etc/zylon/zylon-conf.yaml` file
+
+Finally, execute the following command to reset Zylon and update the config
+
+```bash
+zylon-cli update
+```
+
+You are all set 🎉
+
+## Troubleshooting
+
+### I try to upload files to the knowledge base and Confluence button is greyed out
+
+Clear the browser cache and try again.
+
+### When I click on `Upload files -> From Confluence` the log in is not working
+
+- Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
+- Check that the `Callback URL` is correct in [step 9](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21) and it’s the same as the `redirectUri` in the config file.
+
+### I don’t see any space to import
+
+- Make sure you have logged in into Confluence with an account that has access to spaces.
+- Check the permissions required are correct as shown in [step 6](https://www.notion.so/ARCHIVED-Confluence-integration-doc-19d00531e9a7809baad3f8131f968d12?pvs=21)

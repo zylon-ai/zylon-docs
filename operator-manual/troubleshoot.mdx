@@ -1,0 +1,186 @@
+# Troubleshooting
+
+Owner: Ricardo Rodríguez
+Last edited time: March 12, 2025 6:59 PM
+
+## Zylon Doctor
+
+`zylon-cli` comes with a built in diagnosis tool. 
+
+Run:
+
+```bash
+sudo zylon-cli doctor
+```
+
+to get all the relevant information for debugging. The output of the command will guide your further in case you need more detailed information in case some part of the system is failing.
+
+## Debugging tools
+
+In addition to the doctor command, additional debugging tools can be enabled in `zylon-conf.yaml`. 
+
+Be aware that these tools tap directly into Zylon internals and you can break the system if you modify any critical resource.
+
+### Background task debugging
+
+Enable the background task debug tool by adding these lines to the configuration:
+
+```yaml
+zylonGPTWorker:
+  exposeIngress: true
+  # flowerPassword: "zylon-flower"
+  # you can customize the password if you want to expose it permanently
+```
+
+After the update, a new endpoint will be available under `/gpt-worker/tasks` that contains information about the running operations. The technology powering the dashboard is [flower](https://flower.readthedocs.io/en/latest/).
+
+Username is `flower` and default password is `zylon-flower`
+
+### Kubernetes dashboard
+
+Enable kubernetes admin dashboard for advanced Zylon control by adding these lines to the configuration:
+
+```yaml
+adminDashboard:
+  enabled: true
+  exposeIngress: true 
+```
+
+After the update, a new endpoint will be available under `/kube-dashboard`. The technology powering dashboard is [kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/).
+
+In order to connect to the dashboard you must generate a token by running the following command in your instance
+
+```yaml
+kubectl create token -n zylon zylon
+```
+
+This token gives FULL ACCESS to all Zylon resources, configuration, secrets, and so on. 
+
+> As a general rule, once you are doing using the dashboard you should disable it due to security risks.
+> 
+
+## Improve indexing for versions before 1.13.0
+
+If you are installing a Zylon version greater than 1.13.0 (Release on Jan 27th 2025) skip this section, it only applies to previous versions.
+
+With the release v1.13.0 and support for bigger files indexing is required for better performance. This is a one time operation that will create the index in the vector database for your existing and new documents. 
+
+Simply run the script in the machine where Zylon is installed. Running the script multiple times has no negative effect. Indexing time might vary depending on the number of documents, but should be faster than a minute.
+
+- Indexing script
+    
+    ```bash
+    #!/bin/bash
+    
+    # Configuration
+    QDRANT_HOST="localhost"
+    QDRANT_PORT="6333"
+    MAX_RETRIES=30
+    RETRY_INTERVAL=2
+    QDRANT_RELEASE_NAME="zylon"
+    NAMESPACE="$QDRANT_RELEASE_NAME"
+    
+    # Cleanup function
+    cleanup() {
+        echo "Cleaning up..."
+        if [ ! -z "$PORT_FORWARD_PID" ]; then
+            echo "Stopping port-forward process..."
+            kill $PORT_FORWARD_PID 2>/dev/null
+            wait $PORT_FORWARD_PID 2>/dev/null
+        fi
+        exit 0
+    }
+    
+    # Set up trap for cleanup
+    trap cleanup SIGINT SIGTERM EXIT
+    
+    # Start port-forwarding
+    echo "Starting port-forwarding..."
+    kubectl port-forward "svc/${QDRANT_RELEASE_NAME}-qdrant" -n "$NAMESPACE" "${QDRANT_PORT}:6333" &
+    PORT_FORWARD_PID=$!
+    
+    # Verify port-forward process started successfully
+    if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+        echo "Error: Failed to start port-forwarding"
+        exit 1
+    fi
+    
+    echo "Port-forwarding started with PID $PORT_FORWARD_PID"
+    
+    # Function to check if Qdrant is ready
+    check_qdrant_health() {
+        curl --silent --fail "http://${QDRANT_HOST}:${QDRANT_PORT}/healthz" > /dev/null
+        return $?
+    }
+    
+    # Wait for Qdrant to be ready
+    echo "Waiting for Qdrant to be ready..."
+    retries=0
+    until check_qdrant_health; do
+        # Check if port-forward is still running
+        if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+            echo "Error: Port-forward process died"
+            exit 1
+        fi
+        
+        retries=$((retries + 1))
+        if [ $retries -eq $MAX_RETRIES ]; then
+            echo "Error: Qdrant service did not become ready in time"
+            exit 1
+        fi
+        echo "Qdrant is not ready yet. Retry $retries/$MAX_RETRIES..."
+        sleep $RETRY_INTERVAL
+    done
+    
+    echo "Qdrant is ready! Creating indexes..."
+    
+    # Create artifact_id index
+    echo "Creating artifact_id index..."
+    curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+        -H 'Content-Type: application/json' \
+        -d '{
+            "field_name": "artifact_id",
+            "field_schema": {
+                "type": "keyword",
+                "on_disk": true
+            }
+        }' || exit 1
+    
+    # Check if the first request was successful
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to create artifact_id index"
+        exit 1
+    fi
+    
+    # Create project_id index
+    echo "Creating project_id index..."
+    curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+        -H 'Content-Type: application/json' \
+        -d '{
+            "field_name": "project_id",
+            "field_schema": {
+                "type": "keyword",
+                "on_disk": true
+            }
+        }' || exit 1
+    
+    # Check if the second request was successful
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to create project_id index"
+        exit 1
+    fi
+    
+    echo "Successfully created all indexes!"
+    ```
+    
+
+## OpenEBS is not working, making PODs be Pending
+
+In certain situations, while Zylon is being installed, it may cause OpenEBS to not install correctly. To remedy this, you can do the following:
+
+```bash
+kubectl delete pods,deployments,statefulsets,daemonsets,pv,pvc,sc --all -n zylon
+kubectl delete namespace openebs
+helm uninstall openebs -n openebs
+sudo zylon-cli update
+```

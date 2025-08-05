@@ -1,0 +1,313 @@
+---
+title: "Installing Zylon"
+description: "A guide to install Zylon on a single instance"
+---
+
+## Prerequisites
+
+For a smooth sailing make sure you pass this checklist before you begin the installation:
+
+- [ ]  The target machine is clean of any other software that can interfere with it. That means no docker, no kubernetes, http servers, no Nvidia drivers, etc. Also is important to disable automatic updates, since Nvidia drivers get compiled against the current kernel version and they need to be recompiled when the kernel gets updated.
+- [ ]  The machine has stable and strong Internet connection
+- [ ]  You can reboot the machine if needed
+- [ ]  Your firewall is not blocking connections to any of these websites
+    - huggingface.co
+    - [sentry.io](http://sentry.io) (if you opt-in to send us crash reports)
+    - *.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
+- [ ]  The machine has `curl` installed
+- [ ]  You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
+
+Once you have fulfilled the hardware requirements and have a domain ready it is time to install Zylon!
+
+For single instance setups Zylon it’s installed using it’s CLI `zylon-cli` on the machine where you want to run it. To start the install process make sure that:
+
+- At install time, the machine has internet connection (After Zylon has been installed internet connection it is not a requirement)
+- You have ssh access to the machine
+- Firewall rules will not block the CLI to download any Zylon container images or certificate generation
+
+## Step 1: Install the Zylon CLI
+
+The CLI will speed up the time it takes to get everything ready, it will take care of installing drivers, updating Zylon and generating template configuration for you.
+
+To install it, SSH into the machine where you want to install Zylon and run 
+
+```bash
+# ssh user@zylon.company.com
+```
+
+Root access is required at multiple steps into the installation, if you wish to inspect the script simply run
+
+```yaml
+curl -sL get.zylon.ai
+```
+
+Run `sudo zylon-cli help` to get a list of all the commands!
+
+## Step 2: Generate a configuration file for your Zylon installation
+
+Zylon is configured with a yaml file which needs to be located in `/etc/zylon/zylon-conf.yaml`
+
+You will need to generate this file by yourself. To generate the template for the configuration file use the CLI:
+
+```bash
+sudo zylon-cli config
+```
+
+It will output a template you must fill with your client information in the right location.
+
+Open your editor of choice and replace all placeholders with the right values. 
+
+Some items, like your license ID, and some tokens should have been provided by the Zylon team ahead of time, just paste them in place.
+
+An example configuration file looks like the following yaml file
+
+```yaml
+# Machine configuration, this is the only supported option
+node:
+  distro: "ubuntu22"
+  arch: "x86_64"
+  drivers: "generic"
+
+# Cluster type, this is the only 
+# supported option for single instance installations
+cluster:
+  type: "k0s"
+
+# unstable channel also available under request
+channel: "stable"
+
+license:
+  email: "champion@company.com"
+  id: "2oq..." # A license id a Zylon employee shared with you via email
+
+# AI configuration, detailed information below.
+ai:
+  preset: "baseline-24g"
+  
+# We will use this to identify your company in our anonymous metrics
+companyIdentifier: "your-company" 
+
+# Enable anonymous metrics and crash reporting
+observability:
+  crashReporting: true
+  usageMetrics: true
+
+# Your network configuration, the host users will use to access Zylon
+ingress:
+  host: "zylon.your-company.com"
+  enabled: true
+  tlsEnabled: true
+  certManagerAnnotations: 
+    # If you plan to open the machine to the internet, SSL certificate 
+    # will be automatically generated using letsencrypt
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+### AI Presets
+
+The AI inferencing engine requires proper preset configuration based on your available GPU memory. This ensures optimal performance and prevents startup failures.
+
+Set the AI preset in your configuration file using the `ai.preset` property. By default it is set for 24GB setup.
+
+```yaml
+ai:
+  preset: "baseline-24g"
+```
+
+**Available Presets**
+
+Each preset is optimized for specific VRAM capacities:
+
+- **`baseline-24g`**: For 24GB GPUs (e.g., RTX 4090, L4)
+- **`baseline-32g`**: For 32GB GPUs (e.g., RTX 5090)
+- **`baseline-48g`**: For 48GB GPUs (e.g., RTX A6000, RTX 6000 Ada)
+- **`baseline-96g`**: For 96GB GPUs (e.g., A100 80GB, H100)
+
+If you have one of the GPUs listed above, select the right preset and replace the default `baseline-24g` in the configuration file.
+
+**Alternatives Presets**
+
+Our recommendation is to use the default presets, but alternative presets are available to give the customer the option to choose what they prefer:
+
+- **`alternatives.baseline-48g-context`:** Preset for 48 GB configurations where you will have more context window, moving to a smaller model.
+- **`alternatives.baseline-96g-context`:** Preset for 96 GB configurations where you will have more context window, moving to a smaller model.
+
+**Deprecated Presets**
+
+There are presets that have been deprecated in order to support new functionality and tools. If you want to keep with the old configuration, you should choose:
+
+1. **`deprecated.<size>g.20250710`**: Presets before to move to Qwen 3.
+
+**Multi-GPU Configuration**
+
+When using multiple GPUs, select the preset based on the **total combined VRAM.** For example**:**
+
+- 2x L4 (48GB total) → Use `baseline-48g`
+- 3x RTX 4090 (72GB total) → Use `baseline-48g` (next available lower preset)
+- 4x RTX 4090 (96GB total) → Use `baseline-96g`
+
+Remember to configure you number of GPUs with `numGPUs` property.
+
+**Important Notes**
+
+- **Critical**: Selecting an incorrect preset will prevent the inference engine from starting
+- Always choose a preset that matches or is lower than your available VRAM
+- The system does not automatically detect GPU capacity; manual configuration is required
+- Monitor GPU memory usage after deployment to ensure the preset is appropriate
+
+### Observability
+
+The following domain needs to be whitelisted:  `*.grafana.net`
+
+For added granularity, the domains used are:
+
+- Basic usage metrics (no private information sent)-> [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
+- Logs (no private information sent); [https://logs-prod-012.grafana.net](https://logs-prod-012.grafana.net/)
+- System Traces (no private information sent): [https://tempo-prod-10-prod-eu-west-2.grafana.net](https://tempo-prod-10-prod-eu-west-2.grafana.net/)
+
+In order to provide support in case something goes south, there are two main observability tools that are enabled:
+
+- Sentry for crash reporting
+- Grafana for anonymous and aggregated usage metrics
+
+The data sent will help us to diagnose any malfunctioning in the platform and understand how Zylon is being used to expedite any support actions.
+
+In case you want to opt out of this you can do so by adding the following snippet to the configuration file:
+
+```yaml
+observability:
+  crashReporting: false
+  usageMetrics: false
+```
+
+### (Optional) Performance tweaks
+
+To fine-tuning the machine resources, and be able to use all machine resources in ingestion process, we provide the following configuration to configure based on the machine:
+
+1. **Number of threads**: This configuration will be used to limit the capacity that our internal extraction service will use. Consider that this number should be lower to the maximum cores that machine has.
+
+In case you want to test and improve the performance, consider configure as:
+
+```yaml
+external:
+	docling:
+		numThreads: N
+```
+
+## Step 3: Prepare the machine
+
+In order to install Zylon the machine needs to be ready to do so, and during this step, the drivers will be installed, an embedded kubernetes cluster, and other dependencies will be setup.
+
+This process will take between 5 to 15 minutes, it’s normal to see the output freeze while some installers are running, simply wait until it’s done.
+
+```bash
+sudo zylon-cli setup
+```
+
+Generally, you only need to run the setup once. Running it multiple times has no effect unless an update by Zylon team added a new dependency.
+
+⚠️ It’s **highly recommended** to reboot the machine after this step is completed to ensure GPU drivers are properly loaded.
+
+## Step 4: Install Zylon
+
+This step (install / update) will make Zylon available in your machine assuming the configuration file in `/etc/zylon/zylon-conf.yaml`is correct.
+
+```bash
+sudo zylon-cli update
+```
+
+To update Zylon to a newer version, simply run this command again. You can do so as frequently as you need. 
+
+If you modify your Zylon configuration file you will also need to run the update command again.
+
+<aside>
+⚠️
+
+**The initial installation of Zylon will take around 15 minutes to complete after the update command itself is completed**
+
+</aside>
+
+## Step: 4.5
+
+Go get a coffee and come back in 20 minutes while Zylon gets ready. This is what is happening in the background:
+
+- Zylon images are being downloaded
+- AI models are being downloaded
+- GPU configuration is getting applied, several validations are running to ensure compatibility
+- SSL certificate is being generated
+
+You can watch the process running. When all pods are at 1/1 ready status you can proceed.
+
+```bash
+watch sudo k0s kubectl get pods -n zylon
+# You can also watch nvidia GPU validation process
+watch sudo k0s kubectl get pods -n nvidia
+```
+
+<aside>
+⚠️
+
+ If some service gets stuck in a ContainerCrashLoopBackOff for more than one hour contact us, the installation has failed.
+
+</aside>
+
+## Step 5: Prepare your organization
+
+To start using Zylon you will need to create your organization in it, as well as adding a root admin that will serve as your entry point for other management tasks.
+
+You will need:
+
+- A name for your organization (can be changed later)
+- A password for the root administrator (can be changed later).
+    - Due to some encoding limitations in the CLI some special symbols in password don’t work correctly, prefer using a long alphanumeric password.
+- An email regex to allow users to join automatically. If your usual work email is [`name@company.com`](mailto:name@company.com) your email regex should be `.*@company\.com`
+
+```bash
+# Put a secure password!
+sudo zylon-cli seed --org-name "My Org" --admin-password "admin" --email-regex ".*@yourcompany\.com"
+
+# At seed time, if Zylon is not ready, 
+# this command will wait until it’s completed.
+```
+
+<aside>
+🚨
+
+ **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle** 
+
+</aside>
+
+The credentials to login to Zylon will be:
+
+```bash
+user: admin@zylon.ai
+password: the_password_you_set_up_previously
+```
+
+The root admin email is fixed and will always be [`admin@zylon.ai`](mailto:admin@zylon.ai)
+
+ 
+
+## Step 6 (optional): Manually creating SSL certificates
+
+If you opted in to use Let’s Encrypt certificates you can skip this section.
+
+In case your Zylon installation is behind a VPN / private cloud and it’s not reachable through the internet you will need to configure SSL yourself.
+
+If you are running Zylon in single instance mode, you must upload your own SSL certificates and make them available to the embedded Kubernetes cluster:
+
+```bash
+# Generate a new certificate, or upload your existing one to the Zylon machine
+ZYLON_HOST="zylon.company.com"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+ -keyout tls.key -out tls.crt \
+ -subj "/CN=$ZYLON_HOST[/O=](http://test.zylon.ai/O=test.zylon.ai)$ZYLON_HOST" \
+ -addext "subjectAltName = DNS:$ZYLON_HOST"
+ 
+# After that, import it or refresh it
+sudo k0s kubectl delete secret tls zylon-tls --ignore-not-found -n zylon
+sudo k0s kubectl create secret tls zylon-tls --key tls.key --cert tls.crt -n zylon
+
+# Check if it's correctly created
+sudo k0s kubectl describe secret zylon-tls -n zylon
+```

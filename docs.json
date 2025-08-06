@@ -59,7 +59,7 @@
               "operator-manual/backup",
               "operator-manual/openid",
               {
-                "group": "Knowledge Base",
+                "group": "External Knowledge Base",
                 "pages": [
                   "operator-manual/knowledge-base/sharepoint",
                   "operator-manual/knowledge-base/confluence",

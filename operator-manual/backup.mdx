@@ -8,7 +8,7 @@ There are multiple ways to approach the problem: a single full disk copy and a V
 
 ## Full disk backup
 
-Since most Zylon installations run in a single node, it’s perfectly valid to do a traditional full disk backup with a tool like Clonezilla or similar. 
+Since most Zylon installations run in a single node, it’s perfectly valid to do a traditional full disk backup with a tool like Clonezilla or similar.
 
 Store the image in a cold storage and in case of recovery simply replace the disk contents. Zylon should went back to the moment in the time the snapshot was taken.
 
@@ -28,12 +28,13 @@ Will take a snapshot of Zylon data and save it it to the local machine.
 
 Will restore Zylon state to the moment in time the snapshot was taken. By default, the latest backup will be used, but a given snapshot can be specified too.
 
- 
 
-This basic backups will snapshot Zylon state and save the contents as a .tar.gz to the `/var/backups/zylon` folder with the date of the backup as file name. 
 
-> ⚠️ You should consider copying backup files file to a different machine in case of disk failure.
-> 
+This basic backups will snapshot Zylon state and save the contents as a .tar.gz to the `/var/backups/zylon` folder with the date of the backup as file name.
+
+<Warn>
+    You should consider copying backup files file to a different machine in case of disk failure.
+</Warn>
 
 By default, only the last 10 backups are preserved.
 
@@ -54,10 +55,7 @@ For example, this backup will be performed every Saturday at 4am
 
 [Velero](https://velero.io/) is the standard way to backup kubernetes clusters. It allows automation and only backs up the required cluster and application information.
 
-> Note that in case of disk failure a Velero backup won’t restore the cluster, Nvidia drivers, and other tools required to run Zylon. To recover from that scenario perform a regular setup of Zylon followed by the backup restoration process.
-> 
-
-To enable Velero backups you **must:**
+> Note that in case of disk failure a Velero backup won’t restore the cluster, Nvidia drivers, and other tools required to run Zylon. To recover from that scenario perform a regular setup of Zylon followed by the backup restoration process.To enable Velero backups you **must:**
 
 ### 1. Install Velero CLI
 
@@ -81,7 +79,7 @@ A list of common providers are:
 
 A initial backup of Zylon will take a minimum of 20GB of storage and will grow as you upload documents and generate more data.
 
-Check the `setup instructions` for your provider of choice at the table https://velero.io/docs/v1.15/supported-providers/. 
+Check the `setup instructions` for your provider of choice at the table https://velero.io/docs/v1.15/supported-providers/.
 
 You might need to follow several steps like creating a AWS user in case of s3, configuring some permissions and so on. If you need guidance during the process contact the Zylon team.
 

@@ -1,3 +1,7 @@
+---
+title: Claromentis
+---
+
 To integrate with Claromentis, you need a Claromentis intranet enabled for your company and your access credentials to **configure Zylon** to use Claromentis on the application
 
 ## Check your Claromentis domain
@@ -10,11 +14,10 @@ First, you need to verify that you can access your Claromentis intranet. Your cr
 
 ## Configure Zylon to use Claromentis API
 
-With your Claromentis domain information ready from [step 1](../Knowledge%20Base%20Integrations%2019e00531e9a7800ead89c50730a8771d.md), you now need to edit the Zylon configuration file located in `/etc/zylon/zylon-conf.yaml`
+With your Claromentis domain information ready from step 1,
+you now need to edit the Zylon configuration file located in `/etc/zylon/zylon-conf.yaml`
 
-> ⚠️ The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important ⚠️Add the following snippet to the bottom of the file
-
-```bash
+```yaml
 integration:
   claromentis:
     enabled: true
@@ -23,7 +26,7 @@ integration:
 
 And fill the properties with the values generated previously:
 
-- domain → value generated on [step 1](../Knowledge%20Base%20Integrations%2019e00531e9a7800ead89c50730a8771d.md)
+- domain → value generated on step 1.
 
 Save and close `/etc/zylon/zylon-conf.yaml` file
 
@@ -56,18 +59,23 @@ Clear the browser cache and try again.
 
 1. Go to your zylon instance and log in with the user you want to update
 2. Open the developer tools of the browser (right click => inspect)
-3. On the new sidebar open, go the `Application` tab, select `Cookies` and select the domain of your zylon instance, then copy the value of the cookie `zln_s` and save it for later
+3. On the new sidebar open, go the `Application` tab,
+select `Cookies` and select the domain of your zylon instance, then copy the value of the cookie `zln_s` and save it for later
 4. Now, we have the auth token, let's find the `id` of the integration
-5. Inside the zylon app, open the `Network` tab, and select `Fetch/XHR` and filter by the word `integrations`
-6. Now, inside the zylon app, navigate to the project you integrated and go to the knowledge base, you will see in the network tab one request, click on it to see the details, and you'll be able to see a list of integrations, search for the `type: "Claromentis"`, now you can see the `id`
+5. Inside the zylon app, open the `Network` tab,
+and select `Fetch/XHR` and filter by the word `integrations`
+6. Now, inside the zylon app, navigate to the project you
+integrated and go to the knowledge base, you will see in the network tab one request, click on it to see the details, and you'll be able to see a list of integrations, search for the `type: "Claromentis"`, now you can see the `id`
 7. Next, open a terminal with cURL installed
 8. Paste the next cURL command and replace the next variables:
- - {your-zylon-domain} => domain of the zylon instance
- - {your-zylon-cookie} => the `zln_s` cookie you copied in the step 3
- - {your-integration-id} => the `id` you copied in the step 6
- - {your-user-name} => the username of claromentis
- - {your-new-password-in-raw} => the new password for that user in raw
- - {your-organization} => the organization slug, if you have just 1 organization, is `default` otherwise I'll write down how to get it
+
+* your-zylon-domain => domain of the zylon instance
+* your-zylon-cookie => the `zln_s` cookie you copied in the step 3
+* your-integration-id => the `id` you copied in the step 6
+* your-user-name => the username of claromentis
+* your-new-password-in-raw => the new password for that user in raw
+* your-organization => the organization slug,
+if you have just 1 organization, is `default` otherwise I'll write down how to get it
 
 ```bash
 curl 'https://{your-zylon-domain}/api/app/integration/claromentis/{your-integration-id}' \
@@ -85,7 +93,7 @@ curl 'https://{your-zylon-domain}/api/app/integration/claromentis/{your-integrat
 
 Some files in Claromentis may appear in folders but are actually **symlinks**—shortcuts pointing to files stored elsewhere. These are marked with a 🔗 icon in the Claromentis UI.
 
-![claromentis_linked_files.png](Claromentis%201bd00531e9a78060806de684c604d38c/claromentis_linked_files.png)
+![claromentis_linked_files.png](claromentis-images/claromentis_linked_files.png)
 
 Zylon does **not** ingest these symlinked documents for the following reasons:
 

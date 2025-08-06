@@ -1,3 +1,7 @@
+---
+title: "Samba File System"
+---
+
 ### 1. Gather Your Samba Server Information
 
 To integrate Zylon with your on-premises Samba file server, you need the server’s connection details (host, port, share name) and valid credentials. This guide explains how to configure Zylon to use Samba for file system integration within your local networ. You’ll need:
@@ -7,49 +11,47 @@ To integrate Zylon with your on-premises Samba file server, you need the server�
 - **Share (root) name** (e.g. `zylon-samba`).
 - **Credentials** (username & password) that have **read** access to that share.
 - **SMB protocol version support**:
-    - We currently support **SMB2 and above**.
-    - If you require **SMB1**, please contact the Zylon team for assistance.
+  - We currently support **SMB2 and above**.
+  - If you require **SMB1**, please contact the Zylon team for assistance.
 
 To verify connectivity:
 
 1. **Linux** (using `smbclient`):
-    
-    ```bash
-    smbclient -L //files.example.com -U yourUser%yourPass
+
+ ```bash
+ smbclient -L //files.example.com -U yourUser%yourPass
     ```
-    
-    You should see a listing of shares, including `zylon-samba`.
-    
+
+You should see a listing of shares, including `zylon-samba`.
+
 2. **macOS** (Finder):
-    - In Finder, press ⌘K → connect to `smb://files.example.com/zylon-samba`.
-    - Enter your credentials when prompted, and verify you can browse files.
+ - In Finder, press ⌘K → connect to `smb://files.example.com/zylon-samba`.
+ - Enter your credentials when prompted, and verify you can browse files.
 3. Windows
 - **File Explorer (Graphical)**:
-    1. Open **File Explorer** (Win + E).
-    2. In the left sidebar, right-click **This PC** and choose **Map network drive…**.
-    3. In the **Drive** dropdown, select an available drive letter (e.g., `Z:`).
-    4. In the **Folder** field, enter:
-    (or if using a non-standard port, `\\\\files.example.com@445\\zylon-samba`).
-        
+  1. Open **File Explorer** (Win + E).
+  2. In the left sidebar, right-click **This PC** and choose **Map network drive…**.
+  3. In the **Drive** dropdown, select an available drive letter (e.g., `Z:`).
+  4. In the **Folder** field, enter:
+(or if using a non-standard port, `\\\\files.example.com@445\\zylon-samba`).
+
+ ```
+ \\\\files.example.com\\zylon-samba
+
         ```
-        \\\\files.example.com\\zylon-samba
-        
-        ```
-        
-    5. Check **Connect using different credentials**, then click **Finish**.
-    6. When prompted, enter your Samba **Username** and **Password**, then click **OK**.
-    7. If the connection succeeds, the new mapped drive (e.g., `Z:`) will appear under **This PC**, and you can browse its contents.
+
+  5. Check **Connect using different credentials**, then click **Finish**.
+  6. When prompted, enter your Samba **Username** and **Password**, then click **OK**.
+  7. If the connection succeeds, the new mapped drive (e.g., `Z:`) will appear under **This PC**, and you can browse its contents.
 
 ---
 
 ### 2. Configure Zylon to Use Samba
 
-With the values we have acquired in previous steps we will edit Zylon config file located in `/etc/zylon/zylon-conf.yaml` 
+With the values we have acquired in previous steps we will edit Zylon config file located in `/etc/zylon/zylon-conf.yaml`
 
-> ⚠️ The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important ⚠️
-> 
 
-Add the following snippet to the bottom of the fil
+Add the following snippet to the bottom of the file
 
 ```yaml
 integration:
@@ -92,12 +94,12 @@ You are all set 🎉
 Since this deployment is on-premise, ensure that the Ubuntu Server where Zylon is hosted can reach the Samba server. You do **not** need to expose SMB to the public internet—everything remains within your private network.
 
 1. **DNS / Hosts Configuration**
-    - Verify that client machines can resolve the Samba host name (e.g., `files.internal.company`).
-    - If DNS is unavailable or inconsistent, update `/etc/hosts` (Linux/macOS) or `C:\Windows\System32\drivers\etc\hosts` (Windows) to map the hostname to its IP.
+ - Verify that client machines can resolve the Samba host name (e.g., `files.internal.company`).
+ - If DNS is unavailable or inconsistent, update `/etc/hosts` (Linux/macOS) or `C:\Windows\System32\drivers\etc\hosts` (Windows) to map the hostname to its IP.
 2. **Firewall & Port Access**
-    - Ensure that **TCP port 445** (or your custom SMB port) is open between client workstations and the Samba server.
-    - On the Samba server, confirm the OS firewall (iptables, firewalld, Windows Firewall, etc.) allows inbound connections on that port.
-    - If remote users connect via VPN, make sure the VPN subnet can route to the Samba host’s IP:445.
+ - Ensure that **TCP port 445** (or your custom SMB port) is open between client workstations and the Samba server.
+ - On the Samba server, confirm the OS firewall (iptables, firewalld, Windows Firewall, etc.) allows inbound connections on that port.
+ - If remote users connect via VPN, make sure the VPN subnet can route to the Samba host’s IP:445.
 
 ---
 
@@ -110,38 +112,35 @@ When a user enables Samba integration for the first time via the Zylon front end
 
 Zylon verifies these credentials immediately. If they are invalid, the front end displays an error message, and the user must re-enter correct credentials. Once valid, Zylon securely stores the credentials for subsequent access to the share; no manual environment-variable setup is required.
 
-> Note: Credentials are scoped per user account. If multiple users need to connect to the same share, each must enter valid credentials with appropriate access.
-> 
-
----
+> Note: Credentials are scoped per user account. If multiple users need to connect to the same share, each must enter valid credentials with appropriate access.---
 
 ### 6. Troubleshooting
 
 ### 6.1 “Cannot resolve host” or “Name or service not known”
 
 - **DNS/Hosts:** Verify that the Samba hostname can be resolved:
-    
-    ```bash
-    ping files.internal.company
+
+  ```bash
+  ping files.internal.company
     ```
-    
+
 - If DNS fails, update each client’s hosts file with:
-    
+
+  ```
+  192.168.1.50   files.internal.company
     ```
-    192.168.1.50   files.internal.company
-    ```
-    
+
 
 ### 6.2 “Cannot connect to host”
 
 - **Port Reachability:**
-    
-    ```bash
-    nc -vz files.internal.company 445
+
+  ```bash
+  nc -vz files.internal.company 445
     ```
-    
-    (or replace `445` with your custom port).
-    
+
+(or replace `445` with your custom port).
+
 - If test fails, confirm firewall rules on both the client network segment and the Samba server.
 
 ### 6.3 Authentication Failed / Wrong Credentials
@@ -149,29 +148,29 @@ Zylon verifies these credentials immediately. If they are invalid, the front end
 - If a user enters incorrect Samba credentials in the Zylon front end, they will see an immediate error like “Authentication failed: invalid username or password.”
 - To correct, the user should re-enter their valid Samba username and password via the integration UI.
 - On the Samba server side, verify that the account exists and has permissions in `/etc/samba/smb.conf`:
-    
-    ```bash
-    sudo smbpasswd -a yourUser
-    testparm -s
-    sudo tail -f /var/log/samba/log.smbd
+
+  ```bash
+  sudo smbpasswd -a yourUser
+  testparm -s
+  sudo tail -f /var/log/samba/log.smbd
     ```
-    
+
 
 ### 6.4 “Invalid protocol version”
 
 - Ensure your server and Zylon both support **SMB2 or higher**.
 - To force SMB2+ on the server, add under `[global]` in `/etc/samba/smb.conf`:
-    
+
+  ```
+  server min protocol = SMB2
     ```
-    server min protocol = SMB2
+
+Then restart Samba:
+
+  ```bash
+  sudo systemctl restart smbd
     ```
-    
-    Then restart Samba:
-    
-    ```bash
-    sudo systemctl restart smbd
-    ```
-    
+
 - If you must use SMB1, contact the Zylon team for a custom client build.
 
 ---
@@ -179,15 +178,15 @@ Zylon verifies these credentials immediately. If they are invalid, the front end
 ### 8. Additional Notes
 
 - **Only Samba (SMB) Is Supported for File System Integrations**
-    
-    At this time, Zylon’s integration framework supports **only SMB2+ file system mounts**. If you require a different protocol (e.g., NFS, FTP, WebDAV), contact the Zylon team.
-    
+
+At this time, Zylon’s integration framework supports **only SMB2+ file system mounts**. If you require a different protocol (e.g., NFS, FTP, WebDAV), contact the Zylon team.
+
 - **SMB1 Support**
-    
-    SMB1 is deprecated and insecure. If your environment still requires SMB1, reach out to us. We can provide guidance or build a compatible client.
-    
+
+SMB1 is deprecated and insecure. If your environment still requires SMB1, reach out to us. We can provide guidance or build a compatible client.
+
 - **Performance Tips**
-    - For large repositories, ensure your Samba server has sufficient I/O and network bandwidth.
-    - On Linux, mounting with `cache=none` can reduce stale‐file issues if users frequently modify files outside Zylon.
+  - For large repositories, ensure your Samba server has sufficient I/O and network bandwidth.
+  - On Linux, mounting with `cache=none` can reduce stale‐file issues if users frequently modify files outside Zylon.
 
 You are now ready to integrate Zylon with your Samba file system. Once connected, users will be able to browse and manage shared files directly from the Zylon interface.

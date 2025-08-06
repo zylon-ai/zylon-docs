@@ -33,9 +33,9 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 ![image.png](/operator-manual/openid-images/image%203.png)
 
 - In case you want to change it later you can do so in the `Application Overview`
-    
-    ![image.png](/operator-manual/openid-images/image%204.png)
-    
+
+![image.png](/operator-manual/openid-images/image%204.png)
+
 
 1. Save the following values that will be used later in the config file for Zylon.
 - Application (client) ID
@@ -45,7 +45,7 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 
 1. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
 
-![image.png](/operator-manual/openid-images/image%206.png)
+<img src="/operator-manual/openid-images/image%206.png" alt="image.png" width="50%"/>
 
 1. Click on `New client secret` and add the required information
 
@@ -61,8 +61,9 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 
 1. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
 
-> ⚠️ The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important ⚠️
-> 
+<Warn>
+    The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important
+</Warn>
 
 ```yaml
 auth:
@@ -74,21 +75,17 @@ auth:
     clientSecret: ".RS8Q~....."
 ```
 
-- `redirectUri` → value generated on [step 5](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md).
-- `tenantId` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 6](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
-- `clientId` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 6](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
-- `clientSecret` → value generated on [](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md) [step 9](../%5BPUBLIC%5D%20Zylon%20Operations%20Manual%2010200531e9a78019ad97d16447880dd7.md)
-
 Run the following command to refresh the configuration
 
 ```yaml
 sudo zylon-cli update
 ```
 
-Now you should see the Microsoft Account SSO 
+Now you should see the Microsoft Account SSO
 
-> ⚠️ In case you don’t see the Microsoft Account button to log in, clear the browser cache.
-> 
+<Tip>
+    In case you don’t see the Microsoft Account button to log in, clear the browser cache.
+</Tip>
 
 ### How to manage users
 
@@ -98,4 +95,4 @@ To limit the number of users that are able to log into Zylon check the following
 
 ## Google
 
-🚧 WIP 🚧
+Under construction!

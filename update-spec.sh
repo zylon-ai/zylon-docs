@@ -5,7 +5,6 @@ host=$1
 if [ -z "$host" ]; then
   host="https://zylon.me"
 fi
-server="$host/api"
 
 curl -s $host/api/openapi.json -o workspace.json || exit 1
 curl -s $host/gpt/openapi.json -o pgpt.json || exit 1

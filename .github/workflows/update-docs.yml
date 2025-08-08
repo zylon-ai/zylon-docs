@@ -10,6 +10,8 @@ on:
         description: 'API host'
         required: false
         default: 'https://demo.zylon.ai'
+env:
+  ZYLON_API_TOKEN: ${{ secrets.ZYLON_API_TOKEN }}
 
 jobs:
   update-spec:
@@ -30,7 +32,7 @@ jobs:
       - name: Run update-spec.sh
         run: |
           docs_host=${{ github.event.inputs.host || 'https://demo.zylon.ai' }}
-          bash ./update-spec.sh "$docs_host"
+          bash ./update-spec.sh "$docs_host" "$ZYLON_API_TOKEN"
 
       - name: Commit changes
         run: |

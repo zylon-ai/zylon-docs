@@ -20,16 +20,6 @@
         "deprecated" : false
       }
     },
-    "/v1/auth/google/callback" : {
-      "get" : {
-        "tags" : [ "auth" ],
-        "summary" : "OpenID callback for Google",
-        "description" : "Handles the OpenID callback after authentication with the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
     "/v1/auth/microsoft/login" : {
       "get" : {
         "tags" : [ "auth" ],
@@ -42,7 +32,7 @@
     },
     "/v1/auth/microsoft/callback" : {
       "get" : {
-        "tags" : [ "auth" ],
+        "tags" : [ ],
         "summary" : "OpenID callback for Microsoft",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -138,6 +128,17 @@
         "summary" : "Logout",
         "description" : "Clear the current session and logout the user.",
         "parameters" : [ ],
+        "requestBody" : {
+          "description" : "No body",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : {
           "200" : {
             "description" : "Successful logout",
@@ -194,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-05T16:25:53.719057Z"
+                    "valid_until" : "2026-08-07T19:07:20.319868398Z"
                   }
                 }
               }
@@ -311,6 +312,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "No body required for this operation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : {
           "200" : {
             "description" : "The user details after joining the organization",
@@ -581,6 +593,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "No body required for this operation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : {
           "200" : {
             "description" : "Returns the deactivated user details",
@@ -613,6 +636,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "No body required for this operation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : {
           "200" : {
             "description" : "Returns the activated user details",
@@ -856,6 +890,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "No additional data is required to leave a project",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : { },
         "deprecated" : false
       }
@@ -1002,7 +1047,7 @@
     "/v1/app/project" : {
       "post" : {
         "tags" : [ "project" ],
-        "summary" : "Creates a new project",
+        "summary" : "Create a new project",
         "description" : "Create a new project with the specified details. The user creating the project will automatically become the owner.",
         "parameters" : [ ],
         "requestBody" : {
@@ -1554,6 +1599,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "No body required for cancellation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : {
           "204" : {
             "description" : "No Content",
@@ -2341,48 +2397,6 @@
         "deprecated" : false
       }
     },
-    "/v1/app/project/{projectId}/artifact/{artifactId}/content" : {
-      "put" : {
-        "tags" : [ "artifacts" ],
-        "summary" : "Update artifact content",
-        "description" : "Updates the content of an existing artifact. This is typically used to replace the file or data associated with the artifact.",
-        "parameters" : [ {
-          "name" : "projectId",
-          "in" : "path",
-          "description" : "The ID of the project",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "artifactId",
-          "in" : "path",
-          "description" : "The ID of the artifact to update",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Returns the updated artifact details",
-            "headers" : { },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : false
-      }
-    },
     "/v1/app/project/{projectId}/artifact/{artifactId}/parsed-content" : {
       "get" : {
         "tags" : [ "artifacts" ],
@@ -2451,6 +2465,17 @@
             "type" : "boolean"
           }
         } ],
+        "requestBody" : {
+          "description" : "No body required for this operation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : { },
         "deprecated" : false
       }
@@ -2864,6 +2889,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "description" : "Contains the information to update for the user in the project",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.UpdateProjectInfoDTO"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : { },
         "deprecated" : false
       }
@@ -3107,83 +3143,658 @@
         "deprecated" : false
       }
     },
+    "/v1/app/integration/confluence/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for Confluence",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
+        "parameters" : [ ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/confluence/{integrationId}/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for Confluence",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
+        "parameters" : [ ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/confluence/{integrationId}/refresh_token" : {
+      "post" : {
+        "tags" : [ "openid" ],
+        "summary" : "Refresh OpenID token for an integration",
+        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to refresh the token for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "No body is required for this request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "202" : {
+            "description" : "The request to refresh the token has been accepted",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
     "/v1/app/integration/confluence/{integrationId}/config" : {
       "get" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "confluence-integration" ],
         "summary" : "Integration config for Confluence",
         "description" : "Get the stored configuration for Confluence.",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve the config for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : { },
         "deprecated" : false
       }
     },
     "/v1/app/integration/confluence/{integrationId}/ingest" : {
       "post" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "confluence-integration" ],
         "summary" : "Ingest data from Confluence",
         "description" : "Ingest data into the system using the Confluence integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to use for ingestion",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+                } ]
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Stream of ingestion results",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for SharePoint",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
         "responses" : { },
         "deprecated" : false
       }
     },
+    "/v1/app/integration/sharepoint/{integrationId}/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for SharePoint",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
+        "parameters" : [ ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
+      "post" : {
+        "tags" : [ "openid" ],
+        "summary" : "Refresh OpenID token for an integration",
+        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to refresh the token for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "No body is required for this request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "202" : {
+            "description" : "The request to refresh the token has been accepted",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
     "/v1/app/integration/sharepoint/{integrationId}/config" : {
       "get" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "sharepoint-integration" ],
         "summary" : "Integration config for SharePoint",
         "description" : "Get the stored configuration for SharePoint.",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve the config for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : { },
         "deprecated" : false
       }
     },
     "/v1/app/integration/sharepoint/{integrationId}/ingest" : {
       "post" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "sharepoint-integration" ],
         "summary" : "Ingest data from SharePoint",
         "description" : "Ingest data into the system using the SharePoint integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to use for ingestion",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+                } ]
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Stream of ingestion results",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/filesystem" : {
+      "post" : {
+        "tags" : [ "filesystem-integration" ],
+        "summary" : "Create a new integration for FileSystem",
+        "description" : "Create a new integration of type FileSystem with basic auth configuration.",
         "parameters" : [ ],
-        "responses" : { },
+        "requestBody" : {
+          "description" : "Configuration for the integration",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.BasicAuthIntegrationConfigDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Returns the created integration configuration.",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.UserIntegrationDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/filesystem/{integrationId}" : {
+      "post" : {
+        "tags" : [ "filesystem-integration" ],
+        "summary" : "Update an existing integration for FileSystem",
+        "description" : "Update an existing integration of type FileSystem with basic auth configuration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to update",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Configuration for the integration",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.BasicAuthIntegrationConfigDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Returns the updated integration configuration.",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.UserIntegrationDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/filesystem/files" : {
+      "get" : {
+        "tags" : [ "filesystem-integration" ],
+        "summary" : "Get files from root directory of the filesystem integration",
+        "description" : "Retrieve a list of files from the root directory of the filesystem integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve files from",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a list of files from the root directory.",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.implementations.filesystem.FileSystemItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/filesystem/validate" : {
+      "get" : {
+        "tags" : [ "filesystem-integration" ],
+        "summary" : "Validate filesystem integration credentials",
+        "description" : "Validate the credentials for the filesystem integration using basic auth.",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "The username for basic auth",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "password",
+          "in" : "path",
+          "description" : "The password for basic auth",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns true if the credentials are valid, false otherwise.",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "boolean"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
     "/v1/app/integration/filesystem/{integrationId}/config" : {
       "get" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "filesystem-integration" ],
         "summary" : "Integration config for FileSystem",
         "description" : "Get the stored configuration for FileSystem.",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve the config for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : { },
         "deprecated" : false
       }
     },
     "/v1/app/integration/filesystem/{integrationId}/ingest" : {
       "post" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "filesystem-integration" ],
         "summary" : "Ingest data from FileSystem",
         "description" : "Ingest data into the system using the FileSystem integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to use for ingestion",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+                } ]
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Stream of ingestion results",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/claromentis" : {
+      "post" : {
+        "tags" : [ "claromentis-integration" ],
+        "summary" : "Create a new integration for Claromentis",
+        "description" : "Create a new integration of type Claromentis with basic auth configuration.",
         "parameters" : [ ],
-        "responses" : { },
+        "requestBody" : {
+          "description" : "Configuration for the integration",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.BasicAuthIntegrationConfigDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Returns the created integration configuration.",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.UserIntegrationDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/claromentis/{integrationId}" : {
+      "post" : {
+        "tags" : [ "claromentis-integration" ],
+        "summary" : "Update an existing integration for Claromentis",
+        "description" : "Update an existing integration of type Claromentis with basic auth configuration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to update",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Configuration for the integration",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.BasicAuthIntegrationConfigDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Returns the updated integration configuration.",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.UserIntegrationDTO"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
     "/v1/app/integration/claromentis/{integrationId}/config" : {
       "get" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "claromentis-integration" ],
         "summary" : "Integration config for Claromentis",
         "description" : "Get the stored configuration for Claromentis.",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve the config for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : { },
         "deprecated" : false
       }
     },
     "/v1/app/integration/claromentis/{integrationId}/ingest" : {
       "post" : {
-        "tags" : [ "integration" ],
+        "tags" : [ "claromentis-integration" ],
         "summary" : "Ingest data from Claromentis",
         "description" : "Ingest data into the system using the Claromentis integration.",
-        "parameters" : [ ],
-        "responses" : { },
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to use for ingestion",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+                } ]
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Stream of ingestion results",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -3231,61 +3842,9 @@
         "deprecated" : false
       }
     },
-    "/v1/app/integration/confluence/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for Confluence",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/confluence/{integrationId}/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for Confluence",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/confluence/{integrationId}/refresh_token" : {
-      "post" : {
-        "tags" : [ "openid" ],
-        "summary" : "Refresh OpenID token for an integration",
-        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
-        "parameters" : [ {
-          "name" : "integrationId",
-          "in" : "path",
-          "description" : "The ID of the integration to refresh the token for",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "The request to refresh the token has been accepted",
-            "headers" : { },
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : false
-      }
-    },
     "/v1/app/integration/confluence/callback" : {
       "get" : {
-        "tags" : [ "openid" ],
+        "tags" : [ ],
         "summary" : "OpenID callback for Confluence",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -3293,61 +3852,9 @@
         "deprecated" : false
       }
     },
-    "/v1/app/integration/sharepoint/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for SharePoint",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for SharePoint",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
-      "post" : {
-        "tags" : [ "openid" ],
-        "summary" : "Refresh OpenID token for an integration",
-        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
-        "parameters" : [ {
-          "name" : "integrationId",
-          "in" : "path",
-          "description" : "The ID of the integration to refresh the token for",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "The request to refresh the token has been accepted",
-            "headers" : { },
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : false
-      }
-    },
     "/v1/app/integration/sharepoint/callback" : {
       "get" : {
-        "tags" : [ "openid" ],
+        "tags" : [ ],
         "summary" : "OpenID callback for SharePoint",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -3399,7 +3906,7 @@
         "required" : [ "email", "id", "name", "provider" ]
       },
       "ai.zylon.backend.server.app.account.AuthProviderName" : {
-        "enum" : [ "Token", "Mock", "AccountSession", "UserSession", "Credentials", "Google", "Microsoft", "Confluence", "SharePoint" ]
+        "enum" : [ "AccountToken", "UserToken", "AccountSession", "UserSession", "Credentials", "Mock", "Google", "Microsoft", "Confluence", "SharePoint" ]
       },
       "ai.zylon.backend.server.app.user.UserDTO" : {
         "properties" : {
@@ -3769,7 +4276,7 @@
         "required" : [ "config", "created_at", "has_content", "id", "ingest_status", "keep_file_after_ingestion", "name", "project_id", "source", "state", "type", "updated_at" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactType" : {
-        "enum" : [ "InlineText", "Document", "Folder", "Summary", "Composition", "SmartDoc", "Link", "BulkQA" ]
+        "enum" : [ "InlineText", "Document", "Folder", "Summary", "Composition", "SmartDoc", "Link", "BulkQA", "ReadAndExtract" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactSource" : {
         "enum" : [ "User", "SharePoint", "Confluence", "Claromentis", "FileSystem", "Mock" ]
@@ -3958,6 +4465,9 @@
           },
           "max_tokens" : {
             "type" : "number"
+          },
+          "correlation_id" : {
+            "type" : "string"
           }
         }
       },
@@ -4001,6 +4511,8 @@
           "propertyName" : "type"
         },
         "oneOf" : [ {
+          "$ref" : "#/components/schemas/file"
+        }, {
           "$ref" : "#/components/schemas/image"
         }, {
           "$ref" : "#/components/schemas/source"
@@ -4015,6 +4527,54 @@
         }, {
           "$ref" : "#/components/schemas/tool_use"
         } ]
+      },
+      "file" : {
+        "properties" : {
+          "content" : {
+            "type" : "string"
+          },
+          "content_type" : {
+            "type" : "string"
+          },
+          "doc_metadata" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.DocMetadata"
+          },
+          "start_timestamp" : {
+            "type" : "string"
+          },
+          "stop_timestamp" : {
+            "type" : "string"
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+              } ]
+            }
+          }
+        },
+        "required" : [ "content" ]
+      },
+      "ai.zylon.koala.model.message.PGPTSource.DocMetadata" : {
+        "properties" : {
+          "file_name" : {
+            "type" : "string"
+          },
+          "file_type" : {
+            "type" : "string"
+          }
+        }
       },
       "image" : {
         "properties" : {
@@ -4137,16 +4697,6 @@
         },
         "required" : [ "object" ]
       },
-      "ai.zylon.koala.model.message.PGPTSource.DocMetadata" : {
-        "properties" : {
-          "file_name" : {
-            "type" : "string"
-          },
-          "file_type" : {
-            "type" : "string"
-          }
-        }
-      },
       "ai.zylon.koala.model.message.PGPTSource.SourceMetadata" : {
         "properties" : {
           "title" : {
@@ -4244,6 +4794,9 @@
             "type" : "string"
           },
           "source_id" : {
+            "type" : "string"
+          },
+          "correlation_id" : {
             "type" : "string"
           }
         }
@@ -4519,6 +5072,12 @@
         "properties" : {
           "enabled" : {
             "type" : "boolean"
+          },
+          "known_citations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.model.message.PGPTCitation"
+            }
           }
         }
       },
@@ -5397,6 +5956,14 @@
       "ai.zylon.backend.server.app.audit.AuditQueryIncludeFields" : {
         "enum" : [ "User" ]
       },
+      "ai.zylon.backend.server.app.project.UpdateProjectInfoDTO" : {
+        "properties" : {
+          "is_pinned" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "is_pinned" ]
+      },
       "ai.zylon.backend.server.app.analytics.AnalyticsTotalsDTO" : {
         "properties" : {
           "projects_total" : {
@@ -5463,6 +6030,120 @@
           }
         },
         "required" : [ "has_linked_artifacts" ]
+      },
+      "ai.zylon.backend.server.app.integration.sync.SyncEvent" : {
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/sync_completed"
+        }, {
+          "$ref" : "#/components/schemas/sync_error"
+        }, {
+          "$ref" : "#/components/schemas/sync_progress"
+        }, {
+          "$ref" : "#/components/schemas/sync_started"
+        } ]
+      },
+      "sync_completed" : { },
+      "sync_error" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "message" ]
+      },
+      "sync_progress" : {
+        "properties" : {
+          "integration_item" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO"
+            } ]
+          },
+          "artifact_id" : {
+            "type" : "string"
+          },
+          "artifact" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactDTO"
+          },
+          "op" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent.Progress.Op"
+          },
+          "progress" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "op" ]
+      },
+      "ai.zylon.backend.server.app.integration.sync.SyncEvent.Progress.Op" : {
+        "enum" : [ "Added", "Removed", "Skipped", "Updated", "Recreated", "Error" ]
+      },
+      "sync_started" : {
+        "properties" : {
+          "current_artifact_count" : {
+            "type" : "number"
+          },
+          "integration_item_count" : {
+            "type" : "number"
+          }
+        }
+      },
+      "ai.zylon.backend.server.app.integration.BasicAuthIntegrationConfigDTO" : {
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "password", "username" ]
+      },
+      "ai.zylon.backend.server.app.integration.implementations.filesystem.FileSystemItem" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "parentId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "path" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "parent" : {
+            "type" : "string"
+          },
+          "isFile" : {
+            "type" : "boolean"
+          },
+          "isDirectory" : {
+            "type" : "boolean"
+          },
+          "isHidden" : {
+            "type" : "boolean"
+          },
+          "lastModified" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "id", "isDirectory", "isFile", "isHidden", "lastModified", "name", "parentId", "path", "url" ]
       },
       "health" : {
         "properties" : {

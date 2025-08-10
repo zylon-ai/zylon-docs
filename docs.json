@@ -39,6 +39,138 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "Home",
+        "icon": "house",
+        "pages": [
+          "index"
+        ]
+      },
+      {
+        "tab": "User Manual",
+        "icon": "user",
+        "groups": [
+          {
+            "group": "About Zylon Workspace",
+            "pages": [
+              "workspace-manual/what-is-zylon-workspace",
+              "workspace-manual/first-day-faqs",
+              "workspace-manual/quick-start-guide"
+            ]
+          },
+          {
+            "group": "Admin Tools",
+            "pages": [
+              "workspace-manual/workspace-look-and-feel",
+              "workspace-manual/adding-company-context",
+              "workspace-manual/audit-logs",
+              "workspace-manual/engagement-analytics"
+            ]
+          },
+          {
+            "group": "Zylon Workspace Basics",
+            "pages": [
+              "workspace-manual/working-in-projects",
+              "workspace-manual/managing-knowledge-bases",
+              "workspace-manual/search-across-workspace",
+              "workspace-manual/beginners-guide-to-chat",
+              "workspace-manual/introduction-to-agent-flows"
+            ]
+          },
+          {
+            "group": "Projects",
+            "pages": [
+              "workspace-manual/creating-a-project",
+              "workspace-manual/adding-custom-instructions",
+              "workspace-manual/sharing-with-colleagues"
+            ]
+          },
+          {
+            "group": "Knowledge Bases",
+            "pages": [
+              "workspace-manual/uploading-files",
+              "workspace-manual/roles-and-permissions",
+              "workspace-manual/linking-knowledge-bases",
+              {
+                "group": "External Connectors",
+                "pages": [
+                  "workspace-manual/connectors/confluence",
+                  "workspace-manual/connectors/sharepoint",
+                  "workspace-manual/connectors/ftp",
+                  "workspace-manual/connectors/claromentis"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Search",
+            "pages": [
+              "workspace-manual/search-workspace-content",
+              "workspace-manual/search-company-documents"
+            ]
+          },
+          {
+            "group": "Chat Assistant",
+            "pages": [
+              "workspace-manual/when-to-use-chat-assistant",
+              "workspace-manual/querying-company-documents",
+              {
+                "group": "Using Tools",
+                "pages": [
+                  "workspace-manual/tools/introduction-to-tools",
+                  "workspace-manual/tools/extended-thinking",
+                  "workspace-manual/tools/numeric-analysis",
+                  "workspace-manual/tools/remote-mcp"
+                ]
+              },
+              "workspace-manual/group-chats"
+            ]
+          },
+          {
+            "group": "Agent Flows",
+            "pages": [
+              "workspace-manual/when-to-use-agent-flows",
+              "workspace-manual/real-time-collaboration",
+              "workspace-manual/inline-ai-in-editor",
+              {
+                "group": "Available Agent Flows",
+                "pages": [
+                  "workspace-manual/agent-flows/summarize-file",
+                  "workspace-manual/agent-flows/answer-in-bulk",
+                  "workspace-manual/agent-flows/generate-draft",
+                  "workspace-manual/agent-flows/open-blank-page",
+                  "workspace-manual/agent-flows/read-and-extract"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer Manual",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "icon": "book",
+            "pages": [
+              "api-reference/how-to-use",
+              "api-reference/zylon-gpt-api",
+              "api-reference/workspace-api"
+            ]
+          },
+          {
+            "group": "ZylonGPT API",
+            "icon": "terminal",
+            "openapi": "/api-reference/pgpt.json"
+          },
+          {
+            "group": "Workspace API",
+            "icon": "terminal",
+            "openapi": "/api-reference/workspace.json"
+          }
+        ]
+      },
+      {
         "tab": "Operator Manual",
         "icon": "wrench",
         "groups": [
@@ -68,29 +200,6 @@
                 ]
               }
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Developer Platform",
-        "icon": "code",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "icon": "book",
-            "pages": [
-              "api-reference/how-to-use"
-            ]
-          },
-          {
-            "group": "ZylonGPT API",
-            "icon": "terminal",
-            "openapi": "/api-reference/pgpt.json"
-          },
-          {
-            "group": "Workspace API",
-            "icon": "terminal",
-            "openapi": "/api-reference/workspace.json"
           }
         ]
       },

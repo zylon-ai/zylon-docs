@@ -195,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-09T04:07:04.682216596Z"
+                    "valid_until" : "2026-08-12T14:38:57.089049221Z"
                   }
                 }
               }
@@ -1956,6 +1956,68 @@
           "required" : false
         },
         "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/project/{projectId}/artifact/{artifactId}/children" : {
+      "get" : {
+        "tags" : [ "artifacts" ],
+        "summary" : "Get artifact children",
+        "description" : "Retrieve a list of artifacts nesting from a specific artifact ",
+        "parameters" : [ {
+          "name" : "projectId",
+          "in" : "path",
+          "description" : "The ID of the project.",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "artifactId",
+          "in" : "path",
+          "description" : "The ID of the artifactId.",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "path",
+          "in" : "query",
+          "description" : "The full path of the artifact",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "depth",
+          "in" : "query",
+          "description" : "The level of depth for the artifact children",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a list of artifacts for the specified artifact",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__"
+                }
+              }
+            }
+          }
+        },
         "deprecated" : false
       }
     },
@@ -5645,12 +5707,6 @@
         },
         "required" : [ "name", "visibility" ]
       },
-      "ai.zylon.backend.server.app.QueryOrderBy" : {
-        "enum" : [ "Alphabetical" ]
-      },
-      "org.jetbrains.exposed.sql.SortOrder" : {
-        "enum" : [ "ASC", "DESC", "ASC_NULLS_FIRST", "DESC_NULLS_FIRST", "ASC_NULLS_LAST", "DESC_NULLS_LAST" ]
-      },
       "page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__" : {
         "properties" : {
           "data" : {
@@ -5676,6 +5732,12 @@
           }
         },
         "required" : [ "data", "has_next_page", "has_previous_page" ]
+      },
+      "ai.zylon.backend.server.app.QueryOrderBy" : {
+        "enum" : [ "Alphabetical" ]
+      },
+      "org.jetbrains.exposed.sql.SortOrder" : {
+        "enum" : [ "ASC", "DESC", "ASC_NULLS_FIRST", "DESC_NULLS_FIRST", "ASC_NULLS_LAST", "DESC_NULLS_LAST" ]
       },
       "ai.zylon.backend.server.app.project.artifact.CreateArtifactDTO" : {
         "properties" : {
@@ -5906,6 +5968,9 @@
           },
           "parent_id" : {
             "type" : "string"
+          },
+          "reset_parent_id" : {
+            "type" : "boolean"
           },
           "external_url" : {
             "type" : "string"

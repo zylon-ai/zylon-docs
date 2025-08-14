@@ -7,17 +7,17 @@ description: "A guide to install Zylon on a single instance"
 
 For a smooth sailing make sure you pass this checklist before you begin the installation:
 
-- [ ]  The target machine is clean of any other software that can interfere with it. That means no docker, no kubernetes, http servers, no Nvidia drivers, etc. Also is important to disable automatic updates, since Nvidia drivers get compiled against the current kernel version and they need to be recompiled when the kernel gets updated.
-- [ ]  The machine has stable and strong Internet connection
-- [ ]  You can reboot the machine if needed
-- [ ]  Your firewall is not blocking connections to any of these websites
+-  The target machine is clean of any other software that can interfere with it. That means no docker, no kubernetes, http servers, no Nvidia drivers, etc. Also is important to disable automatic updates, since Nvidia drivers get compiled against the current kernel version and they need to be recompiled when the kernel gets updated.
+-  The machine has stable and strong Internet connection
+-  You can reboot the machine if needed
+-  Your firewall is not blocking connections to any of these websites
   - huggingface.co
   - [sentry.io](http://sentry.io) (if you opt-in to send us crash reports)
-  - *.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
-- [ ]  The machine has `curl` installed
-- [ ]  You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
+  - \*.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
+-  The machine has `curl` installed
+-  You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
 
-Once you have fulfilled the hardware requirements and have a domain ready it is time to install Zylon!
+Once you have fulfilled the hardware requirements and have a domain ready it is time to install Zylon\!
 
 For single instance setups Zylon it’s installed using it’s CLI `zylon-cli` on the machine where you want to run it. To start the install process make sure that:
 
@@ -41,7 +41,7 @@ Root access is required at multiple steps into the installation, if you wish to 
 curl -sL get.zylon.ai
 ```
 
-Run `sudo zylon-cli help` to get a list of all the commands!
+Run `sudo zylon-cli help` to get a list of all the commands\!
 
 ## Step 2: Generate a configuration file for your Zylon installation
 
@@ -129,8 +129,8 @@ If you have one of the GPUs listed above, select the right preset and replace th
 
 Our recommendation is to use the default presets, but alternative presets are available to give the customer the option to choose what they prefer:
 
-- **`alternatives.baseline-48g-context`:** Preset for 48 GB configurations where you will have more context window, moving to a smaller model.
-- **`alternatives.baseline-96g-context`:** Preset for 96 GB configurations where you will have more context window, moving to a smaller model.
+- **`alternatives.baseline-48g-context:`** Preset for 48 GB configurations where you will have more context window, moving to a smaller model.
+- **`alternatives.baseline-96g-context:`** Preset for 96 GB configurations where you will have more context window, moving to a smaller model.
 
 **Deprecated Presets**
 
@@ -140,7 +140,7 @@ There are presets that have been deprecated in order to support new functionalit
 
 **Multi-GPU Configuration**
 
-When using multiple GPUs, select the preset based on the **total combined VRAM.** For example**:**
+When using multiple GPUs, select the preset based on the **total combined VRAM.** For example\*\*:\*\*
 
 - 2x L4 (48GB total) → Use `baseline-48g`
 - 3x RTX 4090 (72GB total) → Use `baseline-48g` (next available lower preset)
@@ -161,7 +161,7 @@ The following domain needs to be whitelisted:  `*.grafana.net`
 
 For added granularity, the domains used are:
 
-- Basic usage metrics (no private information sent)-> [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
+- Basic usage metrics (no private information sent)-\> [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
 - Logs (no private information sent); [https://logs-prod-012.grafana.net](https://logs-prod-012.grafana.net/)
 - System Traces (no private information sent): [https://tempo-prod-10-prod-eu-west-2.grafana.net](https://tempo-prod-10-prod-eu-west-2.grafana.net/)
 
@@ -179,6 +179,27 @@ observability:
   crashReporting: false
   usageMetrics: false
 ```
+
+### Search configuration
+
+To get a better experience during search it's recommended to enable what are the languages you plan to use in Zylon for content (Chats, documents, agent flows), the default language is `english` but multiple languages can be enabled. 
+
+```yaml
+languages:
+  keywordSearch: ['en', 'es', 'de']
+```
+
+The list of available languages is the following:
+
+```
+"ar","hy","eu","ca","da","nl","en","fi","fr","de","el","hi","hu","id","ga","it","lt","ne","no","pt","ro","ru","sr","es","sv","ta","tr","yi"
+```
+<Tip>
+Check if your desired language is supported https://localizely.com/iso-639-1-list/
+</Tip>
+You can enable/disable languages in any moment, just change the configuration and restart Zylon
+
+
 
 ### (Optional) Performance tweaks
 
@@ -207,8 +228,8 @@ sudo zylon-cli setup
 Generally, you only need to run the setup once. Running it multiple times has no effect unless an update by Zylon team added a new dependency.
 
 <Tip>
-    It’s highly recommended to reboot the machine after this step is completed to ensure GPU drivers are properly
-    loaded.
+  It’s highly recommended to reboot the machine after this step is completed to ensure GPU drivers are properly
+  loaded.
 </Tip>
 
 ## Step 4: Install Zylon
@@ -224,8 +245,8 @@ To update Zylon to a newer version, simply run this command again. You can do so
 If you modify your Zylon configuration file you will also need to run the update command again.
 
 <Note>
-    The initial installation of Zylon will take around 15 minutes to complete after the update command itself is
-    completed
+  The initial installation of Zylon will take around 15 minutes to complete after the update command itself is
+  completed
 </Note>
 
 ## Step: 4.5
@@ -246,8 +267,8 @@ watch sudo k0s kubectl get pods -n nvidia
 ```
 
 <Note>
-    If some service gets stuck in a ContainerCrashLoopBackOff for more than one hour contact us, the installation has
-    failed.
+  If some service gets stuck in a ContainerCrashLoopBackOff for more than one hour contact us, the installation has
+  failed.
 </Note>
 
 ## Step 5: Prepare your organization
@@ -270,7 +291,7 @@ sudo zylon-cli seed --org-name "My Org" --admin-password "admin" --email-regex "
 ```
 
 <Danger>
-    **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle**
+  **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle**
 </Danger>
 
 The credentials to login to Zylon will be:
@@ -281,8 +302,6 @@ password: the_password_you_set_up_previously
 ```
 
 The root admin email is fixed and will always be [`admin@zylon.ai`](mailto:admin@zylon.ai)
-
-
 
 ## Step 6 (optional): Manually creating SSL certificates
 

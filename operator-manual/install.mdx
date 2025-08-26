@@ -304,26 +304,47 @@ password: the_password_you_set_up_previously
 
 The root admin email is fixed and will always be [`admin@zylon.ai`](mailto:admin@zylon.ai)
 
-## Step 6 (optional): Manually creating SSL certificates
+## Step 6 (optional): Manually installing SSL certificates
 
 If you opted in to use Let’s Encrypt certificates you can skip this section.
 
-In case your Zylon installation is behind a VPN / private cloud and it’s not reachable through the internet you will need to configure SSL yourself.
+In case your Zylon installation is behind a VPN / private cloud and it’s not reachable through the internet you will need to configure SSL yourself. To do that you must upload your own SSL certificates and make them available to the server where Zylon is installed.
 
-If you are running Zylon in single instance mode, you must upload your own SSL certificates and make them available to the embedded Kubernetes cluster:
+### Configuration file
+
+First, **REMOVE** from the configuration file located in `/etc/zylon/zylon-conf.yaml` the following lines
+
+```yaml
+certManagerAnnotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+Since we are using Kubernetes we need to have the private key (`*.key` ) and the certificate file in two files (`*.crt` ) to store them as a secret.
+
+### I have a .pfx file (ignore otherwise)
+
+In case you have a `.pfx` file you can get the desired files with the following commands:
 
 ```bash
-# Generate a new certificate, or upload your existing one to the Zylon machine
-ZYLON_HOST="zylon.company.com"
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
- -keyout tls.key -out tls.crt \
- -subj "/CN=$ZYLON_HOST[/O=](http://test.zylon.ai/O=test.zylon.ai)$ZYLON_HOST" \
- -addext "subjectAltName = DNS:$ZYLON_HOST"
- 
-# After that, import it or refresh it
+openssl pkcs12 -in <your-certificate.pfx> -clcerts -nokeys -out tls.crt
+openssl pkcs12 -in <your-certificate.pfx> -nocerts -out tls.key
+```
+
+### Create secret
+
+```bash
+
+# Import or refresh the certificates
 sudo k0s kubectl delete secret tls zylon-tls --ignore-not-found -n zylon
 sudo k0s kubectl create secret tls zylon-tls --key tls.key --cert tls.crt -n zylon
 
 # Check if it's correctly created
 sudo k0s kubectl describe secret zylon-tls -n zylon
 ```
+
+To reload the changes done to the configuration file, restart Zylon
+```bash
+sudo zylon-cli update
+```
+
+Finally, go to your Zylon instance and confirm that the connection is using HTTPS.

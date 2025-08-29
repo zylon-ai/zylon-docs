@@ -195,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-08-20T15:46:43.646331841Z"
+                    "valid_until" : "2026-08-29T09:39:25.775336775Z"
                   }
                 }
               }
@@ -2084,7 +2084,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/org.jetbrains.exposed.sql.SortOrder"
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.v1.core.SortOrder"
           }
         }, {
           "name" : "created_by",
@@ -2673,7 +2673,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/org.jetbrains.exposed.sql.SortOrder"
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.v1.core.SortOrder"
           }
         }, {
           "name" : "after",
@@ -2839,7 +2839,7 @@
           "deprecated" : false,
           "explode" : false,
           "schema" : {
-            "$ref" : "#/components/schemas/org.jetbrains.exposed.sql.SortOrder"
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.v1.core.SortOrder"
           }
         }, {
           "name" : "after",
@@ -3260,6 +3260,272 @@
         "deprecated" : false
       }
     },
+    "/v1/app/issue" : {
+      "get" : {
+        "tags" : [ "issue" ],
+        "summary" : "Get all the issues from the current organization",
+        "description" : "Retrieve a list of issues",
+        "parameters" : [ {
+          "name" : "created_by",
+          "in" : "query",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "end_date",
+          "in" : "query",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "include",
+          "in" : "query",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueQueryIncludeFields"
+            }
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "The page number to retrieve (1-based index)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "The number of items per page",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_order",
+          "in" : "query",
+          "description" : "The order of the items on the page (ASC or DESC)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/org.jetbrains.exposed.v1.core.SortOrder"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor to start after for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "The cursor to start before for relative pagination",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "first",
+          "in" : "query",
+          "description" : "The number of items to return after the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "last",
+          "in" : "query",
+          "description" : "The number of items to return before the cursor",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "total_count",
+          "in" : "query",
+          "description" : "Whether to return the total count of items",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "start_date",
+          "in" : "query",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueType"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a paginated list of issues for the actual organization",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/page_array_ai.zylon.backend.server.app.issuetracker.IssueDTO__"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      },
+      "post" : {
+        "tags" : [ "issue" ],
+        "summary" : "Create a new issue",
+        "description" : "Create a new issue with the specified details.",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "Issue details",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.CreateIssueDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The created issue",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/issue/{issueId}" : {
+      "get" : {
+        "tags" : [ "issue" ],
+        "summary" : "Get issue details",
+        "description" : "Retrieve detailed information about a specific issue.",
+        "parameters" : [ {
+          "name" : "issueId",
+          "in" : "path",
+          "description" : "The ID of the issue to retrieve",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : { },
+        "deprecated" : false
+      },
+      "put" : {
+        "tags" : [ "issue" ],
+        "summary" : "Update an issue",
+        "description" : "Update the details of an existing issue.",
+        "parameters" : [ {
+          "name" : "issueId",
+          "in" : "path",
+          "description" : "The ID of the issue to update",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The details to update the issue with",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.UpdateIssueDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The updated issue",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      },
+      "delete" : {
+        "tags" : [ "issue" ],
+        "summary" : "Delete an issue",
+        "description" : "Soft delete an issue. The issue will be marked as deleted but not permanently removed.",
+        "parameters" : [ {
+          "name" : "issueId",
+          "in" : "path",
+          "description" : "The ID of the issue to delete",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
     "/v1/app/integration/confluence/login" : {
       "get" : {
         "tags" : [ "openid" ],
@@ -3348,140 +3614,6 @@
         "tags" : [ "confluence-integration" ],
         "summary" : "Ingest data from Confluence",
         "description" : "Ingest data into the system using the Confluence integration.",
-        "parameters" : [ {
-          "name" : "integrationId",
-          "in" : "path",
-          "description" : "The ID of the integration to use for ingestion",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "oneOf" : [ {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
-                }, {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
-                }, {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
-                }, {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
-                } ]
-              }
-            }
-          },
-          "required" : false
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Stream of ingestion results",
-            "headers" : { },
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for SharePoint",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/login" : {
-      "get" : {
-        "tags" : [ "openid" ],
-        "summary" : "OpenID login for SharePoint",
-        "description" : "Initiates the OpenID login flow for the specified provider.",
-        "parameters" : [ ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
-      "post" : {
-        "tags" : [ "openid" ],
-        "summary" : "Refresh OpenID token for an integration",
-        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
-        "parameters" : [ {
-          "name" : "integrationId",
-          "in" : "path",
-          "description" : "The ID of the integration to refresh the token for",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "No body is required for this request",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "description" : "Nothing"
-              }
-            }
-          },
-          "required" : false
-        },
-        "responses" : {
-          "202" : {
-            "description" : "The request to refresh the token has been accepted",
-            "headers" : { },
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/config" : {
-      "get" : {
-        "tags" : [ "sharepoint-integration" ],
-        "summary" : "Integration config for SharePoint",
-        "description" : "Get the stored configuration for SharePoint.",
-        "parameters" : [ {
-          "name" : "integrationId",
-          "in" : "path",
-          "description" : "The ID of the integration to retrieve the config for",
-          "required" : true,
-          "deprecated" : false,
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : { },
-        "deprecated" : false
-      }
-    },
-    "/v1/app/integration/sharepoint/{integrationId}/ingest" : {
-      "post" : {
-        "tags" : [ "sharepoint-integration" ],
-        "summary" : "Ingest data from SharePoint",
-        "description" : "Ingest data into the system using the SharePoint integration.",
         "parameters" : [ {
           "name" : "integrationId",
           "in" : "path",
@@ -3706,6 +3838,140 @@
         "tags" : [ "filesystem-integration" ],
         "summary" : "Ingest data from FileSystem",
         "description" : "Ingest data into the system using the FileSystem integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to use for ingestion",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The data to ingest, formatted as JSON. The actual structure depends on the integration type.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                } ]
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Stream of ingestion results",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.integration.sync.SyncEvent"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for SharePoint",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
+        "parameters" : [ ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/{integrationId}/login" : {
+      "get" : {
+        "tags" : [ "openid" ],
+        "summary" : "OpenID login for SharePoint",
+        "description" : "Initiates the OpenID login flow for the specified provider.",
+        "parameters" : [ ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/{integrationId}/refresh_token" : {
+      "post" : {
+        "tags" : [ "openid" ],
+        "summary" : "Refresh OpenID token for an integration",
+        "description" : "This endpoint is used to refresh the OpenID token for an existing integration.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to refresh the token for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "No body is required for this request",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "202" : {
+            "description" : "The request to refresh the token has been accepted",
+            "headers" : { },
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/{integrationId}/config" : {
+      "get" : {
+        "tags" : [ "sharepoint-integration" ],
+        "summary" : "Integration config for SharePoint",
+        "description" : "Get the stored configuration for SharePoint.",
+        "parameters" : [ {
+          "name" : "integrationId",
+          "in" : "path",
+          "description" : "The ID of the integration to retrieve the config for",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/integration/sharepoint/{integrationId}/ingest" : {
+      "post" : {
+        "tags" : [ "sharepoint-integration" ],
+        "summary" : "Ingest data from SharePoint",
+        "description" : "Ingest data into the system using the SharePoint integration.",
         "parameters" : [ {
           "name" : "integrationId",
           "in" : "path",
@@ -4226,7 +4492,7 @@
             "type" : "boolean"
           },
           "deadline" : {
-            "type" : "number"
+            "type" : "string"
           },
           "visibility" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.project.ProjectVisibility"
@@ -4364,10 +4630,10 @@
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           },
           "created_at" : {
-            "type" : "number"
+            "type" : "string"
           },
           "updated_at" : {
-            "type" : "number"
+            "type" : "string"
           }
         },
         "required" : [ "config", "created_at", "has_content", "id", "ingest_status", "keep_file_after_ingestion", "name", "project_id", "source", "state", "type", "updated_at" ]
@@ -4416,10 +4682,10 @@
             } ]
           },
           "created_at" : {
-            "type" : "number"
+            "type" : "string"
           },
           "updated_at" : {
-            "type" : "number"
+            "type" : "string"
           }
         },
         "required" : [ "created_at", "id", "org_id", "provider_data", "type", "updated_at", "user_id" ]
@@ -5264,13 +5530,13 @@
             "type" : "boolean"
           },
           "created_at" : {
-            "type" : "number"
+            "type" : "string"
           },
           "created_by" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           }
         },
-        "required" : [ "assistant_output", "created_at", "id", "project_id", "state", "thread_id", "user_input" ]
+        "required" : [ "created_at", "id", "project_id", "state", "user_input" ]
       },
       "ai.zylon.backend.server.app.project.interaction.InteractionState" : {
         "enum" : [ "Processing", "Completed", "Error" ]
@@ -5699,7 +5965,7 @@
       "ai.zylon.backend.server.app.QueryOrderBy" : {
         "enum" : [ "Alphabetical" ]
       },
-      "org.jetbrains.exposed.sql.SortOrder" : {
+      "org.jetbrains.exposed.v1.core.SortOrder" : {
         "enum" : [ "ASC", "DESC", "ASC_NULLS_FIRST", "DESC_NULLS_FIRST", "ASC_NULLS_LAST", "DESC_NULLS_LAST" ]
       },
       "ai.zylon.backend.server.app.project.artifact.CreateArtifactDTO" : {
@@ -6132,6 +6398,128 @@
           }
         },
         "required" : [ "content", "project_id", "project_name", "thread_id", "thread_name" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.CreateIssueDTO" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "resource_type" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.ResourceType"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueType"
+          },
+          "config" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            } ]
+          },
+          "anonymous" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "anonymous", "config", "resource_type", "type" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.ResourceType" : {
+        "enum" : [ "Thread" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.IssueType" : {
+        "enum" : [ "NoAnswer", "Inaccurate", "NoContextUsed", "Format", "Other" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.IssueDTO" : {
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "resource_type" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.ResourceType"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueType"
+          },
+          "state" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueState"
+          },
+          "is_read" : {
+            "type" : "boolean"
+          },
+          "data" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            } ]
+          },
+          "created_at" : {
+            "type" : "string"
+          },
+          "updated_at" : {
+            "type" : "string"
+          },
+          "created_by" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+          }
+        },
+        "required" : [ "created_at", "data", "id", "is_read", "resource_type", "state", "type", "updated_at" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.IssueState" : {
+        "enum" : [ "Active", "Deleted" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.IssueQueryIncludeFields" : {
+        "enum" : [ "User" ]
+      },
+      "page_array_ai.zylon.backend.server.app.issuetracker.IssueDTO__" : {
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueDTO"
+            }
+          },
+          "next_cursor" : {
+            "type" : "string"
+          },
+          "previous_cursor" : {
+            "type" : "string"
+          },
+          "has_next_page" : {
+            "type" : "boolean"
+          },
+          "has_previous_page" : {
+            "type" : "boolean"
+          },
+          "total_count" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "data", "has_next_page", "has_previous_page" ]
+      },
+      "ai.zylon.backend.server.app.issuetracker.UpdateIssueDTO" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueType"
+          },
+          "is_read" : {
+            "type" : "boolean"
+          }
+        }
       },
       "ai.zylon.backend.server.app.integration.sync.SyncEvent" : {
         "discriminator" : {

@@ -200,6 +200,12 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "operator-manual/customization"
+            ]
           }
         ]
       },

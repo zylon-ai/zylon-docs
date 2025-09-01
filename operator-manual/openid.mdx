@@ -17,11 +17,11 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 
 ![image.png](/operator-manual/openid-images/image.png)
 
-1. Register a new App. Click on `App registrations` on the left menu.
+3. Register a new App. Click on `App registrations` on the left menu.
 
 ![image.png](/operator-manual/openid-images/image%201.png)
 
-1. Click on `New Registration`.
+4. Click on `New Registration`.
 
 ![image.png](/operator-manual/openid-images/image%202.png)
 
@@ -37,29 +37,28 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 ![image.png](/operator-manual/openid-images/image%204.png)
 
 
-1. Save the following values that will be used later in the config file for Zylon.
+5. Save the following value that will be used later in the config file for Zylon.
 - Application (client) ID
-- Directory (tenant) ID
 
 ![image.png](/operator-manual/openid-images/image%205.png)
 
-1. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
+6. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
 
 <img src="/operator-manual/openid-images/image%206.png" alt="image.png" width="50%"/>
 
-1. Click on `New client secret` and add the required information
+7. Click on `New client secret` and add the required information
 
 ![image.png](/operator-manual/openid-images/image%207.png)
 
-1. Copy the `Value` for client secret.
+8. Copy the `Value` for client secret.
 
 ![image.png](/operator-manual/openid-images/image%208.png)
 
-1. Verify that the `User.read`  permission is granted. Click on `API Permissions` on the left menu. You should see it there by default. In case it is missing, grant it.
+9. Verify that the `User.read`  permission is granted. Click on `API Permissions` on the left menu. You should see it there by default. In case it is missing, grant it.
 
 ![image.png](/operator-manual/openid-images/image%209.png)
 
-1. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
+10. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
 
 <Warn>
     The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important
@@ -70,7 +69,7 @@ auth:
   microsoft:
     enabled: true
     redirectUri: "https://zylon.company.com/api/v1/auth/microsoft/callback"
-    tenantId: "6ee0......"
+    tenantId: "common"
     clientId: "8c7d......"
     clientSecret: ".RS8Q~....."
 ```

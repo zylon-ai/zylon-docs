@@ -195,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-09-01T09:20:42.161749383Z"
+                    "valid_until" : "2026-09-05T14:28:30.952617854Z"
                   }
                 }
               }
@@ -5703,6 +5703,20 @@
       },
       "input_json_delta" : {
         "properties" : {
+          "partial_json_obj" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              } ]
+            }
+          },
           "partial_json" : {
             "type" : "string"
           },
@@ -5720,8 +5734,7 @@
               } ]
             }
           }
-        },
-        "required" : [ "partial_json" ]
+        }
       },
       "source_delta" : {
         "properties" : {

@@ -15,6 +15,28 @@ By default, the assistant’s name is set to **Zylon**. To change it, simply upd
 - Do not include unusual symbols, special characters, or excessive punctuation (for example, “\$uper_Bot\!”).
 
 ```
-
-assistantName: "Zylon"
+assistantName: "Daisy"
 ```
+
+![Screenshot 2025-09-05 at 11.05.15.png](/images/Screenshot2025-09-05at11.05.15.png)
+
+### \
+Custom Features
+
+Zylon supports feature toggling, allowing you to enable or disable certain features on demand. This is managed through the `features` field in your configuration file.
+
+Each feature can define its own set of keys to control behavior.
+
+```
+features:
+  audit:
+    enabled: true
+```
+
+### **Available Features**
+
+**Audit Log**
+
+- **Default**: Enabled by default.
+- **Enable/Disable**: Controlled through the `enabled` key.
+  - Set `enabled: true` to keep audit logs active.

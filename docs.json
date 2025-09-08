@@ -178,7 +178,13 @@
               "operator-manual/ports-and-dns",
               "operator-manual/troubleshoot",
               "operator-manual/uninstall",
-              "operator-manual/backup",
+              "operator-manual/backup"
+            ]
+          },
+          {
+            "group": "Zylon Instance Configuration",
+            "pages": [
+              "operator-manual/configuration/ai-presets",
               "operator-manual/openid",
               {
                 "group": "Connectors Configuration",
@@ -188,7 +194,10 @@
                   "operator-manual/knowledge-base/file-system",
                   "operator-manual/knowledge-base/claromentis"
                 ]
-              }
+              },
+              "operator-manual/configuration/observability",
+              "operator-manual/configuration/search",
+              "operator-manual/configuration/performance"
             ]
           },
           {

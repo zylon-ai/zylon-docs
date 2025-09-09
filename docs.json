@@ -184,11 +184,13 @@
           {
             "group": "Zylon Instance Configuration",
             "pages": [
+              "operator-manual/configuration/index",
               "operator-manual/configuration/ai-presets",
               "operator-manual/openid",
               {
                 "group": "Connectors Configuration",
                 "pages": [
+                  "operator-manual/knowledge-base/index",
                   "operator-manual/knowledge-base/sharepoint",
                   "operator-manual/knowledge-base/confluence",
                   "operator-manual/knowledge-base/file-system",

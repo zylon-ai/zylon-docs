@@ -1,0 +1,155 @@
+---
+title: "AI Preset Migration Guide"
+---
+
+This guide will help you migrate your existing AI preset configurations to the new enhanced system. The new system provides better capabilities and simplified configuration options.
+
+<Warning>
+  Follow this migration guide is mandatory when **<u>you are updating to versions above to 1.43.0</u>**
+</Warning>
+
+## Migration Steps
+
+<Steps>
+  <Step title="Locate Your Current Configuration">
+    Find your existing Zylon config in `etc/zylon/zylon-conf.yaml`  and open it.
+  </Step>
+  <Step title="Identify Your Configuration Pattern">
+    Look at your current `ai:` section and determine which pattern matches:
+
+    - Only has `preset:` → **Scenario 1** (No action needed)
+    - Has `config.embedding` with multilingual settings → **Scenario 2**
+    - Has `config.llm` or custom LLM settings → **Scenario 3a**
+    - Has `config.embedding` with custom settings → **Scenario 3b**
+  </Step>
+  <Step title="Apply the Corresponding Migration">
+    Follow the exact replacement shown in your matching scenario below.
+  </Step>
+  <Step title="Save Your Changes">
+    Update your configuration file with the new format. Run the command `sudo zylon-cli update` to update the version. Everything should be working as before.
+  </Step>
+</Steps>
+
+## Migration Scenarios
+
+### Scenario 1: Base Preset Only (No Action Required)
+
+**How to detect:** Your configuration only contains a preset line without any `config:` section.
+
+**Current Configuration (No Changes Needed):**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+```
+
+This configuration remains unchanged and will continue to work as expected.
+
+### Scenario 2: Multilingual Embedding Configuration
+
+**How to detect:** Your configuration has `config.embedding` with multilingual-related settings.
+
+**Old Configuration:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    embedding:
+      name: multilingual-e5-large
+      contextWindow: 512
+      vectorDim: 1024
+      gpuMemoryUtilization: 0.10
+      prefixQuery: "query:"
+      prefixText: "passage:"
+```
+
+**New Configuration:**
+
+```yaml
+ai:
+  preset: "baseline-48g,capabilities.multilingual"
+```
+
+<Note>
+  The new preset system automatically handles the multilingual embedding configuration with optimal default settings, providing the same functionality with a much simpler syntax.
+</Note>
+
+### Scenario 3: Custom Model Configuration
+
+**How to detect:** Your configuration has `config.llm` or `config.embedding` with custom model settings.
+
+<Note>
+  If your custom configuration includes non-model related settings, those configurations may remain the same in the new system. Only model-specific configurations need to be migrated to the new `models` structure.
+</Note>
+
+#### Scenario 3a: Custom LLM Configuration
+
+**Look for:** `config.llm` or `config` section with LLM-specific settings.
+
+**Old Configuration:**
+
+_This configuration is modifying the default context window._
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    llm:
+      name: qwen-3-14b-awq
+      contextWindow: 16384
+      # ... other LLM settings
+```
+
+**New Configuration:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    models:
+      - id: llm
+        contextWindow: 16384
+```
+
+#### Scenario 3b: Custom Embedding Configuration
+
+**Look for:** `config.embedding` with custom (non-multilingual) settings.
+
+**Old Configuration:**
+
+_This configuration is modifying the default context window._
+
+```yaml
+ai:
+  preset: "baseline-96g"
+  config:
+    embedding:
+      name: mxbai-embed-large
+      contextWindow: 512
+```
+
+**New Configuration:**
+
+```yaml
+ai:
+  preset: "baseline-96g"
+  config:
+    models:
+      - id: embed
+        contextWindow: 512
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Configuration not loading after migration">
+    Ensure that the YAML syntax is correct and all required fields are properly indented. The `models` array should be properly formatted with the correct `id` values.
+  </Accordion>
+  <Accordion title="Performance differences after migration">
+    The new system should guarantee the same performance and configuration as before. Please be sure that you have followed correctly the guide. If you remains having issues, please contact with Zylon team to check it.
+  </Accordion>
+  <Accordion title="Multilingual embedding not working as expected">
+    Verify that you're using the correct preset combination format: `"baseline-48g,capabilities.multilingual"`. 
+  </Accordion>
+</AccordionGroup>

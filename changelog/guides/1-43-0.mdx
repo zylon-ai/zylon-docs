@@ -1,18 +1,23 @@
 ---
-title: "AI Preset Migration Guide"
+title: "Updating to v1.43.0 from previous versions"
 ---
 
-This guide will help you migrate your existing AI preset configurations to the new enhanced system. The new system provides better capabilities and simplified configuration options.
+This page will help you migrate your Zylon instance to version v1.43.0
 
-<Warning>
+<Danger>
   Following this migration guide is mandatory when **<u>you are updating to versions above to 1.43.0</u>**
-</Warning>
+</Danger>
 
-## Migration Steps
+The guide contains the following steps:
+1. Preparation
+2. Update
+3. Configuration
+
+## 1. Preparation
 
 <Steps>
   <Step title="Locate Your Current Configuration">
-    Find your existing Zylon config in `etc/zylon/zylon-conf.yaml`  and open it.
+    Find your existing Zylon config in `/etc/zylon/zylon-conf.yaml`  and open it.
   </Step>
   <Step title="Identify Your Configuration Pattern">
     Look at your current `ai:` section and determine which pattern matches:
@@ -26,11 +31,10 @@ This guide will help you migrate your existing AI preset configurations to the n
     Follow the exact replacement shown in your matching scenario below.
   </Step>
   <Step title="Save Your Changes">
-    Update your configuration file with the new format. Run the command `sudo zylon-cli update` to update the version. Everything should be working as before.
+    Update your configuration file with the new format
   </Step>
 </Steps>
 
-## Migration Scenarios
 
 ### Scenario 1: Base Preset Only (No Action Required)
 
@@ -140,7 +144,7 @@ ai:
         contextWindow: 512
 ```
 
-## Troubleshooting
+### Troubleshooting
 
 <AccordionGroup>
   <Accordion title="Configuration not loading after migration">
@@ -153,3 +157,30 @@ ai:
     Verify that you're using the correct preset combination format: `"baseline-48g,capabilities.multilingual"`.
   </Accordion>
 </AccordionGroup>
+
+## 2. Update
+Run `sudo zylon-cli update` to update Zylon
+
+
+## 3. Configuration <a id="post-update" />
+
+Now we are going to enable Omnisearch for existing Agent Flows.
+
+
+<Steps>
+  <Step title="Update Zylon CLI to at least version 1.16.0">
+    Run `sudo zylon-cli` and check the version.
+    
+    Run `sudo zylon-cli self-update` if needed.
+  </Step>
+  <Step title="Backfill content using Zylon CLI">
+    Run `sudo zylon-cli backfill-agent-flow-content`.
+
+    Wait for the script to finish. This command can be runned multiple times and stopped at any time.
+  </Step>
+</Steps>
+
+You are all set to start searching for content inside Agent Flows with Omnisearch.
+
+Don't forget to enable your preferred languages (default is English) to make Omnisearch as efficient as possible following
+[the Search configuration guide](/operator-manual/configuration/search)

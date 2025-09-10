@@ -65,7 +65,7 @@
               "workspace-manual/audit-logs",
               "workspace-manual/engagement-analytics"
             ]
-          },          
+          },
           {
             "group": "Projects",
             "pages": [
@@ -84,7 +84,7 @@
                 "group": "External Connectors",
                 "pages": [
                   "workspace-manual/connectors/sharepoint",
-                  "workspace-manual/connectors/confluence",                  
+                  "workspace-manual/connectors/confluence",
                   "workspace-manual/connectors/ftp",
                   "workspace-manual/connectors/claromentis"
                 ]
@@ -144,6 +144,7 @@
             "icon": "book",
             "pages": [
               "api-reference/how-to-use",
+              "api-reference/token-management",
               "api-reference/zylon-gpt-api",
               "api-reference/workspace-api"
             ]

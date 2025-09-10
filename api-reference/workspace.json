@@ -195,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-09-05T14:28:30.952617854Z"
+                    "valid_until" : "2026-09-10T15:32:07.583529957Z"
                   }
                 }
               }
@@ -3287,6 +3287,15 @@
             "type" : "number"
           }
         }, {
+          "name" : "filter_by_text",
+          "in" : "query",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "include",
           "in" : "query",
           "required" : true,
@@ -3386,6 +3395,18 @@
           "explode" : false,
           "schema" : {
             "type" : "number"
+          }
+        }, {
+          "name" : "states",
+          "in" : "query",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueState"
+            }
           }
         }, {
           "name" : "type",
@@ -3638,6 +3659,8 @@
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
                 }, {
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
                 } ]
               }
             }
@@ -3862,6 +3885,8 @@
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
                 }, {
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
                 } ]
               }
             }
@@ -3996,6 +4021,8 @@
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
                 }, {
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
                 } ]
               }
             }
@@ -4143,6 +4170,8 @@
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
                 }, {
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                }, {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
                 } ]
               }
             }
@@ -4612,6 +4641,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           },
           "file_uri" : {
@@ -4679,6 +4710,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           },
           "created_at" : {
@@ -4852,6 +4885,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -4911,6 +4946,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -4952,6 +4989,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -4983,6 +5022,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5078,6 +5119,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5112,6 +5155,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5164,6 +5209,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5200,6 +5247,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5225,6 +5274,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           },
@@ -5245,6 +5296,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5281,6 +5334,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           },
@@ -5357,6 +5412,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5714,6 +5771,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           },
@@ -5731,6 +5790,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5755,6 +5816,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5776,6 +5839,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5804,6 +5869,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -5831,6 +5898,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           }
@@ -6007,6 +6076,9 @@
           "raw_content" : {
             "type" : "string"
           },
+          "plain_text_content" : {
+            "type" : "string"
+          },
           "keep_file_after_ingestion" : {
             "type" : "boolean"
           },
@@ -6019,6 +6091,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           }
         },
@@ -6044,6 +6118,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           }
         },
@@ -6060,6 +6136,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           }
         }
@@ -6216,6 +6294,8 @@
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
               }, {
                 "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               } ]
             }
           },
@@ -6223,6 +6303,9 @@
             "type" : "string"
           },
           "content" : {
+            "type" : "string"
+          },
+          "plain_text_content" : {
             "type" : "string"
           }
         }
@@ -6323,7 +6406,7 @@
         "required" : [ "has_linked_artifacts" ]
       },
       "ai.zylon.backend.server.app.miscellaneous.SearchQueryDTO.SearchType" : {
-        "enum" : [ "Artifact", "Thread", "Interaction", "Project" ]
+        "enum" : [ "Project", "Artifact", "Thread", "Interaction", "ArtifactContent" ]
       },
       "ai.zylon.backend.server.app.search.SearchResult" : {
         "properties" : {
@@ -6348,6 +6431,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           }
         },
@@ -6412,6 +6497,23 @@
         },
         "required" : [ "content", "project_id", "project_name", "thread_id", "thread_name" ]
       },
+      "ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata" : {
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "project_id" : {
+            "type" : "string"
+          },
+          "project_name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "project_id", "project_name", "type" ]
+      },
       "ai.zylon.backend.server.app.issuetracker.CreateIssueDTO" : {
         "properties" : {
           "description" : {
@@ -6432,6 +6534,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           },
           "anonymous" : {
@@ -6450,6 +6554,9 @@
         "properties" : {
           "id" : {
             "type" : "string"
+          },
+          "issue_number" : {
+            "type" : "number"
           },
           "description" : {
             "type" : "string"
@@ -6475,6 +6582,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           },
           "created_at" : {
@@ -6487,10 +6596,10 @@
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
           }
         },
-        "required" : [ "created_at", "data", "id", "is_read", "resource_type", "state", "type", "updated_at" ]
+        "required" : [ "created_at", "data", "id", "is_read", "issue_number", "resource_type", "state", "type", "updated_at" ]
       },
       "ai.zylon.backend.server.app.issuetracker.IssueState" : {
-        "enum" : [ "Active", "Deleted" ]
+        "enum" : [ "NotReviewed", "InReview", "Closed", "Deleted" ]
       },
       "ai.zylon.backend.server.app.issuetracker.IssueQueryIncludeFields" : {
         "enum" : [ "User" ]
@@ -6531,6 +6640,9 @@
           },
           "is_read" : {
             "type" : "boolean"
+          },
+          "state" : {
+            "$ref" : "#/components/schemas/ai.zylon.backend.server.app.issuetracker.IssueState"
           }
         }
       },
@@ -6568,6 +6680,8 @@
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
             }, {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+            }, {
+              "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
             } ]
           },
           "artifact_id" : {

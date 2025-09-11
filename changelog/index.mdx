@@ -7,46 +7,35 @@ title: "Changelog"
     
     Follow [this migration guide before updating.](/changelog/guides/1-43-0)
   </Danger>
+
+  ## Workspace
   
   ### ✨ Features
   - 🔎 **Omnisearch**: Now able to search for content inside Agent Flows and Knowledge Base Documents
     - Follow the [instructions to enable it](/changelog/guides/1-43-0#post-update)
-  - 📝 **Issue reporting**: New filters added to improve usability
+  - 📝 **Issue reporting**: Users can now report chats to admin organizations when encountering issues with Zylon's responses.
+
+  ![](/changelog/images/1.43.0/image1.png)
+  ![](/changelog/images/1.43.0/image2.png)
   ![](/changelog/images/1.43.0/issue_reporting_panel_filters.png)
-
-  ### 🐛 Bug Fixes
-  - Ensure project is loaded before navigating to the first chat
-  - Prevent user to access removed chats by url and show warning when trying to access deleted resources (chat, projects)
-</Update>
-
-<Update label="1.42.0" description="September 05, 2025">
-  ### ✨ Features
   - 🎨 **New Rendering Engine**: Faster & Smoother Chats with Zylon
     - Zylon can now understand and render Mermaid diagrams directly in the chat
     - Enhanced readability of code blocks for better clarity and visual appeal
     - Chat responses now render smoothly without causing formatting jumps during streaming
-  - 🔍 **Enhanced default chat behaviour**: Enforced use of semantic search when files are selected and no other tools are chosen
+  - 💬 **Enhanced default chat behaviour**: Enforced use of semantic search when files are selected and no other tools are chosen
   - 🔐 **Audit logs control**: Added the ability to turn off audit logs — follow the configuration guide to disable
 
+
   ### 🐛 Bug Fixes
+  - Ensure project is loaded before navigating to the first chat
+  - Prevent user to access removed chats by url and show warning when trying to access deleted resources (chat, projects)
   - Fixed an issue with breadcrumbs in Omnisearch that caused accessibility issues
   - Resolved an issue where numeric analysis was incorrectly disabled during document processing
   - Fixed navigation to deleted projects by clearing the last visited project if it no longer exists
   - Prevented users from navigating to deleted agent flows via Omnisearch
   - Fixed broken code blocks in streaming when the programming language wasn't detected
-</Update>
-
-<Update label="1.41.0" description="August 28, 2025">
-  ### ✨ Features
-
-  - 📝 **Issue reporting**: Users can now report chats to admin organizations when encountering issues with Zylon's responses.
-
-  ![](/changelog/images/1.41.0/image1.png)
-
-  ![](/changelog/images/1.41.0/image2.png)
-
-  ### 🛠️ Platform
-
+ 
+  ## 🛠️ Platform
   - Ingest: A unified endpoint for ingestion that supports text, files, and URIs, including support for asynchronous ingestion.
   - Reorganize the endpoint structure for better clarity by grouping related endpoints under a common base path.
 
@@ -54,6 +43,8 @@ title: "Changelog"
     If you are using the low-level API directly, please review carefully our [Developer Manual](https://docs.zylon.ai/api-reference/how-to-use)
   </Warning>
 </Update>
+
+
 
 <Update label="1.40.1" description="August 21, 2025">
   ### ✨ Features

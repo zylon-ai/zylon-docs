@@ -7,7 +7,8 @@ description: "A guide to install Zylon on a single instance"
 
 For a smooth sailing make sure you pass this checklist before you begin the installation:
 
-- The target machine is clean of any other software that can interfere with it. That means no docker, no kubernetes, http servers, no Nvidia drivers, etc. Also is important to disable automatic updates, since Nvidia drivers get compiled against the current kernel version and they need to be recompiled when the kernel gets updated.
+- The target machine is clean of any other software that can interfere with it.
+That means no docker, no kubernetes, http servers, no Nvidia drivers, etc.
 - The machine has stable and strong Internet connection
 - You can reboot the machine if needed
 - Your firewall is not blocking connections to any of these websites
@@ -16,6 +17,21 @@ For a smooth sailing make sure you pass this checklist before you begin the inst
 - \*.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
 - The machine has `curl` installed
 - You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
+
+<Danger>
+    **Kernel upgrades (like unattended updates) will break Nvidia drivers on every change!.**
+
+    To test if the drivers are working use `nvidia-smi` utility, it will display the status of your GPU(s) or
+    fail if the drivers are not working:
+
+    If drivers are not working properly they MUST be recompiled for the new kernel version, to do so run:
+    ```bash
+    sudo zylon-cli install-drivers --force
+    ```
+
+    An implicit kernel update might also happen after a restart of the machine when running in cloud
+    providers like AWS or Azure.
+</Danger>
 
 Once you have fulfilled the hardware requirements and have a domain ready it is time to install Zylon\!
 
@@ -69,7 +85,7 @@ node:
   arch: "x86_64"
   drivers: "generic"
 
-# Cluster type, this is the only 
+# Cluster type, this is the only
 # supported option for single instance installations
 cluster:
   type: "k0s"
@@ -84,9 +100,9 @@ license:
 # AI configuration, detailed information below.
 ai:
   preset: "baseline-24g"
-  
+
 # We will use this to identify your company in our anonymous metrics
-companyIdentifier: "your-company" 
+companyIdentifier: "your-company"
 
 # Enable anonymous metrics and crash reporting
 observability:
@@ -98,14 +114,14 @@ ingress:
   host: "zylon.your-company.com"
   enabled: true
   tlsEnabled: true
-  certManagerAnnotations: 
-    # If you plan to open the machine to the internet, SSL certificate 
+  certManagerAnnotations:
+    # If you plan to open the machine to the internet, SSL certificate
     # will be automatically generated using letsencrypt
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 ```
 
 <Tip>
-  For detailed Zylon instance configuration, refer to the [Configuration](/operator-manual/configuration/index) page.
+    For detailed Zylon instance configuration, refer to the [Configuration](/operator-manual/configuration/index) page.
 </Tip>
 
 ## Step 3: Prepare the machine
@@ -121,7 +137,8 @@ sudo zylon-cli setup
 Generally, you only need to run the setup once. Running it multiple times has no effect unless an update by Zylon team added a new dependency.
 
 <Tip>
-  It’s highly recommended to reboot the machine after this step is completed to ensure GPU drivers are properly loaded.
+    It’s highly recommended to reboot the machine after this step is completed to ensure GPU drivers are properly
+    loaded.
 </Tip>
 
 ## Step 4: Install Zylon
@@ -137,7 +154,8 @@ To update Zylon to a newer version, simply run this command again. You can do so
 If you modify your Zylon configuration file you will also need to run the update command again.
 
 <Note>
-  The initial installation of Zylon will take around 15 minutes to complete after the update command itself is completed.
+    The initial installation of Zylon will take around 15 minutes to complete after the update command itself is
+    completed.
 </Note>
 
 This is what is happening in the background:
@@ -156,7 +174,8 @@ watch sudo k0s kubectl get pods -n nvidia
 ```
 
 <Note>
-  If some service gets stuck in a ContainerCrashLoopBackOff for more than one hour contact us, the installation has failed.
+    If some service gets stuck in a ContainerCrashLoopBackOff for more than one hour contact us, the installation has
+    failed.
 </Note>
 
 ## Step 5: Prepare your organization
@@ -174,12 +193,12 @@ You will need:
 # Put a secure password!
 sudo zylon-cli seed --org-name "My Org" --admin-password "admin" --email-regex ".*@yourcompany\.com"
 
-# At seed time, if Zylon is not ready, 
+# At seed time, if Zylon is not ready,
 # this command will wait until it’s completed.
 ```
 
 <Danger>
-  **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle**
+    **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle**
 </Danger>
 
 The credentials to login to Zylon will be:

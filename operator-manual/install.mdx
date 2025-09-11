@@ -19,7 +19,7 @@ That means no docker, no kubernetes, http servers, no Nvidia drivers, etc.
 - You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
 
 <Danger>
-    **Kernel upgrades (like unattended updates) will break Nvidia drivers on every change!.**
+    **Kernel upgrades (like Ubuntu unattended upgrades) will break Nvidia drivers on every change!.**
 
     To test if the drivers are working use `nvidia-smi` utility, it will display the status of your GPU(s) or
     fail if the drivers are not working:

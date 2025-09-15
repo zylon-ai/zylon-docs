@@ -1,6 +1,26 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.44.0" description="September 15, 2025">
+  <Danger>
+    This update involves a 15-30 minutes of downtime.
+    Follow [this migration guide before updating.](/changelog/guides/1-43-0)
+  </Danger>
+## Workspace
+### ✨ Features
+- Enhanced Slides Extraction thanks to Vision Language Model (VLM). Please check alternatives presets to understand [how to configure and enable it](/operator-manual/configuration/ai-presets#vision-enabled-alternatives).
+  - Intelligent Content Understanding: Implemented VLM-powered extraction that can analyze and understand complex visual content including slides, diagrams, charts, and images.
+  - Contextual Analysis: VLM integration enables better comprehension of slide context, relationships between visual elements, and textual content within images.
+- Display the last update time for Agent Flows.
+
+### 🐛 Bug Fixes
+- Support exporting DOCX files with custom elements (e.g. citations, knowledge sources).
+- Resolved an issue where PDF exports had formatting problems with nested lists.
+- Fixed an issue with partial answer parsing during streaming.
+- Addressed an issue where the issue reporting panel displayed an empty date.
+- Resolved a display issue in the artifact linking modal on Microsoft Edge.
+
+</Update>
 <Update label="1.43.1" description="September 10, 2025">
   <Danger>
     This update involves a 15-30 minutes of downtime.

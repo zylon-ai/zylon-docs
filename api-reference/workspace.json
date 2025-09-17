@@ -12,7 +12,7 @@
   "paths" : {
     "/v1/auth/google/login" : {
       "get" : {
-        "tags" : [ "auth" ],
+        "tags" : [ "openid", "auth" ],
         "summary" : "OpenID login for Google",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -22,7 +22,7 @@
     },
     "/v1/auth/microsoft/login" : {
       "get" : {
-        "tags" : [ "auth" ],
+        "tags" : [ "openid", "auth" ],
         "summary" : "OpenID login for Microsoft",
         "description" : "Initiates the OpenID login flow for the specified provider.",
         "parameters" : [ ],
@@ -32,7 +32,7 @@
     },
     "/v1/auth/microsoft/callback" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID callback for Microsoft",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -195,7 +195,7 @@
                 "example" : {
                   "value" : {
                     "revoke_existing" : false,
-                    "valid_until" : "2026-09-15T11:00:41.341473977Z"
+                    "valid_until" : "2026-09-17T16:25:51.228143085Z"
                   }
                 }
               }
@@ -1678,6 +1678,14 @@
           },
           "required" : false
         },
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/app/chat/validate" : {
+      "post" : {
+        "tags" : [ ],
+        "parameters" : [ ],
         "responses" : { },
         "deprecated" : false
       }
@@ -4240,7 +4248,7 @@
     },
     "/v1/app/integration/confluence/callback" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID callback for Confluence",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -4250,7 +4258,7 @@
     },
     "/v1/app/integration/sharepoint/callback" : {
       "get" : {
-        "tags" : [ ],
+        "tags" : [ "openid" ],
         "summary" : "OpenID callback for SharePoint",
         "description" : "Handles the OpenID callback after authentication with the specified provider.",
         "parameters" : [ ],
@@ -4340,7 +4348,7 @@
             }
           },
           "created_at" : {
-            "type" : "number"
+            "type" : "string"
           }
         },
         "required" : [ "account_id", "created_at", "email", "id", "name", "org_id", "roles", "state" ]
@@ -4860,6 +4868,12 @@
           },
           "correlation_id" : {
             "type" : "string"
+          },
+          "tool_context" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.PGPTArtifact"
+            }
           }
         }
       },
@@ -4901,6 +4915,8 @@
           "propertyName" : "type"
         },
         "oneOf" : [ {
+          "$ref" : "#/components/schemas/binary"
+        }, {
           "$ref" : "#/components/schemas/file"
         }, {
           "$ref" : "#/components/schemas/image"
@@ -4917,6 +4933,42 @@
         }, {
           "$ref" : "#/components/schemas/tool_use"
         } ]
+      },
+      "binary" : {
+        "properties" : {
+          "data" : {
+            "type" : "string"
+          },
+          "mime_type" : {
+            "type" : "string"
+          },
+          "filename" : {
+            "type" : "string"
+          },
+          "start_timestamp" : {
+            "type" : "string"
+          },
+          "stop_timestamp" : {
+            "type" : "string"
+          },
+          "_meta" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              }, {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+              } ]
+            }
+          }
+        },
+        "required" : [ "data", "mime_type" ]
       },
       "file" : {
         "properties" : {
@@ -5456,6 +5508,92 @@
           }
         }
       },
+      "ai.zylon.koala.privategpt.PGPTArtifact" : {
+        "discriminator" : {
+          "propertyName" : "type"
+        },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/file"
+        }, {
+          "$ref" : "#/components/schemas/ingested_artifact"
+        }, {
+          "$ref" : "#/components/schemas/sql_database"
+        }, {
+          "$ref" : "#/components/schemas/text"
+        }, {
+          "$ref" : "#/components/schemas/uri"
+        } ]
+      },
+      "ingested_artifact" : {
+        "properties" : {
+          "context_filter" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ContextFilter"
+          }
+        },
+        "required" : [ "context_filter" ]
+      },
+      "ai.zylon.koala.privategpt.ContextFilter" : {
+        "properties" : {
+          "artifacts" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "collection" : {
+            "type" : "string"
+          },
+          "metadata_filter" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.MetadataFilter"
+            }
+          }
+        },
+        "required" : [ "artifacts", "collection" ]
+      },
+      "ai.zylon.koala.privategpt.MetadataFilter" : {
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.FilterOperator"
+          }
+        },
+        "required" : [ "key", "operator", "value" ]
+      },
+      "ai.zylon.koala.privategpt.FilterOperator" : {
+        "enum" : [ "==", ">", "<", "!=", ">=", "<=", "in", "nin" ]
+      },
+      "sql_database" : {
+        "properties" : {
+          "connection_string" : {
+            "type" : "string"
+          },
+          "schemas" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "ssl" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "connection_string" ]
+      },
+      "uri" : {
+        "properties" : {
+          "value" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "value" ]
+      },
       "ai.zylon.backend.server.app.project.UpdateProjectDTO" : {
         "properties" : {
           "name" : {
@@ -5591,6 +5729,9 @@
           },
           "created_by" : {
             "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+          },
+          "pgpt" : {
+            "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest"
           }
         },
         "required" : [ "created_at", "id", "project_id", "state", "user_input" ]

@@ -1,6 +1,26 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.45.1" description="September 17, 2025">
+
+## Workspace
+### ✨ Features
+- Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
+writing SQL queries.
+  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/customize#features)
+  - Learn how to use it with the [User Manual](/workspace-manual/tools/database-connector)
+- Agent Flow retry option: Manual retry option accessible through the Agent Flow menu, allowing users to restart failed workflows with a single click for quick recovery and continuation
+
+### 🐛 Bug Fixes
+
+- When adding new members to projects search finds users by email.
+- When the knowledge base had only processing files source selector showed 0 files instead of empty state.
+- Omnisearch finds folders correctly.
+
+## 🛠️ Platform
+- API Refactor: Enhanced ZGPT API with automatic context management and direct tool integration, streamlining development workflows through intelligent request handling
+
+</Update>
 <Update label="1.44.0" description="September 15, 2025">
   <Danger>
     This update involves a 15-30 minutes of downtime.
@@ -14,7 +34,7 @@ title: "Changelog"
 ### ✨ Features
 - Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/operator-manual/configuration/ai-presets#vision-enabled-alternatives). The brand new capabilities added are:
   - **Intelligent Content Understanding**: Implemented VLM-powered extraction that can analyze and understand complex visual content including slides, diagrams, charts, and images.
-  - **Contextual Analysi**s: VLM integration enables better comprehension of slide context, relationships between visual elements, and textual content within images.
+  - **Contextual Analysis**: VLM integration enables better comprehension of slide context, relationships between visual elements, and textual content within images.
 - Display the last update time for Agent Flows.
 
 ### 🐛 Bug Fixes

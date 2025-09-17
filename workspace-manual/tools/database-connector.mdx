@@ -1,6 +1,138 @@
 ---
-title: Database connector
-description: Run queries against your database from natural‑language.
+title: "Database connector"
+description: "Connect to your databases and ask questions about your data directly in chat"
 ---
 
-WIP
+## What is the database connector?
+
+The **Database Connector** lets you connect to your company's databases and ask questions about your data directly in chat. Instead of writing complex database queries, you can simply ask "How many customers do we have?" or "Show me last month's sales figures."
+
+<Warning>
+Ask your IT administrator to enable the Database Connector in your system configuration [with the Operator Manual](/operator-manual/customize#features)
+</Warning>
+
+## Connect to your database
+
+1. **Open any chat** where you want to use database information
+2. **Click the tool selector**
+3. **Select "Add connection to database"**
+4. **Enter your connection details** in the popup window
+
+<Frame>
+  <img src="/workspace-manual/tools/images/database_connector.png" alt="Connection popup window" />
+</Frame>
+
+### Connection strings made simple
+
+A connection string is like an address that tells the system where to find your database and how to access it. Your IT team can help you build the right connection string for your database.
+
+#### Supported database types
+
+- Microsoft SQL Server
+- PostgreSQL
+- MySQL
+
+
+#### Connection string
+<Warning>
+**Security Notes**:
+- Never share your connection strings with others
+- Use only the databases your IT team has approved
+- Make sure the user is read-only
+</Warning>
+
+Here's what each part means (ask your IT team for the correct values):
+
+
+```
+SQL Server: mssql+pyodbc://username:password@server:1433/database
+PostgreSQL: postgresql://username:password@server:5432/database  
+MySQL: mysql+mysqldb://username:password@server:3306/database
+```
+
+**Examples** 
+
+<CodeGroup>
+
+```sql Microsoft SQL Server
+mssql+pyodbc://sa:password123@server.company.com:1433/SalesDatabase
+
+mssql+pyodbc://dbuser:mypassword@192.168.1.50:1433/CustomerData
+
+mssql+pyodbc://localhost:1433/TestDB?TrustServerCertificate=yes
+```
+
+```sql PostgreSQL  
+postgresql://postgres:admin123@database.company.com:5432/company_data
+
+postgresql://user:password@10.0.0.25:5432/sales_db
+
+postgresql://localhost:5432/public_data
+```
+
+```sql MySQL
+mysql+mysqldb://root:password@mysql.company.com:3306/customer_info
+
+mysql+mysqldb://appuser:secret123@127.0.0.1:3306/inventory
+
+mysql+mysqldb://localhost:3306/reports
+```
+
+Remember: Replace `username`, `password`, `server`, and `database` with your actual values.
+
+</CodeGroup>
+
+
+
+
+## What you can do once connected
+
+After connecting, you can ask questions about your data:
+
+<Tabs>
+  <Tab title="Sales questions">
+    - How much revenue did we generate last month?
+    - Which products are selling best?
+    - Show me our top 10 customers
+  </Tab>
+  
+  <Tab title="Customer questions">
+    - How many new customers signed up this week?
+    - Which customers haven't ordered recently?
+    - What are our customers' most common locations?
+  </Tab>
+  
+  <Tab title="Inventory questions">
+    - What products are running below 10 units in stock? 
+    - Show me all products in the Electronics category
+    - Which items have never been sold?
+  </Tab>
+</Tabs>
+
+<Info>
+**Limitations**:
+- Queries automatically stop after 10 minutes
+- Due to context window limitations LLM final output could be returned in CSV
+- Some advanced database operations may not be available
+</Info>
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Can't connect to database">
+    **What you see**: "Connection failed" or "Can't reach database"
+    
+    **Try this**:
+    - Double-check your server address and port number
+    - Ask IT if the database server is running
+    - Make sure you're connected to the company network (VPN if working remotely)
+  </Accordion>
+
+  <Accordion title="Takes too long">
+    **What you see**: You are waiting a very long time for a result
+
+    **What can be happening**: Your query can be too complex, the model is trying to get the best data, etc
+
+    **Try this**:
+    - Make a simplier query to verify that the connection is ok
+  </Accordion>
+</AccordionGroup>

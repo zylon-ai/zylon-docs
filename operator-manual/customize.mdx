@@ -20,7 +20,7 @@ assistantName: "Daisy"
 
 ![Screenshot 2025-09-05 at 11.05.15.png](/images/Screenshot2025-09-05at11.05.15.png)
 
-### Custom Features
+### Custom Features <a id="features" />
 
 Zylon supports feature toggling, allowing you to enable or disable certain features on demand. This is managed through the `features` field in your configuration file.
 
@@ -30,12 +30,11 @@ Each feature can define its own set of keys to control behavior.
 features:
   audit:
     enabled: true
+  database:
+    enabled: false
 ```
 
-#### **Available Features**
-
-**Audit Log**
-
-- **Default**: Enabled by default.
-- **Enable/Disable**: Controlled through the `enabled` key.
-  - Set `enabled: true` to keep audit logs active.
+|Feature                     | Key        | Default | Values          | Description                                                  |
+| --------------------------- | ---------- | ------- | --------------- | ------------------------------------------------------------ |
+| **Audit Log**               | `audit`    | `true`  | `true \| false` |  Store Audit Log events & traces                              |
+| **Database tool connector** | `database` | `false` | `true \| false` | **Feature in Alpha**. Show database connector tool in chats. |

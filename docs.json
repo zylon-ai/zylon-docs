@@ -150,6 +150,13 @@
             ]
           },
           {
+            "group": "Examples",
+            "icon": "laptop-code",
+            "pages": [
+              "api-reference/examples/json-output"
+            ]
+          },
+          {
             "group": "ZylonGPT API",
             "icon": "terminal",
             "openapi": "/api-reference/pgpt.json"

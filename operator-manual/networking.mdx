@@ -1,0 +1,36 @@
+---
+title: "Advanced Networking"
+---
+
+## General networking
+
+Zylon Kubernetes cluster is based on k0s, which uses Calico as the default CNI (Container Network Interface).
+
+For a full reference of what port
+s need to be open in your firewall please refer to the official k0s documentation: https://docs.k0sproject.io/latest/networking/
+
+## Configure a proxy for the kubernetes cluster
+
+If your system is running in a local network that requires a proxy to access the internet you will need
+to configure it in the systemd service that runs the kubernetes cluster.
+
+On top of the regular /etc/environment file you will need to create a
+drop-in file for the k0scontroller service.
+
+The file should be located at:
+
+`/etc/systemd/system/k0scontroller.service.d/proxy.conf`
+
+```
+[Service]
+Environment="HTTP_PROXY=..."
+Environment="HTTPS_PROXY=..."
+Environment="NO_PROXY=..."
+```
+
+After you apply the changes, restart the k0scontroller service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart k0scontroller
+```

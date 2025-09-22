@@ -184,6 +184,7 @@
               "operator-manual/hardware-requirements",
               "operator-manual/install",
               "operator-manual/ports-and-dns",
+              "operator-manual/networking",
               "operator-manual/troubleshoot",
               "operator-manual/uninstall",
               "operator-manual/backup"

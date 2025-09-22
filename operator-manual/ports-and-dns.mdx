@@ -1,5 +1,5 @@
 ---
-title: Ports and DNS configuration
+title: Ports and DNS
 ---
 
 These ports **must be open** in order to make Zylon work:
@@ -24,7 +24,7 @@ The following requirements are needed for Zylon to work:
 - Choose a domain for Zylon, for example: `zylon.company.com.` A domain name is required for a secure connection.
 - Configure DNS entries so `zylon.company.com` point to the machine that has Zylon installed
 
-After you have installed Zylon in your environment some extra steps need to be performed to be able to access it over the internet (or VPN). 
+After you have installed Zylon in your environment some extra steps need to be performed to be able to access it over the internet (or VPN).
 
 Take this points into consideration:
 
@@ -33,7 +33,7 @@ Take this points into consideration:
 - You **MUST** configure SSL/HTTPS yourself or delegate Zylon to automatically do it for you
 - Do **NOT** activate SSL redirect unless you plan to provide custom SSL certificates.
 
-During the installation, a domain was chosen to be the entry point of Zylon. This will be used as the `host` parameter in the configuration (for example [`zylon.company.com`](http://zylon.company.com)) 
+During the installation, a domain was chosen to be the entry point of Zylon. This will be used as the `host` parameter in the configuration (for example [`zylon.company.com`](http://zylon.company.com))
 
 ```yaml
 # /var/zylon/zylon-conf.yaml

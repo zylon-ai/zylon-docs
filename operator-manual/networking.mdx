@@ -16,7 +16,6 @@ If your system operates within a local network that requires a proxy for interne
 you must configure the proxy settings in the systemd service running the Kubernetes cluster.
 In addition to setting the proxy variables in the
 /etc/environment file, create a drop-in configuration file for the k0scontroller service at:
-The file should be located at:
 
 `/etc/systemd/system/k0scontroller.service.d/proxy.conf`
 

@@ -87,6 +87,35 @@ These presets use smaller AI models to provide significantly larger context wind
 | `alternatives.baseline-48g-context` | 48GB                | Smaller model (Qwen 3 14B) |
 | `alternatives.baseline-96g-context` | 96GB                | Smaller model (Qwen 3 14B) |
 
+### 3.3 Experimental Presets
+
+<Warning>
+  Experimental presets are under active development and may not be stable. Use only in testing environments.
+</Warning>
+
+Experimental presets provide access to cutting-edge models and configurations that are being evaluated for future releases. These presets may have different performance characteristics or stability compared to baseline presets.
+
+| Preset                     | Required GPU Memory | Model Family | Status |
+| -------------------------- | ------------------- | ------------ | ------ |
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   |
+| `experimental.gemma3-24g`  | 24GB                | Gemma 3      | Alpha  |
+
+**Usage Example:**
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+```
+
+**Important Notes:**
+
+- Experimental presets may be removed or significantly changed between versions
+- Performance and stability are not guaranteed
+- Not recommended for production environments
+- May require additional configuration parameters
+
 **When to use context-optimized presets:**
 
 - Extended conversation sessions
@@ -138,7 +167,103 @@ ai:
 | 2x L4          | 24GB each             | 48GB       | `baseline-48g`     | `numGPUs: 2`  |
 | 4x RTX 4090    | 24GB each             | 96GB       | `baseline-96g`     | `numGPUs: 4`  |
 
-## 6. Deprecated Presets (Legacy Support)
+## 6. Customizing the Default Presets
+
+<Warning>
+  Custom configurations can cause system malfunction. Perform thorough testing before deployment.
+</Warning>
+
+Zylon supports custom model configurations for customers who need to use specialized LLM/Embeddings models. This advanced feature allows you to override the default models while maintaining system compatibility.
+
+### 6.1 Supported Model Families
+
+Zylon supports the following model families for custom configurations:
+
+1. **Qwen 3** - `https://huggingface.co/Qwen/Qwen3-14B` (default in baseline presets, or any model from the Qwen 3 family)
+2. **Mistral Small 3** - `https://huggingface.co/mistralai/Mistral-Small-24B-Instruct-2501`
+3. **Gemma 3** - `https://huggingface.co/google/gemma-3-12b-it` (or any from the Gemma 3 family)
+4. **Gemma 3n** - `https://huggingface.co/google/gemma-3n-E4B-it` (or any from the Gemma 3n family)
+5. **GPT-OSS** - `https://huggingface.co/openai/gpt-oss-20b` (or any from the GPT-OSS family)
+
+### 6.2 Custom Model Configuration
+
+To customize the models used by a preset, modify your `/etc/config/zylon-config.yaml` file by adding a `config` section with model specifications.
+
+**Basic Structure:**
+
+```yaml
+ai:
+  preset: "<preset>"
+  config:
+    models:
+      - id: llm
+        modelRepo: <huggingface-model-url>
+```
+
+**Default Models that Must Be Customized:**
+
+1. **`Primary LLM (id: llm)`** - This is the main language model that handles all text generation tasks
+2. **`Embeddings Model (id: embed)`** - This handles document embeddings and semantic search
+
+**Parameters:**
+
+| Parameter                 | Description                               | Required | Valid Values                  |
+| ------------------------- | ----------------------------------------- | -------- | ----------------------------- |
+| `id`                      | Model identifier                          | Yes      | llm, embed                    |
+| `name`                    | Custom model name                         | Yes      | string                        |
+| `type`                    | Model type                                | Yes      | llm, embedding                |
+| `contextWindow`           | Maximum context length                    | Yes      | integer                       |
+| `modelRepo`               | HuggingFace model path                    | Yes      | string                        |
+| `gpuMemoryUtilization`    | Fraction of GPU memory to use             | Yes      | 0.0-1.0                       |
+| `samplingParams`          | Default sampling parameters               | No       | SamplingParams                |
+| `reasoningSamplingParams` | Reasoning sampling parameters             | No       | SamplingParams                |
+| `tokenizer`               | HuggingFace tokenizer path (llms only)                | Yes      | string                        |
+| `promptStyle`             | Prompt formatting style (llms only)                   | Yes      | qwen, mistral, gemma, gpt-oss |
+| `supportReasoning`        | Enable reasoning capabilities (llms only) | No       | boolean                       |
+| `supportImage`            | Number of supported images (llms only)    | No       | integer                       |
+| `supportAudio`            | Number of supported audios (llms only)    | No       | integer                       |
+| `vectorDim`               | Vector dimensions (embeddings only)       | No       | integer                       |
+
+| Parameter           | Description                   | Range    |
+| ------------------- | ----------------------------- | -------- |
+| `temperature`       | Randomness in text generation | 0.0-2.0  |
+| `maxTokens`         | Maximum tokens in response    | 1-8192   |
+| `minP`              | Minimum probability threshold | 0.0-1.0  |
+| `topP`              | Nucleus sampling threshold    | 0.0-1.0  |
+| `topK`              | Top-K sampling limit          | 1-100    |
+| `repetitionPenalty` | Penalty for repeated tokens   | 1.0-2.0  |
+| `presencePenalty`   | Penalty for token presence    | -2.0-2.0 |
+| `frequencyPenalty`  | Penalty for token frequency   | -2.0-2.0 |
+
+### 6.3 Configuration Examples
+
+#### Example 1: Custom Fine-tuned GPT-OSS Model
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+  config:
+    models:
+      # Main LLM with custom fine-tuned model
+      - id: llm
+        modelRepo: "Jinx-org/Jinx-gpt-oss-20b-mxfp4"
+        tokenizer: "openai/gpt-oss-20b"
+```
+
+#### Example 2: Custom Qwen 3 with Different Parameters
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  config:
+    models:
+      - id: llm
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 4096
+```
+
+## 7. Deprecated Presets (Legacy Support)
 
 For customers that require older configurations, deprecated presets are available but not recommended for new installations.
 
@@ -152,7 +277,7 @@ For customers that require older configurations, deprecated presets are availabl
   Eventually, we can decide to remove completely a deprecated preset. Please be aware that it can happen.
 </Warning>
 
-## 7. Troubleshooting
+## 8. Troubleshooting
 
 **Engine fails to start with memory error:**
 

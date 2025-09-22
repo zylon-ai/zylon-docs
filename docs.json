@@ -208,14 +208,14 @@
               },
               "operator-manual/configuration/observability",
               "operator-manual/configuration/search",
-              "operator-manual/configuration/performance"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "operator-manual/customization/whitelabel",
-              "operator-manual/customization/experimental-features"
+              "operator-manual/configuration/performance",
+              {
+                "group": "Customization",
+                "pages": [
+                  "operator-manual/customization/whitelabel",
+                  "operator-manual/customization/experimental-features"
+                ]
+              }
             ]
           }
         ]

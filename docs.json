@@ -214,7 +214,8 @@
           {
             "group": "Customization",
             "pages": [
-              "operator-manual/customize"
+              "operator-manual/customization/whitelabel",
+              "operator-manual/customization/experimental-features"
             ]
           }
         ]

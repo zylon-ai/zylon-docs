@@ -200,29 +200,32 @@ ai:
         modelRepo: <huggingface-model-url>
 ```
 
-**Default Models that Must Be Customized:**
+#### Default Models that Must Be Customized:**
 
 1. **`Primary LLM (id: llm)`** - This is the main language model that handles all text generation tasks
 2. **`Embeddings Model (id: embed)`** - This handles document embeddings and semantic search
 
-**Parameters:**
+#### Parameters
 
-| Parameter                 | Description                               | Required | Valid Values                  |
-| ------------------------- | ----------------------------------------- | -------- | ----------------------------- |
-| `id`                      | Model identifier                          | Yes      | llm, embed                    |
-| `name`                    | Custom model name                         | Yes      | string                        |
-| `type`                    | Model type                                | Yes      | llm, embedding                |
-| `contextWindow`           | Maximum context length                    | Yes      | integer                       |
-| `modelRepo`               | HuggingFace model path                    | Yes      | string                        |
-| `gpuMemoryUtilization`    | Fraction of GPU memory to use             | Yes      | 0.0-1.0                       |
-| `samplingParams`          | Default sampling parameters               | No       | SamplingParams                |
-| `reasoningSamplingParams` | Reasoning sampling parameters             | No       | SamplingParams                |
-| `tokenizer`               | HuggingFace tokenizer path (llms only)                | Yes      | string                        |
-| `promptStyle`             | Prompt formatting style (llms only)                   | Yes      | qwen, mistral, gemma, gpt-oss |
-| `supportReasoning`        | Enable reasoning capabilities (llms only) | No       | boolean                       |
-| `supportImage`            | Number of supported images (llms only)    | No       | integer                       |
-| `supportAudio`            | Number of supported audios (llms only)    | No       | integer                       |
-| `vectorDim`               | Vector dimensions (embeddings only)       | No       | integer                       |
+| Parameter                 | Description                               | Valid Values                  |
+| ------------------------- | ----------------------------------------- | ----------------------------- |
+| `id`                      | Model identifier                          | llm, embed                    |
+| `name`                    | Custom model name                         | string                        |
+| `type`                    | Model type                                | llm, embedding                |
+| `contextWindow`           | Maximum context length                    | integer                       |
+| `modelRepo`               | HuggingFace model path                    | string                        |
+| `gpuMemoryUtilization`    | Fraction of GPU memory to use             | 0.0-1.0                       |
+| `samplingParams`          | Default sampling parameters               | SamplingParams                |
+| `reasoningSamplingParams` | Reasoning sampling parameters             | SamplingParams                |
+| `tokenizer`               | HuggingFace tokenizer path (llms only)    | string                        |
+| `promptStyle`             | Prompt formatting style (llms only)       | qwen, mistral, gemma, gpt-oss |
+| `supportReasoning`        | Enable reasoning capabilities (llms only) | boolean                       |
+| `supportImage`            | Number of supported images (llms only)    | integer                       |
+| `supportAudio`            | Number of supported audios (llms only)    | integer                       |
+| `vectorDim`               | Vector dimensions (embeddings only)       | integer                       |
+
+
+**Sampling parameters:**
 
 | Parameter           | Description                   | Range    |
 | ------------------- | ----------------------------- | -------- |

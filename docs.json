@@ -153,7 +153,8 @@
             "group": "Examples",
             "icon": "laptop-code",
             "pages": [
-              "api-reference/examples/json-output"
+              "api-reference/examples/json-output",
+              "api-reference/examples/stock_analysis"
             ]
           },
           {

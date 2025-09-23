@@ -198,7 +198,7 @@ if __name__ == '__main__':
         documents_artifact_ids.append(artifact_id)
         ingest_from_uri(artifact_id, file_url, ticker)
 
-    ## Generate, ingest and remove price CSV
+    # Generate, ingest and remove price CSV
     price_csv_path = generate_price_csv(ticker)
     price_artifact_id = str(uuid.uuid4())
     ingest_from_file(price_artifact_id, price_csv_path, ticker)

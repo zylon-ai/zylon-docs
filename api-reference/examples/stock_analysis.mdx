@@ -170,7 +170,7 @@ def extract_response_text(response: dict) -> str:
     Extract the main text response from the Zylon API response.
     """
     contents = response.get("content", [])
-    for item in reversed(contents):  # Busca desde el último para capturar la respuesta final
+    for item in reversed(contents):  # Extract content from the end
         if isinstance(item, dict) and "text" in item:
             return item["text"]
     return ""

@@ -100,7 +100,7 @@ def ingest_from_uri(
     )
 
 def send_chat_message(
-    queries: List[str],
+    query: str,
     collection_name: Optional[str] = None,
     artifact_ids: Optional[List[str]] = None,
     tools: Optional[List[Dict]] = None,
@@ -109,7 +109,7 @@ def send_chat_message(
     Send a chat message to Zylon using tools.
     """
     body = {
-            "messages": [{"role": "user", "content": queries[0]}],
+            "messages": [{"role": "user", "content": query}],
         }
     if artifact_ids and collection_name:
         tool_context = [
@@ -208,19 +208,19 @@ if __name__ == '__main__':
         "Total net sales in march 2025 and march 2024?",
     ]
 
-    reponses = []
+    responses = []
     for question in questions:
         response = send_chat_message(
         artifact_ids=documents_artifact_ids,
         collection_name=VECTOR_COLLECTION,
-        queries=questions,
+        query=question,
         tools=[
             {"name": "semantic_search", "type": "semantic_search_v1"},
         ])
-        reponses.append(format_tool_response(question, response))
+        responses.append(format_tool_response(question, response))
 
     print("========= Document Responses: =========")
-    for r in reponses:
+    for r in responses:
         print(r)
 
 
@@ -229,23 +229,23 @@ if __name__ == '__main__':
         "What is the day with the highest closing price?",
         "What is the day with the lowest closing price? Include only values not nan",
     ]
-    reponses_price = []
+    responses_price = []
     for question in questions_price:
         response = send_chat_message(
         artifact_ids=[price_artifact_id],
         collection_name=VECTOR_COLLECTION,
-        queries=[question],
+        query=question,
         tools=[
             {"name": "tabular_analysis", "type": "tabular_analysis_v1"},
         ])
-        reponses_price.append(format_tool_response(question, response))
+        responses_price.append(format_tool_response(question, response))
 
     print("========= Price Data Responses: =========")
-    for r in reponses_price:
+    for r in responses_price:
         print(r)
 
     ## Final query with all contexts
-    all_responses = reponses + reponses_price
+    all_responses = responses + responses_price
     prompt = """
     Given the following information extracted from company documents, earnings reports, and historical stock price data,
     ---
@@ -254,7 +254,7 @@ if __name__ == '__main__':
     Provide a concise summary of the key financial highlights and stock performance.
     """.format(responses="\n".join(all_responses))
     final_answer = send_chat_message(
-        queries=[prompt],
+        query=prompt,
     )
 
     print("========= Final Answer: =========")

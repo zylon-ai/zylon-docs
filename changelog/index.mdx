@@ -1,6 +1,28 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.46.1" description="September 24, 2025">
+  ## Workspace
+
+  ### ✨ Features
+
+  - **GPT-OSS Model Now Available**: You can now access our experimental GPT-OSS model in both 24GB and 48GB configurations, giving you more powerful AI capabilities for complex tasks. More information in [experimental presets](/operator-manual/configuration/ai-presets#3-3-experimental-presets).
+
+  ### 🐛 Bug Fixes
+
+  - Fixed issues where triton clients weren't properly removed after disconnection, preventing session conflicts.
+  - Resolved problems where tokenizer wasn't selected properly based on the model.
+  - Fixed a bug in Draft Agent Flow that caused unexpected crashes during creation.
+  - Fixed sync ingestion endpoint.
+  - Fixed a bug that could cause the LLM to get stuck in processing loops.
+  - Fixed a bug that prevented to create new agent flows when title failed to generate.
+  - Fixed a bug that allows to reuse an invalidated Triton client from pool
+
+  ## 🛠️ Platform
+
+  - You can now configure and use your own fine-tuned models while keeping all the original platform capabilities. This means you can customize AI behavior for your specific use cases without losing existing functionality. More information in [customizing the default presets](/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
+  - Fixed a bug that prevented Triton to load when the vision model was enabled.
+</Update>
 <Update label="1.45.1" description="September 17, 2025">
 
 ## Workspace

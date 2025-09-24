@@ -1,7 +1,7 @@
 ---
 title: "Changelog"
 ---
-<Update label="1.46.1" description="September 24, 2025">
+<Update label="1.46.2" description="September 24, 2025">
   ## Workspace
 
   ### ✨ Features
@@ -10,28 +10,31 @@ title: "Changelog"
 
   ### 🐛 Bug Fixes
 
-  - Fixed issues where triton clients weren't properly removed after disconnection, preventing session conflicts.
-  - Resolved problems where tokenizer wasn't selected properly based on the model.
-  - Fixed a bug in Draft Agent Flow that caused unexpected crashes during creation.
-  - Fixed sync ingestion endpoint.
-  - Fixed a bug that could cause the LLM to get stuck in processing loops.
-  - Fixed a bug that prevented to create new agent flows when title failed to generate.
-  - Fixed a bug that allows to reuse an invalidated Triton client from pool
+  - Improved connection stability and reliability.
+  - Fixed a bug that could cause crashes when setting up new Agents Flows.
+  - Fixed a rare issue that could cause the AI to get stuck while processing requests.
+  - Fixed a bug where new agent flows couldn’t be created if a title wasn’t generated automatically.
+  - The system now chooses the correct language model for each task more consistently.
+  - Fixed an issue that affected data syncing between systems.
+  - Fixed an issue that occasionally affected image interpretation in PPTX files. 
 
   ## 🛠️ Platform
 
-  - You can now configure and use your own fine-tuned models while keeping all the original platform capabilities. This means you can customize AI behavior for your specific use cases without losing existing functionality. More information in [customizing the default presets](/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
-  - Fixed a bug that prevented Triton to load when the vision model was enabled.
-</Update>
+  - Use your own AI models (if needed): You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. . More information in [customizing the default presets](/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
+  - Vision support improved: Fixed a bug that sometimes prevented AI tools from loading when visual (image) features were turned on.
+  - 
+  </Update>
 <Update label="1.45.1" description="September 17, 2025">
 
 ## Workspace
 ### ✨ Features
 - Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
 writing SQL queries.
-  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/customize#features)
-  - Learn how to use it with the [User Manual](/workspace-manual/tools/database-connector)
-- Agent Flow retry option: Manual retry option accessible through the Agent Flow menu, allowing users to restart failed workflows with a single click for quick recovery and continuation
+  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/customize#features).
+  - Learn how to use it with the [User Manual](/workspace-manual/tools/database-connector).
+- Agent Flow - New menu options for an enhanced user experience:
+  - Retry: Allows users to restart failed workflows with a single click.
+  - Duplicate: User is taken a new workflow prefilled with the same data as the original
 
 ### 🐛 Bug Fixes
 

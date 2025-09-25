@@ -3,9 +3,6 @@ title: "Database Query"
 description: "The database query tool is used to execute natural language queries against SQL databases and retrieve structured data results."
 ---
 
-import { Steps } from '@/components/Steps'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
 ## How it Works
 
 When you add the database query tool and the specified database context to your API request, Zylon follows these steps:
@@ -23,6 +20,7 @@ When you add the database query tool and the specified database context to your 
 - The tool automatically generates SQL queries from natural language - no SQL knowledge required.
 - Results contains the SQL query, and results. If the content is too long, it will create a CSV file.
 - SSL connections are supported through the `ssl` parameter in the tool context.
+- Detailed instructions on how to establish database connections [Database Connector documentation](/workspace-manual/tools/database-connector).
 
 ## Example Usage
 

@@ -1,0 +1,102 @@
+---
+title: "Web Extract"
+description: "The web extract tool is used to extract and analyze content from web pages by providing a URL directly in your message."
+---
+
+## How it Works
+
+When you add the web extract tool to your API request, Zylon follows these steps:
+
+1. **Identifies URLs**: Zylon analyzes your message content and identifies any URLs you want to extract information from.
+2. **Extracts web content**: Fetches and processes the content from the specified web page, converting it to a readable format.
+3. **Analyzes and responds**: Analyzes the extracted content and provides a comprehensive response based on your query.
+
+## Important Notes
+
+- To use this tool, you must specify the **type `web_extract_v1`**.
+- **No document ingestion required** - simply include the URL directly in your message content.
+- The tool automatically detects and extracts content from URLs mentioned in your messages.
+- No `tool_context` is needed for this tool.
+
+## Example Usage
+
+In this practical example, we extract and summarize content from a website by simply including the URL in our message.
+
+<Steps>
+<Step title="Perform Web Extract">
+    Send a request with your message containing the URL you want to analyze. The tool will automatically detect and extract content from the URL.
+    <Tabs>
+      <Tab title="Shell">
+        ```
+        curl --location 'https://<your-host>/api/gpt/v1/messages' \
+        --header 'Authorization: Bearer <your-token>' \
+        --header 'x-org: default' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "messages": [
+            {
+              "role": "user",
+              "content": "Summary this page: https://example.com/"
+            }
+          ],
+          "tools": [
+            {
+              "name": "web_extract",
+              "type": "web_extract_v1"
+            }
+          ],
+          "tool_choice": { "type": "auto" }
+        }'
+        ```
+      </Tab>
+    </Tabs>
+    </Step>
+<Step title="Response">
+    The system responds with the extracted web content and provides your requested analysis or summary:
+     ```
+      {
+        "id": "msg_47a25cb8b6e94b01ae817cdfab7ef39d",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+            {
+                "type": "tool_use",
+                "start_timestamp": "2025-09-24T14:10:23.716299Z",
+                "stop_timestamp": "2025-09-24T14:10:24.771260Z",
+                "id": "toolu_01997c0fa3637ea6a2bdf5935cb9483b",
+                "name": "web_extract",
+                "input": {
+                    "url": "https://example.com/"
+                }
+            },
+            {
+                "type": "tool_result",
+                "start_timestamp": "2025-09-24T14:10:26.336418Z",
+                "stop_timestamp": "2025-09-24T14:10:26.338059Z",
+                "tool_use_id": "toolu_01997c0fa3637ea6a2bdf5935cb9483b",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "# Example Domain\nThis domain is for use in illustrative examples in documents. You may use this domain in literature without prior coordination or asking for permission.\n[More information...](https://www.iana.org/domains/example)"
+                    }
+                ],
+                "is_error": false
+            },
+            {
+                "type": "text",
+                "start_timestamp": "2025-09-24T14:10:26.595942Z",
+                "stop_timestamp": "2025-09-24T14:10:29.634226Z",
+                "text": "The website at [https://example.com/](https://example.com/) is an example domain intended for use in illustrative examples in documents. It can be used in literature without needing prior coordination or permission. For more information, you can visit the provided link."
+            }
+        ],
+        "model": "private-gpt",
+        "stop_reason": "end_turn",
+        "stop_sequence": null,
+        "usage": {
+            "input_tokens": 503,
+            "output_tokens": 47
+        }
+    }
+     ```
+    </Step>
+</Steps>

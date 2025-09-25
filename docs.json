@@ -150,6 +150,28 @@
             ]
           },
           {
+            "group": "Tools",
+            "icon": "toolbox",
+            "pages": [
+              "api-reference/tools/introduction-to-tools",
+              {
+                "group": "Built-in",
+                "pages": [
+                  "api-reference/tools/built-in/semantic-search-tool",
+                  "api-reference/tools/built-in/tabular_analysis-tool",
+                  "api-reference/tools/built-in/web-extract-tool",
+                  "api-reference/tools/built-in/database-query-tool"
+                ]
+              },
+              {
+                "group": "Custom",
+                "pages": [
+                  "api-reference/tools/custom/custom-tools"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Examples",
             "icon": "laptop-code",
             "pages": [

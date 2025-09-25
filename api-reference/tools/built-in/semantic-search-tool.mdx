@@ -1,0 +1,166 @@
+---
+title: "Semantic Search"
+description: "The semantic search tool is used to search through documents that have been previously ingested."
+---
+
+## How it Works
+
+When you add the semantic search tool and the specified context to your API request, Zylon follows these steps:
+
+1. **Determines queries**: Zylon analyzes your question and determines what specific query or queries it should perform to search through the selected documents.
+2. **Performs semantic searches**: Executes searches using the tool against the ingested knowledge base.
+3. **Analyzes and responds**: Analyzes all obtained responses and returns a coherent answer with optional citations from found sources.
+
+## Important Notes
+
+- To use this tool, you must specify the **type `semantic_search_v1`**.
+- The `tool_context` must contain at least one artifact of type **`ingested_artifact`**.
+- Artifacts must have been previously ingested into the system.
+
+## Example Usage
+
+In this practical example, we upload an Apple financial document and then perform semantic queries on its content.
+
+<Steps>
+<Step title="Upload the Document">
+    First, we ingest the document we want to query into our system. In this case, we use Apple's Q2 FY25 financial report.
+    <Tabs>
+      <Tab title="Shell">
+        ```
+        curl --location 'https://<your-host>/api/gpt/v1/artifacts/ingest' \
+        --header 'Authorization: Bearer <your-token>' \
+        --header 'x-org: default' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "artifact": "cefdf840-c0cb-4ff5-98ac-897e79f4c68b",
+          "input": {
+            "value": "https://www.apple.com/newsroom/pdfs/fy2025-q2/FY25_Q2_Consolidated_Financial_Statements.pdf",
+            "type": "uri"
+          },
+          "collection": "stock_documents"
+        }'
+        ```
+      </Tab>
+    </Tabs>
+</Step>
+<Step title="Perform Semantic Search">
+    Once the document is processed, we perform the query by specifying messages, tools, context, and tool choice in the request body.
+    <Tabs>
+      <Tab title="Shell">
+        ```
+        curl --location 'https://<your-host>/api/gpt/v1/messages' \
+        --header 'Authorization: Bearer <your-token>' \
+        --header 'x-org: default' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "messages": [
+            {
+              "role": "user",
+              "content": "Total net sales in March 2025 and March 2024?"
+            }
+          ],
+          "tools": [
+            {
+              "name": "semantic_search",
+              "type": "semantic_search_v1"
+            }
+          ],
+          "tool_choice": { "type": "auto" },
+          "tool_context": [
+            {
+              "type": "ingested_artifact",
+              "context_filter": {
+                "collection": "stock_documents",
+                "artifacts": [
+                  "cefdf840-c0cb-4ff5-98ac-897e79f4c68b"
+                ]
+              }
+            }
+          ]
+        }'
+        ```
+      </Tab>
+    </Tabs>
+    </Step>
+<Step title="Response">
+    The system responds with the searches performed, the results found and the final answer:
+     ```
+      {
+        "id": "msg_1b3644e55d0d4f2da6397fd198a22869",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+            {
+                "type": "tool_use",
+                "start_timestamp": "2025-09-24T11:34:06.309697Z",
+                "stop_timestamp": "2025-09-24T11:34:09.614997Z",
+                "id": "toolu_01997b808ce57f979564f1bb01efa316",
+                "name": "semantic_search",
+                "input": {
+                    "query": "Total net sales in March 2025"
+                }
+            },
+            {
+                "type": "tool_result",
+                "start_timestamp": "2025-09-24T11:34:10.684899Z",
+                "stop_timestamp": "2025-09-24T11:34:10.688481Z",
+                "tool_use_id": "toolu_01997b808ce57f979564f1bb01efa316",
+                "content": [
+                    {
+                        "type": "source",
+                        "sources": [
+                            {
+                                "object": "context.chunk",
+                                "id": "9d7ba0b0-6bfb-4a9a-8f3a-a18ba3ae7330",
+                                "score": 0.6927993893623352,
+                                "document": {
+                                    "object": "ingest.document",
+                                    "artifact": "cefdf840-c0cb-4ff5-98ac-897e79f4c68b",
+                                    "doc_metadata": {
+                                        "file_name": "FY25_Q2_Consolidated_Financial_Statements.pdf",
+                                        "artifact_id": "cefdf840-c0cb-4ff5-98ac-897e79f4c68b",
+                                        "collection": "stock_documents"
+                                    }
+                                },
+                                "text": "## CONDENSED CONSOLIDATED ...",
+                                "content_type": "text/markdown",
+                                "previous_texts": [],
+                                "next_texts": [],
+                                "metadata": {
+                                    "page": 1,
+                                    "shorter_id": "J7SS",
+                                    "abs_idx": 43,
+                                    "rel_idx": 0,
+                                    "file_name": "FY25_Q2_Consolidated_Financial_Statements.pdf",
+                                    "artifact_id": "cefdf840-c0cb-4ff5-98ac-897e79f4c68b",
+                                    "collection": "stock_documents",
+                                    "score": 0.6927993893623352
+                                }
+                            },...
+                        ]
+                    },
+                    {
+                        "type": "text",
+                        "text": "**Context Information**:\nBelow is important information to help you provide the most accurate and relevant ...",
+                    }
+                ],
+                "is_error": false
+            },
+            {
+                "type": "text",
+                "start_timestamp": "2025-09-24T11:34:15.335210Z",
+                "stop_timestamp": "2025-09-24T11:34:18.284533Z",
+                "text": "The total net sales for March 2025 were $95,359 million, and for March 2024, they were $90,753 million."
+            }
+        ],
+        "model": "private-gpt",
+        "stop_reason": "end_turn",
+        "stop_sequence": null,
+        "usage": {
+            "input_tokens": 8121,
+            "output_tokens": 42
+        }
+    }
+     ```
+    </Step>
+</Steps>

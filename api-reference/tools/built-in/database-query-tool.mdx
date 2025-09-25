@@ -21,7 +21,7 @@ When you add the database query tool and the specified database context to your 
 - The `tool_context` must contain at least one **`sql_database`** with a valid **`connection_string`**.
 - You can use `/v1/messages/validate` to validate connectivity before.
 - The tool automatically generates SQL queries from natural language - no SQL knowledge required.
-- Results are returned in both human-readable format.
+- Results contains the SQL query, and results. If the content is too long, it will create a CSV file.
 - SSL connections are supported through the `ssl` parameter in the tool context.
 
 ## Example Usage

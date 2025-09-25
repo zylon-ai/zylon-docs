@@ -18,7 +18,8 @@ When you add the database query tool and the specified database context to your 
 ## Important Notes
 
 - To use this tool, you must specify the **type `database_query_v1`**.
-- The `tool_context` must contain a **`sql_database`** type with a valid **`connection_string`**.
+- The `tool_context` must contain at least one **`sql_database`** with a valid **`connection_string`**.
+- You can use `/v1/messages/validate` to validate connectivity before.
 - The tool automatically generates SQL queries from natural language - no SQL knowledge required.
 - Results are returned in both human-readable format.
 - SSL connections are supported through the `ssl` parameter in the tool context.

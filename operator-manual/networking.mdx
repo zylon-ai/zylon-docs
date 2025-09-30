@@ -33,3 +33,16 @@ and restart the k0scontroller service:
 sudo systemctl daemon-reload
 sudo systemctl restart k0scontroller
 ```
+
+The proxy configuration should also be the Zylon pods themselves
+since they download models and other resources from the internet as a
+one-time operation during installation or when new models are added.
+
+To do so, apply the env with kubectl:
+
+```bash
+kubectl set env -n zylon deploy --all \
+    HTTP_PROXY=... \
+    HTTPS_PROXY=... \
+    NO_PROXY=...
+```

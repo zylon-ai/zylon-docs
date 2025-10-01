@@ -8,7 +8,7 @@ The Zylon AI inferencing engine is the core component that runs artificial intel
 
 AI presets are pre-configured settings that optimize the AI models and memory allocation for your specific hardware setup. Each preset is carefully tuned to:
 
-- Load the appropriate AI model size for your GPU memory
+- Load the appropriate AI model size for your GPU/RAM memory
 - Allocate memory efficiently to prevent crashes
 - Balance performance with available resources
 - Enable specific capabilities when needed
@@ -64,8 +64,7 @@ ai:
   These presets are only available in Zylon versions later than v1.44.0.
 </Note>
 
-These presets include specialized computer vision capabilities in the ingestion pipeline, allowing the system to process and understand images, documents, and visual content.
-Useful for document digitization, image analysis or slide processing.
+These presets include specialized computer vision capabilities in the ingestion pipeline, allowing the system to process and understand images, documents, and visual content. Useful for document digitization, image analysis or slide processing.
 
 | Preset                             | Required GPU Memory | Trade-off                  |
 | ---------------------------------- | ------------------- | -------------------------- |
@@ -77,6 +76,10 @@ Useful for document digitization, image analysis or slide processing.
 - Processing scanned documents, necessity of slide understanding
 - Analyzing charts, graphs, and visual data
 - Image understanding and description tasks
+
+<Warning>
+  The use of these presets probably requires modifying the inference server's shared memory. Check [here](#8-shared-memory) how to do it
+</Warning>
 
 #### Context-Optimized Alternatives
 
@@ -225,7 +228,6 @@ ai:
 | `supportAudio`            | Number of supported audios (llms only)    | integer                       |
 | `vectorDim`               | Vector dimensions (embeddings only)       | integer                       |
 
-
 **Sampling parameters:**
 
 | Parameter           | Description                   | Range    |
@@ -277,11 +279,31 @@ For customers that require older configurations, deprecated presets are availabl
 
 **Example**: `deprecated.24g.20250710` for legacy 24GB configuration
 
+## 8. Shared memory
+
+Our Inference Server - aka Triton Inference Server - uses shared memory to enable zero-copy data transfer between Zylon services and the inference engine. This eliminates the overhead of serializing and deserializing data across process boundaries, significantly improving inference throughput and reducing latency for high-volume workloads.
+
+By default, the inference server allocates **2GB of RAM** for shared memory. This is sufficient for most text-based inference workloads, but you may encounter `Shared memory allocation failed` errors in scenarios such as:
+
+- **Large request queues**: When processing high volumes of concurrent requests, the queued input can exceed available shared memory
+- **Image-based models**: Vision workloads often require multiple megabytes per image. A batch of high-resolution images can quickly exhaust the default allocation
+
+### Updating Shared Memory Allocation
+
+To increase the shared memory limit, update Zylon configuration file and apply the changes.
+
+```yaml
+triton:
+  sharedMemory:
+    limit: "4Gi"  # Increase from default 2Gi
+```
+
 <Warning>
-  Eventually, we can decide to remove completely a deprecated preset. Please be aware that it can happen.
+  - Allocating excessive shared memory can cause the rest pods to be OOMKilled
+  - Be conservative with increases—start with small increments (e.g., 2Gi → 4Gi) and adjust based on observed metrics
 </Warning>
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 **Engine fails to start with memory error:**
 

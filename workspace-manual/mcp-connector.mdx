@@ -1,0 +1,50 @@
+--- 
+title: "MCP connector" 
+description: "Connect to remote MCP servers and use them directly in chat" 
+---
+
+## What is the MCP connector?
+
+The **MCP Connector** lets you connect to remote MCP servers and use them directly in chat. Instead of calling APIs manually, you can simply integrate the MCP server as a tool in your workspace.
+
+<Warning> 
+Ask your IT administrator to enable the MCP Connector in your system configuration [with the Operator Manual](/operator-manual/customize#features) 
+</Warning>
+
+## Connect to your MCP server
+
+1. **Open any chat** where you want to use MCP information  
+2. **Click the tool selector**  
+3. **Select "Add connection to MCP server"**  
+4. **Enter your connection details** in the popup window  
+
+<Frame>  
+  <img src="/workspace-manual/tools/images/database_connector.png" alt="Connection popup window" />  
+</Frame>  
+
+### Requirements
+
+Currently, only **remote MCP servers** are supported, and they must meet the following conditions:
+
+- **No authorization required** or **OAuth enabled**  
+- **CORS enabled**  
+- Must be accessible from the same network as Zylon (just like any other service Zylon needs to connect to)  
+
+Your IT team can help ensure your MCP server is properly exposed for integration.
+
+## What you can do once connected
+
+After connecting, you can use MCP server tools and data directly in chat, for example:
+
+- Query APIs exposed through the MCP server  
+- Run analysis tasks configured in the MCP server  
+- Retrieve structured data into your workspace conversations  
+
+<Info> 
+**Limitations**:  
+- Currently supports **remote MCP servers only**  
+- Some MCP servers wrap large APIs, so tool results can be very large and may **overflow the context window**  
+- Queries automatically stop after 10 minutes  
+</Info>
+
+

@@ -109,7 +109,8 @@
                   "workspace-manual/tools/introduction-to-tools",
                   "workspace-manual/tools/extended-thinking",
                   "workspace-manual/tools/numeric-analysis",
-                  "workspace-manual/tools/database-connector"
+                  "workspace-manual/tools/database-connector",
+                  "workspace-manual/tools/mcp-connector"
                 ]
               },
               "workspace-manual/group-chats"

@@ -4687,13 +4687,13 @@
         "enum" : [ "Initializing", "Processing", "Draft", "Deleted", "Published", "Unavailable", "Error" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactError" : {
-        "enum" : [ "Unknown", "InternalError", "MismatchedType", "InvalidExtension", "MaxNodes", "Malformed", "Encrypted", "NoValidFile", "NoValidNodes" ]
+        "enum" : [ "Unknown", "InternalError", "MismatchedType", "InvalidExtension", "ParsingFailure", "MaxNodes", "Malformed", "Encrypted", "NoValidFile", "NoValidNodes" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactIngestStatus" : {
         "enum" : [ "NotApplicable", "NotStarted", "Processing", "Parsing", "Storing", "Done", "Error" ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactWarning" : {
-        "enum" : [ "Unknown", "BigSize", "ExceedsRecommendedPages", "SpecialConfig", "NoContent", "UnprocessableContent", "DescendantHasError" ]
+        "enum" : [ "Unknown", "BigSize", "FallbackToPdfToText", "UsingVLMForExtraction", "ExceedsRecommendedPages", "SpecialConfig", "NoContent", "UnprocessableContent", "DescendantHasError" ]
       },
       "ai.zylon.backend.server.app.integration.UserIntegrationDTO" : {
         "properties" : {

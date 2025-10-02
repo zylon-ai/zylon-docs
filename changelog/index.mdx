@@ -1,6 +1,26 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.47.0" description="October 2, 2025">
+  ## Workspace
+
+  ### ✨ Features
+
+  - **Database Connector Improvements**: Now supports database views and provides richer contextual data, enabling the model to generate more accurate and grounded responses.
+  - **Customizable Top Users View**: Adjust the number of top users displayed in the Usage Dashboard to suit your organizational needs.
+  - **MCP Connector Integration**: You can now use MCP connectors in your Zylon instance.
+    - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/configuration/experimental-features).
+    - Learn how to use it with the [User Manual](/workspace-manual/tools/mcp-connector).
+
+  ### 🐛 Bug Fixes
+  - Enhanced stability and performance of file pickers across all application modules.
+  - Refined error handling mechanisms for improved user experience during edge cases.
+  - Enhanced collaboration features in shared chat environments for smoother teamwork.
+
+  ## 🛠️ Platform
+  - Resolved license validation issue in the Command Line Interface (CLI).
+</Update>
+
 <Update label="1.46.2" description="September 24, 2025">
   <Warning>
     A new CLI version is now available, featuring an improved update process that is more robust. The process now validates system readiness before proceeding and includes automatic self-repair capabilities when errors occur.
@@ -27,7 +47,7 @@ title: "Changelog"
 
   - Use your own AI models (if needed): You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. . More information in [customizing the default presets](/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
   - Vision support improved: Fixed a bug that sometimes prevented AI tools from loading when visual (image) features were turned on.
-  - 
+
   </Update>
 <Update label="1.45.1" description="September 17, 2025">
 

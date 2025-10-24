@@ -1684,8 +1684,21 @@
     },
     "/v1/app/chat/validate" : {
       "post" : {
-        "tags" : [ ],
+        "tags" : [ "chat" ],
+        "summary" : "Validate a chat request without executing it",
+        "description" : "Validates the given chat request and returns whether it is valid or not along with any validation errors or warnings",
         "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The chat request to validate",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest"
+              }
+            }
+          },
+          "required" : false
+        },
         "responses" : { },
         "deprecated" : false
       }
@@ -4553,7 +4566,7 @@
             "type" : "boolean"
           }
         },
-        "required" : [ "deadline", "default_member_role", "default_role_enabled", "id", "member_count", "name", "visibility" ]
+        "required" : [ "deadline", "default_member_role", "default_role_enabled", "id", "name", "visibility" ]
       },
       "ai.zylon.backend.server.app.project.member.ProjectMemberRole" : {
         "enum" : [ "Viewer", "Commenter", "Editor", "Admin", "Owner" ]

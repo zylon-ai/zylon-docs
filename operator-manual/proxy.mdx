@@ -1,0 +1,49 @@
+---
+title: "Proxy"
+---
+
+<Tip>
+Proxy support is available starting from Zylon 1.48 and CLI version 1.23
+</Tip>
+
+## Configure Zylon to run behind a proxy
+
+If your Zylon installation is running in a LAN network that requires a proxy for internet access,
+you must configure the proxy settings in the Zylon configuration file.
+
+These three lines must be added to the `/etc/zylon/zylon-conf.yaml` file under the `proxy` section.
+
+If the proxy is modifying SSL certificates, you must also add the custom CA certificate in the
+`crt` field, otherwise, you omit it.
+```yaml
+proxy:
+  enabled: true
+  httpProxy: "http://your-proxy-address:port"
+  httpsProxy: "http://your-proxy-address:port"
+  noProxy: "your,no,proxy,exceptions"
+  # Optional: only if your proxy modifies SSL certificates
+  crt: |-
+    -----BEGIN CERTIFICATE-----
+    MIIDoTCCAomgAwIBAgIGEAHcBPNvMA0GCSqGSIb3DQEBCwUAMCgxEjAQBgNVBAMM
+    ...
+    ipRF9TO2AlABfLmTR7uN8o0Opc92
+    -----END CERTIFICATE-----
+```
+
+To obtain your proxy CA certificate, you can run the following command:
+```bash
+echo | openssl s_client -showcerts -connect your-proxy-address:port 2>/dev/null | openssl x509
+```
+
+After applying the proxy changes, run `sudo zylon-cli update` to apply the changes.
+
+Additionally, if the cluster was already running before applying the proxy settings, you must
+restart the k0s controller to apply the proxy settings to the kubernetes cluster itself as well as
+recreate the Zylon pods to apply the proxy settings to them.
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart k0scontroller
+# Wait a few seconds until the cluster starts again
+kubectl delete pods -n zylon --all
+```

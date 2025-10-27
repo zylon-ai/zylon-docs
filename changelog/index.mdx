@@ -1,6 +1,28 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.48.1" description="October 27, 2025">
+  ## 🛠️ Platform
+  ### Features
+  - Zylon now offers proxy support. Learn more about it [here](/operator-manual/proxy).
+  - Introduced a Status page that provides information about the overall system health at `https://your-zylon-instance.com/status`
+  ### Bug Fixes
+  - Stability improvement for long chats: Fixed crashes that occurred when reducing the context window size.
+  - Improved system performance during stress tests.
+  - Increased the number of allowed database connections.
+
+  ## Workspace
+  ### 🐛 Bug Fixes
+  - Database Connector: now supports all SQL column types.
+  - Analytics Dashboard: Improved weekly reporting accuracy.
+  - Issue Dashboard:
+    - Full chat content is now shown when reporting an issue.
+    - Added the ability to clear the date filter.
+  - Agent flow:
+    - Fixed a problem that prevented using Zylon AI as a source for creating draft flow.
+    - Allowed the use of double quotes in questions for the Bulk Q&A flow.
+
+</Update>
 <Update label="1.47.1" description="October 3, 2025">
   ## Workspace
 
@@ -56,7 +78,7 @@ title: "Changelog"
 ### ✨ Features
 - Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
 writing SQL queries.
-  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/customize#features).
+  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/configuration/experimental-features).
   - Learn how to use it with the [User Manual](/workspace-manual/tools/database-connector).
 - Agent Flow - New menu options for an enhanced user experience:
   - Retry: Allows users to restart failed workflows with a single click.

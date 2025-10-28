@@ -96,19 +96,34 @@ registry.k8s.io/sig-storage/csi-resizer:v1.8.0
 registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0
 registry.k8s.io/sig-storage/snapshot-controller:v8.2.0
 ```
+## Requistes
+You are required to have a local Zylon License in case `api.replicated.com` cannot be reached during operation time.
+To obtain your local Zylon License, please reach out to Zylon team.
 
-### Update process in a semi-airgapped environment
+## Enable semi-airgapped environment
+Add to the configuration file located in `/etc/zylon/zylon-conf.yaml` the following snippet:
+```yaml
+airgap:
+  offline_operation: true
+```
+
+In case you need the local license add the `type` and `data` properties to the `license` block in the configuration file.
+```yaml
+license:
+  email: "dev@zylon.ai" // remains as it was
+  id: "2xo..." // remains as it was
+  type: "Zylon"
+  data: |-
+    eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVC.eyJhdWQiOiJ6eWxvbi5haSIsImlzcyI6Inp5bG9uLmF
+    pIiwic3ViIjoibWdhcmNpYUBiYW5zaS5jb20ubXgiLCJpYXQiOjE3NjEzMTYxMDcsImV4cCI6MTc5
+    ...
+    YWA9VSHEGmsoxFn85i0
+```
+## Update process in a semi-airgapped environment
 
 For all practical purposes, the update process is the same as the installation process,
 so the same requirements apply. (Note that only the incremental updates will be downloaded during the
-update process).
+update process). This means, internet connectivity towards the mentioned domains.
 
-### Internet connection during operation
 
-Zylon only requires internet connection for license verification, for that reason
 
-The host `api.replicated.com` must be reachable at all times.
-
-If you plan to run Zylon
-fully offline after installation, an offline license must be obtained from the Zylon team,
-contact us for more information.

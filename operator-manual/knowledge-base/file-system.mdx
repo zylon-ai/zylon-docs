@@ -6,7 +6,7 @@ title: "Samba File System"
 
 To integrate Zylon with your on-premises Samba file server, you need the server’s connection details (host, port, share name) and valid credentials. This guide explains how to configure Zylon to use Samba for file system integration within your local networ. You’ll need:
 
-- **Host or IP address** of the Sacmba server (e.g. `files.example.com` or `192.168.1.50`).
+- **Host or IP address** of the Samba server (e.g. `files.example.com` or `192.168.1.50`).
 - **Port** on which SMB is listening (default is `445`; if you run on a non-standard port, note it).
 - **Share (root) name** (e.g. `zylon-samba`).
 - **Credentials** (username & password) that have **read** access to that share.
@@ -65,8 +65,6 @@ integration:
     host: "YOUR_HOST_OR_IP"   # e.g. "files.example.com" or "192.168.1.50"
     port: 445                 # Swap your port if not configured has default
     name: "ROOT_PATH"
-    username: "SAMBA_USERNAME"
-    password: "SAMBA_PASSWORD"
 ```
 
 - **host** → The hostname or IP address where your Samba server is reachable.

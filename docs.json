@@ -85,7 +85,7 @@
                 "pages": [
                   "workspace-manual/connectors/sharepoint",
                   "workspace-manual/connectors/confluence",
-                  "workspace-manual/connectors/ftp",
+                  "workspace-manual/connectors/file-system",
                   "workspace-manual/connectors/claromentis"
                 ]
               }

@@ -46,3 +46,12 @@ kubectl set env -n zylon deploy --all \
     HTTPS_PROXY=... \
     NO_PROXY=...
 ```
+
+## Change Server IP after Zylon has been installed
+In case you need to move the server where Zylon is installed to a different IP address, there is a change that needs to be done.
+
+1. Stop the K0s cluster: `sudo k0s stop`
+2. Edit the file  `/var/lib/k0s/kubelet.conf` and replace the old IP for the new IP
+3. Reboot the machine
+4. Start K0s in case it has not been started: `sudo k0s start`
+5. Run `sudo zylon-cli update`

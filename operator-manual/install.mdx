@@ -11,10 +11,10 @@ For a smooth sailing make sure you pass this checklist before you begin the inst
 That means no docker, no kubernetes, http servers, no Nvidia drivers, etc.
 - The machine has stable and strong Internet connection
 - You can reboot the machine if needed
-- Your firewall is not blocking connections to any of these websites
-- huggingface.co
-- [sentry.io](http://sentry.io) (if you opt-in to send us crash reports)
-- \*.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
+- Your firewall is not blocking connections to any of these websites:
+  - huggingface.co
+  - [sentry.io](http://sentry.io) (if you opt-in to send us crash reports)
+  - \*.grafana.net (if you opt-in to send us anonymous & aggregated observability metrics)
 - The machine has `curl` installed
 - You have a domain for Zylon ready (ex: zylon.your-company.com), and a valid SSL certificate for that domain
 
@@ -62,21 +62,34 @@ Run `sudo zylon-cli help` to get a list of all the commands\!
 
 ## Step 2: Generate a configuration file for your Zylon installation
 
-Zylon is configured with a yaml file which needs to be located in `/etc/zylon/zylon-conf.yaml`
+Zylon is configured with a YAML file located at `/etc/zylon/zylon-conf.yaml`.
 
-You will need to generate this file by yourself. To generate the template for the configuration file use the CLI:
+### Generate the Configuration Template
 
+Use the Zylon CLI to generate a configuration template:
 ```bash
 sudo zylon-cli config
 ```
 
-It will output a template you must fill with your client information in the right location.
+This outputs a template that you must populate with your specific values and save to `/etc/zylon/zylon-conf.yaml`.
 
-Open your editor of choice and replace all placeholders with the right values.
+### Configuration Parameters
 
-Some items, like your license ID, and some tokens should have been provided by the Zylon team ahead of time, just paste them in place.
+Fill in each required parameter using the values that match your environment:
 
-An example configuration file looks like the following yaml file
+| Parameter | Set to... | Options |
+|-----------|-----------|---------|
+| `node.distro` | Your OS version | `ubuntu22`, `ubuntu24` |
+| `node.arch` | Your CPU architecture | `x86_64`, `arm64` |
+| `node.drivers` | Your hardware type | `generic` |
+| `cluster.type` | `k0s` | Only `k0s` supported |
+| `channel` | `stable` | `stable` (recommended), `unstable` |
+| `license.email` | Your registered email | Provided during registration |
+| `license.id` | Your license key | Received from Zylon team via email |
+| `ai.preset` | Your hardware capacity | [See AI Presets →](http://localhost:3090/operator-manual/configuration/ai-presets) |
+| `companyIdentifier` | Your company name | e.g., `acme-corp` |
+| `ingress.host` | Your domain | e.g., `zylon.company.com` |
+| `ingress.enabled` | `true` | Must be `true` |
 
 ```yaml
 # Machine configuration, this is the only supported option

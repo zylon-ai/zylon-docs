@@ -4,7 +4,9 @@ title: "Performance tweaks"
 
 ## Docling
 
-To fine-tuning the machine resources, and be able to use all machine resources in ingestion process, we provide the following configuration to configure based on the machine:
+To fine-tune the machine resources, and be able to use all machine resources in ingestion process, we provide the following configuration to configure based on the machine:
+
+### Performance Configuration
 
 1. **Number of workers**: This is the configuration that determines how many workers Docling will have. We recommend leaving it at 2, where 1 worker will process large files and the other will process smaller files.
 2. **Number of threads**: This configuration will be used to limit the capacity that our internal extraction service will use. Consider that this number should be lower to the maximum cores that machine has.
@@ -15,7 +17,26 @@ In case you want to test and improve the performance, consider configure as:
 
 ```yaml
 external:
-	docling:
-        numWorkers: M
-		numThreads: N
+  docling:
+    numWorkers: M
+    numThreads: N
+```
+
+### Optional Configuration
+
+1. **Table mode**: Controls the table extraction strategy:
+   - `accurate`: Maximum precision for complex tables. Higher processing time. Default option.
+   - `fast`: Optimized for speed with good accuracy. Lower processing time.
+   - `none`: Disables table extraction. No processing time.
+
+2. **Do cell matching**: Enables matching of table cells to improve structure recognition. Recommended for complex tables. By default is `true`.
+
+3. **Force full page OCR**: Forces OCR processing on entire pages instead of selective regions. Use when standard extraction misses content. This will increase the processing time significantly. By default is `false`.
+
+```yaml
+external:
+  docling:
+    tableMode: "accurate"
+    doCellMatching: true
+    forceFullPageOCR: false
 ```

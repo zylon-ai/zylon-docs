@@ -84,8 +84,8 @@
     "/v1/auth/register" : {
       "post" : {
         "tags" : [ "auth" ],
-        "summary" : "Register a new account",
-        "description" : "Register a new account with email and password.",
+        "summary" : "Create a new account",
+        "description" : "Create a new account with email and password.",
         "parameters" : [ ],
         "requestBody" : {
           "description" : "Create a new account with email and password",
@@ -98,7 +98,8 @@
                 "example" : {
                   "value" : {
                     "email" : "admin",
-                    "password" : "password123"
+                    "password" : "password123",
+                    "roles" : [ ]
                   }
                 }
               }
@@ -147,6 +148,49 @@
               "text/plain" : {
                 "schema" : {
                   "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/account/{accountId}/reset-password" : {
+      "post" : {
+        "tags" : [ "account" ],
+        "summary" : "Reset account password",
+        "description" : "Reset the account password for a given account ID. Regular hierarchy applies: SuperAdmin > Admin > others.",
+        "parameters" : [ {
+          "name" : "accountId",
+          "in" : "path",
+          "description" : "The ID of the account to reset the password",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "No body required for this operation",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "description" : "Nothing"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The account details",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.ResetAccountPasswordDTO"
                 }
               }
             }
@@ -249,20 +293,197 @@
         "deprecated" : false
       }
     },
-    "/v1/account/me" : {
+    "/v1/account/{accountId}" : {
       "get" : {
         "tags" : [ "account" ],
-        "summary" : "Get current user account",
-        "description" : "Get the account details of the currently authenticated user",
-        "parameters" : [ ],
+        "summary" : "Get account by ID",
+        "description" : "Get the account details for the specified account ID",
+        "parameters" : [ {
+          "name" : "accountId",
+          "in" : "path",
+          "description" : "The ID of the account to retrieve",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "The account details of the current user",
+            "description" : "The account details",
             "headers" : { },
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AccountDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      },
+      "post" : {
+        "tags" : [ "account" ],
+        "summary" : "Update account information",
+        "description" : "Update the account information for the specified account ID",
+        "parameters" : [ {
+          "name" : "accountId",
+          "in" : "path",
+          "description" : "The ID of the account to update",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The updated account information",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.UpdateAccountDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The updated account details",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AccountDTO"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/account/me" : {
+      "put" : {
+        "tags" : [ "account" ],
+        "summary" : "Update current user's account information",
+        "description" : "Update the current user's account information. At this moment only password change is available.Only the account owner can use this endpoint.",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The updated account information.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.SelfUpdateAccountDTO"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : { },
+        "deprecated" : false
+      }
+    },
+    "/v1/account" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "Get a list of accounts",
+        "description" : "Get a list of accounts in the system",
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "description" : "The absolute page number to fetch (1-based).",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "Number of items per page. Default is 20.",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "page_order",
+          "in" : "query",
+          "description" : "Sort order for pagination. Options: ASC, DESC. Default is ASC.",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor or value to paginate after (for relative pagination).",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "The cursor or value to paginate before (for relative pagination).",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "first",
+          "in" : "query",
+          "description" : "Limits the result to the first N items (after cursor).",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "last",
+          "in" : "query",
+          "description" : "Limits the result to the last N items (before cursor).",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "total_count",
+          "in" : "query",
+          "description" : "Include the total count in the response.",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of accounts",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ai.zylon.backend.server.app.account.AccountDTO"
+                  }
                 }
               }
             }
@@ -4318,6 +4539,12 @@
             "items" : {
               "$ref" : "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
             }
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
+            }
           }
         },
         "required" : [ "email", "id", "name", "provider" ]
@@ -4370,7 +4597,7 @@
         "enum" : [ "Active", "Inactive" ]
       },
       "ai.zylon.backend.core.authorization.RoleName" : {
-        "enum" : [ "AppGuest", "AppMember", "AppAdmin", "AppOwner", "SuperAdmin", "AccountOwner" ]
+        "enum" : [ "AppGuest", "AppMember", "AppAdmin", "AppOwner", "Basic", "Developer", "Admin", "SuperAdmin" ]
       },
       "ai.zylon.backend.server.app.account.CreateCredentialsAccountDTO" : {
         "properties" : {
@@ -4379,12 +4606,29 @@
           },
           "password" : {
             "type" : "string"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
+            }
           }
         },
         "required" : [ "email", "password" ]
       },
+      "ai.zylon.backend.server.app.account.ResetAccountPasswordDTO" : {
+        "properties" : {
+          "new_password" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "new_password" ]
+      },
       "ai.zylon.backend.core.authentication.token.ApiTokenDTO" : {
         "properties" : {
+          "name" : {
+            "type" : "string"
+          },
           "token" : {
             "type" : "string"
           },
@@ -4408,11 +4652,35 @@
       },
       "ai.zylon.backend.core.authentication.token.CreateApiTokenDTO" : {
         "properties" : {
+          "name" : {
+            "type" : "string"
+          },
           "revoke_existing" : {
             "type" : "boolean"
           },
           "valid_until" : {
             "type" : "string"
+          }
+        }
+      },
+      "ai.zylon.backend.server.app.account.SelfUpdateAccountDTO" : {
+        "properties" : {
+          "current_password" : {
+            "type" : "string"
+          },
+          "new_password" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "current_password", "new_password" ]
+      },
+      "ai.zylon.backend.server.app.account.UpdateAccountDTO" : {
+        "properties" : {
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.backend.core.authorization.RoleName"
+            }
           }
         }
       },
@@ -4566,7 +4834,7 @@
             "type" : "boolean"
           }
         },
-        "required" : [ "deadline", "default_member_role", "default_role_enabled", "id", "name", "visibility" ]
+        "required" : [ "default_member_role", "default_role_enabled", "id", "name", "visibility" ]
       },
       "ai.zylon.backend.server.app.project.member.ProjectMemberRole" : {
         "enum" : [ "Viewer", "Commenter", "Editor", "Admin", "Owner" ]
@@ -5498,6 +5766,12 @@
           },
           "citations" : {
             "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.System.Citations"
+          },
+          "extensions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ai.zylon.koala.privategpt.ChatRequest.SystemExtensions"
+            }
           }
         }
       },
@@ -5513,6 +5787,9 @@
             }
           }
         }
+      },
+      "ai.zylon.koala.privategpt.ChatRequest.SystemExtensions" : {
+        "enum" : [ "zylon" ]
       },
       "ai.zylon.koala.privategpt.ChatRequest.Thinking" : {
         "properties" : {
@@ -5882,6 +6159,8 @@
         }, {
           "$ref" : "#/components/schemas/message_stop"
         }, {
+          "$ref" : "#/components/schemas/ping"
+        }, {
           "$ref" : "#/components/schemas/content_block_synthetic"
         } ]
       },
@@ -6131,6 +6410,7 @@
         "required" : [ "message" ]
       },
       "message_stop" : { },
+      "ping" : { },
       "content_block_synthetic" : {
         "properties" : {
           "block_id" : {

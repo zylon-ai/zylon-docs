@@ -1,28 +1,44 @@
 ---
 title: "Changelog"
 ---
+<Update label="1.49.1" description="November 18, 2025">
+## 💼 Workspace
+### ✨ Features
+- **CSV Bulk User Upload** - Upload multiple users at once with integrated seat control management
+- **Password Reset** - Improved password reset functionality
+- **Developer Mode** - Introducing Zylon Developer Mode with enhanced capabilities for technical users
+    - **Token Management** - Developers and Zylon admins can now manage their API tokens directly in the workspace
+### 🐛 Bug Fixes
+- Centered search bar on Issue tracker for better usability
+- Viewers are now forbidden from downloading files
+
+## 🛠️ Platform
+### ✨ Features
+- **Anthropic API Compatibility** - Platform now supports Anthropic-compatible API endpoints
+- **vLLM Metrics** - Added comprehensive metrics to vLLM v1 for better monitoring and performance tracking
+</Update>
+
 <Update label="1.48.2" description="October 30, 2025">
   ## 🛠️ Platform
-  ### Bug Fixes
+  ### 🐛 Bug Fixes
   - Status Page:
     - Now it requires login to be accessed.
-
-  ## Workspace
+## 💼 Workspace
   ### 🐛 Bug Fixes
   - Enhanced Omnisearch stability when working with linked files.
 
 </Update>
 <Update label="1.48.1" description="October 27, 2025">
   ## 🛠️ Platform
-  ### Features
+  ### ✨ Bug Fixes
   - Zylon now offers proxy support. Learn more about it [here](/operator-manual/proxy).
   - Introduced a Status page that provides information about the overall system health at `https://your-zylon-instance.com/status`
-  ### Bug Fixes
+  ### 🐛 Bug Fixes
   - Stability improvement for long chats: Fixed crashes that occurred when reducing the context window size.
   - Improved system performance during stress tests.
   - Increased the number of allowed database connections.
 
-  ## Workspace
+  ## 💼 Workspace
   ### 🐛 Bug Fixes
   - Database Connector: now supports all SQL column types.
   - Analytics Dashboard: Improved weekly reporting accuracy.
@@ -35,7 +51,7 @@ title: "Changelog"
 
 </Update>
 <Update label="1.47.1" description="October 3, 2025">
-  ## Workspace
+  ## 💼 Workspace
 
   ### ✨ Features
 
@@ -61,7 +77,7 @@ title: "Changelog"
     You must to download the new version running sudo zylon-cli self-update.
   </Warning>
   
-  ## Workspace
+  ## 💼 Workspace
 
   ### ✨ Features
 
@@ -85,7 +101,7 @@ title: "Changelog"
   </Update>
 <Update label="1.45.1" description="September 17, 2025">
 
-## Workspace
+## 💼 Workspace
 ### ✨ Features
 - Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
 writing SQL queries.
@@ -114,7 +130,7 @@ writing SQL queries.
 ## 🛠️ Platform
 - Zylon becomes multimodal! Now our platform is able to manage several AI models running in parallel within the same instance.
 
-## Workspace
+## 💼 Workspace
 ### ✨ Features
 - Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/operator-manual/configuration/ai-presets#vision-enabled-alternatives). The brand new capabilities added are:
   - **Intelligent Content Understanding**: Implemented VLM-powered extraction that can analyze and understand complex visual content including slides, diagrams, charts, and images.
@@ -136,7 +152,7 @@ writing SQL queries.
     Follow [this migration guide before updating.](/changelog/guides/1-43-0)
   </Danger>
 
-  ## Workspace
+  ## 💼 Workspace
   
   ### ✨ Features
   - 🔎 **Omnisearch**: Now able to search for content inside Agent Flows and Knowledge Base Documents
@@ -196,7 +212,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.39.0" description="August 12, 2025">
-  ### Features
+  ### ✨ Bug Fixes
 
   - Users can now create folder in knowledge base
   - Users can now move folders and files inside knowledge base via Drag and Drop
@@ -205,7 +221,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.38.0" description="August 8, 2025">
-  ### Features
+  ### ✨ Bug Fixes
 
   - New Agent Flow. Read & Extract.
 
@@ -215,7 +231,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.37.1" description="August 7, 2025">
-  ### Features
+  ### ✨ Bug Fixes
 
   - Export Agent Flow to PDF/DOCX
 
@@ -236,7 +252,7 @@ writing SQL queries.
     Update button. The app will not function correctly until the update is completed. If any user has issues, clean
     cache and refresh.
   </Warning>
-  ### Features
+  ### ✨ Bug Fixes
 
   - **Tool Selector**: The user has the ability to select Tools between available: Numeric Analysis, and Extended
     Thinking (only available with Qwen 3).
@@ -261,7 +277,7 @@ writing SQL queries.
   <Note>
     This update involves between 15m to 30m of downtime.
   </Note>
-  ### Features
+  ### ✨ Bug Fixes
 
   - New model is available and set as default in all baseline presets. Take a look to [Qwen
     3](https://qwenlm.github.io/blog/qwen3/) page to more detailed information.

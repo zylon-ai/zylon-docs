@@ -1,12 +1,12 @@
 ---
-title: Troubleshooting
+title: "Troubleshooting"
 ---
 
 Zylon troubleshooting is mostly done through the `zylon-cli` command line tool.
 
 ## Zylon Doctor
 
-`zylon-cli` comes with a built in diagnosis tool. 
+`zylon-cli` comes with a built in diagnosis tool.
 
 Run:
 
@@ -16,9 +16,18 @@ sudo zylon-cli doctor
 
 to get all the relevant information for debugging. The output of the command will guide your further in case you need more detailed information in case some part of the system is failing.
 
+## Change Server IP after Zylon has been installed
+
+In case you need to move the server where Zylon is installed to a different IP address, there is a change that needs to be done.
+
+1. Stop the K0s cluster: `sudo k0s stop`
+2. Edit the file  `/var/lib/k0s/kubelet.conf` and replace the old IP for the new IP
+3. Reboot the machine
+5. Run `sudo zylon-cli sync-kubec-config`
+
 ## Debugging tools
 
-In addition to the doctor command, additional debugging tools can be enabled in `zylon-conf.yaml`. 
+In addition to the doctor command, additional debugging tools can be enabled in `zylon-conf.yaml`.
 
 Be aware that these tools tap directly into Zylon internals and you can break the system if you modify any critical resource.
 
@@ -55,125 +64,123 @@ In order to connect to the dashboard you must generate a token by running the fo
 kubectl create token -n zylon zylon
 ```
 
-This token gives FULL ACCESS to all Zylon resources, configuration, secrets, and so on. 
+This token gives FULL ACCESS to all Zylon resources, configuration, secrets, and so on.
 
 > As a general rule, once you are doing using the dashboard you should disable it due to security risks.
-> 
 
 ## Improve indexing for versions before 1.13.0
 
 If you are installing a Zylon version greater than 1.13.0 (Release on Jan 27th 2025) skip this section, it only applies to previous versions.
 
-With the release v1.13.0 and support for bigger files indexing is required for better performance. This is a one time operation that will create the index in the vector database for your existing and new documents. 
+With the release v1.13.0 and support for bigger files indexing is required for better performance. This is a one time operation that will create the index in the vector database for your existing and new documents.
 
 Simply run the script in the machine where Zylon is installed. Running the script multiple times has no negative effect. Indexing time might vary depending on the number of documents, but should be faster than a minute.
 
 - Indexing script
-    
-    ```bash
-    #!/bin/bash
-    
-    # Configuration
-    QDRANT_HOST="localhost"
-    QDRANT_PORT="6333"
-    MAX_RETRIES=30
-    RETRY_INTERVAL=2
-    QDRANT_RELEASE_NAME="zylon"
-    NAMESPACE="$QDRANT_RELEASE_NAME"
-    
-    # Cleanup function
-    cleanup() {
-        echo "Cleaning up..."
-        if [ ! -z "$PORT_FORWARD_PID" ]; then
-            echo "Stopping port-forward process..."
-            kill $PORT_FORWARD_PID 2>/dev/null
-            wait $PORT_FORWARD_PID 2>/dev/null
-        fi
-        exit 0
-    }
-    
-    # Set up trap for cleanup
-    trap cleanup SIGINT SIGTERM EXIT
-    
-    # Start port-forwarding
-    echo "Starting port-forwarding..."
-    kubectl port-forward "svc/${QDRANT_RELEASE_NAME}-qdrant" -n "$NAMESPACE" "${QDRANT_PORT}:6333" &
-    PORT_FORWARD_PID=$!
-    
-    # Verify port-forward process started successfully
-    if ! ps -p $PORT_FORWARD_PID > /dev/null; then
-        echo "Error: Failed to start port-forwarding"
-        exit 1
-    fi
-    
-    echo "Port-forwarding started with PID $PORT_FORWARD_PID"
-    
-    # Function to check if Qdrant is ready
-    check_qdrant_health() {
-        curl --silent --fail "http://${QDRANT_HOST}:${QDRANT_PORT}/healthz" > /dev/null
-        return $?
-    }
-    
-    # Wait for Qdrant to be ready
-    echo "Waiting for Qdrant to be ready..."
-    retries=0
-    until check_qdrant_health; do
-        # Check if port-forward is still running
-        if ! ps -p $PORT_FORWARD_PID > /dev/null; then
-            echo "Error: Port-forward process died"
-            exit 1
-        fi
-        
-        retries=$((retries + 1))
-        if [ $retries -eq $MAX_RETRIES ]; then
-            echo "Error: Qdrant service did not become ready in time"
-            exit 1
-        fi
-        echo "Qdrant is not ready yet. Retry $retries/$MAX_RETRIES..."
-        sleep $RETRY_INTERVAL
-    done
-    
-    echo "Qdrant is ready! Creating indexes..."
-    
-    # Create artifact_id index
-    echo "Creating artifact_id index..."
-    curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
-        -H 'Content-Type: application/json' \
-        -d '{
-            "field_name": "artifact_id",
-            "field_schema": {
-                "type": "keyword",
-                "on_disk": true
-            }
-        }' || exit 1
-    
-    # Check if the first request was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to create artifact_id index"
-        exit 1
-    fi
-    
-    # Create project_id index
-    echo "Creating project_id index..."
-    curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
-        -H 'Content-Type: application/json' \
-        -d '{
-            "field_name": "project_id",
-            "field_schema": {
-                "type": "keyword",
-                "on_disk": true
-            }
-        }' || exit 1
-    
-    # Check if the second request was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to create project_id index"
-        exit 1
-    fi
-    
-    echo "Successfully created all indexes!"
-    ```
-    
+
+  ```bash
+  #!/bin/bash
+  
+  # Configuration
+  QDRANT_HOST="localhost"
+  QDRANT_PORT="6333"
+  MAX_RETRIES=30
+  RETRY_INTERVAL=2
+  QDRANT_RELEASE_NAME="zylon"
+  NAMESPACE="$QDRANT_RELEASE_NAME"
+  
+  # Cleanup function
+  cleanup() {
+      echo "Cleaning up..."
+      if [ ! -z "$PORT_FORWARD_PID" ]; then
+          echo "Stopping port-forward process..."
+          kill $PORT_FORWARD_PID 2>/dev/null
+          wait $PORT_FORWARD_PID 2>/dev/null
+      fi
+      exit 0
+  }
+  
+  # Set up trap for cleanup
+  trap cleanup SIGINT SIGTERM EXIT
+  
+  # Start port-forwarding
+  echo "Starting port-forwarding..."
+  kubectl port-forward "svc/${QDRANT_RELEASE_NAME}-qdrant" -n "$NAMESPACE" "${QDRANT_PORT}:6333" &
+  PORT_FORWARD_PID=$!
+  
+  # Verify port-forward process started successfully
+  if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+      echo "Error: Failed to start port-forwarding"
+      exit 1
+  fi
+  
+  echo "Port-forwarding started with PID $PORT_FORWARD_PID"
+  
+  # Function to check if Qdrant is ready
+  check_qdrant_health() {
+      curl --silent --fail "http://${QDRANT_HOST}:${QDRANT_PORT}/healthz" > /dev/null
+      return $?
+  }
+  
+  # Wait for Qdrant to be ready
+  echo "Waiting for Qdrant to be ready..."
+  retries=0
+  until check_qdrant_health; do
+      # Check if port-forward is still running
+      if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+          echo "Error: Port-forward process died"
+          exit 1
+      fi
+      
+      retries=$((retries + 1))
+      if [ $retries -eq $MAX_RETRIES ]; then
+          echo "Error: Qdrant service did not become ready in time"
+          exit 1
+      fi
+      echo "Qdrant is not ready yet. Retry $retries/$MAX_RETRIES..."
+      sleep $RETRY_INTERVAL
+  done
+  
+  echo "Qdrant is ready! Creating indexes..."
+  
+  # Create artifact_id index
+  echo "Creating artifact_id index..."
+  curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+      -H 'Content-Type: application/json' \
+      -d '{
+          "field_name": "artifact_id",
+          "field_schema": {
+              "type": "keyword",
+              "on_disk": true
+          }
+      }' || exit 1
+  
+  # Check if the first request was successful
+  if [ $? -ne 0 ]; then
+      echo "Error: Failed to create artifact_id index"
+      exit 1
+  fi
+  
+  # Create project_id index
+  echo "Creating project_id index..."
+  curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+      -H 'Content-Type: application/json' \
+      -d '{
+          "field_name": "project_id",
+          "field_schema": {
+              "type": "keyword",
+              "on_disk": true
+          }
+      }' || exit 1
+  
+  # Check if the second request was successful
+  if [ $? -ne 0 ]; then
+      echo "Error: Failed to create project_id index"
+      exit 1
+  fi
+  
+  echo "Successfully created all indexes!"
+  ```
 
 ## OpenEBS is not working, making PODs be Pending
 

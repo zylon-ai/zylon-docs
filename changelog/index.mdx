@@ -4,18 +4,24 @@ title: "Changelog"
 <Update label="1.49.1" description="November 18, 2025">
 ## 💼 Workspace
 ### ✨ Features
-- **CSV Bulk User Upload** - Upload multiple users at once with integrated seat control management.
-- **Password Reset** - Improved password reset functionality.
-- **Developer Mode** - Introducing Zylon Developer Mode with enhanced capabilities for technical users.
-    - **Token Management** - Developers and Zylon admins can now manage their API tokens directly in the workspace, check [the Developer Manual](/api-reference/token-management) for more information.
+- **CSV Bulk User Upload**: You can now upload multiple users at once via CSV, fully integrated with seat-control and license-tracking. Saving time for admins onboarding large teams and reducing manual errors.
+- **Password Management Enhancements**: Users can now update their own passwords, and admins can reset passwords directly from the workspace. Better security hygiene and less administrative overhead.
+- **Developer Mode**: We're introducing **Zylon Developer Mode**, enabling users to authenticate and interact with the Zylon API, unlocking deeper integrations and customization of workflows.
+This will enable organizations to automate workspace operations from internal scripts and connect Zylon in custom backend services.
+  - **Token Management**: Developers and Zylon admins can now create, revoke, and manage API tokens directly inside the workspace. This change reduces operational friction when building integrations.
+- **Permission Update**: Viewers are now **restricted from downloading files** in the Knowledge Base, ensuring sensitive information remains controlled.
 ### 🐛 Bug Fixes
 - Centered search bar on Issue tracker for better usability.
 - Viewers are now forbidden from downloading files.
 
 ## 🛠️ Platform
 ### ✨ Features
-- **Anthropic API Compatibility** - Platform now supports Anthropic-compatible API endpoints.
-- **vLLM Metrics** - Added comprehensive metrics to vLLM v1 for better monitoring and performance tracking.
+- **Expand Zylon with your own tools and workflows without additional infrastructure: Zylon** now supports **Anthropic-compatible API endpoints**, enabling seamless tool integrations.
+This unlocks compatibility with:
+  - **N8N**
+  - **LangChain tools**
+  - **Custom Automations** built in-house
+  - **Enhanced Monitoring and Performance Tracking**: We've improved observability of inference workloads for more precise performance tuning and issue diagnosis
 </Update>
 
 <Update label="1.48.2" description="October 30, 2025">
@@ -30,7 +36,7 @@ title: "Changelog"
 </Update>
 <Update label="1.48.1" description="October 27, 2025">
   ## 🛠️ Platform
-  ### ✨ Bug Fixes
+  ### ✨ Features
   - Zylon now offers proxy support. Learn more about it [here](/operator-manual/proxy).
   - Introduced a Status page that provides information about the overall system health at `https://your-zylon-instance.com/status`
   ### 🐛 Bug Fixes
@@ -212,7 +218,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.39.0" description="August 12, 2025">
-  ### ✨ Bug Fixes
+  ### ✨ Features
 
   - Users can now create folder in knowledge base
   - Users can now move folders and files inside knowledge base via Drag and Drop
@@ -221,7 +227,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.38.0" description="August 8, 2025">
-  ### ✨ Bug Fixes
+  ### ✨ Features
 
   - New Agent Flow. Read & Extract.
 
@@ -231,7 +237,7 @@ writing SQL queries.
 </Update>
 
 <Update label="1.37.1" description="August 7, 2025">
-  ### ✨ Bug Fixes
+  ### ✨ Features
 
   - Export Agent Flow to PDF/DOCX
 
@@ -252,7 +258,7 @@ writing SQL queries.
     Update button. The app will not function correctly until the update is completed. If any user has issues, clean
     cache and refresh.
   </Warning>
-  ### ✨ Bug Fixes
+  ### ✨ Features
 
   - **Tool Selector**: The user has the ability to select Tools between available: Numeric Analysis, and Extended
     Thinking (only available with Qwen 3).
@@ -277,7 +283,7 @@ writing SQL queries.
   <Note>
     This update involves between 15m to 30m of downtime.
   </Note>
-  ### ✨ Bug Fixes
+  ### ✨ Features
 
   - New model is available and set as default in all baseline presets. Take a look to [Qwen
     3](https://qwenlm.github.io/blog/qwen3/) page to more detailed information.

@@ -52,41 +52,41 @@
           {
             "group": "About Zylon Workspace",
             "pages": [
-              "workspace-manual/what-is-zylon-workspace",
-              "workspace-manual/first-day-faqs",
-              "workspace-manual/quick-start-guide"
+              "user-manual/what-is-zylon-workspace",
+              "user-manual/first-day-faqs",
+              "user-manual/quick-start-guide"
             ]
           },
           {
             "group": "Admin Tools",
             "pages": [
-              "workspace-manual/workspace-look-and-feel",
-              "workspace-manual/adding-company-context",
-              "workspace-manual/audit-logs",
-              "workspace-manual/engagement-analytics"
+              "user-manual/workspace-look-and-feel",
+              "user-manual/adding-company-context",
+              "user-manual/audit-logs",
+              "user-manual/engagement-analytics"
             ]
           },
           {
             "group": "Projects",
             "pages": [
-              "workspace-manual/creating-a-project",
-              "workspace-manual/adding-custom-instructions",
-              "workspace-manual/sharing-with-colleagues"
+              "user-manual/creating-a-project",
+              "user-manual/adding-custom-instructions",
+              "user-manual/sharing-with-colleagues"
             ]
           },
           {
             "group": "Knowledge Bases",
             "pages": [
-              "workspace-manual/uploading-files",
-              "workspace-manual/roles-and-permissions",
-              "workspace-manual/linking-knowledge-bases",
+              "user-manual/uploading-files",
+              "user-manual/roles-and-permissions",
+              "user-manual/linking-knowledge-bases",
               {
                 "group": "External Connectors",
                 "pages": [
-                  "workspace-manual/connectors/sharepoint",
-                  "workspace-manual/connectors/confluence",
-                  "workspace-manual/connectors/file-system",
-                  "workspace-manual/connectors/claromentis"
+                  "user-manual/connectors/sharepoint",
+                  "user-manual/connectors/confluence",
+                  "user-manual/connectors/file-system",
+                  "user-manual/connectors/claromentis"
                 ]
               }
             ]
@@ -94,44 +94,50 @@
           {
             "group": "Search",
             "pages": [
-              "workspace-manual/search-workspace-content",
-              "workspace-manual/search-company-documents"
+              "user-manual/search-workspace-content",
+              "user-manual/search-company-documents"
             ]
           },
           {
             "group": "Chat Assistant",
             "pages": [
-              "workspace-manual/when-to-use-chat-assistant",
-              "workspace-manual/querying-company-documents",
+              "user-manual/when-to-use-chat-assistant",
+              "user-manual/querying-company-documents",
               {
                 "group": "Using Tools",
                 "pages": [
-                  "workspace-manual/tools/introduction-to-tools",
-                  "workspace-manual/tools/extended-thinking",
-                  "workspace-manual/tools/numeric-analysis",
-                  "workspace-manual/tools/database-connector",
-                  "workspace-manual/tools/mcp-connector"
+                  "user-manual/tools/introduction-to-tools",
+                  "user-manual/tools/extended-thinking",
+                  "user-manual/tools/numeric-analysis",
+                  "user-manual/tools/database-connector",
+                  "user-manual/tools/mcp-connector"
                 ]
               },
-              "workspace-manual/group-chats"
+              "user-manual/group-chats"
             ]
           },
           {
             "group": "Agent Flows",
             "pages": [
-              "workspace-manual/when-to-use-agent-flows",
-              "workspace-manual/real-time-collaboration",
-              "workspace-manual/inline-ai-in-editor",
+              "user-manual/when-to-use-agent-flows",
+              "user-manual/real-time-collaboration",
+              "user-manual/inline-ai-in-editor",
               {
                 "group": "Available Agent Flows",
                 "pages": [
-                  "workspace-manual/agent-flows/summarize-file",
-                  "workspace-manual/agent-flows/answer-in-bulk",
-                  "workspace-manual/agent-flows/generate-draft",
-                  "workspace-manual/agent-flows/open-blank-page",
-                  "workspace-manual/agent-flows/read-and-extract"
+                  "user-manual/agent-flows/summarize-file",
+                  "user-manual/agent-flows/answer-in-bulk",
+                  "user-manual/agent-flows/generate-draft",
+                  "user-manual/agent-flows/open-blank-page",
+                  "user-manual/agent-flows/read-and-extract"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Profile",
+            "pages": [
+              "user-manual/password-recovery"
             ]
           }
         ]
@@ -236,7 +242,8 @@
               "operator-manual/configuration/search",
               "operator-manual/configuration/performance",
               "operator-manual/configuration/whitelabel",
-              "operator-manual/configuration/experimental-features"
+              "operator-manual/configuration/experimental-features",
+              "operator-manual/configuration/cli"
             ]
           }
         ]

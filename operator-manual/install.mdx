@@ -164,13 +164,9 @@ Generally, you only need to run the setup once. Running it multiple times has no
 
   To test if the drivers are working use `nvidia-smi` utility, it will display the status of your GPU(s) or fail if the drivers are not working:
 
-  If drivers are not working properly they MUST be recompiled for the new kernel version, to do so run:
-
-  ```bash
-  sudo zylon-cli install-drivers --force
-  ```
-
   An implicit kernel update might also happen after a restart of the machine when running in cloud providers like AWS or Azure.
+
+  Check the following page for troubleshooting: [Nvidia Drivers Troubleshooting](/operator-manual/nvidia-drivers-troubleshooting)
 </Danger>
 
 ## Step 4: Install Zylon

@@ -2,37 +2,29 @@
 title: "Nvidia Drivers Troubleshooting"
 ---
 
-This troubleshooting sections provides solutions to common issues encountered
-with Nvidia drivers on Zylon installations.
+This troubleshooting sections provides solutions to common issues encountered with Nvidia drivers on Zylon installations.
 
 ### Why you might encounter issues with Nvidia drivers
 
-In order to provide latest GPU capabilities for Zylon we usually require the latest
-versions of the Nvidia drivers installed, which means they
-have to be compiled on demand for your specific kernel version your hardware is running.
+In order to provide latest GPU capabilities for Zylon we usually require the latest versions of the Nvidia drivers installed, which means they have to be compiled on demand for your specific kernel version your hardware is running.
 
-At the same time, open source Nvidia drivers are still under active
-development and sometimes issues may arise during installation or runtime.
+At the same time, open source Nvidia drivers are still under active development and sometimes issues may arise during installation or runtime.
 
-In particular, during kernel updates or changes to the system configuration,
-Nvidia drivers may stop working properly, failing to detect the GPU or
-causing the AI services to malfunction due to memory usage discrepancies.
+In particular, during kernel updates or changes to the system configuration, Nvidia drivers may stop working properly, failing to detect the GPU or causing the AI services to malfunction due to memory usage discrepancies.
 
 Here are some common ways to diagnose if that is the case and how to fix it.
 
-### 1 Check the Zylon Status page
+### 1 - Check the Zylon Status page
 
-Navigate to the Zylon Status page at `https://<your_zylon_domain>/status`.
-Check for any error in the AI Service section and in particular `zylon-triton`.
+Navigate to the Zylon Status page at `https://<your_zylon_domain>/status`. Check for any error in the AI Service section and in particular `zylon-triton`.
 
 If the service is not online, continue with the next steps to diagnose the issue.
 
-If the system is online but Zylon is still failing, the source is most likely
-and application-level issue, please contact Zylon support.
+If the system is online but Zylon is still failing, the source is most likely and application-level issue, please contact Zylon support.
 
 If you can't access the status page, skip to step 2.
 
-### 2 Verify Nvidia Driver Status
+### 2 - Verify Nvidia Driver Status
 
 Check `nvidia-smi` output:
 
@@ -64,10 +56,9 @@ nvidia-smi
 
 It should report the GPU status, along with the process using it.
 
-#### 2.1 nvidia-smi can't communicate with the NVIDIA driver
+#### 2.1 - Drivers not working: nvidia-smi can't communicate with the NVIDIA driver
 
-This is the most common error, usually caused by a kernel update during an unattended upgrade.
-The fix requires
+This is the most common error, usually caused by a kernel update during an unattended upgrade. The fix requires
 
 Run the following commands:
 
@@ -78,12 +69,11 @@ sudo reboot # Reboot the system to clear any cached GPU info
 sudo zylon-cli update # Reinstall GPU operator when the system is back online
 ```
 
-Wait a few minutes and check the status page again, the issue should be resolved.
+Wait a few minutes and check the status page again, the issue should be resolved. The driver installation will take 10 to 15 minutnes, and additional 3~5 minutes until Triton comes back online.
 
-#### 2.2 nvidia-smi is working properly but Triton service shows failing in the status page
+#### 2.2 - Drivers working: nvidia-smi is working properly but Triton service still failing
 
-If `nvidia-smi` is working properly but the Triton service is failing, this is usually
-caused by caching issues regarding GPU autodetection, to fix it run:
+If `nvidia-smi` is working properly but the Triton service is failing (confirm this in the status page), this is usually caused by caching issues regarding GPU autodetection, to fix it run:
 
 ```bash
 helm uninstall gpu-operator -n nvidia
@@ -91,12 +81,11 @@ sudo reboot # Reboot the to clear any cached GPU info
 sudo zylon-cli update # Reinstall GPU operator
 ```
 
-Wait a few minutes and check the status page again, the issue should be resolved.
+Wait a few minutes and check the status page again, the issue should be resolved. Note that in this case Triton might take 3~5 minutes to come back online.
 
-#### 2.3 nvidia-smi is working, fixes for 2.1 and 2.2 did not work
+#### 2.3 - Drivers working, but fixes for 2.1 and 2.2 did not work
 
-If `nvidia-smi` is working but the previous fixes did not work, the issue might be located
-in the Nvidia Container Toolkit installation.
+If `nvidia-smi` is working but the previous fixes did not work, the issue might be located in the Nvidia Container Toolkit installation.
 
 Verify the file located here: `/etc/k0s/containerd.d/nvidia.toml` exists, and has the following content:
 

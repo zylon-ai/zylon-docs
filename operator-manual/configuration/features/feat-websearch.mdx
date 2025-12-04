@@ -1,0 +1,62 @@
+---
+title: "Web Search"
+---
+
+<Note>**Feature in Alpha**</Note>
+
+Enable web search capabilities in chats powered by Brave Search.
+
+### Configuration
+
+| Key      | Default | Values          | Description                           |
+| -------- | ------- | --------------- | ------------------------------------- |
+| `enabled`| `false` | `true \| false` | Enable web search capabilities in chats |
+
+### Requirements
+
+<Warning>
+**Web Extract Required**: This feature requires `webExtract` to be enabled to function properly.
+</Warning>
+
+<Warning>
+**Brave Search API Required**: You need a valid Brave Search API key to use this feature.
+</Warning>
+
+### Brave API Configuration
+
+Web Search requires a Brave Search API provider configuration with the following parameters:
+
+| Parameter   | Type    | Required | Description                                                  |
+| ----------- | ------- | -------- | ------------------------------------------------------------ |
+| `apiKey`    | string  | Yes      | Your Brave Search API subscription token                     |
+| `rateLimit` | number  | Yes      | Requests per second based on your subscription tier          |
+
+
+### Rate Limit Tiers
+
+Based on your Brave Search API subscription tier:
+
+- **Free AI**: `1.0` (1 query/second, up to 2,000 queries/month)
+- **Base AI**: `20.0` (up to 20 queries/second, up to 20M queries/month)
+- **Pro AI**: `50.0` (up to 50 queries/second, unlimited queries/month)
+- **Enterprise**: Custom rate limits
+
+### Example Configuration
+```yaml
+features:
+    webExtract:
+        enabled: false
+    webSearch:
+        enabled: true
+external:
+    brave:
+        apiKey: YOUR_BRAVE_API_KEY_HERE
+        rateLimit: 1.0
+```
+
+### Getting Started
+
+1. Sign up for a Brave Search API key at [brave.com/search/api](https://brave.com/search/api/)
+2. Configure the `apiKey` and `rateLimit` according to your subscription tier
+3. Enable both `webExtract` and `webSearch` features
+4. The Web Search functionality will be available in your chats

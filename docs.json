@@ -258,7 +258,9 @@
                   "operator-manual/configuration/features/index",
                   "operator-manual/configuration/features/feat-mcp",
                   "operator-manual/configuration/features/feat-database",
-                  "operator-manual/configuration/features/feat-audit"
+                  "operator-manual/configuration/features/feat-audit",
+                  "operator-manual/configuration/features/feat-webextract",
+                  "operator-manual/configuration/features/feat-websearch"
                 ]
               },
               "operator-manual/configuration/cli"

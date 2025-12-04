@@ -243,7 +243,15 @@
               "operator-manual/configuration/search",
               "operator-manual/configuration/performance",
               "operator-manual/configuration/whitelabel",
-              "operator-manual/configuration/experimental-features",
+              {
+                "group": "Features",
+                "pages": [
+                  "operator-manual/configuration/features/index",
+                  "operator-manual/configuration/features/feat-mcp",
+                  "operator-manual/configuration/features/feat-database",
+                  "operator-manual/configuration/features/feat-audit"
+                ]
+              },
               "operator-manual/configuration/cli"
             ]
           }

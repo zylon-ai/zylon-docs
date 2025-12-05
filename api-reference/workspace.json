@@ -1784,25 +1784,14 @@
         "deprecated": false
       }
     },
-    "/v1/app/project/{projectId}/interaction/{interactionId}": {
+    "/v1/app/interaction/{interactionId}": {
       "get": {
         "tags": [
           "interaction"
         ],
         "summary": "Get interaction",
-        "description": "Get a specific interaction by its ID within a project",
+        "description": "Get a specific interaction by its ID",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project containing the interaction",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "interactionId",
             "in": "path",
@@ -1835,19 +1824,8 @@
           "interaction"
         ],
         "summary": "Delete interaction",
-        "description": "Delete a specific interaction by its ID within a project",
+        "description": "Delete a specific interaction by its ID",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project containing the interaction",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "interactionId",
             "in": "path",
@@ -1876,19 +1854,18 @@
         "deprecated": false
       }
     },
-    "/v1/app/project/{projectId}/interaction": {
+    "/v1/app/thread/{threadId}/interaction": {
       "get": {
         "tags": [
-          "interaction"
+          "threads"
         ],
-        "summary": "Get interactions within a project",
-        "description": "Get a paginated list of interactions within a project",
+        "summary": "Get interactions within a thread",
+        "description": "Get a paginated list of interactions within a thread",
         "parameters": [
           {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project to retrieve interactions from",
-            "required": true,
+            "name": "threadId",
+            "in": "query",
+            "required": false,
             "deprecated": false,
             "explode": false,
             "schema": {
@@ -1917,7 +1894,7 @@
             "schema": {}
           },
           {
-            "name": "threadId",
+            "name": "projectId",
             "in": "query",
             "required": false,
             "deprecated": false,
@@ -1946,13 +1923,13 @@
         "tags": [
           "interaction"
         ],
-        "summary": "Create interaction",
-        "description": "Create a new interaction within a project",
+        "summary": "Add a new interaction in an existing thread",
+        "description": "Create a new interaction in an existing thread carrying over the past conversation context",
         "parameters": [
           {
-            "name": "projectId",
+            "name": "threadId",
             "in": "path",
-            "description": "The ID of the project to create the interaction in",
+            "description": "The ID of the thread to create the interaction in",
             "required": true,
             "deprecated": false,
             "explode": false,
@@ -1988,25 +1965,14 @@
         "deprecated": false
       }
     },
-    "/v1/app/project/{projectId}/interaction/{interactionId}/cancel": {
+    "/v1/app/interaction/{interactionId}/cancel": {
       "post": {
         "tags": [
           "interaction"
         ],
         "summary": "Cancel interaction",
-        "description": "Cancel an ongoing interaction by its ID within a project",
+        "description": "Cancel an ongoing interaction by its ID",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project containing the interaction",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "interactionId",
             "in": "path",
@@ -2039,7 +2005,7 @@
         "deprecated": false
       }
     },
-    "/v1/app/project/{projectId}/interaction/{interactionId}/stream": {
+    "/v1/app/interaction/{interactionId}/stream": {
       "get": {
         "tags": [
           "interaction"
@@ -2047,17 +2013,6 @@
         "summary": "Stream interaction events",
         "description": "Stream events for a specific interaction by its ID within a project",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project containing the interaction",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "interactionId",
             "in": "path",
@@ -2299,7 +2254,7 @@
         "deprecated": false
       }
     },
-    "/v1/app/project/{projectId}/thread/{threadId}": {
+    "/v1/app/thread/{threadId}": {
       "get": {
         "tags": [
           "threads"
@@ -2307,17 +2262,6 @@
         "summary": "Get thread details",
         "description": "Routes for managing threads",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "threadId",
             "in": "path",
@@ -2340,17 +2284,6 @@
         "summary": "Updates a thread",
         "description": "Routes for managing threads",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "threadId",
             "in": "path",
@@ -2384,17 +2317,6 @@
         "summary": "Delete a thread",
         "description": "Routes for managing threads",
         "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "threadId",
             "in": "path",
@@ -2443,75 +2365,6 @@
           "required": false
         },
         "responses": {},
-        "deprecated": false
-      }
-    },
-    "/v1/app/project/{projectId}/artifact/{artifactId}/children": {
-      "get": {
-        "tags": [
-          "artifacts"
-        ],
-        "summary": "Get artifact children",
-        "description": "Retrieve a list of artifacts nesting from a specific artifact ",
-        "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "The ID of the project.",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "artifactId",
-            "in": "path",
-            "description": "The ID of the artifactId.",
-            "required": true,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "path",
-            "in": "query",
-            "description": "The full path of the artifact",
-            "required": false,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "depth",
-            "in": "query",
-            "description": "The level of depth for the artifact children",
-            "required": false,
-            "deprecated": false,
-            "explode": false,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a list of artifacts for the specified artifact",
-            "headers": {},
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__"
-                }
-              }
-            }
-          }
-        },
         "deprecated": false
       }
     },
@@ -2614,7 +2467,7 @@
           {
             "name": "parent_id",
             "in": "query",
-            "description": "Filter results by parent artifact ID.",
+            "description": "Defines the parent artifact used to scope the search. If omitted, the search targets root-level artifacts. If provided, results are scoped to that artifact’s direct children.",
             "required": false,
             "deprecated": false,
             "explode": false,
@@ -2642,6 +2495,39 @@
             "explode": false,
             "schema": {
               "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.ArtifactType"
+            }
+          },
+          {
+            "name": "resolve_links",
+            "in": "query",
+            "description": "If true, includes the descendants of link artifacts in the results. Defaults to false.",
+            "required": false,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "keep_ancestors",
+            "in": "query",
+            "description": "If true and used with filter_by_text, includes all ancestors of matched artifacts. Defaults to false.",
+            "required": false,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "include_descendants",
+            "in": "query",
+            "description": "Expands the search to include all descendants under the scoped parent. When false, only root-level artifacts or direct children are returned. When true, the full subtree is returned (or the entire project if no parent_id is given).",
+            "required": false,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -6976,41 +6862,6 @@
           "type"
         ]
       },
-      "ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields": {
-        "enum": [
-          "User"
-        ]
-      },
-      "page_array_ai.zylon.backend.server.app.project.interaction.InteractionDTO__": {
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
-            }
-          },
-          "next_cursor": {
-            "type": "string"
-          },
-          "previous_cursor": {
-            "type": "string"
-          },
-          "has_next_page": {
-            "type": "boolean"
-          },
-          "has_previous_page": {
-            "type": "boolean"
-          },
-          "total_count": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "data",
-          "has_next_page",
-          "has_previous_page"
-        ]
-      },
       "ai.zylon.backend.server.app.project.interaction.CreateInteractionDTO": {
         "properties": {
           "thread_id": {
@@ -7404,6 +7255,41 @@
           "User"
         ]
       },
+      "ai.zylon.backend.server.app.project.interaction.InteractionIncludeFields": {
+        "enum": [
+          "User"
+        ]
+      },
+      "page_array_ai.zylon.backend.server.app.project.interaction.InteractionDTO__": {
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.interaction.InteractionDTO"
+            }
+          },
+          "next_cursor": {
+            "type": "string"
+          },
+          "previous_cursor": {
+            "type": "string"
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "has_previous_page": {
+            "type": "boolean"
+          },
+          "total_count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "data",
+          "has_next_page",
+          "has_previous_page"
+        ]
+      },
       "ai.zylon.backend.server.app.project.thread.UpdateThreadDTO": {
         "properties": {
           "name": {
@@ -7434,6 +7320,21 @@
           "visibility"
         ]
       },
+      "ai.zylon.backend.server.app.QueryOrderBy": {
+        "enum": [
+          "Alphabetical"
+        ]
+      },
+      "org.jetbrains.exposed.v1.core.SortOrder": {
+        "enum": [
+          "ASC",
+          "DESC",
+          "ASC_NULLS_FIRST",
+          "DESC_NULLS_FIRST",
+          "ASC_NULLS_LAST",
+          "DESC_NULLS_LAST"
+        ]
+      },
       "page_array_ai.zylon.backend.server.app.project.artifact.ArtifactDTO__": {
         "properties": {
           "data": {
@@ -7462,21 +7363,6 @@
           "data",
           "has_next_page",
           "has_previous_page"
-        ]
-      },
-      "ai.zylon.backend.server.app.QueryOrderBy": {
-        "enum": [
-          "Alphabetical"
-        ]
-      },
-      "org.jetbrains.exposed.v1.core.SortOrder": {
-        "enum": [
-          "ASC",
-          "DESC",
-          "ASC_NULLS_FIRST",
-          "DESC_NULLS_FIRST",
-          "ASC_NULLS_LAST",
-          "DESC_NULLS_LAST"
         ]
       },
       "ai.zylon.backend.server.app.project.artifact.CreateArtifactDTO": {

@@ -3,7 +3,7 @@
   "info": {
     "title": "Zylon-GPT API",
     "description": "\nThis API describes Zylon's AI layer's API. The API exposes low-level\nprimitives that allow developers to build AI apps\nand worflows on top of Zylon's Private AI platform.\n",
-    "version": "0.69.2\n"
+    "version": "0.70.5\n"
   },
   "servers": [
     {

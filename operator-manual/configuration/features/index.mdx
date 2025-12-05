@@ -1,0 +1,29 @@
+---
+title: "All Features"
+---
+
+Zylon supports feature toggling, allowing you to enable or disable certain features on demand. This is managed through the `features` field in your configuration file.
+
+Each feature can define its own set of keys to control behavior.
+
+```
+features:
+  audit:
+    enabled: true
+  database:
+    enabled: true
+  mcp:
+    enabled: true
+```
+
+<CardGroup cols={2}>
+ <Card title="Audit log" icon="list" href="features/feat-audit">
+  Track all user actions with timestamps and trace information.
+</Card>
+  <Card title="Database tool connector" icon="database" href="features/feat-database">
+  <Badge color="orange" size="xs">Alpha</Badge> Show database connector tool in chats.
+  </Card>
+  <Card title="MCP tool connector" icon="plug" href="features/feat-mcp">
+  <Badge color="orange" size="xs">Alpha</Badge> Show MCP connector tool in chats.
+  </Card>
+</CardGroup>

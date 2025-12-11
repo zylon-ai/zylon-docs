@@ -318,3 +318,184 @@ triton:
 1. Ensure you're using the correct preset for your hardware
 2. Consider decreasing to a lower-tier preset
 3. Consider communicate with Zylon engieneers to understand what it is happening
+
+## 10. Adding and Managing Multiple Models
+
+This section explains how to configure multiple AI models within a single preset, manage GPU memory allocation across models, and customize your Zylon AI stack beyond the default configurations.
+
+### 10.1 Understanding Multi-Model Configurations
+
+Zylon allows you to run multiple models simultaneously within a preset. Each model serves a specific purpose:
+
+- **llm** - Primary language model for text generation (mandatory)
+- **embed** - Embeddings model for semantic search and document processing (mandatory)
+- **Custom models** - Additional models from supported families
+
+Each model consumes GPU memory proportionally to its size and allocated quota. The sum of all `gpuMemoryUtilization` values across models must not exceed 0.95 to reserve at least 5% for system overhead.
+
+### 10.2 GPU Memory Allocation
+
+When adding models to a preset, you must redistribute the GPU memory quota to accommodate all models. The `gpuMemoryUtilization` parameter controls what fraction of total GPU memory each model receives.
+
+**Default baseline-24g allocation:**
+
+```
+llm:    0.85  # 85% of 24GB = ~20.4GB
+embed:  0.10  # 10% of 24GB = ~2.4GB
+# Total: 0.95 (reserving 0.05 for system overhead)
+```
+
+**With additional vision model:**
+
+```
+llm:        0.60  # 60% of 24GB = ~14.4GB (reduced from 0.85)
+llmvision:  0.25  # 25% of 24GB = ~6GB (new model)
+embed:      0.10  # 10% of 24GB = ~2.4GB (unchanged)
+# Total: 0.95 (reserving 0.05 for system overhead)
+```
+
+**Important Rules:**
+
+- The total `gpuMemoryUtilization` across all models must not exceed 0.95
+- Always reserve at least 5% for system overhead
+- Exceeding total GPU capacity will cause inference engine startup failure
+
+### 10.3 Model Configuration Structure
+
+Each model in the configuration requires a unique `id` and follows this structure:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  config:
+    models:
+      - id: <unique-identifier>
+        name: <model-name>
+        type: llm | embedding
+        modelRepo: <huggingface-path>
+        gpuMemoryUtilization: <0.0-1.0>
+        # ... additional parameters
+```
+
+**Critical Requirements:**
+
+- Each `id` must be unique across all models to prevent configuration conflicts
+- The `llm` and `embed` models are mandatory and cannot be removed
+- Only models from supported families can be added (see Section 6.1)
+- Custom `id` values can be used for additional models beyond the standard ones
+
+### 10.4 Memory Reallocation Strategy
+
+When adding new models, you must manually adjust the `gpuMemoryUtilization` values to ensure proper memory distribution:
+
+**Step-by-step process:**
+
+1. **Calculate available memory**: Start with 0.95 (reserving 5% for system overhead)
+2. **Subtract mandatory allocations**: Reserve memory for `llm` and `embed`
+3. **Allocate remaining memory**: Distribute to additional models
+4. **Verify total**: Ensure sum equals exactly 0.95
+
+**Example calculation for adding vision model to baseline-24g:**
+
+```
+# Original allocation
+llm: 0.85, embed: 0.10  # Total: 0.95
+
+# New allocation with vision model
+# Step 1: Available memory = 0.95
+# Step 2: Reduce llm from 0.85 to 0.60 (frees 0.25). You will need to reduce the contextWindow.
+# Step 3: Allocate 0.25 to llmvision
+# Step 4: Verify total: 0.60 + 0.25 + 0.10 = 0.95 ✓
+
+llm:        0.60  # Reduced from 0.85
+llmvision:  0.25  # New model
+embed:      0.10  # Unchanged
+# Total: 0.95 (with 0.05 reserved for system overhead)
+```
+
+**The only way to add models is by reducing the `gpuMemoryUtilization` of existing models. There is no automatic memory management.**
+
+### 10.5 Practical Example: Extended baseline-24g
+
+This example demonstrates adding a vision model and a GPT-OSS model to the baseline-24g preset:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  Num_gpu: 2
+  config:
+    models:
+      # Primary LLM (mandatory, memory reduced to accommodate new models)
+      - id: llm
+        modelRepo: "Qwen/Qwen3-14B-Instruct"
+        tokenizer: "Qwen/Qwen3-14B-Instruct"
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.50
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 4096
+          minP: 0.1
+          topP: 0.8
+          topK: 5
+
+      # Vision LLM (optional, new addition)
+      - id: llmvision
+        name: qwen-2-5-vl-7b-awq
+        type: llm
+        contextWindow: 1024
+        modelRepo: "Qwen/Qwen2.5-VL-7B-Instruct-AWQ"
+        tokenizer: "Qwen/Qwen2.5-VL-7B-Instruct"
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.25
+        multimodal:
+          images:
+            enabled: true
+            maxNumber: 1
+        supportReasoning: false
+        samplingParams:
+          temperature: 0.01
+          maxTokens: 4096
+          minP: 0.1
+          topP: 0.8
+          topK: 5
+
+      # GPT-OSS LLM (optional, new addition)
+      - id: llmgpt
+        name: gpt-oss-20b
+        type: llm
+        contextWindow: 8192
+        modelRepo: "openai/gpt-oss-20b"
+        tokenizer: "openai/gpt-oss-20b"
+        promptStyle: gpt-oss
+        gpuMemoryUtilization: 0.10
+        supportReasoning: true
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 2048
+          topP: 0.9
+
+      # Embeddings (mandatory)
+      - id: embed
+        modelRepo: "BAAI/bge-large-en-v1.5"
+        gpuMemoryUtilization: 0.10
+        vectorDim: 1024
+
+# Total allocation: 0.50 + 0.25 + 0.10 + 0.10 = 0.95 ✓
+```
+
+### 10.6 Troubleshooting Multi-Model Configurations
+
+**Triton Inference Server fails to start:**
+
+- Check the Triton logs to identify which specific model is causing the failure
+- Verify memory allocation for the problematic model - adjust `gpuMemoryUtilization` if needed
+- If you've reduced memory allocation too much, you may need to reduce the `contextWindow` parameter for that model
+- Use `nvidia-smi` to check actual GPU memory usage and availability
+
+**Engine fails to start with "Out of memory" error:**
+
+- Verify total `gpuMemoryUtilization` does not exceed 0.95
+- Reduce allocation for the largest model
+- Check actual GPU memory with `nvidia-smi`
+
+When adding multiple models, start with minimal allocations and gradually increase based on actual usage patterns and performance metrics. If memory allocation is too low, reduce the context window before increasing GPU memory allocation.

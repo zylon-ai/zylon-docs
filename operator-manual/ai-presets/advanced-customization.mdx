@@ -1,0 +1,392 @@
+---
+title: "Advanced Customization"
+description: "Customize AI models, configure multi-model setups, and optimize memory allocation for specialized workloads"
+---
+
+<Warning>
+Custom configurations can cause system malfunction. Perform thorough testing before deployment.
+</Warning>
+
+This guide covers advanced configuration options including custom model selection, multi-model setups, and memory management strategies for specialized AI workloads.
+
+## Introduction to Custom Models
+
+Zylon supports custom model configurations for customers who need to use specialized LLM or embedding models beyond the default presets. This advanced feature allows you to override default models while maintaining system compatibility.
+
+### When to Use Custom Models
+
+Consider custom model configuration when:
+
+- You have fine-tuned models for specific domains
+- You require models not included in standard presets
+- You need to optimize for specific performance characteristics
+- You want to experiment with different model families
+
+### Prerequisites
+
+Before customizing models:
+
+- Understand GPU memory management principles
+- Have access to compatible HuggingFace model repositories
+- Know your hardware limitations
+- Have a testing environment for validation
+
+## Supported Model Families
+
+Zylon supports the following model families for custom configurations:
+
+| Model Family      | Example Repository                                     | Notes                           |
+|-------------------|--------------------------------------------------------|---------------------------------|
+| **Qwen 3**        | `Qwen/Qwen3-14B`                                       | Default in baseline presets     |
+| **Mistral Small** | `mistralai/Mistral-Small-24B-Instruct-2501`            | Experimental support            |
+| **Gemma 3**       | `google/gemma-3-12b-it`                                | Any model from Gemma 3 family   |
+| **Gemma 3n**      | `google/gemma-3n-E4B-it`                               | Any model from Gemma 3n family  |
+| **GPT-OSS**       | `openai/gpt-oss-20b`                                   | Any model from GPT-OSS family   |
+
+<Note>
+Only models from these families are officially supported. Using unsupported model families may result in system instability.
+</Note>
+
+## Single Model Customization
+
+To customize models used by a preset, modify your `/etc/config/zylon-config.yaml` file by adding a `config` section with model specifications.
+
+### Basic Structure
+
+```yaml
+ai:
+  preset: "<preset>"
+  config:
+    models:
+      - id: llm
+        modelRepo: <huggingface-model-url>
+```
+
+### Mandatory Models
+
+Every configuration must include these two models:
+
+1. **Primary LLM (`id: llm`)** - Main language model handling all text generation tasks
+2. **Embeddings Model (`id: embed`)** - Handles document embeddings and semantic search
+
+### Configuration Parameters
+
+#### Core Parameters
+
+| Parameter              | Description                          | Valid Values                  | Required |
+|------------------------|--------------------------------------|-------------------------------|----------|
+| `id`                   | Unique model identifier              | string                        | Yes      |
+| `name`                 | Custom model name                    | string                        | No       |
+| `type`                 | Model type                           | `llm`, `embedding`            | Yes      |
+| `contextWindow`        | Maximum context length               | integer                       | No       |
+| `modelRepo`            | HuggingFace model path               | string                        | Yes      |
+| `gpuMemoryUtilization` | Fraction of GPU memory to use        | 0.0-1.0                       | No       |
+| `tokenizer`            | HuggingFace tokenizer path           | string                        | No       |
+| `promptStyle`          | Prompt formatting style              | qwen, mistral, gemma, gpt-oss | LLMs only|
+| `vectorDim`            | Vector dimensions                    | integer                       | Embeddings only |
+
+#### LLM-Specific Parameters
+
+| Parameter                 | Description                      | Valid Values   |
+|---------------------------|----------------------------------|----------------|
+| `supportReasoning`        | Enable reasoning capabilities    | boolean        |
+| `supportImage`            | Number of supported images       | integer        |
+| `supportAudio`            | Number of supported audios       | integer        |
+| `samplingParams`          | Default sampling parameters      | SamplingParams |
+| `reasoningSamplingParams` | Reasoning sampling parameters    | SamplingParams |
+
+#### Sampling Parameters
+
+| Parameter           | Description                   | Range    |
+|---------------------|-------------------------------|----------|
+| `temperature`       | Randomness in text generation | 0.0-2.0  |
+| `maxTokens`         | Maximum tokens in response    | 1-8192   |
+| `minP`              | Minimum probability threshold | 0.0-1.0  |
+| `topP`              | Nucleus sampling threshold    | 0.0-1.0  |
+| `topK`              | Top-K sampling limit          | 1-100    |
+| `repetitionPenalty` | Penalty for repeated tokens   | 1.0-2.0  |
+| `presencePenalty`   | Penalty for token presence    | -2.0-2.0 |
+| `frequencyPenalty`  | Penalty for token frequency   | -2.0-2.0 |
+
+### Single Model Examples
+
+#### Example 1: Custom Fine-tuned GPT-OSS Model
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+  config:
+    models:
+      - id: llm
+        modelRepo: "Jinx-org/Jinx-gpt-oss-20b-mxfp4"
+        tokenizer: "openai/gpt-oss-20b"
+```
+
+#### Example 2: Custom Qwen 3 with Modified Sampling
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  config:
+    models:
+      - id: llm
+        modelRepo: "Qwen/Qwen3-14B-Instruct"
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 4096
+          minP: 0.1
+          topP: 0.8
+          topK: 5
+```
+
+#### Example 3: Custom Embeddings Model
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    models:
+      - id: embed
+        modelRepo: "BAAI/bge-large-en-v1.5"
+        vectorDim: 1024
+        gpuMemoryUtilization: 0.10
+```
+
+## Multi-Model Setup
+
+Zylon allows you to run multiple models simultaneously within a preset. This enables specialized workflows where different models handle different tasks.
+
+### Understanding Multi-Model Configurations
+
+Each model serves a specific purpose:
+
+- **llm** - Primary language model for text generation (mandatory)
+- **embed** - Embeddings model for semantic search and document processing (mandatory)
+- **Custom models** - Additional models from supported families (e.g., llmvision, llmgpt)
+
+#### Critical Requirements
+
+- Each `id` must be unique across all models
+- The `llm` and `embed` models cannot be removed
+- Only models from supported families can be added
+- Total GPU memory allocation must not exceed 0.95
+
+### GPU Memory Management
+
+The `gpuMemoryUtilization` parameter controls what fraction of total GPU memory each model receives. This is the most critical aspect of multi-model configuration.
+
+#### Default Allocation (baseline-24g)
+
+```
+llm:    0.85  # 85% of 24GB = ~20.4GB
+embed:  0.10  # 10% of 24GB = ~2.4GB
+# Total: 0.95 (reserving 0.05 for system overhead)
+```
+
+#### Multi-Model Allocation Example
+
+```
+llm:        0.60  # 60% of 24GB = ~14.4GB (reduced from 0.85)
+llmvision:  0.25  # 25% of 24GB = ~6GB (new model)
+embed:      0.10  # 10% of 24GB = ~2.4GB (unchanged)
+# Total: 0.95 (reserving 0.05 for system overhead)
+```
+
+#### Memory Allocation Rules
+
+<Warning>
+**Fundamental Rules:**
+- The sum of all `gpuMemoryUtilization` values must not exceed 0.95
+- Always reserve at least 5% (0.05) for system overhead
+- Exceeding total GPU capacity will cause inference engine startup failure
+- **The only way to add models is by reducing the `gpuMemoryUtilization` of existing models**
+</Warning>
+
+### Memory Reallocation Strategy
+
+When adding new models, follow this process:
+
+1. **Calculate available memory**: Start with 0.95 (5% reserved for system overhead)
+2. **Identify memory to free**: Determine which existing model(s) to reduce
+3. **Reduce existing allocations**: Lower `gpuMemoryUtilization` for existing models
+4. **Allocate to new model**: Assign freed memory to the new model
+5. **Adjust context windows**: If reducing memory significantly, lower `contextWindow` values
+6. **Verify total**: Ensure sum equals exactly 0.95
+
+#### Example: Adding Vision Model to baseline-24g
+
+```
+# Original allocation
+llm: 0.85, embed: 0.10  # Total: 0.95
+
+# Planning new allocation
+# Step 1: Available memory = 0.95
+# Step 2: Want to add vision model needing 0.25
+# Step 3: Reduce llm from 0.85 to 0.60 (frees 0.25)
+# Step 4: Allocate 0.25 to llmvision
+# Step 5: Reduce contextWindow on llm from 8192 to 4096
+# Step 6: Verify: 0.60 + 0.25 + 0.10 = 0.95 ✓
+
+llm:        0.60  # Reduced from 0.85
+llmvision:  0.25  # New model
+embed:      0.10  # Unchanged
+```
+
+<Info>
+There is no automatic memory management. You must manually redistribute memory allocations when adding models.
+</Info>
+
+### Context Window Considerations
+
+When reducing `gpuMemoryUtilization` for a model, you may need to also reduce its `contextWindow`:
+
+- Lower memory allocation means less space for active context
+- Start with conservative context windows and increase if memory allows
+- Monitor actual memory usage with `nvidia-smi` during operation
+
+#### Context Window Guidelines
+
+| GPU Memory Allocation | Recommended Max Context Window |
+|-----------------------|--------------------------------|
+| 0.85 (full model)     | 8192-16384                     |
+| 0.60                  | 4096-8192                      |
+| 0.40                  | 2048-4096                      |
+| 0.25                  | 1024-2048                      |
+
+### Complete Multi-Model Example
+
+This example demonstrates a fully configured multi-model setup with three LLMs and one embedding model:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  numGPUs: 2
+  config:
+    models:
+      # Primary LLM - Reduced memory to accommodate additional models
+      - id: llm
+        name: qwen-3-14b
+        type: llm
+        contextWindow: 4096
+        modelRepo: "Qwen/Qwen3-14B-Instruct"
+        tokenizer: "Qwen/Qwen3-14B-Instruct"
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.50
+        supportReasoning: true
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 4096
+          minP: 0.1
+          topP: 0.8
+          topK: 5
+
+      # Vision LLM - For image understanding tasks
+      - id: llmvision
+        name: qwen-2-5-vl-7b-awq
+        type: llm
+        contextWindow: 1024
+        modelRepo: "Qwen/Qwen2.5-VL-7B-Instruct-AWQ"
+        tokenizer: "Qwen/Qwen2.5-VL-7B-Instruct"
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.25
+        multimodal:
+          images:
+            enabled: true
+            maxNumber: 1
+        supportReasoning: false
+        samplingParams:
+          temperature: 0.01
+          maxTokens: 4096
+          minP: 0.1
+          topP: 0.8
+          topK: 5
+
+      # GPT-OSS LLM - Alternative model for specific tasks
+      - id: llmgpt
+        name: gpt-oss-20b
+        type: llm
+        contextWindow: 8192
+        modelRepo: "openai/gpt-oss-20b"
+        tokenizer: "openai/gpt-oss-20b"
+        promptStyle: gpt-oss
+        gpuMemoryUtilization: 0.10
+        supportReasoning: true
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 2048
+          topP: 0.9
+
+      # Embeddings Model - Mandatory for document processing
+      - id: embed
+        type: embedding
+        modelRepo: "BAAI/bge-large-en-v1.5"
+        gpuMemoryUtilization: 0.10
+        vectorDim: 1024
+
+# Total allocation verification: 0.50 + 0.25 + 0.10 + 0.10 = 0.95 ✓
+```
+
+### Multi-Model Best Practices
+
+When configuring multi-model setups:
+
+- **Start minimal**: Begin with the smallest viable allocations and increase gradually
+- **Monitor metrics**: Use `nvidia-smi` to track actual memory usage
+- **Test thoroughly**: Validate each model individually before combining
+- **Document changes**: Keep records of memory allocation decisions
+- **Plan for headroom**: Don't allocate the full 0.95 if you might add models later
+
+## Configuration Reference
+
+### Complete Parameter Reference
+
+This section provides a complete reference of all available configuration parameters for custom model setups.
+
+#### Model Configuration Schema
+
+```yaml
+ai:
+  preset: string
+  numGPUs: integer (optional)
+  config:
+    models:
+      - id: string (required, unique)
+        name: string (optional)
+        type: "llm" | "embedding" (required)
+        contextWindow: integer (optional)
+        modelRepo: string (required)
+        tokenizer: string (optional, LLM only)
+        promptStyle: "qwen" | "mistral" | "gemma" | "gpt-oss" (optional, LLM only)
+        gpuMemoryUtilization: float (0.0-1.0, optional)
+        supportReasoning: boolean (optional, LLM only)
+        supportImage: integer (optional, LLM only)
+        supportAudio: integer (optional, LLM only)
+        vectorDim: integer (optional, embedding only)
+        multimodal: (optional, LLM only)
+          images:
+            enabled: boolean
+            maxNumber: integer
+          audio:
+            enabled: boolean
+            maxNumber: integer
+        samplingParams: (optional, LLM only)
+          temperature: float (0.0-2.0)
+          maxTokens: integer (1-8192)
+          minP: float (0.0-1.0)
+          topP: float (0.0-1.0)
+          topK: integer (1-100)
+          repetitionPenalty: float (1.0-2.0)
+          presencePenalty: float (-2.0-2.0)
+          frequencyPenalty: float (-2.0-2.0)
+        reasoningSamplingParams: (optional, LLM only)
+          # Same structure as samplingParams
+```
+
+### Validation Rules
+
+- `id` values must be unique across all models
+- `llm` and `embed` are mandatory model IDs
+- Sum of `gpuMemoryUtilization` must not exceed 0.95
+- `promptStyle` must match the model family
+- `contextWindow` must be appropriate for allocated memory
+- `vectorDim` must match the embedding model's output dimension

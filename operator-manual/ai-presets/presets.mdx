@@ -1,0 +1,149 @@
+---
+title: "AI Presets Reference"
+description: "Complete reference of available AI presets including base, alternative, experimental, and deprecated configurations"
+---
+
+Set the AI preset in your Zylon configuration file using the `ai.preset` property. The default configuration uses a 24GB setup.
+
+## Base Presets
+
+Base presets provide standard configurations optimized for general-purpose AI workloads.
+
+| Preset         | Required GPU Memory | Compatible Hardware Examples  |
+|----------------|---------------------|-------------------------------|
+| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     |
+| `baseline-32g` | 32GB                | RTX 5090                      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) |
+
+### Configuration Example
+
+```yaml
+ai:
+  preset: "baseline-48g"  # For a system with L40s (48GB)
+```
+
+<Tip>
+Choose the preset that matches your GPU memory capacity. Always select a preset that matches or is lower than your available VRAM.
+</Tip>
+
+## Alternative Presets
+
+Zylon provides alternative presets that offer specialized configurations trading certain capabilities for others. These are optional and should only be used when you have specific requirements that differ from the standard presets.
+
+### Vision-Enabled Alternatives
+
+<Note>
+These presets are only available in Zylon versions later than v1.44.0.
+</Note>
+
+These presets include specialized computer vision capabilities in the ingestion pipeline, allowing the system to process and understand images, documents, and visual content.
+
+| Preset                             | Required GPU Memory | Trade-off                  |
+|------------------------------------|---------------------|----------------------------|
+| `alternatives.baseline-48g-vision` | 48GB                | Smaller model (Qwen 3 14B) |
+| `alternatives.baseline-96g-vision` | 96GB                | Smaller model (Qwen 3 14B) |
+
+**When to use vision-enabled presets:**
+
+- Processing scanned documents and slide understanding
+- Analyzing charts, graphs, and visual data
+- Image understanding and description tasks
+
+**Configuration Example:**
+
+```yaml
+ai:
+  preset: "alternatives.baseline-96g-vision"
+```
+
+<Warning>
+The use of these presets probably requires modifying the inference server's shared memory. See the [Shared Memory Configuration](/ai-presets/configuration#shared-memory) section.
+</Warning>
+
+### Context-Optimized Alternatives
+
+These presets use smaller AI models to provide significantly larger context windows, allowing for extended conversations and complex analysis tasks.
+
+| Preset                              | Required GPU Memory | Trade-off                  |
+|-------------------------------------|---------------------|----------------------------|
+| `alternatives.baseline-48g-context` | 48GB                | Smaller model (Qwen 3 14B) |
+| `alternatives.baseline-96g-context` | 96GB                | Smaller model (Qwen 3 14B) |
+
+**When to use context-optimized presets:**
+
+- Extended conversation sessions
+- Complex analysis requiring large amounts of context
+- Long document processing
+
+**Configuration Example:**
+
+```yaml
+ai:
+  preset: "alternatives.baseline-48g-context"
+```
+
+<Info>
+Using more context windows does not always yield better results. Consider your specific use case before selecting context-optimized presets.
+</Info>
+
+## Experimental Presets
+
+<Warning>
+Experimental presets are under active development and may not be stable. Use only in testing environments.
+</Warning>
+
+Experimental presets provide access to cutting-edge models and configurations that are being evaluated for future releases. These presets may have different performance characteristics or stability compared to baseline presets.
+
+| Preset                     | Required GPU Memory | Model Family | Status |
+|----------------------------|---------------------|--------------|--------|
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   |
+| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   |
+| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  |
+
+**Configuration Example:**
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+```
+
+### Important Notes About Experimental Presets
+
+- Experimental presets may be removed or significantly changed between versions
+- Performance and stability are not guaranteed
+- Not recommended for production environments
+- May require additional configuration parameters
+- Support may be limited
+
+## Deprecated Presets
+
+<Warning>
+Deprecated presets are maintained for backward compatibility only and will not receive updates.
+</Warning>
+
+For customers that require older configurations, deprecated presets are available but not recommended for new installations.
+
+| Preset Pattern                | Description                     | Recommendation                           |
+|-------------------------------|---------------------------------|------------------------------------------|
+| `deprecated.<size>g.20250710` | Pre-Qwen 3 model configurations | Upgrade to current presets when possible |
+
+**Example Configuration:**
+
+```yaml
+ai:
+  preset: "deprecated.24g.20250710"
+```
+
+### Migration from Deprecated Presets
+
+If you're using a deprecated preset, we strongly recommend migrating to current baseline or alternative presets:
+
+1. Review the [base presets](#base-presets) to find an equivalent configuration
+2. Test the new preset in a staging environment
+3. Update your production configuration
+4. Monitor performance and adjust if needed
+
+Migration provides access to improved models, better performance, and ongoing support.

@@ -1,0 +1,155 @@
+---
+title: "Configuration Options"
+description: "Configure enhanced capabilities, multi-GPU setups, and shared memory for optimal performance"
+---
+
+## Enhanced Capabilities
+
+Zylon supports additional capabilities that can be combined with any base or alternative preset. These capabilities extend the functionality but are **not enabled by default**.
+
+### Available Capabilities
+
+| Capability     | Description                                   | Example Use Cases                                       |
+|----------------|-----------------------------------------------|---------------------------------------------------------|
+| `multilingual` | Enhanced support for languages beyond English | International documents, non-English content processing |
+
+### Adding Capabilities
+
+Capabilities are added to presets using a comma-separated format: `<base_preset>,<capability1>,<capability2>`
+
+**Examples:**
+
+```yaml
+# Base preset with multilingual capability
+ai:
+  preset: "baseline-24g,capabilities.multilingual"
+
+# Alternative preset with multilingual capability
+ai:
+  preset: "alternatives.baseline-48g-context,capabilities.multilingual"
+
+# Multiple capabilities (if more become available)
+ai:
+  preset: "baseline-48g,capabilities.multilingual,capabilities.feature2"
+```
+
+<Tip>
+Capabilities can be stacked with any preset type including base, alternative, and experimental presets.
+</Tip>
+
+## Multi-GPU Configuration
+
+If your system has multiple GPUs, you can combine their memory capacity to use higher-tier presets. Select the preset based on **total combined VRAM** across all GPUs.
+
+### Configuration Steps
+
+1. **Calculate total VRAM**: Add up the memory of all GPUs
+2. **Select appropriate preset**: Choose preset for the total memory
+3. **Configure GPU count**: Set the `numGPUs` parameter
+
+**Configuration Example:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  numGPUs: 2  # Using 2 GPUs with 24GB each (48GB total)
+```
+
+### Multi-GPU Configuration Examples
+
+| Hardware Setup | Individual GPU Memory | Total VRAM | Recommended Preset | Configuration |
+|----------------|----------------------|------------|-------------------|---------------|
+| 2x RTX 4090    | 24GB each            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
+| 2x L4          | 24GB each            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
+| 4x RTX 4090    | 24GB each            | 96GB       | `baseline-96g`    | `numGPUs: 4`  |
+| 2x RTX A6000   | 48GB each            | 96GB       | `baseline-96g`    | `numGPUs: 2`  |
+
+### Multi-GPU Best Practices
+
+- Ensure all GPUs are the same model for optimal performance
+- Verify adequate PCIe bandwidth between GPUs
+- Monitor GPU utilization to ensure balanced load
+- Consider NVLink connections for better inter-GPU communication when available
+
+**Complete Multi-GPU Example:**
+
+```yaml
+ai:
+  preset: "baseline-96g,capabilities.multilingual"
+  numGPUs: 4  # 4x RTX 4090 (24GB each = 96GB total)
+```
+
+## Shared Memory Configuration
+
+The Triton Inference Server uses shared memory to enable zero-copy data transfer between Zylon services and the inference engine. This eliminates serialization overhead and significantly improves inference throughput and reduces latency for high-volume workloads.
+
+### Default Allocation
+
+By default, the inference server allocates **2GB of RAM** for shared memory. This is sufficient for most text-based inference workloads.
+
+### When to Increase Shared Memory
+
+You may encounter `Shared memory allocation failed` errors in these scenarios:
+
+- **Large request queues**: Processing high volumes of concurrent requests where queued input exceeds available shared memory
+- **Image-based models**: Vision workloads requiring multiple megabytes per image where batches of high-resolution images quickly exhaust the default allocation
+- **Large document processing**: Handling very large documents or multiple documents simultaneously
+
+### Configuration
+
+To increase the shared memory limit, update your Zylon configuration file:
+
+```yaml
+triton:
+  sharedMemory:
+    limit: "4Gi"  # Increase from default 2Gi
+```
+
+### Recommended Shared Memory by Use Case
+
+| Use Case                    | Recommended Limit | Reason                                    |
+|-----------------------------|-------------------|-------------------------------------------|
+| Text-only inference         | 2Gi (default)     | Sufficient for most text workloads        |
+| Low-volume vision tasks     | 4Gi               | Handles occasional image processing       |
+| High-volume vision tasks    | 8Gi               | Supports batch image processing           |
+| Mixed heavy workloads       | 8-16Gi            | Accommodates concurrent text and vision   |
+
+<Warning>
+**Important considerations when increasing shared memory:**
+- Allocating excessive shared memory can cause pods to be OOMKilled
+- Be conservative with increases—start with small increments (e.g., 2Gi → 4Gi)
+- Monitor actual usage with Kubernetes metrics before further increases
+- Shared memory is reserved from system RAM, reducing available memory for other processes
+</Warning>
+
+### Monitoring Shared Memory Usage
+
+Check current shared memory utilization:
+
+```bash
+# View pod memory usage
+kubectl top pods -l app=triton-inference
+
+# Check for OOM events
+kubectl get events --field-selector reason=OOMKilling
+
+# View detailed memory statistics
+kubectl describe pod <triton-pod-name>
+```
+
+### Troubleshooting Shared Memory Issues
+
+**Symptom: `Shared memory allocation failed` errors**
+
+1. Check current shared memory limit in configuration
+2. Review inference request patterns and sizes
+3. Increase limit incrementally (2Gi → 4Gi → 8Gi)
+4. Monitor for OOMKilled events after changes
+5. Verify sufficient system RAM is available
+
+**Symptom: Pods getting OOMKilled after increasing shared memory**
+
+1. Reduce shared memory allocation
+2. Check total system RAM availability
+3. Review other memory-intensive processes
+4. Consider upgrading system RAM or optimizing workloads

@@ -1,0 +1,492 @@
+---
+title: "Troubleshooting"
+description: "Diagnose and resolve common issues with AI presets, multi-model configurations, and performance optimization"
+---
+
+## Common Issues
+
+This section covers frequently encountered problems when configuring AI presets.
+
+### Engine Fails to Start with Memory Error
+
+**Symptoms:**
+- Inference engine won't start
+- Error messages about insufficient memory
+- Kubernetes pods in CrashLoopBackOff state
+
+**Solutions:**
+
+1. **Verify actual GPU memory**
+   ```bash
+   nvidia-smi
+   ```
+   Check the "Memory-Usage" column for available VRAM.
+
+2. **Try the next lower preset**
+   ```yaml
+   # If using baseline-32g, try baseline-24g instead
+   ai:
+     preset: "baseline-24g"
+   ```
+
+3. **Remove optional capabilities**
+   ```yaml
+   # Remove capabilities to reduce memory usage
+   ai:
+     preset: "baseline-24g"  # Instead of "baseline-24g,capabilities.multilingual"
+   ```
+
+4. **Check for other applications using GPU memory**
+   ```bash
+   # List processes using GPU
+   nvidia-smi pmon
+   
+   # Kill unnecessary GPU processes
+   kill <process-id>
+   ```
+
+5. **Reboot the machine**
+   Sometimes GPU memory doesn't clear properly. A system reboot can resolve this.
+
+### Poor Performance or Slow Responses
+
+**Symptoms:**
+- High latency for inference requests
+- Timeouts during model inference
+- Slow response times
+
+**Solutions:**
+
+1. **Ensure correct preset for hardware**
+   Verify you're not using a preset that exceeds your GPU capacity:
+   ```bash
+   nvidia-smi
+   ```
+   Match the available VRAM to the appropriate preset.
+
+2. **Consider decreasing to a lower-tier preset**
+   Smaller models often provide better throughput on constrained hardware:
+   ```yaml
+   ai:
+     preset: "baseline-24g"  # Instead of baseline-48g
+   ```
+
+3. **Check GPU utilization**
+   ```bash
+   # Monitor GPU usage in real-time
+   watch -n 1 nvidia-smi
+   ```
+   Look for:
+   - High memory usage (>90%)
+   - GPU utilization patterns
+   - Temperature throttling
+
+4. **Review sampling parameters**
+   High `maxTokens` can significantly slow responses:
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm
+           samplingParams:
+             maxTokens: 2048  # Reduce from 4096
+   ```
+
+5. **Contact Zylon engineers**
+   If issues persist, reach out to support with:
+   - GPU model and memory
+   - Current preset configuration
+   - Observed performance metrics
+   - Recent configuration changes
+
+### Configuration Not Taking Effect
+
+**Symptoms:**
+- Changes to config file don't apply
+- System still using old configuration
+- Models not loading as expected
+
+**Solutions:**
+
+1. **Verify configuration file location**
+   Ensure you're editing the correct file:
+   ```bash
+   cat /etc/config/zylon-config.yaml
+   ```
+
+2. **Validate YAML syntax**
+   ```bash
+   # Check for syntax errors
+   yamllint /etc/config/zylon-config.yaml
+   ```
+
+3. **Restart services**
+   ```bash
+   kubectl rollout restart deployment/zylon-inference
+   ```
+
+4. **Check for configuration errors in logs**
+   ```bash
+   kubectl logs -l app=zylon-inference --tail=100
+   ```
+
+## Multi-Model Troubleshooting
+
+Specific issues related to running multiple models simultaneously.
+
+### Triton Inference Server Fails to Start
+
+**Symptoms:**
+- Triton pod in CrashLoopBackOff
+- Error logs showing model loading failures
+- Specific models failing to initialize
+
+**Solutions:**
+
+1. **Check Triton logs for specific model failures**
+   ```bash
+   kubectl logs -l app=triton-inference --tail=200
+   ```
+   Look for error messages indicating which model failed.
+
+2. **Verify memory allocation for problematic model**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llmvision  # If this model failed
+           gpuMemoryUtilization: 0.20  # Try reducing from 0.25
+   ```
+
+3. **Reduce context window if memory is constrained**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm
+           contextWindow: 2048  # Reduce from 4096
+           gpuMemoryUtilization: 0.60
+   ```
+
+4. **Verify model repository access**
+   ```bash
+   # Test HuggingFace access
+   curl -I https://huggingface.co/Qwen/Qwen3-14B-Instruct
+   ```
+
+5. **Check actual GPU memory with nvidia-smi**
+   ```bash
+   nvidia-smi
+   ```
+   Verify sufficient free memory exists for all models.
+
+### Out of Memory (OOM) Errors
+
+**Symptoms:**
+- Engine fails to start with OOM error
+- Kubernetes pods getting OOMKilled
+- Memory allocation failures in logs
+
+**Solutions:**
+
+1. **Verify total gpuMemoryUtilization doesn't exceed 0.95**
+   ```yaml
+   # Calculate total: should be ≤ 0.95
+   ai:
+     config:
+       models:
+         - id: llm
+           gpuMemoryUtilization: 0.60
+         - id: llmvision
+           gpuMemoryUtilization: 0.25
+         - id: embed
+           gpuMemoryUtilization: 0.10
+   # Total: 0.95 ✓
+   ```
+
+2. **Reduce allocation for the largest model**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm
+           gpuMemoryUtilization: 0.50  # Reduced from 0.60
+   ```
+
+3. **Check for other processes using GPU memory**
+   ```bash
+   # Kill unnecessary processes
+   nvidia-smi pmon
+   ```
+
+4. **Remove optional models**
+   Temporarily remove non-essential models to isolate the issue:
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm  # Keep only mandatory models
+         - id: embed
+   ```
+
+5. **Verify correct preset for GPU capacity**
+   Ensure you're not using a 48GB preset on 24GB hardware:
+   ```bash
+   nvidia-smi
+   ```
+
+### Model Conflicts or Initialization Errors
+
+**Symptoms:**
+- Models loading but producing errors
+- Inconsistent inference results
+- Crashes during inference
+
+**Solutions:**
+
+1. **Verify unique model IDs**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm        # ✓ Unique
+         - id: llmvision  # ✓ Unique
+         - id: llmgpt     # ✓ Unique
+         - id: embed      # ✓ Unique
+   ```
+
+2. **Check prompt style matches model family**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llmgpt
+           modelRepo: "openai/gpt-oss-20b"
+           promptStyle: gpt-oss  # Must match model family
+   ```
+
+3. **Verify tokenizer compatibility**
+   ```yaml
+   ai:
+     config:
+       models:
+         - id: llm
+           modelRepo: "Qwen/Qwen3-14B-Instruct"
+           tokenizer: "Qwen/Qwen3-14B-Instruct"  # Must match model
+   ```
+
+4. **Test models individually**
+   Load one model at a time to identify the problematic configuration:
+   ```yaml
+   # Test configuration
+   ai:
+     config:
+       models:
+         - id: llm
+           # ... full config
+         - id: embed
+           # ... full config
+   ```
+
+## Performance Optimization
+
+Strategies for optimizing AI preset configurations for maximum performance.
+
+### Optimizing Memory Allocation
+
+**Goal**: Maximize performance while maintaining stability.
+
+**Strategy 1: Profile actual memory usage**
+
+```bash
+# Monitor memory during typical workload
+nvidia-smi dmon -s um -c 100 > gpu_memory_profile.txt
+```
+
+Analyze the output to find:
+- Peak memory usage per model
+- Average utilization patterns
+- Memory fragmentation
+
+**Strategy 2: Adjust allocations based on usage**
+
+```yaml
+# If profiling shows llm uses only 45% instead of allocated 60%
+ai:
+  config:
+    models:
+      - id: llm
+        gpuMemoryUtilization: 0.50  # Reduce from 0.60
+      - id: llmvision
+        gpuMemoryUtilization: 0.35  # Increase from 0.25
+```
+
+**Strategy 3: Dynamic context window sizing**
+
+```yaml
+# Use smaller context windows for faster models
+ai:
+  config:
+    models:
+      - id: llm
+        contextWindow: 4096
+        samplingParams:
+          maxTokens: 2048
+      - id: llmvision
+        contextWindow: 1024  # Smaller for image tasks
+```
+
+### Optimizing Sampling Parameters
+
+**For speed (low latency):**
+
+```yaml
+samplingParams:
+  temperature: 0.3      # Lower randomness = faster
+  maxTokens: 1024       # Limit response length
+  topK: 10              # Smaller search space
+  topP: 0.8             # Focused probability mass
+```
+
+**For quality (higher accuracy):**
+
+```yaml
+samplingParams:
+  temperature: 0.7      # Higher for diverse outputs
+  maxTokens: 4096       # Allow longer responses
+  topK: 40              # Larger search space
+  topP: 0.95            # Broader probability mass
+  repetitionPenalty: 1.2  # Reduce repetition
+```
+
+**For balanced performance:**
+
+```yaml
+samplingParams:
+  temperature: 0.5
+  maxTokens: 2048
+  minP: 0.05
+  topP: 0.9
+  topK: 20
+```
+
+### Multi-GPU Optimization
+
+**Strategy 1: Balance workload across GPUs**
+
+```yaml
+ai:
+  preset: "baseline-96g"
+  numGPUs: 4
+  # Ensure models are distributed evenly
+```
+
+Monitor per-GPU usage:
+
+```bash
+# Check utilization across all GPUs
+nvidia-smi dmon -s u -c 100
+```
+
+**Strategy 2: Use NVLink when available**
+
+For multi-GPU setups with NVLink:
+- Enable NVLink in BIOS
+- Verify connectivity: `nvidia-smi topo -m`
+- Configure tensor parallelism for large models
+
+**Strategy 3: Optimize batch sizes**
+
+```yaml
+# For high-throughput scenarios
+triton:
+  maxBatchSize: 32
+  preferredBatchSize: 16
+```
+
+### Monitoring and Metrics
+
+**Key metrics to monitor:**
+
+1. **GPU Memory Utilization**
+   ```bash
+   nvidia-smi --query-gpu=memory.used,memory.total --format=csv -l 1
+   ```
+
+2. **GPU Compute Utilization**
+   ```bash
+   nvidia-smi --query-gpu=utilization.gpu --format=csv -l 1
+   ```
+
+3. **Inference Latency**
+   Monitor application-level metrics:
+   - Time to first token
+   - Tokens per second
+   - End-to-end request latency
+
+4. **Throughput**
+   - Requests per second
+   - Concurrent request capacity
+   - Queue depth
+
+**Setting up monitoring:**
+
+```bash
+# Export metrics to Prometheus
+kubectl port-forward svc/triton-metrics 8002:8002
+
+# Query metrics
+curl http://localhost:8002/metrics
+```
+
+### Performance Troubleshooting Checklist
+
+When facing performance issues, check:
+
+- [ ] GPU memory not overallocated (total ≤ 0.95)
+- [ ] Context windows appropriate for memory allocation
+- [ ] Sampling parameters optimized for use case
+- [ ] No thermal throttling (`nvidia-smi` shows normal temps)
+- [ ] No competing GPU processes
+- [ ] Shared memory sufficient for workload
+- [ ] Network latency acceptable (for distributed setups)
+- [ ] Triton batch sizes configured appropriately
+- [ ] Model versions are latest stable releases
+
+### Best Practices Summary
+
+1. **Start Conservative**: Begin with smaller allocations and increase based on measured need
+2. **Monitor Continuously**: Use `nvidia-smi` and application metrics to track performance
+3. **Test Incrementally**: Make one change at a time and validate results
+4. **Document Changes**: Keep a log of configuration modifications and their impacts
+5. **Plan for Growth**: Reserve headroom in memory allocation for future models or increased load
+6. **Regular Maintenance**: Periodically review and optimize configurations based on usage patterns
+
+## Getting Help
+
+If you've tried the solutions above and still experience issues:
+
+1. **Gather diagnostic information**:
+   ```bash
+   # System info
+   nvidia-smi > diagnostics.txt
+   
+   # Current config
+   cat /etc/config/zylon-config.yaml >> diagnostics.txt
+   
+   # Recent logs
+   kubectl logs -l app=zylon-inference --tail=500 >> diagnostics.txt
+   kubectl logs -l app=triton-inference --tail=500 >> diagnostics.txt
+   ```
+
+2. **Contact Zylon Support** with:
+   - Hardware specifications (GPU model, VRAM, CPU, system RAM)
+   - Current preset configuration
+   - Full error messages and logs
+   - Steps taken to troubleshoot
+   - Recent configuration changes
+
+3. **Community Resources**:
+   - Zylon documentation portal
+   - Community forums
+   - GitHub issues (if applicable)

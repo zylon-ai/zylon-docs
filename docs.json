@@ -237,7 +237,6 @@
                   "operator-manual/ai-presets/troubleshooting"
                 ]
               },
-              "operator-manual/configuration/ai-presets/index",
               "operator-manual/openid",
               {
                 "group": "Connectors Configuration",

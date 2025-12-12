@@ -215,7 +215,7 @@ When you allocate GPU memory to a model, that memory is divided between:
 **Example for a 14B parameter model:**
 ```
 Full allocation (0.85 on 24GB = 20.4GB):
-├─ Model weights: 28GB compressed to ~14GB (quantized)
+├─ Model weights: ~14GB (quantized; original FP32 size would be ~28GB)
 ├─ KV Cache: ~5GB (supports 16k context)
 └─ Activations: ~1.4GB
 

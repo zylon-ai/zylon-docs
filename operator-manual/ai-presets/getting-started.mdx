@@ -74,8 +74,8 @@ ai:
 After modifying the configuration file, restart the Zylon services to apply changes:
 
 ```bash
-# Command to restart services (adjust based on your deployment)
-kubectl rollout restart deployment/zylon-inference
+# Rollout restart of Triton
+kubectl rollout restart deploy/zylon-triton
 ```
 
 ### Step 5: Verify Installation

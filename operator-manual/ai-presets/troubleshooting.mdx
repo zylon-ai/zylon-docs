@@ -67,7 +67,7 @@ Issues specific to custom model configurations and multi-model setups.
 
 1. **Check the Triton logs to identify which specific model is causing the failure**
    ```bash
-   kubectl logs -l deploy/zylon-triton -n zylon --tail=200
+   kubectl logs deploy/zylon-triton -n zylon --tail=200
    ```
 
 2. **Verify memory allocation for the problematic model** - adjust `gpuMemoryUtilization` if needed
@@ -120,7 +120,7 @@ Issues specific to custom model configurations and multi-model setups.
 
 2. **Reduce allocation for one or more models based on the crash logs**
    ```bash
-   kubectl logs -l deploy/zylon-triton -n zylon
+   kubectl logs deploy/zylon-triton -n zylon
    ```
 
 3. **Check actual GPU memory with `nvidia-smi`** during startup

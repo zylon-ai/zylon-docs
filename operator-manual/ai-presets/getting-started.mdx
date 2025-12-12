@@ -83,11 +83,8 @@ kubectl rollout restart deployment/zylon-inference
 Check that the inference engine started successfully:
 
 ```bash
-# Check pod status
-kubectl get pods -l app=zylon-inference
-
 # Check logs for successful model loading
-kubectl logs -l app=zylon-inference --tail=100
+ kubectl logs deploy/zylon-triton -n zylon --tail=100
 ```
 
 Look for log messages indicating successful model initialization.

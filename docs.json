@@ -227,7 +227,16 @@
             "group": "Zylon Instance Configuration",
             "pages": [
               "operator-manual/configuration/index",
-              "operator-manual/configuration/ai-presets",
+              {
+                "group": "AI Presets",
+                "pages": [
+                  "operator-manual/ai-presets/getting-started",
+                  "operator-manual/ai-presets/presets",
+                  "operator-manual/ai-presets/configuration",
+                  "operator-manual/ai-presets/advanced-customization",
+                  "operator-manual/ai-presets/troubleshooting"
+                ]
+              },
               "operator-manual/openid",
               {
                 "group": "Connectors Configuration",

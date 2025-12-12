@@ -1,0 +1,129 @@
+---
+title: "Troubleshooting"
+description: "Diagnose and resolve issues with AI presets and custom configurations"
+---
+
+## Common Issues
+
+### Engine Fails to Start with Memory Error
+
+**Solutions:**
+
+1. **Verify your actual GPU memory**
+   ```bash
+   nvidia-smi
+   ```
+
+2. **Try the next lower preset**
+   ```yaml
+   # If using baseline-32g, try baseline-24g instead
+   ai:
+     preset: "baseline-24g"
+   ```
+
+3. **Remove optional capabilities to reduce memory usage**
+   ```yaml
+   # Remove capabilities
+   ai:
+     preset: "baseline-24g"  # Instead of "baseline-24g,capabilities.multilingual"
+   ```
+
+4. **Check for other applications using GPU memory**
+
+5. **Reboot the machine**
+
+### Poor Performance or Slow Responses
+
+**Solutions:**
+
+1. **Ensure you're using the correct preset for your hardware**
+
+2. **Consider decreasing to a lower-tier preset**
+
+3. **Communicate with Zylon engineers to understand what is happening**
+
+### Pod in Failed or CrashLoopBackOff State
+
+If the Triton or inference pods are stuck in a failed state:
+
+```bash
+# Restart the deployment
+kubectl rollout restart deploy/zylon-triton -n zylon
+```
+
+This forces Kubernetes to recreate the pods with a fresh state.
+
+---
+
+## Advanced Issues
+
+Issues specific to custom model configurations and multi-model setups.
+
+### Startup Failures
+
+#### Triton Inference Server Fails to Start
+
+**Solutions:**
+
+1. **Check the Triton logs to identify which specific model is causing the failure**
+   ```bash
+   kubectl logs deploy/zylon-triton -n zylon --tail=200
+   ```
+
+2. **Verify memory allocation for the problematic model** - adjust `gpuMemoryUtilization` if needed
+
+3. **If you've reduced memory allocation too much, reduce the `contextWindow` parameter for that model**
+
+4. **Use `nvidia-smi` to check actual GPU memory usage and availability**
+   ```bash
+   nvidia-smi
+   ```
+
+#### Unsupported Model Version
+
+**Symptom**: Triton fails to load a model even though the model family is supported.
+
+**Cause**: VLLM (the inference backend) may not support the specific version of your model yet. For example:
+- Mistral Small 3 (2501) is supported
+- Mistral Small 3 (2509) might not be supported yet
+
+**Solutions:**
+
+1. **Check the supported model version** in the documentation
+
+2. **Try an earlier version** of the same model family if available
+
+3. **Check Zylon release notes** for supported model versions
+
+4. **Contact Zylon engineers** to confirm model compatibility
+
+### Memory Errors
+
+#### Engine Fails to Start with "Out of Memory" Error
+
+**Solutions:**
+
+1. **Verify total `gpuMemoryUtilization` does not exceed 0.95**
+   ```yaml
+   # Calculate total across all models
+   ai:
+     config:
+       models:
+         - id: llm
+           gpuMemoryUtilization: 0.60
+         - id: llmvision
+           gpuMemoryUtilization: 0.25
+         - id: embed
+           gpuMemoryUtilization: 0.10
+   # Total: 0.95 ✓
+   ```
+
+2. **Reduce allocation for one or more models based on the crash logs**
+   ```bash
+   kubectl logs deploy/zylon-triton -n zylon
+   ```
+
+3. **Check actual GPU memory with `nvidia-smi`** during startup
+   ```bash
+   watch -n 1 nvidia-smi
+   ```

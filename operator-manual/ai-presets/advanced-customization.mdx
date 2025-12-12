@@ -456,7 +456,7 @@ ai:
       - id: llm
         name: qwen-3-14b-awq
         type: llm
-        contextWindow: 4096              # Reduced from 8192 due to memory
+        contextWindow: 9600              # Reduced from 16384 (~41%) to match memory allocation
         promptStyle: qwen
         gpuMemoryUtilization: 0.50       # Reduced from default 0.85
         supportReasoning: true

@@ -3,7 +3,7 @@
   "info": {
     "title": "Zylon-GPT API",
     "description": "\nThis API describes Zylon's AI layer's API. The API exposes low-level\nprimitives that allow developers to build AI apps\nand worflows on top of Zylon's Private AI platform.\n",
-    "version": "0.70.5\n"
+    "version": "0.73.2\n"
   },
   "servers": [
     {
@@ -2492,6 +2492,80 @@
         "responses": {
           "200": {
             "description": "Web content fetched successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolResponse"
+                },
+                "examples": {
+                  "successful_fetch": {
+                    "summary": "Fetched text content from a web page",
+                    "value": {
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "This is the main content extracted from the web page..."
+                        }
+                      ],
+                      "is_error": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Validation Error - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_url": {
+                    "summary": "Missing URL in the last user message",
+                    "value": {
+                      "detail": [
+                        {
+                          "loc": [
+                            "body",
+                            "context_filter"
+                          ],
+                          "msg": "No URL found in the last user message.",
+                          "type": "value_error"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tools/web-search": {
+      "post": {
+        "tags": [
+          "Tools"
+        ],
+        "summary": "Web Search",
+        "description": "Search the web for information related to a natural language query.",
+        "operationId": "web_search_v1_tools_web_search_post",
+        "requestBody": {
+          "description": "Request body for fetching web content. The last user message must contain a valid URL.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebFetchBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Web search completed successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5071,7 +5145,14 @@
           },
           "sources": {
             "items": {
-              "$ref": "#/components/schemas/Chunk"
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Chunk"
+                },
+                {
+                  "$ref": "#/components/schemas/Website"
+                }
+              ]
             },
             "type": "array",
             "title": "Sources",
@@ -5119,6 +5200,36 @@
             "title": "Ssl",
             "description": "Whether to use SSL for the database connection",
             "default": false
+          },
+          "enable_tables": {
+            "type": "boolean",
+            "title": "Enable Tables",
+            "description": "Whether to include tables in the inspection",
+            "default": true
+          },
+          "enable_views": {
+            "type": "boolean",
+            "title": "Enable Views",
+            "description": "Whether to include views in the inspection",
+            "default": true
+          },
+          "enable_functions": {
+            "type": "boolean",
+            "title": "Enable Functions",
+            "description": "Whether to include functions in the inspection",
+            "default": true
+          },
+          "enable_procedures": {
+            "type": "boolean",
+            "title": "Enable Procedures",
+            "description": "Whether to include stored procedures in the inspection",
+            "default": true
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Optional description of the database",
+            "default": ""
           }
         },
         "type": "object",
@@ -6207,6 +6318,168 @@
         ],
         "title": "WebFetchBody",
         "description": "Request body for web content fetching using the tool."
+      },
+      "WebSearchQueryBody": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "The natural language query to search the web.",
+            "examples": [
+              "Latest news on AI advancements"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "WebSearchQueryBody",
+        "description": "Request body for web search using the tool."
+      },
+      "Website": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier for the website source",
+            "examples": [
+              "website_123e4567-e89b-12d3-a456-426614174000"
+            ]
+          },
+          "object": {
+            "type": "string",
+            "const": "context.website",
+            "title": "Object",
+            "description": "Object type identifier, always 'context.website' for website sources"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "The URL of the website",
+            "examples": [
+              "https://www.example.com",
+              "https://docs.privategpt.com/getting-started",
+              "https://en.wikipedia.org/wiki/Artificial_intelligence"
+            ]
+          },
+          "favicon_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Url",
+            "description": "The URL of the website's favicon",
+            "examples": [
+              "https://www.example.com/favicon.ico",
+              "https://docs.privategpt.com/favicon.png",
+              "https://en.wikipedia.org/static/favicon/wikipedia.ico"
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "The title of the website or webpage",
+            "examples": [
+              "Example Domain",
+              "Getting Started with PrivateGPT - Documentation",
+              "Artificial Intelligence - Wikipedia"
+            ]
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "A brief description or summary of the website content",
+            "examples": [
+              "This domain is for use in illustrative examples in documents.",
+              "PrivateGPT is an open-source project that enables private AI interactions.",
+              "Artificial intelligence (AI) is intelligence demonstrated by machines."
+            ]
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Additional metadata about the website source",
+            "examples": [
+              {
+                "accessed_date": "2024-01-15",
+                "language": "en"
+              },
+              {
+                "accessed_date": "2024-02-20",
+                "language": "fr"
+              },
+              null
+            ]
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type",
+            "description": "MIME type indicating the format of the website content",
+            "examples": [
+              "text/html",
+              "application/json"
+            ]
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "The actual text content extracted from the website",
+            "examples": [
+              "<html><head><title>Example Domain</title></head><body>This domain is for use in illustrative examples in documents.</body></html>",
+              "PrivateGPT is an open-source project that enables private AI interactions.",
+              "Artificial intelligence (AI) is intelligence demonstrated by machines."
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "object",
+          "url"
+        ],
+        "title": "Website",
+        "description": "Represents a website URL source."
       },
       "ZylonCitation": {
         "properties": {

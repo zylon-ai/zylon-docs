@@ -2839,6 +2839,72 @@
         "deprecated": false
       }
     },
+    "/v1/app/project/{projectId}/artifact/{artifactId}/private": {
+      "get": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Get artifact private details",
+        "description": "Retrieves private details about a specific artifact by its ID.Only accessible to the creator of the artifact.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "The ID of the project",
+            "required": true,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "artifactId",
+            "in": "path",
+            "description": "The ID of the artifact to retrieve",
+            "required": true,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the artifact private details",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/v1/app/project/{projectId}/artifact/{artifactId}/download": {
       "get": {
         "tags": [
@@ -5420,7 +5486,7 @@
           "external_url": {
             "type": "string"
           },
-          "config": {
+          "props": {
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
@@ -5459,10 +5525,12 @@
           },
           "updated_at": {
             "type": "string"
+          },
+          "ws_auto_select": {
+            "type": "boolean"
           }
         },
         "required": [
-          "config",
           "created_at",
           "has_content",
           "id",
@@ -5470,10 +5538,12 @@
           "keep_file_after_ingestion",
           "name",
           "project_id",
+          "props",
           "source",
           "state",
           "type",
-          "updated_at"
+          "updated_at",
+          "ws_auto_select"
         ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactType": {
@@ -5486,7 +5556,9 @@
           "SmartDoc",
           "Link",
           "BulkQA",
-          "ReadAndExtract"
+          "ReadAndExtract",
+          "SqlDatabase",
+          "McpServer"
         ]
       },
       "ai.zylon.backend.server.app.project.artifact.ArtifactSource": {
@@ -5804,13 +5876,16 @@
         },
         "oneOf": [
           {
+            "$ref": "#/components/schemas/audio"
+          },
+          {
             "$ref": "#/components/schemas/binary"
           },
           {
-            "$ref": "#/components/schemas/file"
+            "$ref": "#/components/schemas/image"
           },
           {
-            "$ref": "#/components/schemas/image"
+            "$ref": "#/components/schemas/file"
           },
           {
             "$ref": "#/components/schemas/source"
@@ -5830,6 +5905,47 @@
           {
             "$ref": "#/components/schemas/tool_use"
           }
+        ]
+      },
+      "audio": {
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "start_timestamp": {
+            "type": "string"
+          },
+          "stop_timestamp": {
+            "type": "string"
+          },
+          "_meta": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "data"
         ]
       },
       "binary": {
@@ -5875,6 +5991,47 @@
         "required": [
           "data",
           "mime_type"
+        ]
+      },
+      "image": {
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "start_timestamp": {
+            "type": "string"
+          },
+          "stop_timestamp": {
+            "type": "string"
+          },
+          "_meta": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "data"
         ]
       },
       "file": {
@@ -5931,53 +6088,12 @@
           }
         }
       },
-      "image": {
-        "properties": {
-          "data": {
-            "type": "string"
-          },
-          "mime_type": {
-            "type": "string"
-          },
-          "start_timestamp": {
-            "type": "string"
-          },
-          "stop_timestamp": {
-            "type": "string"
-          },
-          "_meta": {
-            "type": "object",
-            "additionalProperties": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
-                },
-                {
-                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
-                },
-                {
-                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
-                },
-                {
-                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
-                },
-                {
-                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
-                }
-              ]
-            }
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
       "source": {
         "properties": {
           "sources": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
+              "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSourceType"
             }
           },
           "start_timestamp": {
@@ -6010,11 +6126,21 @@
           }
         }
       },
-      "ai.zylon.koala.model.message.PGPTSource": {
-        "properties": {
-          "object": {
-            "type": "string"
+      "ai.zylon.koala.model.message.PGPTSourceType": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/context.chunk"
           },
+          {
+            "$ref": "#/components/schemas/context.website"
+          }
+        ]
+      },
+      "context.chunk": {
+        "properties": {
           "id": {
             "type": "string"
           },
@@ -6045,10 +6171,7 @@
           "metadata": {
             "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSource.SourceMetadata"
           }
-        },
-        "required": [
-          "object"
-        ]
+        }
       },
       "ai.zylon.koala.model.message.PGPTSource.Document": {
         "properties": {
@@ -6078,6 +6201,56 @@
             "type": "string"
           }
         }
+      },
+      "context.website": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "favicon_url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+                }
+              ]
+            }
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ]
       },
       "tldr": {
         "properties": {
@@ -6608,6 +6781,9 @@
           "connection_string": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          },
           "schemas": {
             "type": "array",
             "items": {
@@ -6615,6 +6791,18 @@
             }
           },
           "ssl": {
+            "type": "boolean"
+          },
+          "enable_tables": {
+            "type": "boolean"
+          },
+          "enable_views": {
+            "type": "boolean"
+          },
+          "enable_procedures": {
+            "type": "boolean"
+          },
+          "enable_functions": {
             "type": "boolean"
           }
         },
@@ -7019,7 +7207,7 @@
           "sources": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
+              "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSourceType"
             }
           },
           "_meta": {
@@ -7391,13 +7579,10 @@
           "raw_content": {
             "type": "string"
           },
-          "plain_text_content": {
-            "type": "string"
-          },
           "keep_file_after_ingestion": {
             "type": "boolean"
           },
-          "config": {
+          "props": {
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
@@ -7415,15 +7600,37 @@
                 "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
               }
             ]
+          },
+          "private_props": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+              },
+              {
+                "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+              },
+              {
+                "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+              },
+              {
+                "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+              },
+              {
+                "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+              }
+            ]
+          },
+          "ws_auto_select": {
+            "type": "boolean"
           }
         },
         "required": [
-          "config",
           "name",
+          "props",
           "type"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactConfig": {
+      "ai.zylon.backend.server.app.project.artifact.document.DocumentArtifactProps": {
         "properties": {
           "file_name": {
             "type": "string"
@@ -7459,7 +7666,7 @@
           "file_name"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactConfig": {
+      "ai.zylon.backend.server.app.project.artifact.folder.FolderArtifactArtifactProps": {
         "properties": {
           "metadata": {
             "oneOf": [
@@ -7482,7 +7689,7 @@
           }
         }
       },
-      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig": {
+      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactProps": {
         "properties": {
           "questions": {
             "type": "array",
@@ -7493,7 +7700,7 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Result"
+              "$ref": "#/components/schemas/ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Result"
             }
           },
           "artifact_ids": {
@@ -7509,13 +7716,10 @@
             }
           },
           "detail": {
-            "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Detail"
+            "$ref": "#/components/schemas/ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Detail"
           },
           "style": {
-            "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Style"
-          },
-          "organization_context": {
-            "type": "string"
+            "$ref": "#/components/schemas/ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Style"
           }
         },
         "required": [
@@ -7526,7 +7730,7 @@
           "style"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Result": {
+      "ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Result": {
         "properties": {
           "question": {
             "type": "string"
@@ -7537,7 +7741,7 @@
           "sources": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ai.zylon.koala.model.message.PGPTSource"
+              "$ref": "#/components/schemas/context.chunk"
             }
           }
         },
@@ -7547,21 +7751,21 @@
           "sources"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Detail": {
+      "ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Detail": {
         "enum": [
           "Concise",
           "Moderate",
           "Comprehensive"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.bulkqa.BulkQAArtifactConfig.Style": {
+      "ai.zylon.backend.server.app.privategpt.CreatePGPTBulkQADTO.Style": {
         "enum": [
           "Expert",
           "Neutral",
           "Simple"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactConfig": {
+      "ai.zylon.backend.server.app.project.artifact.composition.CompositionArtifactProps": {
         "properties": {
           "artifact_ids": {
             "type": "array",
@@ -7577,9 +7781,6 @@
           },
           "detail": {
             "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.composition.CompositionDetailLevel"
-          },
-          "organization_context": {
-            "type": "string"
           }
         },
         "required": [
@@ -7603,7 +7804,7 @@
           "LongPieces"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactConfigDTO": {
+      "ai.zylon.backend.server.app.project.artifact.summary.SummaryArtifactProps": {
         "properties": {
           "artifact_ids": {
             "type": "array",
@@ -7655,7 +7856,7 @@
           "LongPieces"
         ]
       },
-      "ai.zylon.backend.server.app.project.artifact.link.LinkArtifactConfigDTO": {
+      "ai.zylon.backend.server.app.project.artifact.link.CreateLinkArtifactDTO": {
         "properties": {
           "original_artifact_id": {
             "type": "string"
@@ -7663,6 +7864,95 @@
         },
         "required": [
           "original_artifact_id"
+        ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.readextract.CreateReadAndExtractArtifactDTO": {
+        "properties": {
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.artifact.readextract.ReadExtractSection"
+            }
+          },
+          "artifact_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "artifact_ids",
+          "sections"
+        ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.readextract.ReadExtractSection": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "id",
+          "title"
+        ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.inline.InlineTextArtifactProps": {
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "ai.zylon.backend.server.app.project.artifact.sqldb.SqlDatabaseArtifactProps": {
+        "properties": {
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ssl": {
+            "type": "boolean"
+          },
+          "enable_tables": {
+            "type": "boolean"
+          },
+          "enable_views": {
+            "type": "boolean"
+          },
+          "enable_procedures": {
+            "type": "boolean"
+          },
+          "enable_functions": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ai.zylon.backend.server.app.project.artifact.sqldb.SqlDatabaseArtifactPrivateProps": {
+        "properties": {
+          "connection_string": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection_string"
         ]
       },
       "ai.zylon.backend.server.app.project.artifact.UpdateArtifactDTO": {
@@ -7679,7 +7969,29 @@
           "external_url": {
             "type": "string"
           },
-          "config": {
+          "props": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ProjectMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ThreadMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.InteractionMetadata"
+                },
+                {
+                  "$ref": "#/components/schemas/ai.zylon.backend.server.app.search.SearchResult.ArtifactContentMetadata"
+                }
+              ]
+            }
+          },
+          "private_props": {
             "type": "object",
             "additionalProperties": {
               "oneOf": [
@@ -7709,6 +8021,9 @@
           },
           "plain_text_content": {
             "type": "string"
+          },
+          "ws_auto_select": {
+            "type": "boolean"
           }
         }
       },

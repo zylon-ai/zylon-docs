@@ -1,0 +1,27 @@
+---
+title: "Multimodalility capabilities"
+---
+
+<Info>
+    **Available from version 1.51**
+</Info>
+<Note>**This feature require your current model to have audio or image capabilities**</Note>
+<Note>**Feature in Alpha**</Note>
+
+Extract and parse content from images or audios if model capabilities supports it.
+
+### Configuration
+
+| Key      | Default | Values          | Description                      |
+| -------- | ------- | --------------- | -------------------------------- |
+| `enabled`| `true`  | `true \| false` | Store Audit Log events & traces  |
+
+### Example
+
+```yaml
+features:
+    multimodal-voice:
+        enabled: true
+    multimodal-image:
+        enabled: true
+```

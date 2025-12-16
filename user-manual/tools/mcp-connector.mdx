@@ -1,50 +1,106 @@
---- 
-title: "MCP connector" 
-description: "Connect to remote MCP servers and use them directly in chat" 
+# MCP Connector
+
+The MCP (Model Context Protocol) Connector allows you to integrate external MCP servers into a **Project**, exposing their tools to the LLM in a controlled and shareable way.
+
+> **Important change**: MCP connectors are no longer added directly inside chats. They are now **project-level shared connectors**.
+
 ---
 
-## What is the MCP connector?
+## Creating an MCP Connector
 
-The **MCP Connector** lets you connect to remote MCP servers and use them directly in chat. Instead of calling APIs manually, you can simply integrate the MCP server as a tool in your workspace.
+To create an MCP connector:
 
-<Warning> 
-Ask your IT administrator to enable the MCP Connector in your system configuration [with the Operator Manual](/operator-manual/configuration/experimental-features) 
-</Warning>
+1. Open your **Project**.
+2. Click **Connectors** in the project sidebar.
+3. Click **Create Connector**.
+4. Select **MCP Server**.
+5. Configure the MCP server connection.
 
-## Connect to your MCP server
+Once created, the connector becomes available to all members of the project.
 
-1. **Open any chat** where you want to use MCP information  
-2. **Click the tool selector**  
-3. **Select "Add connection to MCP server"**  
-4. **Enter your connection details** in the popup window  
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/Y8o9o5lhkcI"
+    title="Zylon Workspace - Creating MCP Connector"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
 
-<Frame>  
-  <img src="/user-manual/tools/images/mcp_connector.png" alt="Connection popup window" />  
-</Frame>  
+---
 
-### Requirements
+## Configuring the MCP Connection
 
-Currently, only **remote MCP servers** are supported, and they must meet the following conditions:
+When setting up the connector, you will provide:
 
-- **No authorization required** or **OAuth enabled**  
-- **CORS enabled**  
-- Must be accessible from the same network as Zylon (just like any other service Zylon needs to connect to)  
+* **MCP server name**
+* **MCP endpoint URL**
 
-Your IT team can help ensure your MCP server is properly exposed for integration.
+After the connection is successfully established, you can control which MCP tools are exposed to the LLM.
 
-## What you can do once connected
+---
 
-After connecting, you can use MCP server tools and data directly in chat, for example:
+## Selecting MCP Tools
 
-- Query APIs exposed through the MCP server  
-- Run analysis tasks configured in the MCP server  
-- Retrieve structured data into your workspace conversations  
+Once the MCP connection has been established:
 
-<Info> 
-**Limitations**:  
-- Currently supports **remote MCP servers only**  
-- Some MCP servers wrap large APIs, so tool results can be very large and may **overflow the context window**  
-- Queries automatically stop after 10 minutes  
-</Info>
+* A list of **available tools** provided by the MCP server is displayed
+* You can **enable or disable** specific tools
 
+This allows you to:
 
+* Limit the LLM to only the tools it actually needs
+* Reduce risk and unintended behavior
+* Improve performance and reliability
+
+Tool selection can be updated at any time after creation.
+
+---
+
+## Using an MCP Connector in Chat
+
+After creation, MCP connectors can be used inside chats:
+
+1. Open a chat within the project.
+2. Use the **Connectors** selector in the chat input.
+3. Select the MCP connector.
+
+The LLM will now be able to call the enabled MCP tools during the conversation.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/e6W6fUodUQM"
+    title="Zylon Workspace - Using connectors"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+## Pre‑selecting MCP Connectors for All Chats
+
+MCP connectors can be configured to be **enabled by default** for every chat in a project.
+
+This is useful when:
+
+* Platform or AI administrators manage integrations
+* Non‑technical users should not worry about tool setup
+
+Once enabled, every new chat in the project automatically has access to the MCP tools.
+
+---
+
+## Personal or Private MCP Servers
+
+If you want to connect to a personal MCP server that should not be shared with others:
+
+1. Create a **private project**.
+2. Add the MCP connector to that project.
+3. Configure tools as usual.
+
+The same workflow applies, but access is limited to you only.

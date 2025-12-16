@@ -1,138 +1,111 @@
+# Database Connector
+
+The Database Connector allows you to securely connect a shared database to a **Project**, making its data available to all project members through chat.
+
+> **Important change**: Database connectors are no longer added directly inside a chat. They are now **project-level shared connectors**, managed from the Project sidebar.
+
 ---
-title: "Database connector"
-description: "Connect to your databases and ask questions about your data directly in chat"
+
+## Creating a Database Connector
+
+To create a database connector:
+
+1. Open your **Project**.
+2. Click **Connectors** in the project sidebar.
+3. Click **Create Connector**.
+4. Select **Database**.
+5. Configure the database connection details.
+
+Once created, the connector becomes available to all members of the project.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/uTQ07GFxffk"
+    title="Zylon Workspace - Creating Database Server Connector"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
 ---
 
-## What is the database connector?
+## Configuring Connection Details
 
-The **Database Connector** lets you connect to your company's databases and ask questions about your data directly in chat. Instead of writing complex database queries, you can simply ask "How many customers do we have?" or "Show me last month's sales figures."
+When creating the connector, you will be asked to provide:
 
-<Warning>
-Ask your IT administrator to enable the Database Connector in your system configuration [with the Operator Manual](/operator-manual/configuration/experimental-features).
-</Warning>
+* **Connection string**
 
-## Connect to your database
+After the initial connection is successfully established, you can further refine how the database is exposed to the LLM.
 
-1. **Open any chat** where you want to use database information
-2. **Click the tool selector**
-3. **Select "Add connection to database"**
-4. **Enter your connection details** in the popup window
+---
 
-<Frame>
-  <img src="/user-manual/tools/images/database_connector.png" alt="Connection popup window" />
-</Frame>
+## Advanced Database Configuration
 
-### Connection strings made simple
+After the database connection is established, you can configure advanced parameters:
 
-A connection string is like an address that tells the system where to find your database and how to access it. Your IT team can help you build the right connection string for your database.
+### Tables and Schemas
 
-#### Supported database types
+* Limit access to **specific tables** or **schemas**
+* Expose only the data that is relevant to your use case
 
-- Microsoft SQL Server
-- PostgreSQL
-- MySQL
+This improves performance, security, and response accuracy.
 
+### Description
 
-#### Connection string
-<Warning>
-**Security Notes**:
-- Never share your connection strings with others
-- Use only the databases your IT team has approved
-- Make sure the user is read-only
-</Warning>
+You can define a **database description** that explains:
 
-Here's what each part means (ask your IT team for the correct values):
+* What the database contains
+* How the data should be interpreted
+* Any domain-specific context
 
+This description is used by the LLM to better understand how to query and reason over your data.
 
-```
-SQL Server: mssql+pyodbc://username:password@server:1433/database
-PostgreSQL: postgresql://username:password@server:5432/database  
-MySQL: mysql+mysqldb://username:password@server:3306/database
-```
+---
 
-**Examples** 
+## Using a Database Connector in Chat
 
-<CodeGroup>
+Once created, database connectors can be used in chats:
 
-```sql Microsoft SQL Server
-mssql+pyodbc://sa:password123@server.company.com:1433/SalesDatabase
+1. Open a chat inside the project.
+2. Use the **Connectors** selector in the chat input.
+3. Select the database connector you want to use.
 
-mssql+pyodbc://dbuser:mypassword@192.168.1.50:1433/CustomerData
+The LLM will now be able to query the connected database during the conversation.
 
-mssql+pyodbc://localhost:1433/TestDB?TrustServerCertificate=yes
-```
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/e6W6fUodUQM"
+    title="Zylon Workspace - Using connectors"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
 
-```sql PostgreSQL  
-postgresql://postgres:admin123@database.company.com:5432/company_data
+---
 
-postgresql://user:password@10.0.0.25:5432/sales_db
+## Pre‑selecting Connectors for All Chats
 
-postgresql://localhost:5432/public_data
-```
+Database connectors can be configured to be **pre‑selected by default** for all chats in a project.
 
-```sql MySQL
-mysql+mysqldb://root:password@mysql.company.com:3306/customer_info
+This is especially useful when:
 
-mysql+mysqldb://appuser:secret123@127.0.0.1:3306/inventory
+* Technical administrators configure the environment
+* Non‑technical users interact with chats without manual setup
 
-mysql+mysqldb://localhost:3306/reports
-```
+Once enabled, every new chat in the project will automatically have access to the connector.
 
-Remember: Replace `username`, `password`, `server`, and `database` with your actual values.
+---
 
-</CodeGroup>
+## Personal or Private Databases
 
+If you want to use a personal database that should not be shared:
 
+1. Create a **private project**.
+2. Add the database connector to that project.
+3. Use it only within that private space.
 
-
-## What you can do once connected
-
-After connecting, you can ask questions about your data:
-
-<Tabs>
-  <Tab title="Sales questions">
-    - How much revenue did we generate last month?
-    - Which products are selling best?
-    - Show me our top 10 customers
-  </Tab>
-  
-  <Tab title="Customer questions">
-    - How many new customers signed up this week?
-    - Which customers haven't ordered recently?
-    - What are our customers' most common locations?
-  </Tab>
-  
-  <Tab title="Inventory questions">
-    - What products are running below 10 units in stock? 
-    - Show me all products in the Electronics category
-    - Which items have never been sold?
-  </Tab>
-</Tabs>
-
-<Info>
-**Limitations**:
-- Queries automatically stop after 10 minutes
-- Due to context window limitations LLM final output could be returned in CSV
-- Some advanced database operations may not be available
-</Info>
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Can't connect to database">
-    **What you see**: "Connection failed" or "Can't reach database"
-    
-    **Try this**:
-    - Double-check your server address and port number
-    - Ask IT if the database server is running
-    - Make sure you're connected to the company network (VPN if working remotely)
-  </Accordion>
-
-  <Accordion title="Takes too long">
-    **What you see**: You are waiting a very long time for a result
-
-    **What can be happening**: Your query can be too complex, the model is trying to get the best data, etc
-
-    **Try this**:
-    - Make a simplier query to verify that the connection is ok
-  </Accordion>
-</AccordionGroup>
+The setup process is identical, but access is restricted to you alone.

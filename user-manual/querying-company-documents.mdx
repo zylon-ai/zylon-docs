@@ -4,6 +4,8 @@ description: Ask questions over your project’s knowledge base, including conne
 icon: question
 ---
 
+## Querying your documents
+
 1. Start a new chat in the relevant **project**.
 2. (Optional) **Scope** the chat to a **folder** if you know where the answer lives.
 3. Ask your question. The assistant retrieves relevant snippets and replies with **citations** you can open to the exact passage.
@@ -21,3 +23,85 @@ icon: question
 ></iframe>
 
 > You can also paste a **URL** in the prompt to fetch and use the content from that page for the current turn.
+
+---
+
+## Editing the Latest Chat Query
+
+Users can edit **only the latest query** in a chat.
+
+When editing a query:
+
+- Only the **most recent message** can be edited
+- All **initial inputs** can be modified (prompt, connectors, parameters, tools, etc.)
+- The previous version of the query is **removed and replaced** by the edited one
+
+This ensures the chat history remains consistent and avoid context to get corrupted.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/R25WMHM0z4U"
+    title="Zylon Workspace - Retry Chat"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+## Deleting the Latest Chat Query
+
+Chat queries can also be deleted, with the same restriction:
+
+- **Only the latest query** in the chat can be deleted
+
+Deleting a query:
+
+- Removes the question and its associated response
+- Does not affect earlier messages in the conversation
+
+This is useful when a query was sent by mistake or is no longer relevant.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/xU33koneZRo"
+    title="Zylon Workspace - Delete chat query"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+## Retrying Failed Chat Queries
+
+If a chat query fails, users can retry it.
+
+Retrying a failed query allows you to:
+
+- Re-run the same question
+- **Modify inputs and parameters** before retrying
+- Fix issues caused by incorrect connectors, tools, or prompt configuration
+
+This is especially useful when failures are related to:
+
+- Invalid or missing inputs
+- Misconfigured connectors
+- Tool execution errors
+
+The retried query replaces the failed one, keeping the chat clean and easy to follow.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/OFv4S6nmKG4"
+    title="Zylon Workspace - Retry failed chat query"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>

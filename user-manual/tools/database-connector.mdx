@@ -4,6 +4,10 @@ The Database Connector allows you to securely connect a shared database to a **P
 
 > **Important change**: Database connectors are no longer added directly inside a chat. They are now **project-level shared connectors**, managed from the Project sidebar.
 
+<Warning>
+    Ask your IT administrator to enable the Database Connector in your system configuration [with the Operator Manual](/operator-manual/configuration/features).
+</Warning>
+
 ---
 
 ## Creating a Database Connector
@@ -19,7 +23,6 @@ To create a database connector:
 
 Once the connection is successful, additional configuration options become available.
 
-
 <iframe
     width="560"
     height="315"
@@ -32,6 +35,67 @@ Once the connection is successful, additional configuration options become avail
 ></iframe>
 
 ---
+
+### Connection strings made simple
+
+A connection string is like an address that tells the system where to find your database and how to access it. Your IT team can help you build the right connection string for your database.
+
+#### Supported database types
+
+- Microsoft SQL Server
+- PostgreSQL
+- MySQL
+
+
+#### Connection string
+<Warning>
+    **Security Notes**:
+    - Never share your connection strings with others
+    - Use only the databases your IT team has approved
+    - Make sure the user is read-only
+</Warning>
+
+Here's what each part means (ask your IT team for the correct values):
+
+
+```
+SQL Server: mssql+pyodbc://username:password@server:1433/database
+PostgreSQL: postgresql://username:password@server:5432/database
+MySQL: mysql+mysqldb://username:password@server:3306/database
+```
+
+**Examples**
+
+<CodeGroup>
+
+    ```sql Microsoft SQL Server
+    mssql+pyodbc://sa:password123@server.company.com:1433/SalesDatabase
+
+    mssql+pyodbc://dbuser:mypassword@192.168.1.50:1433/CustomerData
+
+    mssql+pyodbc://localhost:1433/TestDB?TrustServerCertificate=yes
+    ```
+
+    ```sql PostgreSQL
+    postgresql://postgres:admin123@database.company.com:5432/company_data
+
+    postgresql://user:password@10.0.0.25:5432/sales_db
+
+    postgresql://localhost:5432/public_data
+    ```
+
+    ```sql MySQL
+    mysql+mysqldb://root:password@mysql.company.com:3306/customer_info
+
+    mysql+mysqldb://appuser:secret123@127.0.0.1:3306/inventory
+
+    mysql+mysqldb://localhost:3306/reports
+    ```
+
+    Remember: Replace `username`, `password`, `server`, and `database` with your actual values.
+
+</CodeGroup>
+
 
 ## Advanced Configuration
 

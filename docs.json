@@ -110,7 +110,9 @@
                   "user-manual/tools/extended-thinking",
                   "user-manual/tools/numeric-analysis",
                   "user-manual/tools/database-connector",
-                  "user-manual/tools/mcp-connector"
+                  "user-manual/tools/mcp-connector",
+                  "user-manual/tools/attachments",
+                  "user-manual/tools/web-search"
                 ]
               },
               "user-manual/group-chats"
@@ -258,7 +260,10 @@
                   "operator-manual/configuration/features/index",
                   "operator-manual/configuration/features/feat-mcp",
                   "operator-manual/configuration/features/feat-database",
-                  "operator-manual/configuration/features/feat-audit"
+                  "operator-manual/configuration/features/feat-audit",
+                  "operator-manual/configuration/features/feat-webextract",
+                  "operator-manual/configuration/features/feat-websearch",
+                  "operator-manual/configuration/features/feat-multimodal"
                 ]
               },
               "operator-manual/configuration/cli"

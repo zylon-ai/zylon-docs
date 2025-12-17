@@ -14,16 +14,35 @@ features:
     enabled: true
   mcp:
     enabled: true
+  webExtract:
+    enabled: false
+  webSearch:
+    enabled: false
+  multimodal-image:
+    enabled: false
+  multimodal-voice:
+    enabled: false
 ```
 
+
 <CardGroup cols={2}>
- <Card title="Audit log" icon="list" href="features/feat-audit">
-  Track all user actions with timestamps and trace information.
-</Card>
+  <Card title="Audit log" icon="list" href="features/feat-audit">
+    Store Audit Log events & traces
+  </Card>
+  <Card title="Web Extract" icon="file-code" href="features/feat-webextract">
+    Extract and parse content from web pages.
+  </Card>
   <Card title="Database tool connector" icon="database" href="features/feat-database">
-  <Badge color="orange" size="xs">Alpha</Badge> Show database connector tool in chats.
+    <Badge color="orange" size="xs">Alpha</Badge> Show database connector tool in chats.
   </Card>
   <Card title="MCP tool connector" icon="plug" href="features/feat-mcp">
-  <Badge color="orange" size="xs">Alpha</Badge> Show MCP connector tool in chats.
+    <Badge color="orange" size="xs">Alpha</Badge> Show MCP connector tool in chats.
+  </Card>
+  <Card title="Web Search" icon="globe" href="features/feat-websearch">
+    <Badge color="orange" size="xs">Alpha</Badge> Enable web search capabilities in chats.
+  </Card>
+  <Card title="Multimodality Capabilities" icon="globe" href="features/feat-multimodal">
+    <Badge color="orange" size="xs">Alpha</Badge> Enable image support in chats.
   </Card>
 </CardGroup>
+

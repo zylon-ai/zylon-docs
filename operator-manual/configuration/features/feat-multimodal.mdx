@@ -1,8 +1,14 @@
 ---
-title: "Audit Log"
+title: "Multimodalility capabilities"
 ---
 
-Store Audit Log events & traces.
+<Info>
+    **Available from version 1.51**
+</Info>
+<Note>**This feature requires your current model to have image capabilities**</Note>
+<Note>**Feature in Alpha**</Note>
+
+Extract and parse content from images if model capabilities supports it.
 
 ### Configuration
 
@@ -14,6 +20,6 @@ Store Audit Log events & traces.
 
 ```yaml
 features:
-    audit:
+    multimodal-image:
         enabled: true
 ```

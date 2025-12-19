@@ -7,8 +7,8 @@ title: "Changelog"
     ## 💼 Workspace
     ### ✨ Features
     - **Attach Images in Chat**: You can now attach images directly in chat conversations. This feature requires your model to support image capabilities.
-    - **Project-Level Connectors**: MCPs and Databases can now be configured at the **project level**, making them reusable across multiple agents and flows while maintaining consistent access control. [Check how to enable Connectors.](/operator-manual/configuration/features)
-    - **Web Search Tool in Chat**: Web Search is now available directly inside chat, enabling users to fetch up-to-date information without leaving the conversation. [Check how to enable Web Search.](/operator-manual/configuration/features/feat-websearch)
+    - **Project-Level Connectors**: MCPs and Databases can now be configured at the **project level**, making them reusable across multiple agents and flows while maintaining consistent access control. [Check how to enable Connectors.](/en/operator-manual/configuration/features)
+    - **Web Search Tool in Chat**: Web Search is now available directly inside chat, enabling users to fetch up-to-date information without leaving the conversation. [Check how to enable Web Search.](/en/operator-manual/configuration/features/feat-websearch)
     - **Edit & Delete Last Interaction**: Quickly fix mistakes or refine prompts by editing or deleting your **last interaction** directly from the chat interface.
 
     ### 🐛 Bug Fixes
@@ -25,7 +25,7 @@ title: "Changelog"
 
 
 <Tip>
-Recall [how to update Zylon.](/operator-manual/update)
+Recall [how to update Zylon.](/en/operator-manual/update)
 </Tip>
 </Update>
 
@@ -77,7 +77,7 @@ This unlocks compatibility with:
 <Update label="1.48.1" description="October 27, 2025">
   ## 🛠️ Platform
   ### ✨ Features
-  - Zylon now offers proxy support. Learn more about it [here](/operator-manual/proxy).
+  - Zylon now offers proxy support. Learn more about it [here](/en/operator-manual/proxy).
   - Introduced a Status page that provides information about the overall system health at `https://your-zylon-instance.com/status`
   ### 🐛 Bug Fixes
   - Stability improvement for long chats: Fixed crashes that occurred when reducing the context window size.
@@ -104,8 +104,8 @@ This unlocks compatibility with:
   - **Database Connector Improvements**: Now supports database views and provides richer contextual data, enabling the model to generate more accurate and grounded responses.
   - **Customizable Top Users View**: Adjust the number of top users displayed in the Usage Dashboard to suit your organizational needs.
   - **MCP Connector Integration**: You can now use MCP connectors in your Zylon instance.
-    - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/configuration/experimental-features).
-    - Learn how to use it with the [User Manual](/user-manual/tools/mcp-connector).
+    - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/experimental-features).
+    - Learn how to use it with the [User Manual](/en/user-manual/tools/mcp-connector).
   - **Image Support in Chats**: You can now chat with your images, _if the image model is enabled_.
 
   ### 🐛 Bug Fixes
@@ -127,7 +127,7 @@ This unlocks compatibility with:
 
   ### ✨ Features
 
-  - **GPT-OSS Model Now Available**: You can now access our experimental GPT-OSS model in both 24GB and 48GB configurations, giving you more powerful AI capabilities for complex tasks. More information in [experimental presets](/operator-manual/configuration/ai-presets#3-3-experimental-presets).
+  - **GPT-OSS Model Now Available**: You can now access our experimental GPT-OSS model in both 24GB and 48GB configurations, giving you more powerful AI capabilities for complex tasks. More information in [experimental presets](/en/operator-manual/configuration/ai-presets#3-3-experimental-presets).
 
   ### 🐛 Bug Fixes
 
@@ -141,7 +141,7 @@ This unlocks compatibility with:
 
   ## 🛠️ Platform
 
-  - Use your own AI models: You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. . More information in [customizing the default presets](/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
+  - Use your own AI models: You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. . More information in [customizing the default presets](/en/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
   - Vision support improved: Fixed a bug that sometimes prevented AI tools from loading when visual (image) features were turned on.
 
   </Update>
@@ -151,8 +151,8 @@ This unlocks compatibility with:
 ### ✨ Features
 - Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
 writing SQL queries.
-  - This feature is in **Alpha phase** and [needs to be enabled](/operator-manual/configuration/experimental-features).
-  - Learn how to use it with the [User Manual](/user-manual/tools/database-connector).
+  - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/experimental-features).
+  - Learn how to use it with the [User Manual](/en/user-manual/tools/database-connector).
 - Agent Flow - New menu options for an enhanced user experience:
   - Retry: Allows users to restart failed workflows with a single click.
   - Duplicate: User is taken a new workflow prefilled with the same data as the original
@@ -170,7 +170,7 @@ writing SQL queries.
 <Update label="1.44.0" description="September 15, 2025">
   <Danger>
     This update involves a 15-30 minutes of downtime.
-    Follow [this migration guide before updating.](/changelog/guides/1-43-0)
+    Follow [this migration guide before updating.](/en/changelog/guides/1-43-0)
   </Danger>
 
 ## 🛠️ Platform
@@ -178,7 +178,7 @@ writing SQL queries.
 
 ## 💼 Workspace
 ### ✨ Features
-- Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/operator-manual/configuration/ai-presets#vision-enabled-alternatives). The brand new capabilities added are:
+- Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/en/operator-manual/configuration/ai-presets#vision-enabled-alternatives). The brand new capabilities added are:
   - **Intelligent Content Understanding**: Implemented VLM-powered extraction that can analyze and understand complex visual content including slides, diagrams, charts, and images.
   - **Contextual Analysis**: VLM integration enables better comprehension of slide context, relationships between visual elements, and textual content within images.
 - Display the last update time for Agent Flows.
@@ -195,14 +195,14 @@ writing SQL queries.
   <Danger>
     This update involves a 15-30 minutes of downtime.
     
-    Follow [this migration guide before updating.](/changelog/guides/1-43-0)
+    Follow [this migration guide before updating.](/en/changelog/guides/1-43-0)
   </Danger>
 
   ## 💼 Workspace
   
   ### ✨ Features
   - 🔎 **Omnisearch**: Now able to search for content inside Agent Flows and Knowledge Base Documents
-    - Follow the [instructions to enable it](/changelog/guides/1-43-0#post-update)
+    - Follow the [instructions to enable it](/en/changelog/guides/1-43-0#post-update)
   - 📝 **Issue reporting**: Users can now report chats to admin organizations when encountering issues with Zylon's responses.
 
   ![](/changelog/images/1.43.0/image1.png)

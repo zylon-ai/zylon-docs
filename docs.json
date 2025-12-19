@@ -277,7 +277,7 @@
           },
           {
             "tab": "Customer Support Manual",
-            "icon": "code",
+            "icon": "headphones",
                 "pages": [
                   "en/customer-support-manual/zendesk-client-manual"
                 ]
@@ -530,7 +530,7 @@
           },
           {
             "tab": "Atención al cliente",
-            "icon": "code",
+            "icon": "headphones",
                 "pages": [
                   "es/customer-support-manual/zendesk-client-manual"
                 ]

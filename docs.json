@@ -219,10 +219,16 @@
               "operator-manual/proxy",
               "operator-manual/semi-airgap",
               "operator-manual/troubleshoot",
+              "operator-manual/nvidia-drivers-troubleshooting"
+            ]
+          },
+                    {
+            "group": "Managing Zylon",
+            "pages": [
+              "operator-manual/update",
               "operator-manual/uninstall",
               "operator-manual/backup",
-              "operator-manual/sys-admin-dashboard",
-              "operator-manual/nvidia-drivers-troubleshooting"
+              "operator-manual/sys-admin-dashboard"
             ]
           },
           {

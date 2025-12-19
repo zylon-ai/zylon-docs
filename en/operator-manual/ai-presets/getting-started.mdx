@@ -1,0 +1,97 @@
+---
+title: "Getting Started"
+description: "Learn the fundamentals of AI presets and how to configure them for your hardware"
+---
+
+## Overview
+
+The Zylon AI inferencing engine is the core component that runs artificial intelligence models on your hardware. To ensure optimal performance and prevent startup failures, you must configure the system with the correct preset based on your available GPU (Graphics Processing Unit) memory.
+
+### What are AI Presets?
+
+AI presets are pre-configured settings that optimize the AI models and memory allocation for your specific hardware setup. Each preset is carefully tuned to:
+
+- Load the appropriate AI model size for your GPU/RAM memory
+- Allocate memory efficiently to prevent crashes
+- Balance performance with available resources
+- Enable specific capabilities when needed
+
+<Warning>
+Selecting an incorrect preset will prevent the inference engine from starting. The system does not automatically detect your GPU capacity, so manual configuration is required.
+</Warning>
+
+## Understanding GPU Memory Requirements
+
+Your GPU (Graphics Processing Unit) has a specific amount of VRAM (Video Random Access Memory) that determines which AI models can run effectively. AI models require substantial memory to operate, and larger models with better capabilities need more VRAM.
+
+### How to Check Your GPU Memory
+
+You can verify your GPU memory using:
+
+- **Command line**: Run `nvidia-smi` command
+- **Hardware documentation**: Refer to your GPU manufacturer specifications
+
+The output of `nvidia-smi` will show your GPU model and total memory capacity.
+
+## Quick Start Guide
+
+### Step 1: Identify Your GPU Memory
+
+Run the following command to check your available GPU memory:
+
+```bash
+nvidia-smi
+```
+
+Look for the "Memory" column to find your total VRAM.
+
+### Step 2: Select the Appropriate Preset
+
+Based on your GPU memory, choose the matching preset:
+
+| GPU Memory | Preset to Use  | Example Hardware          |
+|------------|----------------|---------------------------|
+| 24GB       | `baseline-24g` | RTX 4090, L4, RTX 3090 Ti |
+| 32GB       | `baseline-32g` | RTX 5090                  |
+| 48GB       | `baseline-48g` | RTX A6000, A40, L40       |
+| 96GB       | `baseline-96g` | A100 80GB, H100           |
+
+<Tip>
+Always select a preset that matches or is lower than your available VRAM.
+</Tip>
+
+### Step 3: Configure Your System
+
+Edit your Zylon configuration file at `/etc/config/zylon-config.yaml`:
+
+```yaml
+ai:
+  preset: "baseline-24g"  # Replace with your selected preset
+```
+
+### Step 4: Apply Configuration
+
+After modifying the configuration file, restart the Zylon services to apply changes:
+
+```bash
+# Rollout restart of Triton
+kubectl rollout restart deploy/zylon-triton
+```
+
+### Step 5: Verify Installation
+
+Check that the inference engine started successfully:
+
+```bash
+# Check logs for successful model loading
+ kubectl logs deploy/zylon-triton -n zylon --tail=100
+```
+
+Look for log messages indicating successful model initialization.
+
+## What's Next?
+
+- Explore [available presets](/en/operator-manual/ai-presets/presets) to find specialized configurations
+- Learn about [configuration options](/en/operator-manual/ai-presets/configuration) for multi-GPU and capabilities
+- Dive into [advanced customization](/en/operator-manual/ai-presets/advanced-customization) for custom models
+- Troubleshoot common issues in the [troubleshooting guide](/en/operator-manual/ai-presets/troubleshooting)

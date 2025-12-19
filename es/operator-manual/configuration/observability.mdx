@@ -1,0 +1,28 @@
+---
+title: "Observabilidad"
+---
+
+Para proporcionar soporte en caso de que algo salga mal, hay dos herramientas principales de observabilidad que están habilitadas:
+
+- Sentry para reportes de fallos
+- Grafana para métricas de uso anónimas y agregadas
+
+Los datos enviados nos ayudarán a diagnosticar cualquier mal funcionamiento en la plataforma y entender cómo se está usando Zylon para acelerar cualquier acción de soporte.
+
+En caso de que quieras optar por no participar en esto, puedes hacerlo agregando el siguiente fragmento al archivo de configuración:
+
+```yaml
+observability:
+  crashReporting: false
+  usageMetrics: false
+```
+
+## Grafana
+
+El siguiente dominio necesita estar en la lista blanca:  `*.grafana.net`
+
+Para mayor granularidad, los dominios utilizados son:
+
+- Métricas de uso básicas (no se envía información privada)-\> [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
+- Logs (no se envía información privada); [https://logs-prod-012.grafana.net](https://logs-prod-012.grafana.net/)
+- Trazas del Sistema (no se envía información privada): [https://tempo-prod-10-prod-eu-west-2.grafana.net](https://tempo-prod-10-prod-eu-west-2.grafana.net/)

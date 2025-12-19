@@ -1,0 +1,69 @@
+---
+title: "CLI de Zylon"
+description: "Todos los comandos disponibles en la CLI"
+---
+
+## backfill-agent-flow-content  
+Indexa contenido para flujos de agente creados antes de Zylon v1.43.0.
+
+## backup  
+Crea una copia de seguridad del estado actual del sistema.
+
+Uso: `sudo zylon-cli backup --help`
+
+## config  
+Inicializa el archivo de configuración para Zylon en `/etc/zylon/zylon-conf.yaml`.
+
+Uso: `sudo zylon-cli config`
+
+## doctor  
+Realiza varias verificaciones para ver el estado general en el clúster k8s para Zylon.
+
+Uso: `sudo zylon-cli doctor`
+## install-drivers  
+Instala los controladores NVIDIA necesarios para soporte GPU. Usa la bandera `--force` para desinstalar cualquier controlador previamente instalado y reinstalarlos.
+
+Uso: `sudo zylon-cli install-drivers --force true/false`
+
+## restart  
+Reinicia los servicios de Zylon.
+
+## restore  
+Restaura el estado del sistema desde una copia de seguridad previamente creada.
+
+Uso: `sudo zylon-cli restore -f path/to/backup.tgz`
+
+
+## seed  
+Pobla la base de datos con datos iniciales o de prueba.
+Usa junto con `--help` para información adicional
+<Danger>
+ Esta es una acción irreversible. Establece la base de datos al estado inicial.
+</Danger>
+
+Uso: `sudo zylon-cli seed`
+## self-update  
+Actualiza Zylon CLI (interfaz de línea de comandos) a la última versión.
+
+Uso: `sudo zylon-cli self-update`
+
+
+## setup  
+Configura e inicializa un nuevo nodo de Zylon. También recarga cambios en el archivo de configuración.
+
+Uso: `sudo zylon-cli setup`
+
+## uninstall-drivers  
+Desinstala los controladores NVIDIA actualmente instalados.
+
+Uso: `sudo zylon-cli uninstall-drivers`
+
+## update  
+Actualiza la instancia de Zylon a la última versión.
+
+Uso: `sudo zylon-cli update`
+
+## update-password <a id="update-password" />
+Restablece la contraseña para un usuario especificado.
+
+Uso: `sudo zylon-cli update-password -e "user@example.com"`

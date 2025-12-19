@@ -1,0 +1,118 @@
+# MCP Connector
+
+The MCP (Model Context Protocol) Connector allows you to integrate external MCP servers into a **Project**,exposing their tools to the LLM in a controlled and shareable way.
+
+> **Important change**: MCP connectors are no longer added directly inside chats. They are now **project-level shared connectors**.
+
+<Warning>
+    Ask your IT administrator to enable the MCP Connector in your system configuration [with the Operator Manual](/en/operator-manual/configuration/features).
+</Warning>
+
+---
+
+
+## Creating an MCP Connector
+
+To create an MCP connector:
+
+1. Open your **Project Sidebar**
+2. Click **Connectors**
+3. Click **Create connector**
+4. Select **MCP**
+5. Configure the **MCP connection details**
+6. Establish the connection
+
+Once the connection is successful, you can configure which MCP tools are available.
+
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/Y8o9o5lhkcI"
+    title="Zylon Workspace - Creating MCP Connector"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+
+---
+
+## Tool Selection
+
+After the MCP connection is established, you must select the tools the connector will expose.
+
+### Why Tool Selection Matters
+
+- Limits what the LLM can invoke
+- Reduces noise and unintended behavior
+- Improves reliability and safety
+
+You can:
+- Enable or disable individual tools
+- Update tool selection later without recreating the connector
+
+Only selected tools will be available when the connector is used in a chat.
+
+---
+
+## Using the MCP Connector in Chat
+
+Once created, MCP connectors can be used in chats:
+
+1. Open or create a chat within the project
+2. Use the **Connectors selector** in the chat input
+3. Enable the MCP connector
+
+The LLM will then be able to invoke the selected MCP tools during the conversation.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/e6W6fUodUQM"
+    title="Zylon Workspace - Using connectors"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+## Pre-Selected Connectors
+
+Project administrators can configure MCP connectors to be **automatically enabled for every new chat** in the project.
+
+This is recommended when:
+- MCP tools are a standard part of the workflow
+- Users should not manually manage tool selection
+- The project relies on consistent tool availability
+
+---
+
+## Personal and Private MCPs
+
+If a user wants to add or experiment with **personal MCP connectors**:
+
+1. Create a **private project**
+2. Create MCP connectors using the same creation flow
+3. Use those connectors only within that project
+
+This allows safe experimentation without impacting shared projects.
+
+---
+
+## Requirements and Considerations
+
+- The MCP server must be reachable from the connector environment
+- Only MCP-compliant tools are supported
+- Tool permissions are enforced based on connector configuration
+
+---
+
+## Security
+
+- Only selected tools are exposed to the LLM
+- MCP connectors do not grant unrestricted access
+- Tool availability is controlled at the connector level

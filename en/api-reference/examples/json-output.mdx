@@ -1,0 +1,287 @@
+---
+title: "Generate JSON as output"
+description: "Using structured output to get JSON responses from the model"
+---
+
+This sample demonstrates how to transform an old file (such as a scanned PDF)
+into a structured JSON format for further processing by automation tools.
+
+Specifically, the script extracts information from a citizenship application
+form and converts it into a structured JSON object.
+
+You can customize the fields to extract and adjust the JSON schema as needed.
+
+To run this simply you will need:
+* Python 3 (no external dependencies)
+* An API token from your Zylon instance
+(see [Token Management](/en/api-reference/token-management) for more details)
+
+Save the following script as `main.py` and run it with:
+
+```python main.py lines icon="python" expandable
+import base64
+import json
+import sys
+import uuid
+import urllib.request
+
+HOST = "your_zylon_instance.com"
+TOKEN = "your api token here"
+
+
+API_HOST = f"https://{HOST}/api/gpt"
+VECTOR_COLLECTION = "sample"
+CHUNK_SIZE = 1000
+
+"""
+The following fields are to be extracted from the file.
+They follow the JSON schema format, so they have a type, description, and optionally enum values.
+"""
+FIELDS_TO_EXTRACT = [
+    {
+        "name": "name",
+        "type": "string",
+        "description": "Full name of the applicant"
+    },
+    {
+        "name": "date_of_birth",
+        "type": "string",
+        "description": "Date of birth in YYYY-MM-DD format"
+    },
+    {
+        "name": "passport_number",
+        "type": "string",
+        "description": "Passport number if applicable"
+    },
+    {
+        "name": "age",
+        "type": "integer",
+        "description": "Age of the applicant"
+    },
+    {
+        "name": "address",
+        "type": "string",
+        "description": "Residential address"
+    },
+    {
+        "name": "citizenship_type",
+        "type": "string",
+        "enum": ["by_birth", "by_naturalization", "by_marriage"],
+        "description": "Type of citizenship application"
+    },
+    {
+        "name": "documents_submitted",
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "List of documents submitted with the application."
+                       "Each document should be an item in the array."
+    }
+]
+
+"""
+JSON schema that Zylon will follow to extract the information
+in the propert format.
+"""
+JSON_SCHEMA = {
+    "type": "object",
+    "properties": {field['name']: {k: v for k, v in field.items() if k != 'name'} for field in FIELDS_TO_EXTRACT},
+}
+
+
+def http_post(url: str, data: dict, token=TOKEN) -> dict:
+    """
+    Simple POST request.
+
+    All requests to Zylon API require an Authorization header with a Bearer token.
+    """
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(data).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+    with urllib.request.urlopen(req, timeout=300) as resp:
+        if resp.status != 200:
+            raise Exception(f"HTTP {resp.status}: {resp.read().decode('utf-8')}")
+        return json.load(resp)
+
+
+def chunk_text(text: str, chunk_size: int = CHUNK_SIZE) -> list[str]:
+    """
+    Splits text into chunks of approximately chunk_size characters.
+    Required so the file fits in the context window of the LLM, might not
+    be necessary for smaller files or if input format is well known.
+    """
+    words = text.split()
+    chunks = []
+    current_chunk = ""
+    for word in words:
+        if len(current_chunk) + len(word) + 1 <= chunk_size:
+            if current_chunk:
+                current_chunk += " "
+            current_chunk += word
+        else:
+            if current_chunk:
+                chunks.append(current_chunk)
+            current_chunk = word
+    if current_chunk:
+        chunks.append(current_chunk)
+    return chunks
+
+
+def ingest(artifact_id: str, file_path: str) -> list[str]:
+    """
+    Send a file to Zylon for ingestion and content extraction.
+
+    The file can be in any format supported by Zylon (PDF, DOCX, TXT, etc).
+    The content is extracted and returned as a list of text chunks.
+    """
+    with open(file_path, "rb") as f:
+        file_bytes = f.read()
+    encoded = base64.b64encode(file_bytes)
+    body = {
+        "input": {
+            "type": "file",
+            "value": encoded.decode("utf-8"),
+        },
+        "artifact": artifact_id,
+        "collection": VECTOR_COLLECTION,
+        "metadata": {"file_name": file_path.split("/")[-1]},
+    }
+    filename = file_path.split("/")[-1]
+
+    print(f"Ingesting file {filename}")
+    # Synchronous ingestion of a file
+    http_post(f"{API_HOST}/v1/artifacts/ingest", body, TOKEN)
+
+    # Extract the parsed content of the file, the format is a plain text string
+    # with Markdown formatting.
+    print(f"File {filename} ingested, extracting content")
+    parsed_content_response = http_post(
+        f"{API_HOST}/v1/artifacts/content",
+        {
+            "context_filter": {
+                "collection": VECTOR_COLLECTION,
+                "artifacts": [artifact_id]
+            }
+        }
+    )
+    content = parsed_content_response['data'][0]['content']
+    print(f"File content parsed, length: {len(content)} characters.")
+    return chunk_text(content, CHUNK_SIZE)
+
+
+def generate_json(instructions: str, json_schema: dict) -> dict:
+    """
+    Generate a JSON object from instructions and a JSON schema using Zylon's LLM endpoint.
+
+    Using Zylon response_format with type json_schema to ensure the output is a valid JSON object
+    """
+    response = http_post(
+        f"{API_HOST}/v1/messages",
+        {
+            "stream": False,
+            "messages": [{"role": "user", "content": instructions}],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": json_schema
+            },
+        }
+    )
+    json_str = response['content'][0]['text']
+    return json.loads(json_str)
+
+
+def extract_information_as_json(file_path: str) -> dict:
+    """
+    Main function to extract information from a file and return it as a structured JSON object.
+    """
+    artifact_id = str(uuid.uuid4())
+    chunks = ingest(artifact_id, file_path)
+
+    field_names_and_descriptions = "\n".join(
+        [f"- {field['name']}: {field['description']}" for field in FIELDS_TO_EXTRACT]
+    )
+
+    partial_jsons = []
+    for i, chunk in enumerate(chunks):
+        # Process each chunk to extract partial JSON
+        print(f"Processing chunk {i + 1}/{len(chunks)}")
+        partial = generate_json(
+            f"Extract the information from the following text and format it as per the JSON schema."
+            f"If a field is missing, mark it as null."
+            f"It it's not clear if a field clearly corresponds to the schema, mark it as null."
+            f"The text provided may be incomplete or fragmented."
+            f"For example, only if a name is clearly indicated as a name, extract it, otherwise mark it as null."
+            f"The fields to extract are: {field_names_and_descriptions} "
+            f"Here is the text:"
+            f"================================"
+            f" {chunk}"
+            f"================================", JSON_SCHEMA)
+        partial_jsons.append(partial)
+
+    # Merge everything into a single JSON object
+    print("Combining partial JSON objects into a final JSON object")
+    full_json = generate_json(
+        f"Combine the following JSON objects into a single JSON object. "
+        f"For each field, if multiple chunks provide a value, choose the most complete and relevant one. "
+        f"If a field is missing in all chunks, mark it as null. "
+        f"The fields to extract are: {field_names_and_descriptions} "
+        f"Here are the JSON objects:\n"
+        + "\n".join([json.dumps(p) for p in partial_jsons]),
+        JSON_SCHEMA
+    )
+    return full_json
+
+
+if __name__ == '__main__':
+
+    if len(sys.argv) != 2:
+        print("Usage: python main.py <file_path>")
+        sys.exit(1)
+    file_path = sys.argv[1]
+
+    full_json = extract_information_as_json(file_path)
+    print("========= Final JSON Output =========")
+    print(json.dumps(full_json, indent=2))
+    print("====================================")
+```
+
+Save the script and run it:
+```bash
+python main.py <file_path>
+```
+
+You should see an output like the following:
+```bash
+Ingesting file apply.pdf
+File apply.pdf ingested, extracting content
+File content parsed, length: 2343 characters.
+Processing chunk 1/3
+Processing chunk 2/3
+Processing chunk 3/3
+Combining partial JSON objects into a final JSON object
+========= Final JSON Output =========
+{
+  "name": "John Alexander Smith",
+  "date_of_birth": "1990-03-15",
+  "passport_number": "GB1234567",
+  "age": 35,
+  "address": "12 Fjordgate, Oslo, Norway, 0147",
+  "citizenship_type": "by_marriage",
+  "documents_submitted": [
+    "Passport Copy",
+    "Residence Permit Card",
+    "Marriage Certificate",
+    "Child's Birth Certificate",
+    "Proof of Employment",
+    "Norwegian Language Exam Certificate",
+    "Police Clearance Certificate",
+    "Tax Records (last 3 years)"
+  ]
+}
+====================================
+```

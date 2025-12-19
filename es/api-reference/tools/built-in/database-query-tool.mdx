@@ -1,0 +1,123 @@
+---
+title: "Consulta de base de datos"
+description: "La herramienta de consulta de base de datos se usa para ejecutar consultas en lenguaje natural contra bases de datos SQL y recuperar resultados de datos estructurados."
+---
+
+## Cómo funciona
+
+Cuando añades la herramienta de consulta de base de datos y el contexto de base de datos especificado a tu solicitud de API, Zylon sigue estos pasos:
+
+1. **Analiza lenguaje natural**: Zylon interpreta tu pregunta en lenguaje natural y entiende qué datos estás buscando.
+2. **Genera consulta SQL**: Convierte automáticamente tu pregunta en la consulta SQL apropiada basándose en el esquema de la base de datos.
+3. **Ejecuta consulta**: Ejecuta la consulta SQL generada contra tu conexión de base de datos especificada.
+4. **Devuelve resultados**: Proporciona resultados coherentes basados en la respuesta de la base de datos.
+
+## Notas importantes
+
+- Para usar esta herramienta, debes especificar el **tipo `database_query_v1`**.
+- El `tool_context` debe contener al menos una **`sql_database`** con una **`connection_string`** válida.
+- Puedes usar `/v1/messages/validate` para validar la conectividad antes.
+- La herramienta genera automáticamente consultas SQL a partir de lenguaje natural - no se requiere conocimiento de SQL.
+- Los resultados contienen la consulta SQL y los resultados. Si el contenido es demasiado largo, creará un archivo CSV.
+- Las conexiones SSL se admiten a través del parámetro `ssl` en el contexto de la herramienta.
+- Instrucciones detalladas sobre cómo establecer conexiones de base de datos en la [documentación del conector de base de datos](/es/user-manual/tools/database-connector).
+
+## Ejemplo de uso
+
+En este ejemplo práctico, nos conectamos a una base de datos SQL Server y consultamos información de clientes usando lenguaje natural.
+
+<Steps>
+<Step title="Realizar consulta de base de datos">
+    Envía una solicitud con tu pregunta en lenguaje natural y los detalles de conexión de la base de datos. La herramienta generará y ejecutará automáticamente la consulta SQL apropiada.
+    <Tabs>
+      <Tab title="Shell">
+        ```
+        curl --location 'https://<your-host>/api/gpt/v1/messages' \
+        --header 'Authorization: Bearer <your-token>' \
+        --header 'x-org: default' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "messages": [
+            {
+              "role": "user",
+              "content": "What is the number of customers?"
+            }
+          ],
+          "tools": [
+            {
+              "name": "database_query",
+              "type": "database_query_v1"
+            }
+          ],
+          "tool_choice": { "type": "auto" },
+          "tool_context": [
+            {
+              "type": "sql_database",
+              "connection_string": "__redacted__",
+              "ssl": true
+            }
+          ]
+        }'
+        ```
+      </Tab>
+    </Tabs>
+    </Step>
+<Step title="Respuesta">
+    El sistema responde con la consulta SQL generada, los resultados de ejecución y una respuesta en lenguaje natural:
+     ```
+      {
+        "id": "msg_b8223938b59d471b90d19ec3aac01e82",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+            {
+                "type": "tool_use",
+                "start_timestamp": "2025-09-24T14:24:34.937013Z",
+                "stop_timestamp": "2025-09-24T14:24:36.074038Z",
+                "id": "toolu_01997c1ca0787a20a01f1e445dac4ff7",
+                "name": "database_query",
+                "input": {
+                    "query": "What is the number of customers?"
+                }
+            },
+            {
+                "type": "tool_result",
+                "start_timestamp": "2025-09-24T14:26:07.509036Z",
+                "stop_timestamp": "2025-09-24T14:26:07.510799Z",
+                "tool_use_id": "toolu_01997c1ca0787a20a01f1e445dac4ff7",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Query:\n```sql\nSELECT COUNT(*) AS NumberOfCustomers\nFROM Sales.Customers\n```
+                    },
+                    {
+                        "type": "binary",
+                        "filename": "What is the number of customers?.csv",
+                        "data": "TnVtYmVyT2ZDdXN0b21lcnMKNjYzCg==",
+                        "mime_type": "text/csv"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Query result: \nNumberOfCustomers\n663\n"
+                    }
+                ],
+                "is_error": false
+            },
+            {
+                "type": "text",
+                "start_timestamp": "2025-09-24T14:26:07.834526Z",
+                "stop_timestamp": "2025-09-24T14:26:08.504033Z",
+                "text": "The number of customers is 663."
+            }
+        ],
+        "model": "private-gpt",
+        "stop_reason": "end_turn",
+        "stop_sequence": null,
+        "usage": {
+            "input_tokens": 421,
+            "output_tokens": 11
+        }
+    }
+     ```
+    </Step>
+</Steps>

@@ -1,0 +1,51 @@
+---
+title: "Panel de Administración del Sistema"
+description: "Monitorea y gestiona la salud del sistema, el rendimiento y las actividades de los usuarios con el Panel de Administración del Sistema."
+---
+
+Zylon viene con un [Kubernetes Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/) integrado,
+que te ayudará a monitorear y diagnosticar problemas con tu instalación.
+
+Para habilitarlo, necesitarás editar tu archivo de configuración en `/etc/zylon/zylon-conf.yaml` y agregar la siguiente sección:
+```yaml
+adminDashboard:
+  enabled: true
+  exposeIngress: true
+```
+
+A continuación, actualiza tu sistema Zylon ejecutando:
+```bash
+sudo zylon-cli update
+```
+
+Una vez que se complete la actualización, accede al panel en:
+`https://<zylon.company.com>/kube-dashboard`
+
+Para iniciar sesión, puedes generar un token de corta duración:
+```bash
+kubectl -n zylon create token zylon
+```
+O un token permanente:
+```bash
+kubectl get secret zylon-token -n zylon -o jsonpath='{.data.token}' | base64 -d
+```
+
+<Warning>
+    El token permanente proporcionará acceso completo de administrador a tu clúster de Kubernetes.
+    Manténlo secreto y seguro.
+</Warning>
+
+<Tip>
+    Zylon usa múltiples namespaces, puedes verificar el estado de cada uno.
+    Selecciona el namespace correcto del menú desplegable en la esquina superior izquierda.
+
+    * zylon: Componentes del sistema Zylon
+    * openebs: Sistema de almacenamiento OpenEBS
+    * nvidia: Controlador NVIDIA y plugin de dispositivo
+</Tip>
+
+
+Después de iniciar sesión, podrás ver el estado de tu instalación de Zylon, incluyendo:
+- Pods
+- Logs
+- Métricas básicas sobre el uso de CPU y memoria

@@ -1,0 +1,103 @@
+---
+title: Claromentis
+---
+
+Para integrar con Claromentis, necesitas una intranet de Claromentis habilitada para tu empresa y tus credenciales de acceso para **configurar Zylon** para usar Claromentis en la aplicación
+
+## Verifica tu dominio de Claromentis
+
+Primero, necesitas verificar que puedes acceder a tu intranet de Claromentis. Tus credenciales se usarán más tarde como el punto de conexión entre Zylon y Claromentis.
+
+- Inicia sesión en tu intranet de Claromentis usando tus credenciales
+- Anota tu dominio de Claromentis (ej., `https://your-company.myintranet.net` o tu dominio personalizado de claromentis)
+- Verifica que tu cuenta tenga permisos suficientes para acceder a los documentos de tu intranet
+
+## Configurar Zylon para usar la API de Claromentis
+
+Con la información de tu dominio de Claromentis lista del paso 1,
+ahora necesitas editar el archivo de configuración de Zylon ubicado en `/etc/zylon/zylon-conf.yaml`
+
+```yaml
+integration:
+  claromentis:
+    enabled: true
+    domain: "https://your-company.myintranet.net"
+```
+
+Y completa las propiedades con los valores generados previamente:
+
+- domain → valor generado en el paso 1.
+
+Guarda y cierra el archivo `/etc/zylon/zylon-conf.yaml`
+
+Finalmente, ejecuta el siguiente comando para reiniciar Zylon y actualizar la configuración
+
+```bash
+zylon-cli update
+```
+
+¡Todo está listo 🎉
+
+## Solución de Problemas
+
+### Intento cargar archivos a la base de conocimiento y el botón de Claromentis está deshabilitado
+
+Limpia la caché del navegador e intenta de nuevo.
+
+### Cuando hago clic en `Upload files -> From Claromentis` el inicio de sesión no funciona
+
+- Verifica que el usuario y contraseña que estás introduciendo sean los mismos que usas para iniciar sesión en Claromentis.
+
+### Actualicé mis credenciales en Claromentis. Mi integración/usuario está atascado y no puedo sincronizar archivos más.
+
+<Note>
+    Esta solución es solo para la versión temprana de Zylon que no tiene la pantalla de integraciones. Si tu instancia de Zylon
+    tiene una pantalla donde gestionar las integraciones de usuario, por favor usa esa pantalla en lugar de esta guía.
+</Note>
+
+**Lo que necesitamos es el `id` de la integración y la cookie de autenticación `zln_s`.**
+
+1. Ve a tu instancia de zylon e inicia sesión con el usuario que quieres actualizar
+2. Abre las herramientas de desarrollador del navegador (clic derecho => inspeccionar)
+3. En la nueva barra lateral abierta, ve a la pestaña `Application`,
+selecciona `Cookies` y selecciona el dominio de tu instancia de zylon, luego copia el valor de la cookie `zln_s` y guárdalo para más tarde
+4. Ahora, tenemos el token de autenticación, encontremos el `id` de la integración
+5. Dentro de la aplicación zylon, abre la pestaña `Network`,
+y selecciona `Fetch/XHR` y filtra por la palabra `integrations`
+6. Ahora, dentro de la aplicación zylon, navega al proyecto que
+integraste y ve a la base de conocimiento, verás en la pestaña de red una solicitud, haz clic en ella para ver los detalles, y podrás ver una lista de integraciones, busca `type: "Claromentis"`, ahora puedes ver el `id`
+7. A continuación, abre una terminal con cURL instalado
+8. Pega el siguiente comando cURL y reemplaza las siguientes variables:
+
+* your-zylon-domain => dominio de la instancia de zylon
+* your-zylon-cookie => la cookie `zln_s` que copiaste en el paso 3
+* your-integration-id => el `id` que copiaste en el paso 6
+* your-user-name => el nombre de usuario de claromentis
+* your-new-password-in-raw => la nueva contraseña para ese usuario en texto plano
+* your-organization => el slug de la organización,
+si solo tienes 1 organización, es `default` de lo contrario escribiré cómo obtenerlo
+
+```bash
+curl 'https://{your-zylon-domain}/api/app/integration/claromentis/{your-integration-id}' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'content-type: application/json' \
+  -b 'zln_s={your-zylon-cookie}' \
+  -H 'origin: https://{your-zylon-domain}' \
+  -H 'x-org: {your-organization}' \
+  --data-raw '{"username":"{your-user-name}","password":"{your-new-password-in-raw}"}'
+```
+
+## Notas Adicionales
+
+### Los documentos vinculados (symlinks) no están soportados
+
+Algunos archivos en Claromentis pueden aparecer en carpetas pero en realidad son **symlinks**—atajos que apuntan a archivos almacenados en otro lugar. Estos están marcados con un icono 🔗 en la interfaz de Claromentis.
+
+![claromentis_linked_files.png](/images/operator-manual/knowledge-base/claromentis-images/claromentis_linked_files.png)
+
+Zylon **no** ingiere estos documentos symlinked por las siguientes razones:
+
+- La **API de Claromentis no soporta resolver symlinks**, haciendo imposible obtener los archivos objetivo reales.
+- Ingerir tanto el archivo original como su symlink crearía **contenido duplicado** en Zylon.
+- Si el **archivo original está restringido** o no es accesible para el usuario que realiza la ingesta, la ingesta fallará.
+- Podría llevar a **bucles de ingesta infinitos** si los symlinks se referencian entre sí cíclicamente.

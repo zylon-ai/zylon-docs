@@ -1,0 +1,25 @@
+---
+title: "Capacidades Multimodales"
+---
+
+<Info>
+    **Disponible desde la versión 1.51**
+</Info>
+<Note>**Esta característica requiere que tu modelo actual tenga capacidades de imagen**</Note>
+<Note>**Característica en Alpha**</Note>
+
+Extrae y analiza contenido de imágenes si las capacidades del modelo lo soportan.
+
+### Configuración
+
+| Clave      | Por Defecto | Valores          | Descripción                      |
+| -------- | ------- | --------------- | -------------------------------- |
+| `enabled`| `true`  | `true \| false` | Habilita capacidades multimodales para procesamiento de imágenes  |
+
+### Ejemplo
+
+```yaml
+features:
+    multimodal-image:
+        enabled: true
+```

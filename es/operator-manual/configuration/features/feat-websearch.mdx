@@ -1,0 +1,86 @@
+---
+title: "Búsqueda Web"
+---
+
+<Info>
+**Disponible desde la versión 1.51**
+</Info>
+<Note>**Característica en Alpha**</Note>
+
+Habilita capacidades de búsqueda web en los chats impulsadas por Brave Search.
+
+### Configuración
+
+| Clave      | Por Defecto | Valores          | Descripción                           |
+| -------- | ------- | --------------- | ------------------------------------- |
+| `enabled`| `false` | `true \| false` | Habilita capacidades de búsqueda web en los chats |
+
+### Requisitos
+
+<Warning>
+**Extracción Web Requerida**: Esta característica requiere que `webExtract` esté habilitada para funcionar correctamente.
+</Warning>
+
+<Warning>
+**API de Brave Search Requerida**: Necesitas una clave de API válida de Brave Search para usar esta característica.
+</Warning>
+
+### Cómo Obtener una Clave de API de Brave Search
+
+1. **Visita el sitio web de la API de Brave Search**
+   - Navega a [brave.com/search/api](https://brave.com/search/api/)
+   - Haz clic en "Get Started" o "Sign Up"
+
+2. **Crea una cuenta o inicia sesión**
+   - Regístrate con tu correo electrónico o inicia sesión si ya tienes una cuenta
+   - Accede al panel de API en [api-dashboard.search.brave.com](https://api-dashboard.search.brave.com/app/keys)
+
+3. **Suscríbete a un plan**
+   - Ve a la pestaña **Subscriptions** en el menú izquierdo
+   - Elige un plan "Data for Search" según tus necesidades:
+
+4. **Genera tu clave de API**
+   - Navega a **API Keys** en el menú izquierdo
+   - Haz clic en **"Add API Key"**
+   - Nombra tu clave (ej., "Integración de Búsqueda Web de Zylon")
+   - Selecciona el plan de suscripción para asociar con la clave
+   - Copia y guarda tu clave de API de forma segura
+
+### Configuración de la API de Brave
+
+La Búsqueda Web requiere una configuración de proveedor de API de Brave Search con los siguientes parámetros:
+
+| Parámetro   | Tipo    | Requerido | Descripción                                                  |
+| ----------- | ------- | -------- | ------------------------------------------------------------ |
+| `apiKey`    | string  | Sí      | Tu token de suscripción de API de Brave Search                     |
+| `rateLimit` | number  | Sí      | Solicitudes por segundo basadas en tu nivel de suscripción          |
+
+
+### Niveles de Límite de Tasa
+
+Basado en tu nivel de suscripción de API de Brave Search:
+
+- **Free AI**: `1.0` (1 consulta/segundo, hasta 2,000 consultas/mes)
+- **Base AI**: `20.0` (hasta 20 consultas/segundo, hasta 20M consultas/mes)
+- **Pro AI**: `50.0` (hasta 50 consultas/segundo, consultas ilimitadas/mes)
+- **Enterprise**: Límites de tasa personalizados
+
+### Ejemplo de Configuración
+```yaml
+features:
+    webExtract:
+        enabled: true
+    webSearch:
+        enabled: true
+external:
+    brave:
+        apiKey: YOUR_BRAVE_API_KEY_HERE
+        rateLimit: 1.0
+```
+
+### Primeros Pasos
+
+1. Regístrate para una clave de API de Brave Search en [brave.com/search/api](https://brave.com/search/api/)
+2. Configura el `apiKey` y `rateLimit` según tu nivel de suscripción
+3. Habilita ambas características `webExtract` y `webSearch`
+4. La funcionalidad de Búsqueda Web estará disponible en tus chats

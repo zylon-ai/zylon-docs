@@ -1,0 +1,129 @@
+---
+title: "Solución de Problemas"
+description: "Diagnostica y resuelve problemas con presets de IA y configuraciones personalizadas"
+---
+
+## Problemas Comunes
+
+### El Motor Falla al Iniciar con Error de Memoria
+
+**Soluciones:**
+
+1. **Verifica tu memoria GPU real**
+   ```bash
+   nvidia-smi
+   ```
+
+2. **Prueba el siguiente preset inferior**
+   ```yaml
+   # Si estás usando baseline-32g, prueba baseline-24g en su lugar
+   ai:
+     preset: "baseline-24g"
+   ```
+
+3. **Elimina capacidades opcionales para reducir el uso de memoria**
+   ```yaml
+   # Elimina capacidades
+   ai:
+     preset: "baseline-24g"  # En lugar de "baseline-24g,capabilities.multilingual"
+   ```
+
+4. **Verifica otras aplicaciones usando memoria GPU**
+
+5. **Reinicia la máquina**
+
+### Rendimiento Pobre o Respuestas Lentas
+
+**Soluciones:**
+
+1. **Asegúrate de estar usando el preset correcto para tu hardware**
+
+2. **Considera disminuir a un preset de nivel inferior**
+
+3. **Comunícate con los ingenieros de Zylon para entender qué está pasando**
+
+### Pod en Estado Fallido o CrashLoopBackOff
+
+Si los pods de Triton o inferencia están atascados en un estado fallido:
+
+```bash
+# Reinicia el despliegue
+kubectl rollout restart deploy/zylon-triton -n zylon
+```
+
+Esto fuerza a Kubernetes a recrear los pods con un estado fresco.
+
+---
+
+## Problemas Avanzados
+
+Problemas específicos de configuraciones de modelos personalizados y configuraciones multi-modelo.
+
+### Fallos de Inicio
+
+#### El Servidor de Inferencia Triton Falla al Iniciar
+
+**Soluciones:**
+
+1. **Verifica los logs de Triton para identificar qué modelo específico está causando el fallo**
+   ```bash
+   kubectl logs deploy/zylon-triton -n zylon --tail=200
+   ```
+
+2. **Verifica la asignación de memoria para el modelo problemático** - ajusta `gpuMemoryUtilization` si es necesario
+
+3. **Si has reducido demasiado la asignación de memoria, reduce el parámetro `contextWindow` para ese modelo**
+
+4. **Usa `nvidia-smi` para verificar el uso y disponibilidad real de memoria GPU**
+   ```bash
+   nvidia-smi
+   ```
+
+#### Versión de Modelo No Soportada
+
+**Síntoma**: Triton falla al cargar un modelo aunque la familia del modelo esté soportada.
+
+**Causa**: VLLM (el backend de inferencia) puede no soportar la versión específica de tu modelo aún. Por ejemplo:
+- Mistral Small 3 (2501) está soportado
+- Mistral Small 3 (2509) podría no estar soportado aún
+
+**Soluciones:**
+
+1. **Verifica la versión del modelo soportada** en la documentación
+
+2. **Prueba una versión anterior** de la misma familia de modelo si está disponible
+
+3. **Verifica las notas de lanzamiento de Zylon** para versiones de modelos soportadas
+
+4. **Contacta a los ingenieros de Zylon** para confirmar la compatibilidad del modelo
+
+### Errores de Memoria
+
+#### El Motor Falla al Iniciar con Error "Out of Memory"
+
+**Soluciones:**
+
+1. **Verifica que el total de `gpuMemoryUtilization` no exceda 0.95**
+   ```yaml
+   # Calcula el total en todos los modelos
+   ai:
+     config:
+       models:
+         - id: llm
+           gpuMemoryUtilization: 0.60
+         - id: llmvision
+           gpuMemoryUtilization: 0.25
+         - id: embed
+           gpuMemoryUtilization: 0.10
+   # Total: 0.95 ✓
+   ```
+
+2. **Reduce la asignación para uno o más modelos basado en los logs de fallo**
+   ```bash
+   kubectl logs deploy/zylon-triton -n zylon
+   ```
+
+3. **Verifica la memoria GPU real con `nvidia-smi`** durante el inicio
+   ```bash
+   watch -n 1 nvidia-smi
+   ```

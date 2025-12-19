@@ -1,0 +1,132 @@
+---
+title: SharePoint
+---
+
+Para integrar con SharePoint, necesitas **crear una aplicación de Azure AD** que actúa como un puente entre Zylon ↔ SharePoint y **configurar Zylon** para usar esta aplicación de Microsoft.
+
+Esta guía te guía a través de la integración de SharePoint con Zylon usando el flujo OAuth 2.0 de Microsoft a través de Azure Active Directory. Esto permite a Zylon acceder de forma segura a tus recursos de SharePoint usando permisos delegados.
+
+## Crear una aplicación de Azure AD
+
+Primero necesitas una aplicación de Azure AD. Recomendamos usar una cuenta no personal para crear esto desde el panel de Microsoft Entra. Esta cuenta no necesita tener acceso a ningún elemento en Sharepoint pero tiene los permisos correctos para configurar la aplicación que servirá como un puente entre Zylon y Sharepoint.
+
+1. Ve a [https://entra.microsoft.com](https://entra.microsoft.com/).
+
+En la barra lateral izquierda haz clic en `Applications` → `App Registrations` → `New Registration`
+
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen.png)
+
+2. Proporciona un nombre significativo para la Aplicación.
+3. En Tipos de cuenta admitidos elige `Accounts in this organizational directory only`
+4. Bajo `Redirect URI` → Selecciona `Web` y agrega la siguiente URL de redirección
+
+```
+https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
+```
+
+1. Haz clic en `Register`
+
+![Screenshot 2025-04-07 at 11.23.17.png](/images/operator-manual/knowledge-base/sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
+
+2. Haz clic en `Redirect URIs`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image.png)
+
+3. Haz clic en `Add a platform`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%201.png)
+
+4. Haz clic en `Single-Page application`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%202.png)
+
+5. Agrega la siguiente URL y haz clic en `Configure`:
+
+```
+https://{your-zylon-instance}.com
+```
+
+6. Ahora que la aplicación está creada, anota el `Application (client) Id` y `Directory (tenant) id` de la página `Overview`.
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%203.png)
+
+7. Creemos un secreto de aplicación
+
+Navega a `Certificates & secrets` → Haz clic en `+ New client secret` → Agrega una descripción y fecha de expiración (si agregas una fecha que viene pronto, debes ser consciente de que tu integración dejará de funcionar cuando el secreto expire)
+
+Copia el `value` del Client Secret. El valor del secreto no será accesible más tarde.
+
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen%201.png)
+
+
+Ahora tenemos que configurar los permisos de API que tendrá nuestra aplicación cliente.
+
+Navega a `API Permissions` → `+ Add a permission` → `Microsoft Graph` → `Delegated permissions` e incluye los permisos a continuación y luego haz clic en `Add permissions`
+
+- `Files.Read.All`
+- `OpenId permissions.offline_access`
+- `SharePointTenantSettings.Read.All`
+- `Sites.Read.All`
+- `User.Read`
+
+Navega a `API Permissions` → `+ Add a permission` → `Sharepoint` → `Delegated permissions` e incluye los permisos a continuación y luego haz clic en `Add permissions`
+
+- `AllSites.Read`
+- `EnterpriseResource.Read`
+- `MyFiles.Read`
+- `Project.Read`
+- `Sites.Search.All`
+- `User.Read.All`
+
+Después de agregar ambas listas de permisos, haz clic en `Grant admin consent for [Your Org]` y confirma haciendo clic en `Yes`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%204.png)
+
+## Configurar Zylon con tu aplicación de Azure AD
+
+Con los valores que hemos adquirido en los pasos anteriores, editaremos el archivo de configuración de Zylon ubicado en `/etc/zylon/zylon-conf.yaml`
+
+
+Agrega el siguiente fragmento al final del archivo
+
+```bash
+integration:
+sharepoint:
+enabled: true
+clientId: "" //Del paso 10 - Application client Id
+clientSecret: "" //Del paso 11 - Secret value
+redirectUri: "" //Del paso 4
+domain: "" //Tu dominio de sharepoint. ej: https://zylonai.sharepoint.com
+tenantId: "" //Del paso 10 - Directory tenant Id
+
+```
+
+Y completa las propiedades con los valores generados previamente:
+
+- clientId → valor generado en el paso 10
+- clientSecret → valor generado en el paso 11
+- redirectUri → mismo valor que en el paso 4
+- domain → Tu URL de SharePoint
+- tenantId → mismo valor que en el paso 10
+
+Guarda y cierra el archivo `/etc/zylon/zylon-conf.yaml`
+
+Finalmente, ejecuta el siguiente comando para reiniciar Zylon y actualizar la configuración
+
+```bash
+zylon-cli update
+```
+
+¡Todo está listo 🎉
+
+## Solución de Problemas
+
+### Intenté cargar archivos a la base de conocimiento pero el botón de Sharepoint está deshabilitado
+
+Limpia la caché del navegador e intenta de nuevo.
+
+### Cuando hago clic en `Upload files -> From Sharepoint` el inicio de sesión no funciona
+
+- Verifica que el `clientId` `secretId` estén copiados y pegados correctamente en el archivo de configuración de Zylon
+- Verifica que `redirectUri` sea el mismo que en el paso 4 y que tu dominio de sharepoint sea correcto
+- Verifica que el `tenantId` que se está usando coincida con el de la página `Overview` de tu aplicación en Azure AD

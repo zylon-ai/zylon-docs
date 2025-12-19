@@ -1,0 +1,145 @@
+---
+title: "Referencia de Presets de IA"
+description: "Referencia completa de presets de IA disponibles incluyendo configuraciones base, alternativas, experimentales y deprecadas"
+---
+
+Establece el preset de IA en tu archivo de configuración de Zylon usando la propiedad `ai.preset`. La configuración por defecto usa una configuración de 24GB.
+
+## Presets Base
+
+Los presets base proporcionan configuraciones estándar optimizadas para cargas de trabajo de IA de propósito general.
+
+| Preset         | Memoria GPU Requerida | Ejemplos de Hardware Compatible  |
+|----------------|---------------------|-------------------------------|
+| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     |
+| `baseline-32g` | 32GB                | RTX 5090                      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) |
+
+### Ejemplo de Configuración
+
+```yaml
+ai:
+  preset: "baseline-48g"  # Para un sistema con L40s (48GB)
+```
+
+<Tip>
+Elige el preset que coincida con la capacidad de memoria de tu GPU. Siempre selecciona un preset que coincida o sea menor que tu VRAM disponible.
+</Tip>
+
+## Presets Alternativos
+
+Zylon proporciona presets alternativos que ofrecen configuraciones especializadas intercambiando ciertas capacidades por otras. Estos son opcionales y solo deben usarse cuando tienes requisitos específicos que difieren de los presets estándar.
+
+### Alternativas Habilitadas para Visión
+
+Estos presets incluyen capacidades especializadas de visión por computadora en el pipeline de ingesta, permitiendo al sistema procesar y entender imágenes, documentos y contenido visual.
+
+| Preset                             | Memoria GPU Requerida | Compensación                  |
+|------------------------------------|---------------------|----------------------------|
+| `alternatives.baseline-48g-vision` | 48GB                | Modelo más pequeño (Qwen 3 14B) |
+| `alternatives.baseline-96g-vision` | 96GB                | Modelo más pequeño (Qwen 3 14B) |
+
+**Cuándo usar presets habilitados para visión:**
+
+- Procesar documentos escaneados y comprensión de diapositivas
+- Analizar gráficos, tablas y datos visuales
+- Tareas de comprensión y descripción de imágenes
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "alternatives.baseline-96g-vision"
+```
+
+<Warning>
+El uso de estos presets probablemente requiere modificar la memoria compartida del servidor de inferencia. Consulta la sección [Configuración de Memoria Compartida](/es/operator-manual/ai-presets/configuration#shared-memory-configuration).
+</Warning>
+
+### Alternativas Optimizadas para Contexto
+
+Estos presets usan modelos de IA más pequeños para proporcionar ventanas de contexto significativamente más grandes, permitiendo sesiones de conversación extendidas y tareas de análisis complejas.
+
+| Preset                              | Memoria GPU Requerida | Compensación                  |
+|-------------------------------------|---------------------|----------------------------|
+| `alternatives.baseline-48g-context` | 48GB                | Modelo más pequeño (Qwen 3 14B) |
+| `alternatives.baseline-96g-context` | 96GB                | Modelo más pequeño (Qwen 3 14B) |
+
+**Cuándo usar presets optimizados para contexto:**
+
+- Sesiones de conversación extendidas
+- Análisis complejo que requiere grandes cantidades de contexto
+- Procesamiento de documentos largos
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "alternatives.baseline-48g-context"
+```
+
+<Info>
+Usar más ventanas de contexto no siempre produce mejores resultados. Considera tu caso de uso específico antes de seleccionar presets optimizados para contexto.
+</Info>
+
+## Presets Experimentales
+
+<Warning>
+Los presets experimentales están en desarrollo activo y pueden no ser estables. Usa solo en entornos de prueba.
+</Warning>
+
+Los presets experimentales proporcionan acceso a modelos y configuraciones de vanguardia que están siendo evaluados para futuras versiones. Estos presets pueden tener características de rendimiento o estabilidad diferentes comparados con los presets base.
+
+| Preset                     | Memoria GPU Requerida | Familia de Modelo | Estado |
+|----------------------------|---------------------|--------------|--------|
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   |
+| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   |
+| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  |
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+```
+
+### Notas Importantes Sobre Presets Experimentales
+
+- Los presets experimentales pueden ser eliminados o cambiados significativamente entre versiones
+- El rendimiento y la estabilidad no están garantizados
+- No recomendados para entornos de producción
+- Pueden requerir parámetros de configuración adicionales
+- El soporte puede ser limitado
+
+## Presets Deprecados
+
+<Warning>
+Los presets deprecados se mantienen solo para compatibilidad hacia atrás y no recibirán actualizaciones.
+</Warning>
+
+Para clientes que requieren configuraciones más antiguas, los presets deprecados están disponibles pero no se recomiendan para nuevas instalaciones.
+
+| Patrón de Preset                | Descripción                     | Recomendación                           |
+|-------------------------------|---------------------------------|------------------------------------------|
+| `deprecated.<size>g.20250710` | Configuraciones de modelo Pre-Qwen 3 | Actualiza a presets actuales cuando sea posible |
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "deprecated.24g.20250710"
+```
+
+### Migración desde Presets Deprecados
+
+Si estás usando un preset deprecado, recomendamos encarecidamente migrar a presets base o alternativos actuales:
+
+1. Revisa los [presets base](#base-presets) para encontrar una configuración equivalente
+2. Prueba el nuevo preset en un entorno de staging
+3. Actualiza tu configuración de producción
+4. Monitorea el rendimiento y ajusta si es necesario
+
+La migración proporciona acceso a modelos mejorados, mejor rendimiento y soporte continuo.

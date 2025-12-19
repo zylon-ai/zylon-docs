@@ -1,0 +1,186 @@
+---
+title: "Actualizar a v1.43.0 desde versiones anteriores"
+---
+
+Esta página te ayudará a migrar tu instancia de Zylon a la versión v1.43.0
+
+<Danger>
+  Seguir esta guía de migración es obligatorio cuando **<u>estás actualizando a versiones superiores a 1.43.0</u>**
+</Danger>
+
+La guía contiene los siguientes pasos:
+1. Preparación
+2. Actualización
+3. Configuración
+
+## 1. Preparación
+
+<Steps>
+  <Step title="Localiza tu configuración actual">
+    Encuentra tu configuración existente de Zylon en `/etc/zylon/zylon-conf.yaml` y ábrela.
+  </Step>
+  <Step title="Identifica tu patrón de configuración">
+    Mira tu sección `ai:` actual y determina qué patrón coincide:
+
+    - Solo tiene `preset:` → **Escenario 1** (No se requiere acción)
+    - Tiene `config.embedding` con configuraciones multilingües → **Escenario 2**
+    - Tiene `config.llm` o configuraciones LLM personalizadas → **Escenario 3a**
+    - Tiene `config.embedding` con configuraciones personalizadas → **Escenario 3b**
+  </Step>
+  <Step title="Aplica la migración correspondiente">
+    Sigue el reemplazo exacto mostrado en tu escenario coincidente a continuación.
+  </Step>
+  <Step title="Guarda tus cambios">
+    Actualiza tu archivo de configuración con el nuevo formato
+  </Step>
+</Steps>
+
+
+### Escenario 1: Solo preset base (no se requiere acción)
+
+**Cómo detectar:** Tu configuración solo contiene una línea de preset sin ninguna sección `config:`.
+
+**Configuración actual (no se requieren cambios):**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+```
+
+Esta configuración permanece sin cambios y continuará funcionando como se espera.
+
+### Escenario 2: Configuración de embedding multilingüe
+
+**Cómo detectar:** Tu configuración tiene `config.embedding` con configuraciones relacionadas con multilingüe.
+
+**Configuración antigua:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    embedding:
+      name: multilingual-e5-large
+      contextWindow: 512
+      vectorDim: 1024
+      gpuMemoryUtilization: 0.10
+      prefixQuery: "query:"
+      prefixText: "passage:"
+```
+
+**Configuración nueva:**
+
+```yaml
+ai:
+  preset: "baseline-48g,capabilities.multilingual"
+```
+
+<Note>
+  El nuevo sistema de presets maneja automáticamente la configuración de embedding multilingüe con configuraciones predeterminadas óptimas, proporcionando la misma funcionalidad con una sintaxis mucho más simple.
+</Note>
+
+### Escenario 3: Configuración de modelo personalizado
+
+**Cómo detectar:** Tu configuración tiene `config.llm` o `config.embedding` con configuraciones de modelo personalizadas.
+
+<Note>
+  Si tu configuración personalizada incluye configuraciones no relacionadas con modelos, esas configuraciones pueden permanecer iguales en el nuevo sistema. Solo las configuraciones específicas del modelo necesitan migrarse a la nueva estructura `models`.
+</Note>
+
+#### Escenario 3a: Configuración LLM personalizada
+
+**Busca:** `config.llm` o sección `config` con configuraciones específicas de LLM.
+
+**Configuración antigua:**
+
+_Esta configuración está modificando la ventana de contexto predeterminada._
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    llm:
+      name: qwen-3-14b-awq
+      contextWindow: 16384
+      # ... other LLM settings
+```
+
+**Configuración nueva:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    models:
+      - id: llm
+        contextWindow: 16384
+```
+
+#### Escenario 3b: Configuración de embedding personalizada
+
+**Busca:** `config.embedding` con configuraciones personalizadas (no multilingües).
+
+**Configuración antigua:**
+
+_Esta configuración está modificando la ventana de contexto predeterminada._
+
+```yaml
+ai:
+  preset: "baseline-96g"
+  config:
+    embedding:
+      name: mxbai-embed-large
+      contextWindow: 512
+```
+
+**Configuración nueva:**
+
+```yaml
+ai:
+  preset: "baseline-96g"
+  config:
+    models:
+      - id: embed
+        contextWindow: 512
+```
+
+### Solución de problemas
+
+<AccordionGroup>
+  <Accordion title="La configuración no se carga después de la migración">
+    Asegúrate de que la sintaxis YAML es correcta y todos los campos requeridos están correctamente indentados. El array `models` debe estar correctamente formateado con los valores `id` correctos.
+  </Accordion>
+  <Accordion title="Diferencias de rendimiento después de la migración">
+    El nuevo sistema debería garantizar el mismo rendimiento y configuración que antes. Por favor asegúrate de haber seguido correctamente la guía. Si sigues teniendo problemas, por favor contacta con el equipo de Zylon para comprobarlo.
+  </Accordion>
+  <Accordion title="El embedding multilingüe no funciona como se espera">
+    Verifica que estás usando el formato de combinación de preset correcto: `"baseline-48g,capabilities.multilingual"`.
+  </Accordion>
+</AccordionGroup>
+
+## 2. Actualización
+Ejecuta `sudo zylon-cli update` para actualizar Zylon
+
+
+## 3. Configuración <a id="post-update" />
+
+Ahora vamos a habilitar Omnisearch para Agent Flows existentes.
+
+
+<Steps>
+  <Step title="Actualiza Zylon CLI a al menos la versión 1.16.0">
+    Ejecuta `sudo zylon-cli` y comprueba la versión.
+    
+    Ejecuta `sudo zylon-cli self-update` si es necesario.
+  </Step>
+  <Step title="Rellenar contenido usando Zylon CLI">
+    Ejecuta `sudo zylon-cli backfill-agent-flow-content`.
+
+    Espera a que el script termine. Este comando se puede ejecutar múltiples veces y detenerse en cualquier momento.
+  </Step>
+</Steps>
+
+Ya estás listo para empezar a buscar contenido dentro de Agent Flows con Omnisearch.
+
+No olvides habilitar tus idiomas preferidos (el predeterminado es inglés) para hacer Omnisearch lo más eficiente posible siguiendo
+[la guía de configuración de búsqueda](/es/operator-manual/configuration/search)

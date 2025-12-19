@@ -2,6 +2,16 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "palm",
   "name": "Zylon",
+    "locales": [
+    {
+      "locale": "en",
+      "name": "English"
+    },
+    {
+      "locale": "es",
+      "name": "Español"
+    }
+  ],
   "colors": {
     "primary": "#796ABF",
     "light": "#796ABF",

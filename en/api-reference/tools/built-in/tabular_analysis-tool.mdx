@@ -1,0 +1,115 @@
+---
+title: "Tabular Analysis"
+description: "The tabular analysis tool is used to analyze and query numerical data from tables, spreadsheets, and structured documents that have been previously ingested."
+---
+
+## How it Works
+
+When you add the tabular analysis tool and the specified context to your API request, Zylon follows these steps:
+
+1. **Analyzes query intent**: Zylon understands your analytical question and determines what specific data analysis needs to be performed.
+2. **Processes tabular data**: Executes analysis using the tool against the ingested tabular data, focusing on numerical calculations and data insights.
+3. **Returns analytical results**: Provides direct analytical answers based on the data processing and calculations performed.
+
+## Important Notes
+
+- To use this tool, you must specify the **type `tabular_analysis_v1`**.
+- The `tool_context` must contain at least one artifact of type **`ingested_artifact`**.
+- Artifacts must contain tabular data such as **CSV files**, **Excel spreadsheets**, **PDFs with tables**, or other structured data formats.
+
+## Example Usage
+
+In this practical example, we upload a CSV file containing stock price data and then perform analytical queries to find specific insights.
+
+<Steps>
+<Step title="Upload the Document">
+    First, you need to upload a CSV file or similar tabular document that contains the data you want to analyze. For detailed instructions on how to ingest documents, refer to the [Ingest Content API documentation](/en/api-reference/artifacts/ingest-content).
+</Step>
+<Step title="Perform Tabular Analysis">
+    Once the document is processed, we perform the analytical query by specifying messages, tools, context, and tool choice in the request body.
+    <Tabs>
+      <Tab title="Shell">
+        ```
+        curl --location 'https://<your-host>/api/gpt/v1/messages' \
+        --header 'Authorization: Bearer <your-token>' \
+        --header 'x-org: default' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "messages": [
+            {
+              "role": "user",
+              "content": "What is the day with the highest closing price?"
+            }
+          ],
+          "tools": [
+            {
+              "name": "tabular_analysis",
+              "type": "tabular_analysis_v1"
+            }
+          ],
+          "tool_choice": { "type": "auto" },
+          "tool_context": [
+            {
+              "type": "ingested_artifact",
+              "context_filter": {
+                "collection": "stock_documents",
+                "artifacts": [
+                  "8853b8c6-59ea-4874-b0a2-fe96cc15eb13"
+                ]
+              }
+            }
+          ]
+        }'
+        ```
+      </Tab>
+    </Tabs>
+    </Step>
+<Step title="Response">
+    The system responds with the analytical processing performed and the direct answer to your query:
+     ```
+      {
+        "id": "msg_978e1f57031a41b2bc9140dfe2696ccd",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+            {
+                "type": "tool_use",
+                "start_timestamp": "2025-09-24T16:38:02.179513Z",
+                "stop_timestamp": "2025-09-24T16:38:03.487913Z",
+                "id": "toolu_01997c96cec37ccc9aafac2566b8c60f",
+                "name": "tabular_analysis",
+                "input": {
+                    "query": "Find the day with the highest closing price"
+                }
+            },
+            {
+                "type": "tool_result",
+                "start_timestamp": "2025-09-24T16:38:16.028423Z",
+                "stop_timestamp": "2025-09-24T16:38:16.030538Z",
+                "tool_use_id": "toolu_01997c96cec37ccc9aafac2566b8c60f",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "The day with the highest closing price is 2024-12-26."
+                    }
+                ],
+                "is_error": false
+            },
+            {
+                "type": "text",
+                "start_timestamp": "2025-09-24T16:38:16.341826Z",
+                "stop_timestamp": "2025-09-24T16:38:17.743287Z",
+                "text": "The day with the highest closing price is **2024-12-26**."
+            }
+        ],
+        "model": "private-gpt",
+        "stop_reason": "end_turn",
+        "stop_sequence": null,
+        "usage": {
+            "input_tokens": 621,
+            "output_tokens": 22
+        }
+    }
+     ```
+    </Step>
+</Steps>

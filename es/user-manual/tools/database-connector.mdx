@@ -1,0 +1,186 @@
+# Conector de base de datos
+
+El Conector de base de datos te permite conectar de forma segura una base de datos compartida a un **Proyecto**, haciendo que sus datos estén disponibles para todos los miembros del proyecto a través del chat.
+
+> **Cambio importante**: Los conectores de base de datos ya no se añaden directamente dentro de un chat. Ahora son **conectores compartidos a nivel de proyecto**, gestionados desde la barra lateral del proyecto.
+
+<Warning>
+    Pide a tu administrador de TI que habilite el Conector de base de datos en la configuración del sistema [con el Manual del operador](/operator-manual/configuration/features).
+</Warning>
+
+---
+
+## Crear un conector de base de datos
+
+Para crear un conector de base de datos:
+
+1. Abre tu **Barra lateral del proyecto**
+2. Haz clic en **Conectores**
+3. Haz clic en **Crear conector**
+4. Selecciona **Base de datos**
+5. Introduce los **detalles de conexión** requeridos
+6. Establece la conexión
+
+Una vez que la conexión sea exitosa, estarán disponibles opciones de configuración adicionales.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/uTQ07GFxffk"
+    title="Zylon Workspace - Creating Database Server Connector"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+### Cadenas de conexión simplificadas
+
+Una cadena de conexión es como una dirección que le dice al sistema dónde encontrar tu base de datos y cómo acceder a ella. Tu equipo de TI puede ayudarte a construir la cadena de conexión correcta para tu base de datos.
+
+#### Tipos de base de datos admitidos
+
+- Microsoft SQL Server
+- PostgreSQL
+- MySQL
+
+
+#### Cadena de conexión
+<Warning>
+    **Notas de seguridad**:
+    - Nunca compartas tus cadenas de conexión con otros
+    - Usa solo las bases de datos que tu equipo de TI ha aprobado
+    - Asegúrate de que el usuario sea de solo lectura
+</Warning>
+
+Esto es lo que significa cada parte (pide a tu equipo de TI los valores correctos):
+
+
+```
+SQL Server: mssql+pyodbc://username:password@server:1433/database
+PostgreSQL: postgresql://username:password@server:5432/database
+MySQL: mysql+mysqldb://username:password@server:3306/database
+```
+
+**Examples**
+
+<CodeGroup>
+
+    ```sql Microsoft SQL Server
+    mssql+pyodbc://sa:password123@server.company.com:1433/SalesDatabase
+
+    mssql+pyodbc://dbuser:mypassword@192.168.1.50:1433/CustomerData
+
+    mssql+pyodbc://localhost:1433/TestDB?TrustServerCertificate=yes
+    ```
+
+    ```sql PostgreSQL
+    postgresql://postgres:admin123@database.company.com:5432/company_data
+
+    postgresql://user:password@10.0.0.25:5432/sales_db
+
+    postgresql://localhost:5432/public_data
+    ```
+
+    ```sql MySQL
+    mysql+mysqldb://root:password@mysql.company.com:3306/customer_info
+
+    mysql+mysqldb://appuser:secret123@127.0.0.1:3306/inventory
+
+    mysql+mysqldb://localhost:3306/reports
+    ```
+
+    Recuerda: Reemplaza `username`, `password`, `server` y `database` con tus valores reales.
+
+</CodeGroup>
+
+
+## Configuración avanzada
+
+Después de que se haya establecido la conexión de la base de datos, puedes configurar parámetros avanzados para controlar cómo se usa la base de datos.
+
+### Restricciones de tabla y esquema
+
+Puedes limitar el acceso del conector a:
+- **Esquemas** específicos
+- **Tablas** específicas
+
+Esto ayuda a:
+- Reducir la exposición innecesaria de datos
+- Mejorar la precisión de las consultas
+- Evitar que el LLM consulte datos irrelevantes
+
+### Descripción del conector
+
+Puedes definir una **descripción** para el conector de base de datos.
+Esta descripción se proporciona al LLM y debe explicar:
+
+- Qué contiene la base de datos
+- Cómo están estructurados los datos
+- Cualquier regla o convención importante
+
+Una buena descripción mejora significativamente la calidad de las consultas generadas por el LLM.
+
+---
+
+## Usar el conector de base de datos en el chat
+
+Una vez creado, el conector de base de datos se puede usar en chats:
+
+1. Abre o crea un chat dentro del proyecto
+2. Usa el **selector de conectores** en la entrada del chat
+3. Habilita el conector de base de datos
+
+Cuando está habilitado, el LLM puede consultar la base de datos como parte de la conversación.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/e6W6fUodUQM"
+    title="Zylon Workspace - Using connectors"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+---
+
+## Conectores preseleccionados
+
+Los administradores del proyecto pueden configurar los conectores de base de datos para que estén **preseleccionados para cada chat nuevo** en el proyecto.
+
+Esto es especialmente útil cuando:
+- La base de datos es una parte central del flujo de trabajo del proyecto
+- Los usuarios no técnicos necesitan acceso a MCPs o bases de datos sin tener que lidiar con configuración compleja
+- Se requiere acceso consistente a datos en todas las conversaciones
+
+---
+
+## Uso personal y privado
+
+Si un usuario quiere configurar sus **propios conectores de base de datos** sin compartirlos:
+
+1. Crea un **proyecto privado**
+2. Crea conectores de base de datos usando el mismo proceso
+3. Úsalos exclusivamente dentro de ese proyecto privado
+
+Los proyectos privados permiten experimentación o integraciones personales sin afectar entornos compartidos.
+
+---
+
+## Requisitos y consideraciones
+
+- La base de datos debe ser accesible desde el entorno del conector
+- El acceso de red, firewalls y listas de permitidos de IP pueden necesitar configuración
+- Las consultas generadas por el LLM respetan el alcance configurado del conector
+
+---
+
+## Seguridad
+
+- Las credenciales se almacenan de forma segura
+- El LLM solo puede acceder a datos permitidos por la configuración del conector
+- Las restricciones de esquema y tabla se aplican en el momento de la consulta

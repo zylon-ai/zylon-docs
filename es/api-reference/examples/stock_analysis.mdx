@@ -1,0 +1,307 @@
+---
+title: "Análisis de datos de acciones"
+description: "Ingiere, analiza y resume automáticamente estados financieros consolidados de empresas y precios históricos de acciones, devolviendo una instantánea financiera concisa."
+---
+
+Esta muestra demuestra cómo usar la plataforma Zylon para ingerir, consultar y analizar documentos financieros de Apple (AAPL) y datos históricos de 
+precios de acciones. 
+
+Los estados financieros y datos históricos de precios usados en este ejemplo se obtienen de la siguiente manera:
+- **Estados financieros consolidados**: Obtenidos directamente del centro de noticias oficial de Apple:
+  - [Estados financieros consolidados FY25 Q2](https://www.apple.com/newsroom/pdfs/fy2025-q2/FY25_Q2_Consolidated_Financial_Statements.pdf)
+  - [Estados financieros consolidados FY25 Q3](https://www.apple.com/newsroom/pdfs/fy2025-q3/FY25_Q3_Consolidated_Financial_Statements.pdf)
+- **Precios históricos de acciones**: Obtenidos programáticamente mediante la biblioteca Python `yfinance`, asegurando datos de mercado actualizados para el análisis.
+
+Puedes adaptar este script para analizar cualquier empresa que cotice en bolsa cambiando el símbolo del ticker y las URIs de documentos.
+
+Para ejecutar esto simplemente necesitarás:
+
+- Python 3 (con `yfinance` y `requests` instalados)
+- Un token de API de Zylon (consulta [Gestión de tokens](/es/api-reference/token-management))
+- Acceso a internet (para descargar documentos y datos de precios)
+
+Guarda el siguiente script como `main.py` y ejecútalo con
+
+```python main.py lines icon="python" expandable
+import base64
+import json
+import os
+from typing import Dict, List, Optional
+import uuid
+import urllib.request
+import yfinance as yf
+from datetime import datetime, timedelta
+
+HOST = "your_zylon_instance.com"
+TOKEN = "your api token here"
+
+API_HOST = f"https://{HOST}/api/gpt"
+VECTOR_COLLECTION = "stock_documents"
+
+
+def http_post(url: str, data: dict, token=TOKEN) -> dict:
+    """
+    Simple POST request.
+
+    All requests to Zylon API require an Authorization header with a Bearer token.
+    """
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(data).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+    with urllib.request.urlopen(req, timeout=300) as resp:
+        if resp.status != 200:
+            raise Exception(f"HTTP {resp.status}: {resp.read().decode('utf-8')}")
+        return json.load(resp)
+    
+def _ingest_artifact(
+    artifact_id: str,
+    input_type: str,
+    input_value: str,
+    metadata: dict,
+) -> list[str]:
+    """Ingest artifact to Zylon API with flexible input type and metadata."""
+    body = {
+        "input": {"type": input_type, "value": input_value},
+        "artifact": artifact_id,
+        "collection": VECTOR_COLLECTION,
+        "metadata": metadata,
+    }
+    print(f"Ingesting file {metadata.get('file_name')}")
+    return http_post(f"{API_HOST}/v1/artifacts/ingest", body, TOKEN)
+
+
+def ingest_from_file(
+    artifact_id: str, file_path: str, stock_name: str, token: str = TOKEN
+) -> list[str]:
+    """Ingest a local file to Zylon."""
+    filename = file_path.split("/")[-1]
+    with open(file_path, "rb") as f:
+        file_bytes = f.read()
+    file_base64 = base64.b64encode(file_bytes).decode("utf-8")
+    metadata = {"file_name": filename, "stock_name": stock_name}
+    return _ingest_artifact(
+        artifact_id=artifact_id,
+        input_type="file",
+        input_value=file_base64,
+        metadata=metadata,
+    )
+
+def ingest_from_uri(
+    artifact_id: str, file_uri: str, stock_name: str, token: str = TOKEN
+) -> list[str]:
+    """Ingest a file from URI to Zylon."""
+    filename = file_uri.split("/")[-1]
+    metadata = {"file_name": filename, "stock_name": stock_name}
+    return _ingest_artifact(
+        artifact_id=artifact_id,
+        input_type="uri",
+        input_value=file_uri,
+        metadata=metadata,
+    )
+
+def send_chat_message(
+    query: str,
+    collection_name: Optional[str] = None,
+    artifact_ids: Optional[List[str]] = None,
+    tools: Optional[List[Dict]] = None,
+) -> Dict:
+    """
+    Send a chat message to Zylon using tools.
+    """
+    body = {
+            "messages": [{"role": "user", "content": query}],
+        }
+    if artifact_ids and collection_name:
+        tool_context = [
+            {   'type': 'ingested_artifact',
+                'context_filter':{
+                'collection': collection_name,
+                'artifacts': artifact_ids
+            }}]
+        body["tool_context"] = tool_context
+    if tools:
+        body["tools"] = tools
+
+    return http_post(f"{API_HOST}/v1/messages", body, TOKEN)
+    
+
+def generate_price_csv(ticker: str, months: int = 12) -> str:
+    """
+    Generate a CSV file with historical price data for a given stock ticker.
+
+    The CSV file is saved locally and the path to the file is returned.
+    """
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=30 * months)
+    df = yf.download(ticker, start=start_date.strftime("%Y-%m-%d"), end=end_date.strftime("%Y-%m-%d"), auto_adjust=True)
+
+    if df.empty:
+        raise Exception(f"No data found for ticker {ticker}")
+
+    csv_path = f"./{ticker}_price.csv"
+    df.to_csv(csv_path)
+    print(f"Price data for {ticker} saved to {csv_path}")
+    return csv_path
+
+def remove_price_csv(ticker: str):
+    """
+    Remove the local CSV file for a given stock ticker.
+    """
+    csv_path = f"./{ticker}_price.csv"
+    try:
+        os.remove(csv_path)
+        print(f"Removed local price CSV file: {csv_path}")
+    except FileNotFoundError:
+        print(f"No local price CSV file found to remove: {csv_path}")
+
+
+def format_response(query: str, response: Dict) -> str:
+    """
+    Extract and format the assistant's response from the Zylon API response.
+    """
+    return f"""
+    Query: {query}
+    Response: {response["content"][0]["text"]}
+    """
+
+def extract_response_text(response: dict) -> str:
+    """
+    Extract the main text response from the Zylon API response.
+    """
+    contents = response.get("content", [])
+    for item in reversed(contents):  # Extract content from the end
+        if isinstance(item, dict) and "text" in item:
+            return item["text"]
+    return ""
+
+def format_tool_response(query: str, tool_response: Dict) -> str:
+    """
+    Extract and format the tool's response from the Zylon API response.
+    """
+    return f"""
+    Query: {query}
+    Tool Response: {extract_response_text(tool_response)}
+    """
+
+if __name__ == '__main__':
+    ticker = "AAPL"
+    example_files = [
+        "https://www.apple.com/newsroom/pdfs/fy2025-q2/FY25_Q2_Consolidated_Financial_Statements.pdf",
+        "https://www.apple.com/newsroom/pdfs/fy2025-q3/FY25_Q3_Consolidated_Financial_Statements.pdf"
+    ]
+    
+    # Ingest uris documents
+    documents_artifact_ids = []
+    for file_url in example_files:
+        artifact_id = str(uuid.uuid4())
+        documents_artifact_ids.append(artifact_id)
+        ingest_from_uri(artifact_id, file_url, ticker)
+
+    # Generate, ingest and remove price CSV
+    price_csv_path = generate_price_csv(ticker)
+    price_artifact_id = str(uuid.uuid4())
+    ingest_from_file(price_artifact_id, price_csv_path, ticker)
+    remove_price_csv(ticker)
+
+    # Query documents
+    questions = [
+        "Total net sales in march 2025 and march 2024?",
+    ]
+
+    responses = []
+    for question in questions:
+        response = send_chat_message(
+        artifact_ids=documents_artifact_ids,
+        collection_name=VECTOR_COLLECTION,
+        query=question,
+        tools=[
+            {"name": "semantic_search", "type": "semantic_search_v1"},
+        ])
+        responses.append(format_tool_response(question, response))
+
+    print("========= Document Responses: =========")
+    for r in responses:
+        print(r)
+
+
+    # Query price data
+    questions_price = [
+        "What is the day with the highest closing price?",
+        "What is the day with the lowest closing price? Include only values not nan",
+    ]
+    responses_price = []
+    for question in questions_price:
+        response = send_chat_message(
+        artifact_ids=[price_artifact_id],
+        collection_name=VECTOR_COLLECTION,
+        query=question,
+        tools=[
+            {"name": "tabular_analysis", "type": "tabular_analysis_v1"},
+        ])
+        responses_price.append(format_tool_response(question, response))
+
+    print("========= Price Data Responses: =========")
+    for r in responses_price:
+        print(r)
+
+    ## Final query with all contexts
+    all_responses = responses + responses_price
+    prompt = """
+    Given the following information extracted from company documents, earnings reports, and historical stock price data,
+    ---
+    {responses}
+    ---
+    Provide a concise summary of the key financial highlights and stock performance.
+    """.format(responses="\n".join(all_responses))
+    final_answer = send_chat_message(
+        query=prompt,
+    )
+
+    print("========= Final Answer: =========")
+    print(extract_response_text(final_answer))
+```
+
+Guarda el script y ejecútalo:
+```bash
+python main.py
+```
+
+Deberías ver una salida como la siguiente:
+```bash
+Ingesting file FY25_Q2_Consolidated_Financial_Statements.pdf
+Ingesting file FY25_Q3_Consolidated_Financial_Statements.pdf
+[*********************100%***********************]  1 of 1 completed
+Price data for AAPL saved to ./AAPL_price.csv
+Ingesting file AAPL_price.csv
+Removed local price CSV file: ./AAPL_price.csv
+========= Document Responses: =========
+
+    Query: Total net sales in march 2025 and march 2024?
+    Tool Response: The total net sales for March 2025 were **$95,359 million**, and for March 2024, they were **$90,753 million**.
+    
+========= Price Data Responses: =========
+
+    Query: What is the day with the highest closing price?
+    Tool Response: The day with the highest closing price is **2024-12-26**, with a closing price of **258.10**.
+    
+
+    Query: What is the day with the lowest closing price? Include only values not nan
+    Tool Response: The day with the lowest closing price, excluding NaN values, is April 8, 2025, with a closing price of approximately 171.999.
+    
+========= Final Answer: =========
+**Key Financial Highlights and Stock Performance Summary:**
+
+- **Net Sales Growth:** Total net sales increased significantly from **$90,753 million** in March 2024 to **$95,359 million** in March 2025, reflecting strong year-over-year growth.
+
+- **Stock Performance:** 
+  - The highest closing price was recorded on **December 26, 2024**, at **$258.10**.
+  - The lowest closing price (excluding NaN values) occurred on **April 8, 2025**, at approximately **$172.00**, indicating notable volatility during this period.
+
+These figures highlight both robust revenue growth and fluctuating stock performance over the specified timeframe.
+```

@@ -1,0 +1,46 @@
+---
+title: "Todas las Características"
+---
+
+Zylon admite activación/desactivación de características, permitiéndote habilitar o deshabilitar ciertas características bajo demanda. Esto se gestiona a través del campo `features` en tu archivo de configuración.
+
+Cada característica puede definir su propio conjunto de claves para controlar el comportamiento.
+
+```
+features:
+  audit:
+    enabled: true
+  database:
+    enabled: true
+  mcp:
+    enabled: true
+  webExtract:
+    enabled: false
+  webSearch:
+    enabled: false
+  multimodal-image:
+    enabled: false
+```
+
+
+<CardGroup cols={2}>
+  <Card title="Registro de auditoría" icon="list" href="features/feat-audit">
+    Almacena eventos y trazas del Registro de Auditoría
+  </Card>
+  <Card title="Extracción Web" icon="file-code" href="features/feat-webextract">
+    Extrae y analiza contenido de páginas web.
+  </Card>
+  <Card title="Conector de herramienta de base de datos" icon="database" href="features/feat-database">
+    <Badge color="orange" size="xs">Alpha</Badge> Muestra la herramienta conectora de base de datos en los chats.
+  </Card>
+  <Card title="Conector de herramienta MCP" icon="plug" href="features/feat-mcp">
+    <Badge color="orange" size="xs">Alpha</Badge> Muestra la herramienta conectora MCP en los chats.
+  </Card>
+  <Card title="Búsqueda Web" icon="globe" href="features/feat-websearch">
+    <Badge color="orange" size="xs">Alpha</Badge> Habilita capacidades de búsqueda web en los chats.
+  </Card>
+  <Card title="Capacidades Multimodales" icon="globe" href="features/feat-multimodal">
+    <Badge color="orange" size="xs">Alpha</Badge> Habilita soporte de imágenes en los chats.
+  </Card>
+</CardGroup>
+

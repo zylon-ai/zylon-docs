@@ -1,0 +1,595 @@
+---
+title: "Personalización Avanzada"
+description: "Personaliza modelos de IA para cargas de trabajo especializadas incluyendo modelos fine-tuned y configuraciones multi-modelo"
+---
+
+<Warning>
+Las configuraciones personalizadas pueden causar mal funcionamiento del sistema. Realiza pruebas exhaustivas antes del despliegue.
+</Warning>
+
+## Cuándo Usar Configuraciones Personalizadas
+
+Considera la personalización avanzada cuando:
+
+- Tienes **modelos fine-tuned** optimizados para dominios o tareas específicas
+- Necesitas **parámetros de muestreo diferentes** a los valores por defecto del preset
+- Quieres ejecutar **múltiples modelos especializados** simultáneamente (ej., uno para visión, uno para texto, uno para razonamiento)
+- Requieres modelos de **familias de modelos alternativas** no incluidas en los presets estándar
+
+Antes de proceder, asegúrate de:
+- Entender los principios de gestión de memoria GPU
+- Tener acceso a repositorios de modelos HuggingFace compatibles
+- Conocer las limitaciones de tu hardware
+- Tener un entorno de prueba para validación
+
+## Familias de Modelos Soportadas
+
+Zylon admite estas familias de modelos para configuraciones personalizadas:
+
+| Familia de Modelo      | Repositorio de Ejemplo                              | Casos de Uso                           |
+|-------------------|-------------------------------------------------|-------------------------------------|
+| **Qwen 3**        | `Qwen/Qwen3-14B`                                | Propósito general (por defecto)           |
+| **Mistral Small** | `mistralai/Mistral-Small-24B-Instruct-2501`     | Generación de texto de alta calidad        |
+| **Gemma 3**       | `google/gemma-3-12b-it`                         | Inferencia eficiente                 |
+| **Gemma 3n**      | `google/gemma-3n-E4B-it`                        | Modelos pequeños optimizados              |
+| **GPT-OSS**       | `openai/gpt-oss-20b`                            | Arquitectura alternativa            |
+
+<Note>
+Solo los modelos de estas familias están oficialmente soportados. Usar familias no soportadas puede resultar en inestabilidad del sistema.
+</Note>
+
+## Entendiendo la Estructura de Configuración
+
+Todas las configuraciones personalizadas siguen este patrón:
+
+```yaml
+ai:
+  preset: "<base-preset>"           # Comienza con un preset base
+  numGPUs: <number>                 # Opcional: para configuraciones multi-GPU
+  config:
+    models:
+      - id: llm                      # Obligatorio: modelo de lenguaje principal
+        # ... configuración
+      - id: embed                    # Obligatorio: modelo de embeddings
+        # ... configuración
+      - id: <custom-id>              # Opcional: modelos adicionales
+        # ... configuración
+```
+
+**Principios clave:**
+- Cada configuración debe incluir modelos `llm` y `embed`
+- Cada modelo necesita un `id` único
+- La memoria GPU debe gestionarse manualmente al agregar/eliminar modelos
+
+---
+
+## Caso de Uso 1: Personalizar Modelos Existentes
+
+**Objetivo**: Modificar los modelos por defecto del preset sin agregar nuevos. Esto es útil para usar versiones fine-tuned de modelos existentes o ajustar parámetros de inferencia.
+
+### Cuándo Usar Este Enfoque
+
+- Intercambiar el modelo por defecto por una **versión fine-tuned** (ej., `Qwen3-14B-Medical` en lugar de `Qwen3-14B`)
+- Cambiar **parámetros de muestreo** (temperature, max tokens, etc.) para un comportamiento diferente
+- Usar un **modelo de embeddings diferente** para búsqueda semántica mejorada
+- Ajustar el tamaño de la **ventana de contexto** según tu caso de uso
+
+### Cómo Funciona
+
+Como no estás agregando modelos, no necesitas preocuparte por la reasignación de memoria. Simplemente especifica los cambios del modelo en la sección `config`, y el preset maneja la asignación de memoria automáticamente.
+
+### Esquema de Configuración
+
+```yaml
+ai:
+  preset: "<preset>"
+  config:
+    models:
+      - id: llm | embed                    # Qué modelo personalizar
+        modelRepo: string                  # Ruta del modelo HuggingFace
+        tokenizer: string                  # Opcional: ruta del tokenizer (solo LLMs)
+        promptStyle: string                # Opcional: qwen, mistral, gemma, gpt-oss
+        contextWindow: integer             # Opcional: longitud máxima de contexto
+        samplingParams:                    # Opcional: parámetros de inferencia
+          temperature: float (0.0-2.0)
+          maxTokens: integer (1-8192)
+          topP: float (0.0-1.0)
+          # ... otros parámetros de muestreo
+```
+
+### Ejemplos
+
+#### Ejemplo 1: Usar un Modelo Fine-Tuned
+
+Reemplaza el modelo por defecto con tu versión fine-tuned específica del dominio:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  config:
+    models:
+      - id: llm
+        modelRepo: "your-org/qwen3-14b-medical-finetuned"
+        tokenizer: "Qwen/Qwen3-14B-Instruct"  # Usa el tokenizer original
+```
+
+#### Ejemplo 2: Ajustar Parámetros de Muestreo
+
+Modifica el comportamiento de inferencia sin cambiar el modelo:
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    models:
+      - id: llm
+        samplingParams:
+          temperature: 0.3        # Más determinista
+          maxTokens: 2048         # Respuestas más cortas
+          topP: 0.85              # Muestreo enfocado
+          repetitionPenalty: 1.3  # Reducir repetición
+```
+
+#### Ejemplo 3: Usar Familia de Modelo Alternativa
+
+Cambia a una familia de modelo diferente manteniendo la misma huella de memoria:
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+  config:
+    models:
+      - id: llm
+        modelRepo: "your-org/gpt-oss-20b-finetuned"
+        tokenizer: "openai/gpt-oss-20b"
+        promptStyle: gpt-oss
+```
+
+#### Ejemplo 4: Modelo de Embeddings Personalizado
+
+Usa embeddings especializados para búsqueda semántica específica del dominio:
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  config:
+    models:
+      - id: embed
+        modelRepo: "your-org/legal-embeddings-v1"
+        vectorDim: 1024
+```
+
+---
+
+## Caso de Uso 2: Agregar Nuevos Modelos
+
+**Objetivo**: Ejecutar múltiples modelos especializados simultáneamente. Esto es más complejo porque debes gestionar manualmente la asignación de memoria GPU en todos los modelos.
+
+### Cuándo Usar Este Enfoque
+
+- Ejecutar un **modelo de visión** junto con tu modelo de texto principal
+- Usar **modelos diferentes para diferentes tareas** (ej., modelo de razonamiento + modelo de respuesta rápida)
+- Crear **pipelines especializados** que requieren múltiples tipos de modelos
+- Construir **sistemas multi-modales** que procesan texto, imágenes, audio y otros tipos de datos
+
+### Entendiendo la Gestión de Memoria GPU
+
+El concepto crítico: **La memoria GPU es un recurso fijo que debe dividirse manualmente entre todos los modelos.**
+
+Cada modelo usa una fracción de la memoria GPU total, controlada por `gpuMemoryUtilization` (un valor entre 0.0 y 1.0). La suma de todas las asignaciones de memoria de los modelos no puede exceder **0.95** (reservando 5% para sobrecarga del sistema).
+
+**Asignación por defecto para baseline-24g:**
+```
+llm:   0.85  (85% de 24GB = ~20.4GB)
+embed: 0.10  (10% de 24GB = ~2.4GB)
+─────────────
+Total: 0.95  (con 0.05 reservado para el sistema)
+```
+
+**Para agregar un nuevo modelo**, debes:
+1. Reducir las asignaciones de los modelos existentes para liberar memoria
+2. Asignar la memoria liberada al nuevo modelo
+3. Ajustar las ventanas de contexto si la memoria se reduce significativamente
+
+### Entendiendo KV Cache
+
+Para entender por qué la asignación de memoria afecta las ventanas de contexto, necesitas saber sobre **KV Cache**.
+
+**¿Qué es KV Cache?**
+
+Durante la inferencia, los modelos de lenguaje almacenan cálculos intermedios (Keys y Values) para cada token que procesan. Esto se llama **KV Cache**, y es lo que permite a los modelos mantener el contexto a través de una conversación o documento sin recalcular todo desde cero.
+
+El KV Cache crece con:
+- **Longitud del contexto**: Más tokens en contexto = más almacenamiento de caché necesario
+- **Tamaño del modelo**: Modelos más grandes requieren más caché por token
+- **Tamaño del lote**: Procesar múltiples solicitudes simultáneamente multiplica los requisitos de caché
+
+**Desglose de asignación de memoria:**
+
+Cuando asignas memoria GPU a un modelo, esa memoria se divide entre:
+
+1. **Pesos del modelo**: Los parámetros del modelo (tamaño fijo, ~2 bytes por parámetro para FP16)
+2. **KV Cache**: Almacenamiento para tokens de contexto (crece con la longitud del contexto)
+3. **Memoria de activación**: Espacio de cálculo temporal durante la inferencia
+
+**Ejemplo para un modelo de 14B parámetros:**
+```
+Asignación completa (0.85 en 24GB = 20.4GB):
+├─ Pesos del modelo: ~14GB (cuantizado; el tamaño FP32 original sería ~28GB)
+├─ KV Cache: ~5GB (soporta contexto de 16k)
+└─ Activaciones: ~1.4GB
+
+Asignación reducida (0.50 en 24GB = 12GB):
+├─ Pesos del modelo: ~14GB (igual, pero más ajustado)
+├─ KV Cache: ~2GB (ahora solo soporta contexto de 8k)
+└─ Activaciones: margen mínimo
+```
+
+**Por qué esto importa:**
+
+Si reduces la asignación total de memoria de 0.85 a 0.50, los pesos del modelo aún necesitan el mismo espacio, pero tienes significativamente menos espacio para KV Cache. Esto significa que debes reducir el parámetro `contextWindow` proporcionalmente para evitar errores de falta de memoria durante la inferencia.
+
+**Asignaciones de KV Cache por defecto de baseline:**
+
+| Preset           | Asignación de Memoria | Ventana de Contexto | KV Cache Aprox |
+|------------------|-------------------|----------------|-----------------|
+| baseline-24g/48g | 0.85              | 16384 (16k)    | ~4-6GB          |
+| baseline-96g     | 0.85              | 32768 (32k)    | ~8-12GB         |
+
+<Warning>
+Establecer `contextWindow` demasiado alto para la memoria asignada causará errores de falta de memoria durante la inferencia, especialmente durante conversaciones largas o al procesar documentos grandes. Los errores típicamente aparecen como "CUDA out of memory" en los logs de Triton.
+</Warning>
+
+### Proceso Paso a Paso
+
+#### Paso 1: Conoce tu Memoria GPU
+
+Primero, identifica tu memoria GPU total disponible:
+
+```bash
+nvidia-smi
+```
+
+Configuraciones comunes:
+- **24GB**: RTX 4090, L4
+- **48GB**: RTX A6000, L40, L40s
+- **80-96GB**: A100, H100
+
+Reserva **5% para sobrecarga del sistema**, dejando **95% para modelos**:
+- 24GB → 22.8GB utilizables
+- 48GB → 45.6GB utilizables
+- 96GB → 91.2GB utilizables
+
+#### Paso 2: Calcula los Requisitos de Memoria del Modelo
+
+La memoria del modelo depende del **conteo de parámetros** y la **cuantización**. Usa esta tabla para estimar:
+
+| Tamaño del Modelo | FP16 (precisión completa) | FP8 | FP4/AWQ | Uso Típico |
+|------------|----------------------|------|----------|-------------|
+| 3-4B       | 6-8 GB               | 3-4 GB | 2-3 GB   | Inferencia rápida, razonamiento |
+| 7B         | 14-16 GB             | 7-8 GB | 4-5 GB   | Modelos de visión, tareas especializadas |
+| 14B        | 28-32 GB             | 14-16 GB | 8-10 GB | Uso común |
+| 20B        | 40-44 GB             | 20-22 GB | 12-14 GB | Generación de alta calidad |
+| 32B        | 64-68 GB             | 32-34 GB | 18-20 GB | Razonamiento avanzado |
+| 70B        | 140-150 GB           | 70-75 GB | 40-45 GB | Tareas complejas |
+
+**Notas sobre cuantización:**
+- **FP16**: Precisión completa, mejor calidad, mayor memoria
+- **FP8**: Reducción de memoria del 50%, pérdida mínima de calidad
+- **FP4/AWQ**: Reducción de memoria del 70-75%, ligera degradación de calidad
+- La mayoría de los modelos de HuggingFace usan FP16 por defecto a menos que se especifique (ej., sufijo `-AWQ`, `-GPTQ`)
+
+**Ejemplos de cálculos para GPU de 24GB (22.8GB utilizables):**
+
+```
+Escenario 1: Principal + Visión
+- Qwen3-14B (FP16): 28GB → Demasiado grande solo
+- Qwen3-14B (FP4): 10GB → Encaja
+- Qwen2.5-VL-7B (AWQ): 5GB → Encaja
+- Embeddings: 2-3GB → Encaja
+- Total: 17-18GB → ✓ Encaja en 22.8GB
+
+Escenario 2: Múltiples modelos más pequeños
+- Gemma-3n-4B: 3GB → Encaja
+- Qwen2.5-VL-7B (AWQ): 5GB → Encaja
+- GPT-OSS-20B (FP4): 12GB → Encaja
+- Embeddings: 2GB → Encaja
+- Total: 22GB → ✓ Encaja en 22.8GB
+```
+
+#### Paso 3: Convierte GB a Porcentajes de Utilización de Memoria
+
+Una vez que conoces los requisitos en GB, convierte a `gpuMemoryUtilization`:
+
+**Fórmula**: `gpuMemoryUtilization = (Model GB / Total GPU GB)`
+
+**Ejemplo para GPU de 24GB:**
+
+| Modelo              | Memoria (GB) | Cálculo       | gpuMemoryUtilization |
+|-------------------|-------------|-------------------|----------------------|
+| Qwen3-14B (FP4)  | 10 GB       | 10 / 24 = 0.417   | 0.42                |
+| Qwen2.5-VL-7B     | 5 GB        | 5 / 24 = 0.208    | 0.21                |
+| GPT-OSS-20B (FP4)| 12 GB       | 12 / 24 = 0.500   | 0.50                |
+| Embeddings        | 2.5 GB      | 2.5 / 24 = 0.104  | 0.10                |
+| **Total**         | **29.5 GB** | **29.5 / 24**     | **1.23** (sobre 1.00 ✗) |
+
+**Ejemplo para GPU de 48GB:**
+
+| Modelo              | Memoria (GB) | Cálculo       | gpuMemoryUtilization |
+|-------------------|-------------|-------------------|----------------------|
+| Qwen3-14B (FP16)  | 30 GB       | 30 / 48 = 0.625   | 0.63                |
+| Qwen2.5-VL-7B     | 5 GB        | 5 / 48 = 0.104    | 0.10                |
+| Gemma-3n-4B       | 3 GB        | 3 / 48 = 0.063    | 0.07                |
+| Embeddings        | 5 GB        | 5 / 48 = 0.104    | 0.10                |
+| **Total**         | **43 GB**   | **43 / 48**       | **0.90** (bajo 1.00 ✓) |
+
+<Tip>
+Siempre redondea ligeramente hacia abajo para dejar margen. Si el cálculo da 0.417, usa 0.40 o 0.42.
+</Tip>
+
+#### Paso 4: Ajusta las Ventanas de Contexto Basado en la Memoria
+
+Cuando reduces la asignación de memoria de un modelo, también debes reducir su `contextWindow` porque hay menos espacio disponible para [KV Cache](#understanding-kv-cache).
+
+**Regla general**: La ventana de contexto escala aproximadamente linealmente con la huella de memoria.
+
+**Ejemplos:**
+```
+Escenario 1: GPU de 24GB con modelo de visión
+- LLM Principal: 0.85 → 0.50
+  Contexto: 16384 → 8192
+- Visión: 0.25
+  Contexto: 2048
+
+Escenario 2: GPU de 48GB con múltiples modelos  
+- LLM Principal: 0.85 → 0.60
+  Contexto: 16384 → 12288
+- Razonamiento: 0.15
+  Contexto: 4096
+- Visión: 0.10
+  Contexto: 2048
+```
+
+#### Paso 5: Escribe la Configuración Completa
+
+Ahora combina todos los modelos con sus asignaciones calculadas:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  config:
+    models:
+      - id: llm
+        gpuMemoryUtilization: 0.42  # 10GB para Qwen3-14B FP4
+        contextWindow: 4096          # Reducido desde 8192
+        
+      - id: llmvision
+        gpuMemoryUtilization: 0.21  # 5GB para modelo de visión
+        contextWindow: 1024          # Pequeño para tareas de visión
+        
+      - id: llmfast
+        gpuMemoryUtilization: 0.12  # 3GB para modelo rápido
+        contextWindow: 2048
+        
+      - id: embed
+        gpuMemoryUtilization: 0.10  # 2.5GB para embeddings
+```
+
+<Warning>
+**Modelos cuantizados en HuggingFace**:
+Busca sufijos como `-AWQ` o `-GPTQ` en el nombre del modelo. Si no hay sufijo, asume FP16.
+
+Ejemplos:
+- `Qwen/Qwen3-14B-Instruct` → FP16 (28-32GB)
+- `Qwen/Qwen3-14B-Instruct-AWQ` → FP4 (8-10GB)
+- `mistralai/Mistral-Small-24B-Instruct-2501` → FP16 (44-48GB)
+</Warning>
+
+### Esquema de Configuración
+
+```yaml
+ai:
+  preset: "<base-preset>"
+  numGPUs: integer                         # Opcional: para multi-GPU
+  config:
+    models:
+      - id: string                         # Requerido: identificador único
+        name: string                       # Opcional: nombre para mostrar
+        type: llm | embedding              # Requerido: tipo de modelo
+        modelRepo: string                  # Requerido: ruta HuggingFace
+        tokenizer: string                  # Opcional: ruta del tokenizer (LLMs)
+        promptStyle: string                # Opcional: qwen, mistral, gemma, gpt-oss
+        contextWindow: integer             # Opcional: longitud máxima de contexto
+        gpuMemoryUtilization: float        # Requerido al agregar modelos (0.0-1.0)
+        supportReasoning: boolean          # Opcional: habilitar razonamiento (LLMs)
+        multimodal:                        # Opcional: soporte multimodal (LLMs)
+          images:
+            enabled: boolean
+            maxNumber: integer
+        samplingParams:                    # Opcional: parámetros de inferencia
+          temperature: float (0.0-2.0)
+          maxTokens: integer (1-8192)
+          minP: float (0.0-1.0)
+          topP: float (0.0-1.0)
+          topK: integer (1-100)
+          repetitionPenalty: float (1.0-2.0)
+          presencePenalty: float (-2.0-2.0)
+          frequencyPenalty: float (-2.0-2.0)
+```
+
+<Warning>
+**Reglas Críticas:**
+- La suma de todos los `gpuMemoryUtilization` no debe exceder 1.00
+- Cada `id` debe ser único
+- `llm` y `embed` son obligatorios y no se pueden eliminar
+- Reducir la asignación de memoria requiere reducir `contextWindow` proporcionalmente
+</Warning>
+
+### Ejemplo Completo: Configuración Multi-Modelo
+
+Este ejemplo demuestra agregar modelos de visión y razonamiento para manejar diferentes tipos de cargas de trabajo:
+
+**Escenario**: Quieres tres modelos:
+1. **LLM Principal** para tareas de texto generales
+2. **LLM de Visión** para comprensión de imágenes
+3. **Modelo de Audio Rápido** para tareas de transcripción
+
+**Estrategia de asignación de memoria**:
+```
+LLM Principal:   0.50  (reducido desde 0.85)
+Modelo de Visión:  0.25  (nuevo)
+Modelo de Audio:   0.10  (nuevo)
+Embeddings:    0.10  (sin cambios)
+───────────────────────────────
+Total:         0.95
+```
+
+**Configuración completa**:
+
+```yaml
+ai:
+  preset: "baseline-24g"
+  numGPUs: 1
+  config:
+    models:
+      # LLM Principal - Maneja generación de texto general
+      - id: llm
+        name: qwen-3-14b-awq
+        type: llm
+        contextWindow: 9600              # Reducido desde 16384 (~41%) para coincidir con asignación de memoria
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.50       # Reducido desde el defecto 0.85
+        supportReasoning: true
+        samplingParams:
+          temperature: 0.7
+          maxTokens: 4096
+          topP: 0.9
+
+      # Embeddings - Obligatorio para procesamiento de documentos (sin cambios)
+      - id: embed
+        gpuMemoryUtilization: 0.10
+
+      # LLM de Visión - Maneja tareas de comprensión de imágenes
+      - id: llmvision
+        name: qwen-2-5-vl-7b-awq
+        type: llm
+        contextWindow: 1024              # Más pequeño para tareas de imagen
+        promptStyle: qwen
+        gpuMemoryUtilization: 0.25       # Nueva asignación
+        multimodal:
+          images:
+            enabled: true
+            maxNumber: 1
+        supportReasoning: false
+        samplingParams:
+          temperature: 0.1               # Más determinista para visión
+          maxTokens: 2048
+          topP: 0.85
+
+      # Modelo de audio rápido - Maneja tareas de transcripción
+      - id: llmaudio
+        name: gemma-3n-e4b
+        type: llm
+        contextWindow: 2048
+        modelRepo: "<repo>/gemma-3n-4b-it-audio"  # Fine-tuned para audio
+        promptStyle: gemma
+        gpuMemoryUtilization: 0.10                # Nueva asignación
+        supportReasoning: true
+        samplingParams:
+          temperature: 0.5
+          maxTokens: 1024
+          topP: 0.9
+
+# Verificación de memoria: 0.50 + 0.25 + 0.10 + 0.10 = 0.95 ✓
+```
+
+### Mejores Prácticas para Configuraciones Multi-Modelo
+
+1. **Comienza mínimo**: Empieza con asignaciones viables más pequeñas, aumenta basado en el uso real
+2. **Monitorea continuamente**: Usa `nvidia-smi` para rastrear el consumo real de memoria
+3. **Prueba individualmente**: Valida que cada modelo funciona antes de combinar. Es mejor aislar problemas en lugar de depurar múltiples modelos a la vez
+4. **Planifica margen**: No asignes toda la memoria. Deja algo de buffer para picos de memoria
+5. **Prueba de estrés**: Simula cargas de trabajo pico para asegurar estabilidad bajo carga
+
+---
+
+## Referencia de Parámetros de Configuración
+
+Referencia completa de todos los parámetros disponibles.
+
+### Parámetros Principales (Todos los Modelos)
+
+| Parámetro              | Tipo    | Requerido | Descripción                              |
+|------------------------|---------|----------|------------------------------------------|
+| `id`                   | string  | Sí      | Identificador único del modelo                  |
+| `type`                 | string  | Sí      | Tipo de modelo: `llm` o `embedding`         |
+| `modelRepo`            | string  | Sí      | Ruta del modelo HuggingFace                   |
+| `name`                 | string  | No       | Nombre personalizado para mostrar                      |
+| `gpuMemoryUtilization` | float   | No       | Fracción de memoria GPU (0.0-1.0)            |
+
+### Parámetros Específicos de LLM
+
+| Parámetro                 | Tipo    | Descripción                                 |
+|---------------------------|---------|---------------------------------------------|
+| `contextWindow`           | integer | Longitud máxima de contexto                      |
+| `tokenizer`               | string  | Ruta del tokenizer HuggingFace                  |
+| `promptStyle`             | string  | Formato: `qwen`, `mistral`, `gemma`, `gpt-oss` |
+| `supportReasoning`        | boolean | Habilitar capacidades de razonamiento               |
+| `supportImage`            | integer | Número de imágenes soportadas                  |
+| `supportAudio`            | integer | Número de entradas de audio soportadas            |
+| `samplingParams`          | object  | Configuración de muestreo por defecto              |
+| `reasoningSamplingParams` | object  | Muestreo para modo de razonamiento                 |
+
+### Parámetros Específicos de Embedding
+
+| Parámetro   | Tipo    | Descripción                     |
+|-------------|---------|----------------------------------|
+| `vectorDim` | integer | Dimensiones del vector de salida        |
+
+### Parámetros de Muestreo
+
+| Parámetro           | Tipo  | Rango       | Descripción                       |
+|---------------------|-------|-------------|-----------------------------------|
+| `temperature`       | float | 0.0-2.0     | Aleatoriedad en la generación          |
+| `maxTokens`         | int   | 1-8192      | Tokens máximos de respuesta           |
+| `minP`              | float | 0.0-1.0     | Umbral de probabilidad mínimo     |
+| `topP`              | float | 0.0-1.0     | Umbral de muestreo de núcleo        |
+| `topK`              | int   | 1-100       | Límite de muestreo Top-K              |
+| `repetitionPenalty` | float | 1.0-2.0     | Penalización por tokens repetidos       |
+| `presencePenalty`   | float | -2.0-2.0    | Penalización por presencia de token        |
+| `frequencyPenalty`  | float | -2.0-2.0    | Penalización por frecuencia de token       |
+
+### Parámetros Multimodales (LLMs)
+
+```yaml
+multimodal:
+  images:
+    enabled: boolean      # Habilitar entrada de imagen
+    maxNumber: integer    # Máximo de imágenes por solicitud
+  audio:
+    enabled: boolean      # Habilitar entrada de audio
+    maxNumber: integer    # Máximo de archivos de audio por solicitud
+```
+
+---
+
+## Lista de Verificación de Validación
+
+Antes de desplegar configuraciones personalizadas:
+
+- [ ] Todos los valores de `id` son únicos
+- [ ] Los modelos `llm` y `embed` están presentes
+- [ ] Suma de `gpuMemoryUtilization` ≤ 0.95
+- [ ] `promptStyle` coincide con la familia del modelo
+- [ ] `contextWindow` apropiado para la asignación de memoria
+- [ ] `tokenizer` coincide o es compatible con el modelo
+- [ ] Configuración probada en entorno de staging
+- [ ] Monitoreo en su lugar para uso de memoria
+
+## Errores Comunes
+
+1. **Exceder asignación de memoria de 1.0**: Siempre verifica tus cálculos
+2. **No reducir ventanas de contexto**: Los contextos grandes necesitan más memoria, ajusta en consecuencia
+3. **Tokenizers incompatibles**: Usa tokenizers compatibles para cada modelo
+4. **Estilo de prompt incorrecto**: Cada familia de modelo requiere formato específico
+5. **Sin pruebas**: Siempre valida en no-producción primero

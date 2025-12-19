@@ -1,0 +1,289 @@
+---
+title: "Instalando Zylon"
+description: "Una guía para instalar Zylon en una sola instancia"
+---
+
+## Prerrequisitos
+
+Para una navegación sin problemas, asegúrate de pasar esta lista de verificación antes de comenzar la instalación:
+
+- La máquina objetivo está limpia de cualquier otro software que pueda interferir con ella. Eso significa sin docker, sin kubernetes, servidores http, sin controladores Nvidia, etc.
+- Tienes acceso root y SSH a la máquina
+- La máquina tiene una conexión a Internet estable y fuerte
+- Puedes reiniciar la máquina si es necesario
+- Tu firewall no está bloqueando conexiones a ningún sitio web.
+  - En caso de que ejecutes en un entorno restringido, consulta las [instrucciones semi-airgap](operator-manual/semi-airgap)
+- La máquina tiene `curl` instalado
+- Tienes un dominio para Zylon listo (ej: zylon.your-company.com)
+  - Si tu instancia no está abierta a internet, tienes un certificado SSL válido para ese dominio, será necesario como el último paso de la instalación.
+
+Una vez que hayas cumplido los requisitos de hardware y tengas un dominio listo, ¡es hora de instalar Zylon!
+
+Para configuraciones de instancia única, Zylon se instala usando su CLI `zylon-cli` en la máquina donde quieres ejecutarlo. Para iniciar el proceso de instalación, asegúrate de que:
+
+- En el momento de la instalación, la máquina tiene conexión a internet (Después de que Zylon haya sido instalado, la conexión a internet no es un requisito)
+- Tienes acceso ssh a la máquina
+- Las reglas del firewall no bloquearán la CLI para descargar imágenes de contenedor de Zylon o la generación de certificados
+
+## Paso 1: Instalar la CLI de Zylon
+
+_Tiempo estimado: 2 min_
+
+La CLI acelerará el tiempo que lleva tener todo listo, se encargará de instalar controladores, actualizar Zylon y generar la configuración de plantilla para ti.
+
+Para instalarla, haz SSH en la máquina donde quieres instalar Zylon y ejecuta
+
+```bash
+# ssh user@zylon.company.com
+sudo curl -sL get.zylon.ai | sh
+```
+
+Se requiere acceso root en múltiples pasos de la instalación, si deseas inspeccionar el script simplemente ejecuta
+
+```yaml
+curl -sL get.zylon.ai
+```
+
+¡Ejecuta `sudo zylon-cli help` para obtener una lista de todos los comandos!
+
+## Paso 2: Generar un archivo de configuración para tu instalación de Zylon
+
+_Tiempo estimado: 10min_
+
+Zylon se configura con un archivo YAML ubicado en `/etc/zylon/zylon-conf.yaml`.
+
+Puedes usar la CLI de Zylon para generar una plantilla de configuración:
+
+```bash
+sudo zylon-cli config
+```
+
+Esto genera una plantilla que debes completar con tus valores específicos y guardar en `/etc/zylon/zylon-conf.yaml`. 
+
+Ten en cuenta que necesitarás acceso root para editar este archivo.
+
+Un archivo de configuración básico se verá así:
+
+```yaml
+# Configuración de máquina, esta es la única opción soportada
+node:
+  distro: "ubuntu22" # o ubuntu24
+  arch: "x86_64" 
+  drivers: "generic" 
+
+# Tipo de clúster, esta es la única
+# opción soportada para instalaciones de instancia única
+cluster:
+  type: "k0s"
+
+# canal inestable también disponible bajo solicitud
+channel: "stable"
+
+license:
+  email: "champion@company.com" # El correo asignado a la licencia
+  id: "2oq..." # Un id de licencia que un empleado de Zylon compartió contigo por correo
+
+# Configuración de IA, información detallada a continuación.
+ai:
+  preset: "baseline-24g"
+
+# Usaremos esto para identificar tu empresa en nuestras métricas anónimas
+# Puedes establecer cualquier identificador, si tienes múltiples instalaciones
+# haz el identificador diferente, por ejemplo, company, y company-test
+companyIdentifier: "your-company"
+
+# Habilitar métricas anónimas y reportes de fallos
+observability:
+  crashReporting: true
+  usageMetrics: true
+
+# Tu configuración de red
+ingress:
+  host: "zylon.your-company.com" # El dominio que has preparado para Zylon
+  enabled: true
+  tlsEnabled: true
+  certManagerAnnotations:
+    # Si planeas abrir la máquina a internet, el certificado SSL
+    # se generará automáticamente usando letsencrypt
+    # De lo contrario, consulta la documentación SSL para importar un certificado personalizado
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+### Parámetros de Configuración
+
+Completa cada parámetro requerido usando los valores que coincidan con tu entorno:
+
+| Parámetro           | Establecer a...              | Opciones                                                                            |
+| ------------------- | ---------------------- | ---------------------------------------------------------------------------------- |
+| `node.distro`       | Tu versión de SO        | `ubuntu22`, `ubuntu24`                                                             |
+| `node.arch`         | Tu arquitectura de CPU  | `x86_64`, `arm64`                                                                  |
+| `node.drivers`      | Tu tipo de hardware     | `generic`                                                                          |
+| `cluster.type`      | `k0s`                  | Solo `k0s` soportado                                                               |
+| `channel`           | `stable`               | `stable` (recomendado), `unstable`                                                 |
+| `license.email`     | Tu correo registrado  | Proporcionado durante el registro                                                       |
+| `license.id`        | Tu clave de licencia       | Recibido del equipo de Zylon por correo                                                 |
+| `ai.preset`         | Tu capacidad de hardware | [Ver Presets de IA →](http://localhost:3090/operator-manual/configuration/ai-presets) |
+| `companyIdentifier` | Nombre de tu empresa      | ej., `acme-corp`                                                                  |
+| `ingress.host`      | Tu dominio            | ej., `zylon.company.com`                                                          |
+| `ingress.enabled`   | `true`                 | Debe ser `true`                                                                     |
+
+<Tip>
+  Para la configuración detallada de la instancia de Zylon, consulta la página de [Configuración](/operator-manual/configuration/index).
+</Tip>
+
+## Paso 3: Preparar la máquina
+
+_Tiempo estimado: 5min a 45min, dependiendo de la velocidad de red._
+
+Para instalar Zylon, la máquina necesita estar lista para hacerlo, y durante este paso, se instalarán los controladores, un clúster de kubernetes embebido y otras dependencias se configurarán.
+
+Este proceso tomará entre 5 y 15 minutos, es normal ver que la salida se congela mientras algunos instaladores se ejecutan, simplemente espera hasta que termine.
+
+En condiciones de red lentas, este proceso puede tomar hasta 1 hora.
+
+```bash
+sudo zylon-cli setup
+```
+
+Esto es lo que se instalará:
+
+- Algunos paquetes comunes como gcc y git
+- Una distribución de kubernetes embebida, [k0s](https://k0sproject.io/)
+- [Controladores Nvidia y CUDA ](https://developer.nvidia.com/cuda-downloads)
+- [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/index.html)
+- Algunas utilidades de herramientas para gestionar el clúster de kubernetes (kubectl, helm, helmfile...)
+
+Generalmente, solo necesitas ejecutar el setup una vez. Ejecutarlo múltiples veces no tiene efecto a menos que una actualización del equipo de Zylon agregue una nueva dependencia.
+
+<Tip>
+  Es muy recomendable reiniciar la máquina después de que este paso se complete para asegurar que los controladores de GPU se carguen correctamente.
+</Tip>
+
+<Danger>
+  **¡Las actualizaciones del kernel (como las actualizaciones desatendidas de Ubuntu) romperán los controladores Nvidia en cada cambio!.**
+
+  Para probar si los controladores están funcionando, usa la utilidad `nvidia-smi`, mostrará el estado de tu(s) GPU(s) o fallará si los controladores no están funcionando:
+
+  Una actualización implícita del kernel también puede ocurrir después de un reinicio de la máquina cuando se ejecuta en proveedores de nube como AWS o Azure.
+
+  Consulta la siguiente página para solución de problemas: [Solución de Problemas de Controladores Nvidia](/operator-manual/nvidia-drivers-troubleshooting)
+</Danger>
+
+## Paso 4: Instalar Zylon
+
+_Tiempo estimado: 15min a 1hora, dependiendo de la velocidad de red._
+
+Este paso (instalar / actualizar) hará que Zylon esté disponible en tu máquina asumiendo que el archivo de configuración en `/etc/zylon/zylon-conf.yaml` es correcto.
+
+```bash
+sudo zylon-cli update
+```
+
+Para actualizar Zylon a una versión más nueva, simplemente ejecuta este comando nuevamente. Puedes hacerlo tan frecuentemente como necesites.
+
+Si modificas tu archivo de configuración de Zylon también necesitarás ejecutar el comando de actualización nuevamente.
+
+<Note>
+  La instalación inicial de Zylon tomará alrededor de 15 minutos para completarse después de que el comando de actualización en sí se complete.
+</Note>
+
+Esto es lo que está sucediendo en segundo plano:
+
+- Las imágenes de Zylon se están descargando
+- Los modelos de IA se están descargando
+- La configuración de GPU se está aplicando, se están ejecutando varias validaciones para asegurar la compatibilidad
+- El certificado SSL se está generando
+
+Puedes ver el proceso ejecutándose. Cuando todos los pods estén en estado 1/1 listo, puedes proceder.
+
+```bash
+watch sudo k0s kubectl get pods -n zylon
+# También puedes ver el proceso de validación de GPU nvidia, más propenso a fallos
+watch sudo k0s kubectl get pods -n nvidia
+```
+
+<Note>
+  Si algún servicio se queda atascado en un ContainerCrashLoopBackOff por más de una hora, contáctanos, la instalación ha fallado.
+</Note>
+
+## Paso 5: Preparar tu organización
+
+Para comenzar a usar Zylon necesitarás crear tu organización en él, así como agregar un administrador raíz que servirá como tu punto de entrada para otras tareas de gestión.
+
+Necesitarás:
+
+- Un nombre para tu organización (puede cambiarse más tarde)
+- Una contraseña para el administrador raíz (puede cambiarse más tarde).
+  - Debido a algunas limitaciones de codificación en la CLI, algunos símbolos especiales en la contraseña no funcionan correctamente, prefiere usar una contraseña alfanumérica larga.
+- Una expresión regular de correo electrónico para permitir que los usuarios se unan automáticamente. Si tu correo electrónico de trabajo habitual es [`name@company.com`](mailto:name@company.com), tu expresión regular de correo electrónico debe ser `.*@company\.com`. Si tu control de acceso se realiza con SSO (como Microsoft Entra, o Google), puedes usar `.*` como tu expresión regular.
+
+```bash
+# ¡Pon una contraseña segura!
+sudo zylon-cli seed --org-name "Mi Org" --admin-password "admin" --email-regex ".*@yourcompany\.com"
+
+# En el momento de seed, si Zylon no está listo,
+# este comando esperará hasta que se complete.
+```
+
+<Danger>
+  **Ejecutar el comando seed BORRARÁ TODOS LOS DATOS. Solo haz esto una vez durante el ciclo de vida de Zylon**
+</Danger>
+
+Las credenciales para iniciar sesión en Zylon serán:
+
+```bash
+user: admin@zylon.ai
+password: la_contraseña_que_configuraste_anteriormente
+```
+
+El correo electrónico del administrador raíz está fijo y siempre será `admin@zylon.ai`. Necesitarás usar estas credenciales para iniciar sesión por primera vez en el espacio de trabajo.
+
+## Paso 6 (opcional): Instalar certificados SSL manualmente
+
+_Tiempo estimado: 10 minutos_
+
+Si optaste por usar certificados Let's Encrypt puedes omitir esta sección.
+
+En caso de que tu instalación de Zylon esté detrás de una VPN / nube privada y no sea accesible a través de internet, necesitarás configurar SSL tú mismo. Para hacer eso, debes cargar tus propios certificados SSL y hacerlos disponibles al servidor donde está instalado Zylon.
+
+### Archivo de configuración
+
+Primero, **ELIMINA** las siguientes líneas del archivo de configuración `/etc/zylon/zylon-conf.yaml` 
+
+```yaml
+certManagerAnnotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+Como estamos usando Kubernetes, necesitamos tener la clave privada (`*.key`) y el archivo de certificado en dos archivos (`*.crt`) para almacenarlos como un secreto.
+
+### Para archivo .pfx (ignora si no aplica)
+
+En caso de que tengas un archivo `.pfx` puedes obtener los archivos deseados con los siguientes comandos:
+
+```bash
+openssl pkcs12 -in <your-certificate.pfx> -clcerts -nokeys -out tls.crt
+openssl pkcs12 -in <your-certificate.pfx> -nocerts -out tls.key
+```
+
+### Crear un secreto en el clúster de kubernetes
+
+Limpia los certificados anteriores (si los hay) e importa el nuevo. Zylon buscará tu certificado en el clúster con el nombre `zylon-tls`. Ten en cuenta que kubernetes requiere el certificado dividido en dos archivos, el `.crt` con el certificado mismo y `.key` con la clave privada.
+
+```bash
+
+# Importar o actualizar los certificados
+sudo k0s kubectl delete secret tls zylon-tls --ignore-not-found -n zylon
+sudo k0s kubectl create secret tls zylon-tls --key tls.key --cert tls.crt -n zylon
+
+# Verificar si está correctamente creado
+sudo k0s kubectl describe secret zylon-tls -n zylon
+```
+
+Para recargar los cambios realizados en el archivo de configuración, recarga la configuración.
+
+```bash
+sudo zylon-cli update
+```
+
+Finalmente, ve a tu instancia de Zylon y confirma que la conexión está usando HTTPS.

@@ -1,0 +1,123 @@
+---
+title: "Opciones de Configuración"
+description: "Configura capacidades mejoradas, configuraciones multi-GPU y memoria compartida para un rendimiento óptimo"
+---
+
+## Capacidades Mejoradas
+
+Zylon admite capacidades adicionales que se pueden combinar con cualquier preset base o alternativo. Estas capacidades extienden la funcionalidad pero **no están habilitadas por defecto**.
+
+### Capacidades Disponibles
+
+| Capacidad     | Descripción                                   | Casos de Uso de Ejemplo                                       |
+|----------------|-----------------------------------------------|---------------------------------------------------------|
+| `multilingual` | Soporte mejorado para idiomas más allá del inglés | Documentos internacionales, procesamiento de contenido no inglés |
+
+### Agregar Capacidades
+
+Las capacidades se agregan a los presets usando un formato separado por comas: `<base_preset>,<capability1>,<capability2>`
+
+**Ejemplos:**
+
+```yaml
+# Preset base con capacidad multilingüe
+ai:
+  preset: "baseline-24g,capabilities.multilingual"
+
+# Preset alternativo con capacidad multilingüe
+ai:
+  preset: "alternatives.baseline-48g-context,capabilities.multilingual"
+
+# Múltiples capacidades (si más están disponibles)
+ai:
+  preset: "baseline-48g,capabilities.multilingual,capabilities.feature2"
+```
+
+<Tip>
+Las capacidades se pueden apilar con cualquier tipo de preset incluyendo presets base, alternativos y experimentales.
+</Tip>
+
+## Configuración Multi-GPU
+
+Si tu sistema tiene múltiples GPUs, puedes combinar su capacidad de memoria para usar presets de nivel superior. Selecciona el preset basado en **VRAM total combinado** en todas las GPUs.
+
+### Pasos de Configuración
+
+1. **Calcula el VRAM total**: Suma la memoria de todas las GPUs
+2. **Selecciona el preset apropiado**: Elige el preset para la memoria total
+3. **Configura el conteo de GPU**: Establece el parámetro `numGPUs`
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "baseline-48g"
+  numGPUs: 2  # Usando 2 GPUs con 24GB cada una (48GB total)
+```
+
+### Ejemplos de Configuración Multi-GPU
+
+| Configuración de Hardware | Memoria GPU Individual | VRAM Total | Preset Recomendado | Configuración |
+|----------------|----------------------|------------|-------------------|---------------|
+| 2x RTX 4090    | 24GB cada una            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
+| 2x L4          | 24GB cada una            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
+| 4x RTX 4090    | 24GB cada una            | 96GB       | `baseline-96g`    | `numGPUs: 4`  |
+| 2x RTX A6000   | 48GB cada una            | 96GB       | `baseline-96g`    | `numGPUs: 2`  |
+
+### Mejores Prácticas Multi-GPU
+
+- Asegúrate de que todas las GPUs sean del mismo modelo para un rendimiento óptimo
+- Verifica un ancho de banda PCIe adecuado entre las GPUs
+- Monitorea la utilización de GPU para asegurar una carga equilibrada
+- Considera conexiones NVLink para mejor comunicación entre GPUs cuando esté disponible
+
+**Ejemplo Completo Multi-GPU:**
+
+```yaml
+ai:
+  preset: "baseline-96g,capabilities.multilingual"
+  numGPUs: 4  # 4x RTX 4090 (24GB cada una = 96GB total)
+```
+
+## Configuración de Memoria Compartida
+
+El Servidor de Inferencia Triton usa memoria compartida para habilitar transferencia de datos sin copia entre los servicios de Zylon y el motor de inferencia. Esto elimina la sobrecarga de serialización y mejora significativamente el rendimiento de inferencia y reduce la latencia para cargas de trabajo de alto volumen.
+
+### Asignación por Defecto
+
+Por defecto, el servidor de inferencia asigna **2GB de RAM** para memoria compartida. Esto es suficiente para la mayoría de las cargas de trabajo de inferencia basadas en texto.
+
+### Cuándo Aumentar la Memoria Compartida
+
+Puedes encontrar errores de `Shared memory allocation failed` en estos escenarios:
+
+- **Colas de solicitudes grandes**: Procesar grandes volúmenes de solicitudes concurrentes donde la entrada en cola excede la memoria compartida disponible
+- **Modelos basados en imágenes**: Cargas de trabajo de visión que requieren múltiples megabytes por imagen donde lotes de imágenes de alta resolución agotan rápidamente la asignación por defecto
+- **Procesamiento de documentos grandes**: Manejar documentos muy grandes o múltiples documentos simultáneamente
+
+### Configuración
+
+Para aumentar el límite de memoria compartida, actualiza tu archivo de configuración de Zylon:
+
+```yaml
+triton:
+  sharedMemory:
+    limit: "4Gi"  # Aumentar desde el defecto 2Gi
+```
+
+### Memoria Compartida Recomendada por Caso de Uso
+
+| Caso de Uso                    | Límite Recomendado | Razón                                    |
+|-----------------------------|-------------------|-------------------------------------------|
+| Inferencia solo texto         | 2Gi (defecto)     | Suficiente para la mayoría de cargas de trabajo de texto        |
+| Tareas de visión de bajo volumen     | 4Gi               | Maneja procesamiento ocasional de imágenes       |
+| Tareas de visión de alto volumen    | 8Gi               | Soporta procesamiento por lotes de imágenes           |
+| Cargas de trabajo mixtas pesadas       | 8-16Gi            | Acomoda texto y visión concurrentes   |
+
+<Warning>
+**Consideraciones importantes al aumentar la memoria compartida:**
+- Asignar memoria compartida excesiva puede causar que los pods sean OOMKilled
+- Sé conservador con los aumentos—comienza con incrementos pequeños (ej., 2Gi → 4Gi)
+- Monitorea el uso real con métricas de Kubernetes antes de aumentos adicionales
+- La memoria compartida se reserva de la RAM del sistema, reduciendo la memoria disponible para otros procesos
+</Warning>

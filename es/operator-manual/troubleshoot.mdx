@@ -1,0 +1,194 @@
+---
+title: "Solución de problemas"
+---
+
+La solución de problemas de Zylon se realiza principalmente a través de la herramienta de línea de comandos `zylon-cli`.
+
+## Zylon Doctor
+
+`zylon-cli` viene con una herramienta de diagnóstico integrada.
+
+Ejecuta:
+
+```bash
+sudo zylon-cli doctor
+```
+
+para obtener toda la información relevante para depurar. La salida del comando te guiará más adelante en caso de que necesites información más detallada si alguna parte del sistema está fallando.
+
+## Cambiar la IP del servidor después de que Zylon ha sido instalado
+
+En caso de que necesites mover el servidor donde está instalado Zylon a una dirección IP diferente, hay un cambio que debe hacerse.
+
+1. Detén el clúster K0s: `sudo k0s stop`
+2. Edita el archivo `/var/lib/k0s/kubelet.conf` y reemplaza la IP antigua por la nueva IP
+3. Reinicia la máquina
+5. Ejecuta `sudo zylon-cli sync-kubec-config`
+
+## Herramientas de depuración
+
+Además del comando doctor, se pueden habilitar herramientas de depuración adicionales en `zylon-conf.yaml`.
+
+Ten en cuenta que estas herramientas acceden directamente a los internos de Zylon y puedes romper el sistema si modificas cualquier recurso crítico.
+
+### Depuración de tareas en segundo plano
+
+Habilita la herramienta de depuración de tareas en segundo plano agregando estas líneas a la configuración:
+
+```yaml
+zylonGPTWorker:
+  exposeIngress: true
+  # flowerPassword: "zylon-flower"
+  # puedes personalizar la contraseña si quieres exponerla permanentemente
+```
+
+Después de la actualización, un nuevo endpoint estará disponible bajo `/gpt-worker/tasks` que contiene información sobre las operaciones en ejecución. La tecnología que impulsa el panel es [flower](https://flower.readthedocs.io/en/latest/).
+
+El nombre de usuario es `flower` y la contraseña por defecto es `zylon-flower`
+
+### Panel de Kubernetes
+
+Habilita el panel de administración de Kubernetes para control avanzado de Zylon agregando estas líneas a la configuración:
+
+```yaml
+adminDashboard:
+  enabled: true
+  exposeIngress: true 
+```
+
+Después de la actualización, un nuevo endpoint estará disponible bajo `/kube-dashboard`. La tecnología que impulsa el panel es [kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/).
+
+Para conectarte al panel debes generar un token ejecutando el siguiente comando en tu instancia
+
+```yaml
+kubectl create token -n zylon zylon
+```
+
+Este token da ACCESO COMPLETO a todos los recursos de Zylon, configuración, secretos, y así sucesivamente.
+
+> Como regla general, una vez que termines de usar el panel, debes deshabilitarlo debido a los riesgos de seguridad.
+
+## Mejorar la indexación para versiones anteriores a 1.13.0
+
+Si estás instalando una versión de Zylon mayor que 1.13.0 (Lanzada el 27 de enero de 2025) omite esta sección, solo se aplica a versiones anteriores.
+
+Con el lanzamiento v1.13.0 y el soporte para archivos más grandes, la indexación es necesaria para un mejor rendimiento. Esta es una operación única que creará el índice en la base de datos vectorial para tus documentos existentes y nuevos.
+
+Simplemente ejecuta el script en la máquina donde está instalado Zylon. Ejecutar el script múltiples veces no tiene efecto negativo. El tiempo de indexación puede variar dependiendo del número de documentos, pero debería ser más rápido que un minuto.
+
+- Script de indexación
+
+  ```bash
+  #!/bin/bash
+  
+  # Configuración
+  QDRANT_HOST="localhost"
+  QDRANT_PORT="6333"
+  MAX_RETRIES=30
+  RETRY_INTERVAL=2
+  QDRANT_RELEASE_NAME="zylon"
+  NAMESPACE="$QDRANT_RELEASE_NAME"
+  
+  # Función de limpieza
+  cleanup() {
+      echo "Limpiando..."
+      if [ ! -z "$PORT_FORWARD_PID" ]; then
+          echo "Deteniendo proceso de port-forward..."
+          kill $PORT_FORWARD_PID 2>/dev/null
+          wait $PORT_FORWARD_PID 2>/dev/null
+      fi
+      exit 0
+  }
+  
+  # Configurar trap para limpieza
+  trap cleanup SIGINT SIGTERM EXIT
+  
+  # Iniciar port-forwarding
+  echo "Iniciando port-forwarding..."
+  kubectl port-forward "svc/${QDRANT_RELEASE_NAME}-qdrant" -n "$NAMESPACE" "${QDRANT_PORT}:6333" &
+  PORT_FORWARD_PID=$!
+  
+  # Verificar que el proceso de port-forward se inició correctamente
+  if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+      echo "Error: Falló al iniciar port-forwarding"
+      exit 1
+  fi
+  
+  echo "Port-forwarding iniciado con PID $PORT_FORWARD_PID"
+  
+  # Función para verificar si Qdrant está listo
+  check_qdrant_health() {
+      curl --silent --fail "http://${QDRANT_HOST}:${QDRANT_PORT}/healthz" > /dev/null
+      return $?
+  }
+  
+  # Esperar a que Qdrant esté listo
+  echo "Esperando a que Qdrant esté listo..."
+  retries=0
+  until check_qdrant_health; do
+      # Verificar si el port-forward sigue ejecutándose
+      if ! ps -p $PORT_FORWARD_PID > /dev/null; then
+          echo "Error: El proceso de port-forward murió"
+          exit 1
+      fi
+      
+      retries=$((retries + 1))
+      if [ $retries -eq $MAX_RETRIES ]; then
+          echo "Error: El servicio Qdrant no estuvo listo a tiempo"
+          exit 1
+      fi
+      echo "Qdrant aún no está listo. Reintento $retries/$MAX_RETRIES..."
+      sleep $RETRY_INTERVAL
+  done
+  
+  echo "¡Qdrant está listo! Creando índices..."
+  
+  # Crear índice artifact_id
+  echo "Creando índice artifact_id..."
+  curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+      -H 'Content-Type: application/json' \
+      -d '{
+          "field_name": "artifact_id",
+          "field_schema": {
+              "type": "keyword",
+              "on_disk": true
+          }
+      }' || exit 1
+  
+  # Verificar si la primera solicitud fue exitosa
+  if [ $? -ne 0 ]; then
+      echo "Error: Falló al crear índice artifact_id"
+      exit 1
+  fi
+  
+  # Crear índice project_id
+  echo "Creando índice project_id..."
+  curl -X PUT "http://${QDRANT_HOST}:${QDRANT_PORT}/collections/zgptvector/index" \
+      -H 'Content-Type: application/json' \
+      -d '{
+          "field_name": "project_id",
+          "field_schema": {
+              "type": "keyword",
+              "on_disk": true
+          }
+      }' || exit 1
+  
+  # Verificar si la segunda solicitud fue exitosa
+  if [ $? -ne 0 ]; then
+      echo "Error: Falló al crear índice project_id"
+      exit 1
+  fi
+  
+  echo "¡Índices creados exitosamente!"
+  ```
+
+## OpenEBS no está funcionando, haciendo que los PODs estén Pendientes
+
+En ciertas situaciones, mientras Zylon se está instalando, puede causar que OpenEBS no se instale correctamente. Para remediar esto, puedes hacer lo siguiente:
+
+```bash
+kubectl delete pods,deployments,statefulsets,daemonsets,pv,pvc,sc --all -n zylon
+kubectl delete namespace openebs
+helm uninstall openebs -n openebs
+sudo zylon-cli update
+```

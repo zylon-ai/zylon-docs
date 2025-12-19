@@ -1,0 +1,145 @@
+---
+title: Confluence
+---
+
+Para integrar con Confluence, necesitas **crear una aplicación de Atlassian** que actuará como un puente entre Zylon ↔ Confluence y **configurar Zylon** para usar la nueva aplicación de Atlassian
+
+## Crear una aplicación de Atlassian
+
+Primero necesitas una cuenta de Atlassian que será la propietaria de la aplicación. Recomendamos usar una cuenta no personal. Esta cuenta no necesita tener acceso a ningún Space ya que servirá como un puente entre Zylon y Confluence.
+
+1. Ve a [https://developer.atlassian.com/console/myapps/](https://developer.atlassian.com/console/myapps/)
+
+    Haz clic en `Create` → `OAuth 2.0 integration`
+
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image.png)
+
+1. Proporciona un nombre significativo para la Aplicación.
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%201.png)
+
+1. En distribución:
+    - En el menú izquierdo navega a `Distribution`
+    - Haz clic en `Edit`
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%202.png)
+
+1. En estado de distribución:
+- Selecciona la casilla `Sharing`.
+- Ingresa un nombre de proveedor o elige la opción `Use your own name`.
+- Si tienes una política de privacidad, proporciona el enlace a ella. Si no, usa el enlace por defecto: [`https://example.com/privacy`](https://example.com/privacy), que está destinado para uso interno.
+- Para la pregunta "¿Tu aplicación almacena datos personales?", selecciona `No`
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%203.png)
+
+1.  En permisos:
+- En el menú izquierdo, navega a **`Permissions`**.
+- Haz clic en **`Add`** para **`Confluence API`**.
+- La página se actualiza automáticamente, y debería aparecer un nuevo botón **`Configure`**. Si no aparece, actualiza la página manualmente.
+- Haz clic en **`Configure`**.
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%204.png)
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%205.png)
+
+1. Haz clic en `Granual scopes` y luego en `Edit scopes`
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%206.png)
+
+1. Agrega uno por uno los siguientes permisos. Puedes buscarlos pegando los valores en el campo con una lupa.
+
+    Debe haber un total de `10` scopes agregados que puedes revisar antes de guardar.
+
+
+```bash
+        read:content:confluence,
+        read:content-details:confluence,
+        read:space-details:confluence,
+        read:page:confluence,
+        read:attachment:confluence,
+        read:blogpost:confluence,
+        read:custom-content:confluence,
+        read:space:confluence,
+        read:space.permission:confluence,
+        read:folder:confluence,
+
+```
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%207.png)
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%208.png)
+
+1. En autorización:
+- En el menú izquierdo, navega a **`Authorization`**.
+- Haz clic en **`Add`** para **`OAuth 2.0 (3LO)`**.
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%209.png)
+
+1. En autorización:
+- En el campo **`Callback URL`**, ingresa:
+`https://zylon.company.com/api/app/integration/confluence/callback`Reemplaza **`zylon.company.com`** con el hostname donde está instalado Zylon en tu servidor.
+- Haz clic en **`Save changes`**.
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%2010.png)
+
+1. En configuración:
+- En el menú izquierdo, navega a `Settings`. Copia los dos valores listados bajo **`Authentication details`**:
+    - Client ID
+    - Secret
+
+Necesitarás estos valores para el siguiente paso: [Configurar Zylon para usar la Aplicación de Atlassian](#configure-zylon-to-use-atlassian-application)
+
+![image.png](/images/operator-manual/knowledge-base/confluence-images/image%2011.png)
+
+## Configurar Zylon para usar la Aplicación de Atlassian
+
+Con los valores que hemos adquirido en el paso 10, necesitas editar el archivo de configuración de Zylon ubicado en `/etc/zylon/zylon-conf.yaml`
+
+<Tip>
+    El archivo de configuración es un archivo `.yaml` ¡ten cuidado con la sangría, espacios, punto y coma, comillas dobles!
+</Tip>
+
+Agrega el siguiente fragmento al final del archivo
+
+```bash
+integration:
+  confluence:
+    enabled: true
+    clientId: ""
+    clientSecret: ""
+    redirectUri: ""  
+
+```
+
+Y completa las propiedades con los valores generados previamente:
+
+- clientId → valor generado en el paso 10
+- clientSecret → valor generado en el paso 10
+- redirectUri → mismo valor que en el paso 9
+
+Guarda y cierra el archivo `/etc/zylon/zylon-conf.yaml`
+
+Finalmente, ejecuta el siguiente comando para reiniciar Zylon y actualizar la configuración
+
+```bash
+zylon-cli update
+```
+
+¡Todo está listo 🎉
+
+## Solución de Problemas
+
+### Intento cargar archivos a la base de conocimiento y el botón de Confluence está deshabilitado
+
+Limpia la caché del navegador e intenta de nuevo.
+
+### Cuando hago clic en `Upload files -> From Confluence` el inicio de sesión no funciona
+
+- Verifica que el `clientId` `secretId` estén copiados y pegados correctamente en el archivo de configuración de Zylon
+- Verifica que la `Callback URL` sea correcta en el paso 9 y sea la misma que el `redirectUri` en el archivo de configuración.
+
+### No veo ningún espacio para importar
+
+- Asegúrate de haber iniciado sesión en Confluence con una cuenta que tenga acceso a espacios.
+- Verifica que los permisos requeridos sean correctos como se muestra en el paso 6

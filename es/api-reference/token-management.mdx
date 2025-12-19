@@ -1,0 +1,79 @@
+---
+title: "Gestión de tokens"
+description: "Aprende cómo gestionar tokens para acceder a las API de Zylon"
+---
+
+## Crear un token
+<Warning>
+  Las API de Zylon están en desarrollo activo.
+  Aunque no se anticipan cambios importantes que rompan la compatibilidad, pueden ocurrir ajustes menores.
+</Warning>
+
+Todas las solicitudes a las API de Zylon deben autenticarse, ya sea mediante cookies de sesión (para acceso web)
+o mediante tokens de API (para acceso programático). Este documento describe cómo generar y usar tokens de API.
+
+<Warning>
+  Los tokens de API son generados por el usuario super administrador, y por lo tanto
+  tendrán permisos de super administrador.
+
+  En una versión futura, todos los usuarios podrán generar sus propios tokens a través de la interfaz web.
+</Warning>
+
+
+1. Inicia sesión como `admin@zylon.ai` 
+2. Haz clic en el logo de la organización y luego en `Tokens de API`
+![](/images/api-reference/token.png)
+3. Haz clic en `Crear token de API`, dale un nombre y guárdalo
+![](/images/api-reference/create-token.png)
+4. Copia y guarda el token, solo se mostrará una vez.
+
+
+Zylon permite que múltiples organizaciones coexistan en la misma instalación, por lo que
+el nombre de la organización TAMBIÉN debe proporcionarse al llamar a la API con `x-org: <org_slug>` como encabezado.
+La organización predeterminada se llama `default`.
+
+Para verificar que el token funciona puedes ejecutar el comando CURL, mostrará información sobre la cuenta que llama.
+
+```bash
+curl -H "Authorization: Bearer <token>" -H "x-org: default" https://<your_zylon_domain.com>/api/v1/account/me
+```
+
+<Tip>
+  ¡Mantén tu token secreto, proporciona acceso completo a tu instalación de Zylon!
+</Tip>
+
+## Revocar token
+Para revocar un token existente, solo necesitas hacer clic en el icono de `papelera` en el panel de `Token de API`
+![](/images/api-reference/revoke-token.png)
+
+
+### Acceder a la API de workspace (API de alto nivel)
+
+Para acceder a la API de workspace, simplemente llama a los endpoints bajo `/api/v1/...`
+
+Sigue la documentación de la API sobre la API de workspace en la barra lateral de esta página para
+la referencia completa de cada endpoint.
+
+### API de bajo nivel (ZylonGPT)
+
+Para acceder a la API de bajo nivel, la API de Workspace debe usarse como proxy para
+fines de autenticación.
+
+Las solicitudes se proxificarán bajo la URL `<your_zylon_domain.com>/api/gpt/...`
+Por ejemplo, para generar una inferencia simple puedes ejecutar el siguiente comando:
+
+```bash
+curl -X POST https://<your_zylon_domain.com>/api/gpt/v1/messages \
+    -H "Authorization: Bearer <token>" \
+    -H "x-org: default" \
+    -H "Content-Type: application/json" \
+    -d '{"messages": [{"role": "user", "content": "Write a haiku about AI"}], "stream": false}'
+```
+
+Sigue la documentación de la API sobre la API de ZylonGPT en la barra lateral de esta página para
+la referencia completa.
+
+<Tip>
+  Todas las solicitudes a la API de bajo nivel deben proxificarse a través de la API de workspace,
+  por lo que todas las rutas deben comenzar con `/api/gpt/...` seguido del endpoint real de ZylonGPT.
+</Tip>

@@ -1,0 +1,80 @@
+---
+title: Requisitos de hardware
+---
+
+Zylon solo tiene un requisito estricto con respecto al hardware: **debe tener acceso a una GPU con capacidades NVIDIA CUDA**. Dependiendo del hardware, algunos modelos de IA pueden estar restringidos, por lo que para asegurar la compatibilidad apunta a las versiones de CUDA más nuevas compatibles (12.6+).
+
+Nuestras especificaciones recomendadas para la mejor experiencia son:
+
+- Sistema Operativo: Ubuntu **SERVER** 22.04 LTS o 24.04 LTS, instalación limpia, sin controladores adicionales o software instalado.
+- CPU: Mínimo de 12 núcleos de CPU arquitectura amd64 (x86_64), pero se recomiendan 16 núcleos
+- RAM: Mínimo de 64GB, pero se recomiendan 128GB
+- Almacenamiento: Sin límite, mínimo de 4TB de almacenamiento rápido, pero se recomiendan 8TB
+- GPU:
+    - Bare metal
+        - GPU de servidor (se requiere refrigeración externa ⚠️)
+            - NVIDIA L40/L40s (48 GB)
+            - NVIDIA H100 (80 / 96 GB)
+            - NVIDIA A100 (40 / 80 GB)
+            - NVIDIA H200 (141 GB)
+        - GPU de estación de trabajo (sistema de refrigeración integrado)
+            - NVIDIA GeForce RTX 5090 (32 GB)
+    - AWS
+        - g6e.xlarge https://instances.vantage.sh/aws/ec2/g6e.xlarge
+    - Azure Cloud
+        - Standard_NV36ads_A10_v5 (recomendado) https://learn.microsoft.com/es-es/azure/virtual-machines/sizes/gpu-accelerated/nvadsa10v5-series?tabs=sizebasic
+        - NVv3 (Requiere modelos cuantizados) https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nvv3-series?tabs=sizebasic
+
+
+## ¿Qué GPU debo comprar?
+
+Encontrar la GPU adecuada para tu sistema puede ser un proceso complicado. Por ejemplo, dos GPUs con la misma vRAM pueden no tener el mismo rendimiento:
+
+- L4 (servidor) promedios: mínimo de 15 tk/s, pico en 89 tk/s
+- RTX 4090 (escritorio) promedios: mínimo 6.9 tk/s, pico 45tk/s
+
+Por otro lado, dependiendo de la GPU que elijas, se habilitarán otras características que pueden afectar la calidad de la IA, si alguna de ellas es relevante para tus casos de uso, tenlo en cuenta para tu decisión:
+
+|  | Nvidia L40s | Azure A10 | RTX 5090 | A100 / H100 |
+| --- | --- | --- | --- | --- |
+| Requiere Estación de Trabajo | ✅ | ❌ | ❌ | ✅ |
+| LLM | ✅ | ✅ | ✅ | ✅ |
+| Reranker* | ✅ | ❌ | ✅ | ✅ |
+| Multi-modelo (imágenes)* | ✅ | ❌ | ✅ | ✅ |
+
+*Actualmente en desarrollo/en pruebas — sujeto a cambios en el futuro.
+
+Para **entornos bare metal on-premise** (el escenario habitual para clientes de Zylon), un factor importante sería tu capacidad para refrigerar adecuadamente la GPU instalada en tu máquina. Si no quieres ocuparte de ello o careces de experiencia, opta por una opción de hardware de escritorio. Pero ten en cuenta que en caso de que quieras ejecutar modelos más grandes o proporcionar servicio a varios cientos de usuarios, es posible que necesites instalar un rack con un par en paralelo o verse obligado a cambiar a modelos de hardware de servidor.
+
+Otro factor importante sería la inversión, especialmente con respecto a la GPU. Los rangos de precios del 5 de mayo de 2025 para los modelos mencionados son:
+
+| **Modelo de GPU** | **vRAM (GB)** | **Precio (USD)** |
+| --- | --- | --- |
+| NVIDIA L40 48GB/L40s | 48 | $7,900 – $9000 |
+| NVIDIA H100 (PCIe) | 80 | $25,000 – $30,000 |
+| NVIDIA H100 (SXM) | 80 | $35,000 – $40,000 |
+| NVIDIA H100 (NVL) | 96 | $40,000 - $45,000 |
+| NVIDIA A100 (PCIe) | 40 | $8,000 - $10,000 |
+| NVIDIA A100 (PCIe) | 80 | $18,000 - $20,000 |
+| NVIDIA A100 (SXM) | 40 | $10,000 - $12,000 |
+| NVIDIA A100 (SXM) | 80 | $20,000 - $25,000 |
+| NVIDIA H200 | 141 | $30,000 - $32,000 |
+| NVIDIA GeForce RTX 5090 | 32 | $3,000 - $3,500 |
+
+En cualquier caso, como respuesta directa a la pregunta de qué GPU debes comprar, ten en cuenta que hasta el día de hoy tenemos varios clientes ejecutando Zylon en RTX 5090s dando soporte a más de 200 usuarios en sus organizaciones con un gran rendimiento.
+
+## Hardware de referencia para organización de tamaño medio
+
+Si necesitas adquirir tu equipo con capacidad de IA desde cero, a partir del 29 de julio de 2025, por favor considera la siguiente [recomendación de hardware](https://pcpartpicker.com/user/pablo.zylon/saved/#view=csWVD3):
+
+![image.png](/images/operator-manual/hardware-requirements-images/basic.png)
+
+Esta configuración incluye una RTX GeForce NVIDIA 5090 (GPU de 32 GB), una CPU potente (16 núcleos), 128 GB de RAM y suficiente capacidad de almacenamiento para operar Zylon con margen para crecer. También proporciona una solución de refrigeración robusta para asegurar un rendimiento óptimo bajo cargas de trabajo pesadas, así como una placa base grande para acomodar dos GPUs en algún momento si es necesario en el futuro.
+
+Ten en cuenta que esto es solo una recomendación, así que siéntete libre de adaptarla a tus preferencias mientras mantienes capacidades similares para un rendimiento ideal. Hemos usado Amazon como proveedor considerando que puedes ensamblar todas las partes tú mismo, pero cualquier proveedor con el que normalmente trabajes debería poder obtener un hardware similar y ensamblarlo para ti.
+
+## Hardware de referencia para organización de gran tamaño
+
+En estos escenarios, no proporcionamos una configuración de hardware de referencia hasta que entendamos los requisitos no solo con respecto al número de usuarios, sino también qué tipo de operaciones internas se ejecutarán en paralelo aprovechando la API de la plataforma.
+
+Si estás en esta situación, es probable que ya estemos discutiendo sobre esto.

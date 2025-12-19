@@ -1,0 +1,97 @@
+---
+title: "Primeros Pasos"
+description: "Aprende los fundamentos de los presets de IA y cómo configurarlos para tu hardware"
+---
+
+## Resumen
+
+El motor de inferencia de IA de Zylon es el componente central que ejecuta modelos de inteligencia artificial en tu hardware. Para asegurar un rendimiento óptimo y prevenir fallos de inicio, debes configurar el sistema con el preset correcto basado en la memoria de GPU (Unidad de Procesamiento de Gráficos) disponible.
+
+### ¿Qué son los Presets de IA?
+
+Los presets de IA son configuraciones predefinidas que optimizan los modelos de IA y la asignación de memoria para tu configuración de hardware específica. Cada preset está cuidadosamente ajustado para:
+
+- Cargar el tamaño de modelo de IA apropiado para tu memoria GPU/RAM
+- Asignar memoria eficientemente para prevenir fallos
+- Equilibrar el rendimiento con los recursos disponibles
+- Habilitar capacidades específicas cuando sea necesario
+
+<Warning>
+Seleccionar un preset incorrecto impedirá que el motor de inferencia se inicie. El sistema no detecta automáticamente la capacidad de tu GPU, por lo que se requiere configuración manual.
+</Warning>
+
+## Entendiendo los Requisitos de Memoria GPU
+
+Tu GPU (Unidad de Procesamiento de Gráficos) tiene una cantidad específica de VRAM (Memoria de Acceso Aleatorio de Video) que determina qué modelos de IA pueden ejecutarse efectivamente. Los modelos de IA requieren memoria sustancial para operar, y los modelos más grandes con mejores capacidades necesitan más VRAM.
+
+### Cómo Verificar tu Memoria GPU
+
+Puedes verificar tu memoria GPU usando:
+
+- **Línea de comandos**: Ejecuta el comando `nvidia-smi`
+- **Documentación de hardware**: Consulta las especificaciones del fabricante de tu GPU
+
+La salida de `nvidia-smi` mostrará tu modelo de GPU y la capacidad total de memoria.
+
+## Guía de Inicio Rápido
+
+### Paso 1: Identifica tu Memoria GPU
+
+Ejecuta el siguiente comando para verificar tu memoria GPU disponible:
+
+```bash
+nvidia-smi
+```
+
+Busca la columna "Memory" para encontrar tu VRAM total.
+
+### Paso 2: Selecciona el Preset Apropiado
+
+Basado en tu memoria GPU, elige el preset correspondiente:
+
+| Memoria GPU | Preset a Usar  | Ejemplo de Hardware          |
+|------------|----------------|---------------------------|
+| 24GB       | `baseline-24g` | RTX 4090, L4, RTX 3090 Ti |
+| 32GB       | `baseline-32g` | RTX 5090                  |
+| 48GB       | `baseline-48g` | RTX A6000, A40, L40       |
+| 96GB       | `baseline-96g` | A100 80GB, H100           |
+
+<Tip>
+Siempre selecciona un preset que coincida o sea menor que tu VRAM disponible.
+</Tip>
+
+### Paso 3: Configura tu Sistema
+
+Edita tu archivo de configuración de Zylon en `/etc/config/zylon-config.yaml`:
+
+```yaml
+ai:
+  preset: "baseline-24g"  # Reemplaza con tu preset seleccionado
+```
+
+### Paso 4: Aplica la Configuración
+
+Después de modificar el archivo de configuración, reinicia los servicios de Zylon para aplicar los cambios:
+
+```bash
+# Reinicio de despliegue de Triton
+kubectl rollout restart deploy/zylon-triton
+```
+
+### Paso 5: Verifica la Instalación
+
+Verifica que el motor de inferencia se inició exitosamente:
+
+```bash
+# Verifica los logs para carga exitosa del modelo
+ kubectl logs deploy/zylon-triton -n zylon --tail=100
+```
+
+Busca mensajes de log que indiquen inicialización exitosa del modelo.
+
+## ¿Qué sigue?
+
+- Explora [presets disponibles](/operator-manual/ai-presets/presets) para encontrar configuraciones especializadas
+- Aprende sobre [opciones de configuración](/operator-manual/ai-presets/configuration) para multi-GPU y capacidades
+- Sumérgete en [personalización avanzada](/operator-manual/ai-presets/advanced-customization) para modelos personalizados
+- Soluciona problemas comunes en la [guía de solución de problemas](/operator-manual/ai-presets/troubleshooting)

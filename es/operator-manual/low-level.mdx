@@ -1,0 +1,128 @@
+---
+title: API de bajo nivel
+---
+
+# Habilitar la API
+
+La API de bajo nivel está deshabilitada por defecto.
+
+Para habilitar la API de bajo nivel de Zylon, solo necesitas editar tu archivo de configuración en `/etc/zylon-conf.yaml` y agregar `exposeIngress: true` en `zylonGPT`:
+
+```yaml
+zylonGPT:
+	exposeIngress: true
+```
+
+A partir de ese momento, la API estará disponible bajo
+
+`https://<zylon.company.com>/gpt/v1/`. 
+
+Reemplaza `<zylon.company.com>` con el dominio donde está alojado Zylon (Es el mismo dominio que en el archivo de configuración ubicado en `/etc/zylon/zylon-conf.yaml`).
+
+Ejemplo de llamada API:
+
+```bash
+curl -X 'POST' \
+  'https://staging.zylon.ai/gpt/v1/messages' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "messages": [
+        {
+            "role": "user",
+            "content": "How do you fry an egg?"
+        }
+    ]
+}'
+```
+
+La documentación interactiva de la API está disponible en `https://<zylon.company.com>/gpt/docs`
+
+Puedes probar la API directamente desde la documentación, usando el botón "try it out".
+
+<aside>
+⚠️
+
+**Nota importante de seguridad**: la API no tiene autenticación habilitada por defecto. Por lo tanto, una vez que la expongas con la configuración anterior, cualquiera con acceso a la API podría consultar cualquier documento ingerido en Zylon. Por lo tanto, solo usa esta API de bajo nivel en tu despliegue de desarrollo o para acciones temporales como pruebas de estrés. 
+
+</aside>
+
+# Conceptos principales de la API de bajo nivel
+
+<aside>
+⚠️
+
+La API de bajo nivel está sujeta a cambios para incluir mejoras y soportar nuevas funcionalidades.
+
+</aside>
+
+## **Introducción**
+
+Esta API describe la API de la capa de IA de Zylon. La API expone primitivas de alto nivel que permiten a los desarrolladores construir aplicaciones y flujos de trabajo de IA sobre la plataforma de IA Privada de Zylon.
+
+Esta guía contiene los Conceptos Principales, APIs y Esquemas de Objetos.
+
+---
+
+## **Conceptos Principales**
+
+La API cubre diferentes bloques de construcción funcionales:
+
+- Ingestión: las APIs /ingest/* permiten incorporar textos y documentos como contexto para la aplicación. Hay dos conceptos importantes para entender durante la ingestión, que se usarán en el resto de las APIs:
+    - Artifact: es el identificador del archivo o pieza de texto que se está ingiriendo.
+    - Collection: se usa para agrupar artefactos juntos.
+    
+    Tanto `artifact` como `collection` se usarán para especificar el contexto a usar en las diferentes APIs contextuales como completions o summarization. Para ese filtrado, se usa el objeto ContextFilter (ver referencia al final de esta guía).
+    
+    Durante la ingestión, se puede especificar `metatada` para, por ejemplo, etiquetar documentos. Esa `metadata` también se puede usar como parte del ContextFilter.
+    
+
+```
+  "context_filter": {
+    "collection": "collection_name",
+    "artifacts": [
+      "artifact_id_1, artifact_id_2"
+    ],
+    "metadata_filter": [
+      {
+        "key": "file_id",
+        "operator": "==",
+        "value": "artifact_id_1"
+      }
+    ]
+  }
+
+```
+
+- Eliminación: /delete se usa para eliminar contexto ingerido.
+- Completions: /completions y /chat/completions permiten interactuar con el LLM opcionalmente usando el contexto proveniente de uno o más archivos ingeridos.
+- Chunks: /chunks ejecuta una recuperación semántica sobre el contexto seleccionado dada una cierta consulta. Útil para implementar funcionalidades de búsqueda semántica rápida.
+- Embeddings: /embeddings obtiene una representación vectorial de una entrada dada.
+- Recipes: flujos de trabajo funcionales integrados de alto nivel listos para usar.
+    - Summarize: dado un texto o un conjunto de artefactos, y una instrucción opcional, creará y devolverá un resumen. No está limitado por la ventana de contexto de los modelos, ya que internamente implementa un algoritmo recursivo de dividir+resumir.
+    - Report (beta): dado un texto o conjunto de artefactos, y una instrucción, generará un informe primero infiriendo las secciones del informe basándose en la instrucción, y luego llenando las secciones con contenido del contexto disponible.
+- Health: /health prueba si el servicio está activo.
+
+### **Sync vs Async**
+
+Todas las APIs son sincrónicas por defecto. Algunas de ellas -las que pueden tomar más tiempo para ejecutarse- tienen una versión asíncrona:
+
+- /async/ingest/uri
+- /async/delete
+- /async/summarize
+- /async/report
+
+Cuando se invoca una API asíncrona, se crea y encola una tarea asíncrona, y se devuelve el id de la tarea:
+
+`{"task_id":"33732728-d456-4e43-bbbe-6b4e2c2eab2c"}`
+
+Las tareas son ejecutadas por trabajadores de Zylon.
+
+Todas las APIs asíncronas tienen un endpoint relacionado que devuelve el estado de la tarea y su resultado, una vez que está disponible
+
+- /ingest/tasks/{task_id}
+- /delete/tasks/{task_id}
+- /summarize/tasks/{task_id}
+- /report/tasks/{task_id}
+
+Las tareas asíncronas también pueden publicar actualizaciones en una cola amqp definida en la propiedad `callback` al crear la tarea.

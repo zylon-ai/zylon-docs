@@ -1,0 +1,42 @@
+---
+title: "Ajustes de rendimiento"
+---
+
+## Docling
+
+Para ajustar finamente los recursos de la máquina y poder usar todos los recursos de la máquina en el proceso de ingesta, proporcionamos la siguiente configuración para configurar según la máquina:
+
+### Configuración de Rendimiento
+
+1. **Número de workers**: Esta es la configuración que determina cuántos workers tendrá Docling. Recomendamos dejarlo en 2, donde 1 worker procesará archivos grandes y el otro procesará archivos más pequeños.
+2. **Número de threads**: Esta configuración se usará para limitar la capacidad que nuestro servicio de extracción interno usará. Considera que este número debe ser menor al máximo de núcleos que tiene la máquina.
+
+**Importante**: El número de threads debe ser divisible por el número de workers.
+
+En caso de que quieras probar y mejorar el rendimiento, considera configurar como:
+
+```yaml
+external:
+  docling:
+    numWorkers: M
+    numThreads: N
+```
+
+### Configuración Opcional
+
+1. **Modo de tabla**: Controla la estrategia de extracción de tablas:
+   - `accurate`: Máxima precisión para tablas complejas. Mayor tiempo de procesamiento. Opción por defecto.
+   - `fast`: Optimizado para velocidad con buena precisión. Menor tiempo de procesamiento.
+   - `none`: Deshabilita la extracción de tablas. Sin tiempo de procesamiento.
+
+2. **Hacer coincidencia de celdas**: Habilita la coincidencia de celdas de tabla para mejorar el reconocimiento de estructura. Recomendado para tablas complejas. Por defecto es `true`.
+
+3. **Forzar OCR de página completa**: Fuerza el procesamiento OCR en páginas completas en lugar de regiones selectivas. Usa cuando la extracción estándar pierde contenido. Esto aumentará significativamente el tiempo de procesamiento. Por defecto es `false`.
+
+```yaml
+external:
+  docling:
+    tableMode: "accurate"
+    doCellMatching: true
+    forceFullPageOCR: false
+```

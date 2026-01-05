@@ -1,0 +1,116 @@
+---
+title: "n8n"
+---
+
+<Tip>
+El soporte de n8n está disponible a partir de Zylon 1.53
+</Tip>
+
+## Integración de n8n
+
+n8n es una herramienta de automatización de flujos que ahora está integrada en Zylon, permitiendo así crear flujos automatizados conectando diferentes servicios y sistemas. 
+El despliegue y la configuración de n8n son gestionados automáticamente por Zylon, requiriendo una configuración mínima por parte del usuario.
+
+### Configuración
+
+Para habilitar n8n en tu entorno solo se necesita habilitar o deshabilitar la opción correspondiente en tu instalación de Zylon, para ello debes editar
+el archivo `/etc/zylon/zylon-conf.yaml`:
+
+```yaml
+n8n:
+  enabled: true  # Establecer en false para deshabilitar n8n
+```
+
+### Configuración de Proxy
+
+n8n utiliza la configuración global de proxy de Zylon. El propio sistema se encarga de gestionar automáticamente los certificados y endpoints del proxy, 
+por lo que no se requiere configuración adicional específica para n8n.
+
+Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/proxy).
+
+### Entornos Air-Gapped
+
+Cuando ejecutas Zylon en entornos air-gapped (sin acceso a internet), ciertas funcionalidades de n8n se deshabilitan automáticamente:
+
+- **Paquetes de la comunidad**: La instalación de paquetes desde el registro NPM está deshabilitada
+- **Templates de flujos de trabajo**: Los templates de flujos de trabajo de la comunidad están deshabilitados
+- **Activación de licencias**: La activación de licencias está deshabilitada
+
+Estas restricciones aseguran que n8n opere de sin dependencias externas.
+
+## Gestión de Respaldos
+
+n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluyen automáticamente en los respaldos estándar de base de datos de Zylon.
+
+### Comandos CLI para Exportación e Importación
+
+n8n proporciona comandos CLI que permiten la exportación e importación selectiva de entidades, útiles para casos específicos de migración o transferencia de workflows entre entornos:
+
+**Exportar workflows:**
+```bash
+n8n export:workflow --backup
+```
+
+**Importar workflows:**
+```bash
+n8n import:workflow --input=./workflow-file.json
+```
+
+**Exportar credenciales:**
+```bash
+n8n export:credentials --output=./credentials.json
+```
+
+**Importar credenciales:**
+```bash
+n8n import:credentials --input=./credentials.json
+```
+
+**Exportar instancia completa:**
+```bash
+n8n export:entities --outputDir=./outputs
+```
+
+**Importar instancia completa:**
+```bash
+n8n import:entities --inputDir=./outputs
+```
+
+### Casos de Uso Prácticos
+
+Estos comandos son especialmente útiles en los siguientes escenarios:
+
+- **Migración desde otros entornos**: Si un cliente tiene workflows configurados en otra instancia de n8n y desea migrarlos a Zylon, puede exportarlos con `export:entities` e importarlos con `import:entities`
+- **Importación selectiva**: Exportar workflows específicos desde otros entornos e importarlos en Zylon sin necesidad de migrar la instancia completa
+
+### Notas Importantes
+
+<Warning>
+Las entidades exportadas conservan sus IDs originales, por lo que importarlas sobrescribirá las entidades existentes con el mismo ID.
+</Warning>
+
+Para credenciales, usa la opción `--decrypted` para exportarlas en texto plano, útil cuando migres entre instancias con diferentes claves de encriptación:
+
+```bash
+n8n export:credentials --output=./credentials.json --decrypted
+```
+
+Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).
+
+## Aplicar Configuración
+
+Después de modificar el archivo de configuración, aplica los cambios:
+
+```bash
+sudo zylon-cli sync
+```
+
+Si tu clúster ya estaba ejecutándose, reinicia los servicios:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart k0scontroller
+# Espera unos segundos para que el clúster se reinicie
+kubectl delete pods -n zylon --all
+```
+```

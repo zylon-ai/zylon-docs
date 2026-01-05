@@ -258,6 +258,7 @@
                   "en/operator-manual/configuration/search",
                   "en/operator-manual/configuration/performance",
                   "en/operator-manual/configuration/whitelabel",
+                  "en/operator-manual/configuration/n8n",
                   {
                     "group": "Features",
                     "pages": [
@@ -511,6 +512,7 @@
                   "es/operator-manual/configuration/search",
                   "es/operator-manual/configuration/performance",
                   "es/operator-manual/configuration/whitelabel",
+                  "es/operator-manual/configuration/n8n",
                   {
                     "group": "Funciones",
                     "pages": [

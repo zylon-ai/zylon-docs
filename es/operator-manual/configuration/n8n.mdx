@@ -8,18 +8,37 @@ El soporte de n8n está disponible a partir de Zylon 1.53
 
 ## Integración de n8n
 
-n8n es una herramienta de automatización de flujos que ahora está integrada en Zylon, permitiendo así crear flujos automatizados conectando diferentes servicios y sistemas. 
+[n8n](https://n8n.io/) es una herramienta de automatización de flujos que ahora está integrada en Zylon, permitiendo así crear flujos conectando diferentes servicios y sistemas.
 El despliegue y la configuración de n8n son gestionados automáticamente por Zylon, requiriendo una configuración mínima por parte del usuario.
 
 ### Configuración
 
-Para habilitar n8n en tu entorno solo se necesita habilitar o deshabilitar la opción correspondiente en tu instalación de Zylon, para ello debes editar
+Para habilitar n8n en tu entorno solo se necesita habilitar o deshabilitar la opción correspondiente, para ello debes editar
 el archivo `/etc/zylon/zylon-conf.yaml`:
 
 ```yaml
 n8n:
   enabled: true  # Establecer en false para deshabilitar n8n
+  publicApi:
+    enabled: false  # Habilitar la API REST pública de n8n
+  externalConnection:
+    enabled: false  # Permitir conexiones salientes a servicios de n8n
 ```
+
+<Warning>
+En modo airgap, `externalConnection.enabled` siempre estará en `false` independientemente del valor configurado.
+</Warning>
+
+### External Connections
+
+Cuando las conexiones externas están deshabilitadas, ciertas funcionalidades de n8n se desactivan automáticamente:
+
+- **Paquetes de la comunidad**: La instalación de paquetes desde el registro NPM está deshabilitada
+- **Templates de flujos de trabajo**: Los templates de flujos de trabajo de la comunidad están deshabilitados
+- **Activación de licencias**: La renovación automática de licencias está deshabilitada
+
+Estas restricciones aseguran que n8n opere sin dependencias externas.
+
 
 ### Configuración de Proxy
 
@@ -28,74 +47,12 @@ por lo que no se requiere configuración adicional específica para n8n.
 
 Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/proxy).
 
-### Entornos Air-Gapped
-
-Cuando ejecutas Zylon en entornos air-gapped (sin acceso a internet), ciertas funcionalidades de n8n se deshabilitan automáticamente:
-
-- **Paquetes de la comunidad**: La instalación de paquetes desde el registro NPM está deshabilitada
-- **Templates de flujos de trabajo**: Los templates de flujos de trabajo de la comunidad están deshabilitados
-- **Activación de licencias**: La activación de licencias está deshabilitada
-
-Estas restricciones aseguran que n8n opere de sin dependencias externas.
 
 ## Gestión de Respaldos
 
-n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluyen automáticamente en los respaldos estándar de base de datos de Zylon.
+n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los respaldos estándar de base de datos de Zylon .
 
-### Comandos CLI para Exportación e Importación
-
-n8n proporciona comandos CLI que permiten la exportación e importación selectiva de entidades, útiles para casos específicos de migración o transferencia de workflows entre entornos:
-
-**Exportar workflows:**
-```bash
-n8n export:workflow --backup
-```
-
-**Importar workflows:**
-```bash
-n8n import:workflow --input=./workflow-file.json
-```
-
-**Exportar credenciales:**
-```bash
-n8n export:credentials --output=./credentials.json
-```
-
-**Importar credenciales:**
-```bash
-n8n import:credentials --input=./credentials.json
-```
-
-**Exportar instancia completa:**
-```bash
-n8n export:entities --outputDir=./outputs
-```
-
-**Importar instancia completa:**
-```bash
-n8n import:entities --inputDir=./outputs
-```
-
-### Casos de Uso Prácticos
-
-Estos comandos son especialmente útiles en los siguientes escenarios:
-
-- **Migración desde otros entornos**: Si un cliente tiene workflows configurados en otra instancia de n8n y desea migrarlos a Zylon, puede exportarlos con `export:entities` e importarlos con `import:entities`
-- **Importación selectiva**: Exportar workflows específicos desde otros entornos e importarlos en Zylon sin necesidad de migrar la instancia completa
-
-### Notas Importantes
-
-<Warning>
-Las entidades exportadas conservan sus IDs originales, por lo que importarlas sobrescribirá las entidades existentes con el mismo ID.
-</Warning>
-
-Para credenciales, usa la opción `--decrypted` para exportarlas en texto plano, útil cuando migres entre instancias con diferentes claves de encriptación:
-
-```bash
-n8n export:credentials --output=./credentials.json --decrypted
-```
-
-Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).
+Para casos específicos de migración o transferencia de workflows entre entornos, consulta la sección [Importación y Exportación de Workflows](#importación-y-exportación-de-workflows).
 
 ## Aplicar Configuración
 
@@ -105,12 +62,103 @@ Después de modificar el archivo de configuración, aplica los cambios:
 sudo zylon-cli sync
 ```
 
-Si tu clúster ya estaba ejecutándose, reinicia los servicios:
+## Importación y Exportación de Workflows
+
+n8n proporciona comandos CLI que permiten la exportación e importación selectiva de entidades. Estos comandos son especialmente útiles para:
+
+- **Migración desde otros entornos**: Si se desea migrar a Zylon información de n8n desde otro entorno existente.
+- **Importación selectiva**: Exportar workflows específicos desde otros entornos e importarlos en Zylon sin necesidad de migrar la instancia completa.
+
+
+### Transferir archivos al pod
+
+Si necesitas importar archivos JSON desde tu máquina local al pod de n8n:
+
+#### 1. Obtener el ID del volumen persistente
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl restart k0scontroller
-# Espera unos segundos para que el clúster se reinicie
-kubectl delete pods -n zylon --all
+# Obtener el ID del Persistent Volume de n8n
+N8N_PV_ID=$(kubectl get pvc zylon-n8n-data -o jsonpath='{.spec.volumeName}' -n zylon)
+
+# Construir la ruta del directorio
+N8N_PV_DIR="/var/zylon/data/$N8N_PV_ID"
+
+# Ver el resultado
+echo $N8N_PV_DIR
 ```
+
+#### 2. Copiar archivos al volumen
+
+```bash
+# Copiar archivo desde tu máquina local
+sudo cp /ruta/local/workflows.json $N8N_PV_DIR/
+```
+
+#### 3. Acceder al pod y verificar el archivo
+
+```bash
+kubectl exec -it deployment/zylon-n8n -n zylon -- /bin/sh
+# Dentro del pod, verifica que el archivo esté disponible
+ls /home/node/.n8n/
+```
+
+### Comandos de Exportación
+
+**Exportar todos los workflows:**
+```bash
+n8n export:workflow --all --output=/home/node/.n8n/workflows.json
+```
+
+**Exportar un workflow específico:**
+```bash
+n8n export:workflow --id=42 --output=/home/node/.n8n/workflow-42.json
+```
+
+**Exportar credenciales:**
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json
+```
+
+**Exportar credenciales desencriptadas**:
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json --decrypted
+```
+
+<Tip>
+Usa la opción `--decrypted` cuando migres entre instancias con diferentes claves de encriptación [web:35].
+</Tip>
+
+**Exportar instancia completa:**
+```bash
+n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+```
+
+### Comandos de Importación
+
+**Importar workflows:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflows.json
+```
+
+**Importar un workflow específico:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflow-42.json
+```
+
+**Importar credenciales:**
+```bash
+n8n import:credentials --input=/home/node/.n8n/credentials.json
+```
+
+### Notas Importantes
+
+<Warning>
+Las entidades exportadas conservan sus IDs originales, por lo que importarlas sobrescribirá las entidades existentes con el mismo ID.
+</Warning>
+
+<Warning>
+Los archivos de exportación deben ubicarse en un directorio accesible dentro del pod, típicamente `/home/node/.n8n/`.
+</Warning>
+
+Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).
 ```

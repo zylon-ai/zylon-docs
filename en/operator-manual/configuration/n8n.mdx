@@ -2,7 +2,6 @@
 title: "n8n"
 ---
 
-
 <Tip>
 n8n support is available starting from Zylon 1.53
 </Tip>
@@ -11,9 +10,14 @@ n8n support is available starting from Zylon 1.53
 
 [n8n](https://n8n.io/) is a workflow automation tool now integrated into Zylon, enabling you to create flows by connecting different services and systems. The deployment and configuration of n8n are automatically managed by Zylon, requiring minimal user setup.
 
+### Important Considerations
+- **Version management**: Zylon manages the deployed n8n version to ensure compatibility with the rest of the system. Manual n8n updates are not available.
+- **Access**: n8n is available at the `/n8n` path of your Zylon instance (for example: `https://your-zylon-instance.com/n8n`)
+- **User management**: User management in n8n is independent from Zylon users. Users must be created and managed directly within the n8n interface.
+
 ### Configuration
 
-To enable n8n in your environment, you only need to toggle the corresponding option by editing the `/etc/zylon/zylon-conf.yaml` file:
+To enable n8n in your environment, you only need to modify the corresponding option in the `/etc/zylon/zylon-conf.yaml` file:
 
 ```yaml
 n8n:
@@ -23,6 +27,11 @@ n8n:
   externalConnection:
     enabled: false  # Allow outbound connections to n8n services
 ```
+
+<Info>
+n8n's public API allows you to manage workflows, executions, credentials, 
+and other resources programmatically through REST endpoints ([API Documentation](https://docs.n8n.io/api/))
+</Info>
 
 <Warning>
 In airgap mode, `externalConnection.enabled` will always be `false` regardless of the configured value.
@@ -34,7 +43,7 @@ When external connections are disabled, certain n8n functionalities are automati
 
 - **Community packages**: Installation of packages from the NPM registry is disabled
 - **Workflow templates**: Community workflow templates are disabled
-- **License activation**: Automatic license renewal is disabled
+- **License activation**: Pro licenses are not validated and will not work in this mode
 
 These restrictions ensure that n8n operates without external dependencies.
 
@@ -42,12 +51,11 @@ These restrictions ensure that n8n operates without external dependencies.
 
 n8n uses Zylon's global proxy configuration. The system automatically manages proxy certificates and endpoints, so no additional n8n-specific configuration is required.
 
-If your organization uses a proxy, configure it following the [proxy configuration guide](/operator-manual/proxy).
+If your organization uses a proxy, configure it following the [proxy configuration guide](/en/operator-manual/proxy).
 
 ## Backup Management
 
-n8n uses PostgreSQL as its database, which means all n8n information is automatically included in Zylon's standard database backups.
-
+n8n uses PostgreSQL as its database, which means all n8n information is automatically included in Zylon's standard database backups. For more information about backup management, see the [Zylon backup documentation](/en/operator-manual/backup).
 For specific use cases involving workflow migration or transfer between environments, see the [Workflow Import and Export](#workflow-import-and-export) section.
 
 ## Apply Configuration
@@ -64,38 +72,6 @@ n8n provides CLI commands that allow selective export and import of entities. Th
 
 - **Migration from other environments**: If you want to migrate n8n information to Zylon from another existing environment
 - **Selective import**: Export specific workflows from other environments and import them into Zylon without needing to migrate the entire instance
-
-### Transfer Files to the Pod
-
-If you need to import JSON files from your local machine to the n8n pod:
-
-#### 1. Get the Persistent Volume ID
-
-```bash
-# Get the n8n Persistent Volume ID
-N8N_PV_ID=$(kubectl get pvc zylon-n8n-data -o jsonpath='{.spec.volumeName}' -n zylon)
-
-# Build the directory path
-N8N_PV_DIR="/var/zylon/data/$N8N_PV_ID"
-
-# View the result
-echo $N8N_PV_DIR
-```
-
-#### 2. Copy Files to the Volume
-
-```bash
-# Copy file from your local machine
-sudo cp /local/path/workflows.json $N8N_PV_DIR/
-```
-
-#### 3. Access the Pod and Verify the File
-
-```bash
-kubectl exec -it deployment/zylon-n8n -n zylon -- /bin/sh
-# Inside the pod, verify the file is available
-ls /home/node/.n8n/
-```
 
 ### Export Commands
 
@@ -143,6 +119,38 @@ n8n import:workflow --input=/home/node/.n8n/workflow-42.json
 **Import credentials:**
 ```bash
 n8n import:credentials --input=/home/node/.n8n/credentials.json
+```
+
+### Transfer Files from Your Local Machine
+
+If you need to import workflows or credentials from JSON files located on your local machine, you must first transfer them to the n8n pod:
+
+#### 1. Get the Persistent Volume ID
+
+```bash
+# Get the n8n Persistent Volume ID
+N8N_PV_ID=$(kubectl get pvc zylon-n8n-data -o jsonpath='{.spec.volumeName}' -n zylon)
+
+# Build the directory path
+N8N_PV_DIR="/var/zylon/data/$N8N_PV_ID"
+
+# View the result
+echo $N8N_PV_DIR
+```
+
+#### 2. Copy Files to the Volume
+
+```bash
+# Copy file from your local machine
+sudo cp /local/path/workflows.json $N8N_PV_DIR/
+```
+
+#### 3. Access the Pod and Verify the File
+
+```bash
+kubectl exec -it deployment/zylon-n8n -n zylon -- /bin/sh
+# Inside the pod, verify the file is available
+ls /home/node/.n8n/
 ```
 
 ### Important Notes

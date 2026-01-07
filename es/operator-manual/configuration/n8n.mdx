@@ -8,13 +8,16 @@ El soporte de n8n está disponible a partir de Zylon 1.53
 
 ## Integración de n8n
 
-[n8n](https://n8n.io/) es una herramienta de automatización de flujos que ahora está integrada en Zylon, permitiendo así crear flujos conectando diferentes servicios y sistemas.
-El despliegue y la configuración de n8n son gestionados automáticamente por Zylon, requiriendo una configuración mínima por parte del usuario.
+[n8n](https://n8n.io/) es una herramienta de automatización de flujos que ahora está integrada en Zylon, permitiendo crear flujos conectando diferentes servicios y sistemas. El despliegue y la configuración de n8n son gestionados automáticamente por Zylon, requiriendo una configuración mínima por parte del usuario.
+
+### Consideraciones importantes
+- **Gestión de versiones**: Zylon gestiona la versión de n8n desplegada para asegurar la compatibilidad con el resto del sistema. Las actualizaciones manuales de n8n no están disponibles.
+- **Acceso**: n8n está disponible en la ruta `/n8n` de tu instancia de Zylon (por ejemplo: `https://tu-instancia-zylon.com/n8n`)
+- **Gestión de usuarios**: La gestión de usuarios en n8n es independiente de los usuarios de Zylon. Los usuarios deben crearse y gestionarse directamente dentro de la interfaz de n8n.
 
 ### Configuración
 
-Para habilitar n8n en tu entorno solo se necesita habilitar o deshabilitar la opción correspondiente, para ello debes editar
-el archivo `/etc/zylon/zylon-conf.yaml`:
+Para habilitar n8n en tu entorno solo necesitas modificar la opción correspondiente en el archivo `/etc/zylon/zylon-conf.yaml`:
 
 ```yaml
 n8n:
@@ -24,7 +27,10 @@ n8n:
   externalConnection:
     enabled: false  # Permitir conexiones salientes a servicios de n8n
 ```
-
+<Info>
+La API pública de n8n permite gestionar workflows, ejecuciones, credenciales 
+y otros recursos de forma programática mediante endpoints REST ([Documentación de la API](https://docs.n8n.io/api/))
+</Info>
 <Warning>
 En modo airgap, `externalConnection.enabled` siempre estará en `false` independientemente del valor configurado.
 </Warning>
@@ -35,10 +41,9 @@ Cuando las conexiones externas están deshabilitadas, ciertas funcionalidades de
 
 - **Paquetes de la comunidad**: La instalación de paquetes desde el registro NPM está deshabilitada
 - **Templates de flujos de trabajo**: Los templates de flujos de trabajo de la comunidad están deshabilitados
-- **Activación de licencias**: La renovación automática de licencias está deshabilitada
+- **Activación de licencias**: Las licencias Pro no se validan y no funcionarán en este modo
 
 Estas restricciones aseguran que n8n opere sin dependencias externas.
-
 
 ### Configuración de Proxy
 
@@ -47,10 +52,9 @@ por lo que no se requiere configuración adicional específica para n8n.
 
 Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/proxy).
 
+## Gestión de  Backups
 
-## Gestión de Respaldos
-
-n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los respaldos estándar de base de datos de Zylon .
+n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los backups estándar de base de datos de Zylon. Para más información sobre la gestión de backups, consulta la [documentación de backups de Zylon](/es/operator-manual/backup).
 
 Para casos específicos de migración o transferencia de workflows entre entornos, consulta la sección [Importación y Exportación de Workflows](#importación-y-exportación-de-workflows).
 
@@ -69,10 +73,57 @@ n8n proporciona comandos CLI que permiten la exportación e importación selecti
 - **Migración desde otros entornos**: Si se desea migrar a Zylon información de n8n desde otro entorno existente.
 - **Importación selectiva**: Exportar workflows específicos desde otros entornos e importarlos en Zylon sin necesidad de migrar la instancia completa.
 
+### Comandos de Exportación
 
-### Transferir archivos al pod
+**Exportar todos los workflows:**
+```bash
+n8n export:workflow --all --output=/home/node/.n8n/workflows.json
+```
 
-Si necesitas importar archivos JSON desde tu máquina local al pod de n8n:
+**Exportar un workflow específico:**
+```bash
+n8n export:workflow --id=42 --output=/home/node/.n8n/workflow-42.json
+```
+
+**Exportar credenciales:**
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json
+```
+
+**Exportar credenciales desencriptadas**:
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json --decrypted
+```
+
+<Tip>
+Usa la opción `--decrypted` cuando migres entre instancias con diferentes claves de encriptación.
+</Tip>
+
+**Exportar instancia completa:**
+```bash
+n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+```
+
+### Comandos de Importación
+
+**Importar workflows:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflows.json
+```
+
+**Importar un workflow específico:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflow-42.json
+```
+
+**Importar credenciales:**
+```bash
+n8n import:credentials --input=/home/node/.n8n/credentials.json
+```
+
+### Transferir archivos desde tu máquina local
+
+Si necesitas importar workflows o credenciales desde archivos JSON ubicados en tu máquina local, primero debes transferirlos al pod de n8n:
 
 #### 1. Obtener el ID del volumen persistente
 
@@ -102,54 +153,6 @@ kubectl exec -it deployment/zylon-n8n -n zylon -- /bin/sh
 ls /home/node/.n8n/
 ```
 
-### Comandos de Exportación
-
-**Exportar todos los workflows:**
-```bash
-n8n export:workflow --all --output=/home/node/.n8n/workflows.json
-```
-
-**Exportar un workflow específico:**
-```bash
-n8n export:workflow --id=42 --output=/home/node/.n8n/workflow-42.json
-```
-
-**Exportar credenciales:**
-```bash
-n8n export:credentials --all --output=/home/node/.n8n/credentials.json
-```
-
-**Exportar credenciales desencriptadas**:
-```bash
-n8n export:credentials --all --output=/home/node/.n8n/credentials.json --decrypted
-```
-
-<Tip>
-Usa la opción `--decrypted` cuando migres entre instancias con diferentes claves de encriptación [web:35].
-</Tip>
-
-**Exportar instancia completa:**
-```bash
-n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
-```
-
-### Comandos de Importación
-
-**Importar workflows:**
-```bash
-n8n import:workflow --input=/home/node/.n8n/workflows.json
-```
-
-**Importar un workflow específico:**
-```bash
-n8n import:workflow --input=/home/node/.n8n/workflow-42.json
-```
-
-**Importar credenciales:**
-```bash
-n8n import:credentials --input=/home/node/.n8n/credentials.json
-```
-
 ### Notas Importantes
 
 <Warning>
@@ -161,4 +164,3 @@ Los archivos de exportación deben ubicarse en un directorio accesible dentro de
 </Warning>
 
 Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).
-```

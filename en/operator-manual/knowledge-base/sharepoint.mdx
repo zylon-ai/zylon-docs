@@ -26,19 +26,19 @@ https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
 
 1. Click `Register`
 
-![Screenshot 2025-04-07 at 11.23.17.png](sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
+![Screenshot 2025-04-07 at 11.23.17.png](images/operator-manual/knowledge-base/sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
 
 2. Click on `Redirect URIs`
 
-![image.png](sharepoint-images/image.png)
+![image.png](images/operator-manual/knowledge-base/sharepoint-images/image.png)
 
 3. Click on `Add a platform`
 
-![image.png](sharepoint-images/image%201.png)
+![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%201.png)
 
 4. Click on `Single-Page application`
 
-![image.png](sharepoint-images/image%202.png)
+![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%202.png)
 
 5. Add the following URL and click `Configure`:
 
@@ -48,7 +48,7 @@ https://{your-zylon-instance}.com
 
 6. Now that the app is created, note the `Application (client) Id` and `Directory (tenant) id` from the `Overview` page.
 
-![image.png](sharepoint-images/image%203.png)
+![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%203.png)
 
 7. Let’s create an application secret
 
@@ -56,7 +56,7 @@ Navigate to `Certificates & secrets` → Click `+ New client secret` → Add a d
 
 Copy the Client Secret`value`. The secret value will not be accesible later.
 
-![imagen.png](sharepoint-images/imagen%201.png)
+![imagen.png](images/operator-manual/knowledge-base/sharepoint-images/imagen%201.png)
 
 
 Now we have to configure the API permissions our client application will have.
@@ -80,7 +80,7 @@ Navigate to `API Permissions` → `+ Add a permission` → `Sharepoint` → `Del
 
 After adding both list of permissions click on `Grant admin consent for [Your Org]` and confirm by clicking `Yes`
 
-![image.png](sharepoint-images/image%204.png)
+![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%204.png)
 
 ## Configure Zylon with your Azure AD app
 
@@ -99,6 +99,9 @@ clientSecret: "" //From step 11 - Secret value
 redirectUri: "" //From step 4
 domain: "" //Your sharepoint domain. ex: https://zylonai.sharepoint.com
 tenantId: "" //From step 10 - Directory tenant Id
+entrySite: "" //Optional: Default Entry SharePoint site URL
+entryList: "" //Optional: Default Entry list name (e.g., "Documents")
+entryFolder: "" //Optional: Default Entry folder name
 
 ```
 
@@ -108,7 +111,10 @@ And fill the properties with the values generated previously:
 - clientSecret → value generated on [step 11](sharepoint-images.md)
 - redirectUri → same value as [step 4](sharepoint-images.md)
 - domain → Your sharepoint url
-- client_tenant_id → same value as [step 10](sharepoint-images.md)
+- tenantId → same value as [step 10](sharepoint-images.md)
+- entrySite → (Optional) Default SharePoint site URL. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryList → (Optional) Default list name, e.g., "Documents". See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryFolder → (Optional) Default folder name. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
 
 Save and close `/etc/zylon/zylon-conf.yaml` file
 
@@ -119,6 +125,35 @@ zylon-cli sync
 ```
 
 You are all set 🎉
+
+## Configuring Default Opening Folder
+
+You can configure a default opening folder for the SharePoint integration. This allows the integration to open directly to a specific folder when users access SharePoint through Zylon, improving the user experience by skipping navigation steps.
+
+The three optional fields control the entry point for the integration:
+
+- `entrySite`: The absolute SharePoint site URL (works for both SharePoint and OneDrive)
+- `entryList`: The list name within the site (e.g., "Documents" is the default for SharePoint)
+- `entryFolder`: The folder name within the list
+
+**Important:** You must use absolute SharePoint paths for the `entrySite` field, even for OneDrive. The path format should be like:
+```
+https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
+```
+
+### Example Configuration
+
+If you want the integration to open by default to the "Defense and Security" folder in the Documents list for the user `user_example_onmicrosoft_com`, you would configure:
+
+```bash
+entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
+entryList: "Documents" //Default on SharePoint
+entryFolder: "Defense and Security"
+```
+
+This configuration will make the integration open directly to the "Defense and Security" folder when users access SharePoint through Zylon.
+
+**Note:** All three fields are optional. If they are not set or left empty, they will be ignored and the integration will use the default behavior (opening at the root level).
 
 ## Troubleshooting
 

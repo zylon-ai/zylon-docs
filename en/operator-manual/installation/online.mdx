@@ -8,6 +8,7 @@ import InstallationConfig from "/snippets/en/installation/installation-config.md
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
 
 This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
 
@@ -50,36 +51,6 @@ This guide covers the standard Zylon installation for environments with full int
     - Zylon container images
     - AI models from your configuration
     - SSL certificate generation
-
-    **Monitor Installation**
-
-    Watch the installation progress:
-
-    ```bash
-    # Watch Zylon pods
-    watch sudo k0s kubectl get pods -n zylon
-
-    # Watch GPU validation (if applicable)
-    watch sudo k0s kubectl get pods -n nvidia
-    ```
-
-    Wait until all pods show `1/1` ready status. Initial installation takes approximately 15-60 minutes depending on network speed.
-
-    <Tip>
-      **Reboot after installation** to ensure GPU drivers load properly.
-    </Tip>
-
-    <Danger>
-      **Kernel upgrades break NVIDIA drivers!** Ubuntu's unattended upgrades or cloud provider kernel updates will require driver reinstallation.
-      
-      Test drivers with: `nvidia-smi`
-      
-      Troubleshooting: [NVIDIA Drivers Guide](/en/operator-manual/nvidia-drivers-troubleshooting)
-    </Danger>
-
-    <Warning>
-      If any service remains in `ContainerCrashLoopBackOff` for over 1 hour, the installation has failed. Contact support.
-    </Warning>
   </Step>
 
   <Step title="Create Organization">

@@ -1,0 +1,126 @@
+---
+title: "Primeros pasos en n8n"
+---
+
+---
+
+n8n is an open-source workflow automation tool that allows users to connect various applications and services to automate repetitive tasks.
+Zylon includes a preconfigured n8n instance ready to use, making it easy for users to create and manage automated workflows directly from the
+Zylon platform.
+
+<Info>
+If you haven't configured n8n in your Zylon instance yet, you can check the n8n configuration manual [here](/en/operator-manual/configuration/n8n).
+</Info>
+
+# Getting Started
+
+Once n8n is configured in your Zylon instance, you can access the n8n web interface, which is available at the following URL:
+`https://<your_zylon_domain>/n8n`.
+
+## Creating an Account in n8n
+
+The first time you access the n8n instance, you'll be asked to create an administrator account. This account will have full privileges to manage users, configure global settings, and administer all workflows in the instance.
+
+**Steps to create the administrator account:**
+
+1. Go to `https://<your_zylon_domain>/n8n`
+2. Complete the registration form
+3. Accept the terms of use
+4. Click "Create account"
+
+## Creating New Users
+
+Additional users can be invited to the n8n instance through invitation links.
+
+Each user can have one of two roles: **Administrator** (full access) or **Member** (limited access to assigned workflows and credentials).
+
+<Warning>
+Only administrators can create new users in n8n.
+</Warning>
+
+**Steps to invite users:**
+
+1. Click the user icon (bottom left corner)
+2. Select **Settings > Users**
+3. Click the **"Invite"** button
+4. Enter the new user's email address
+5. Select the appropriate role:
+   - **Administrator**: Full access to configuration, users, and all workflows
+   - **Member**: Access only to shared workflows and credentials
+6. Click **"Create invite link"**
+7. Share the invitation link with the new user
+
+<Warning>
+If the invitation link is lost, you can retrieve it by selecting the user from the list and clicking "Copy invite link". However,
+n8n currently has a bug storing invitation links. If the original link is lost and the recovery method doesn't work, it will be necessary to delete the user and create a new one.
+</Warning>
+
+# Connecting to Zylon Chat Model
+
+To connect n8n with Zylon's chat models, you can use the Anthropic node that comes integrated with n8n, as Zylon is compatible with Anthropic nodes in n8n, enabling seamless integration.
+
+The prerequisites are:
+
+- Having a Zylon API token (see how to obtain token)[/en/api-reference/token-management]
+- Knowing the LLM model available in your Zylon instance (see available models)[/en/operator-manual/ai-presets/presets#ai-presets-reference]
+
+Once you have the prerequisites, you can proceed to configure n8n:
+
+### Credential Configuration
+
+1. Navigate to the Credentials section in n8n
+2. Create a new credential by selecting "Anthropic"
+3. Configure the following options:
+   - **Name**: Descriptive name for the credential (e.g., Zylon) (The name is modified in the upper left corner of the form)
+   - **API Key**: The Zylon API token
+   - **Base URL**: The Zylon API URL, which is generally `https://<your_zylon_domain>/api/gpt`
+4. Save the credential (if everything goes well, "Connection tested successfully" will appear)
+
+### Creating a Simple Workflow
+
+Now that we have the credentials, we can create a simple workflow that uses Zylon's chat model.
+
+1. Navigate to the Workflows section in n8n
+2. Create a new workflow
+3. Add an "Anthropic Chat Model" node to the workflow
+4. Configure the node with the following options:
+   - **Credentials**: Select the Anthropic credential we created earlier
+   - **Model**: Select "By ID" and enter the model available in your Zylon instance (e.g., qwen-3-14b-awq)
+
+Now you can use Zylon's chat model in n8n to create automated workflows.
+
+# Using MCP from Chat to Connect with n8n Workflows
+
+Zylon also allows you to use MCP (Model Call Protocol) from the chat to interact with n8n workflows.
+This enables users to execute workflows directly from the chat interface.
+To do this, you must first create a workflow in n8n that is designed to be called from MCP.
+
+## Creating a Workflow in n8n for MCP
+
+1. Navigate to the Workflows section in n8n
+2. Create a new workflow
+3. Add an "MCP Server Trigger" node to the workflow
+4. Copy the "Test URL" generated in the MCP Server Trigger node and configure the remaining options according to your needs
+5. Add tools to the MCP Server Trigger node to define the actions you want the workflow to perform when called from Zylon chat
+6. Click "Execute Step" to test the workflow and ensure it works correctly
+
+<Info>
+More information about the MCP Server Trigger node in n8n can be found [here](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/).
+</Info>
+
+## Calling the Workflow from Zylon Chat Using MCP
+
+Once the workflow is configured and tested in n8n, we can call it from Zylon chat using MCP.
+
+1. Open the chat interface in Zylon
+2. Select a project and navigate to the connectors section
+3. Click "New Connector" and select "Add MCP Server"
+4. Configure the following options:
+   - **Name**: Descriptive name for the connector (e.g., n8n MCP)
+   - **MCP Server URL**: Paste the "Test URL" we copied from the MCP Server Trigger node in n8n
+5. Click "Connect" (if an error occurs, make sure the workflow in n8n is active)
+6. Navigate to the chat section and select the MCP connector we just created
+7. Now we can send messages in the chat that will call the workflow in n8n through MCP
+
+Additional documentation about MCP and its use in Zylon can be found [here](/en/user-manual/tools/mcp-connector#mcp-connector).
+---

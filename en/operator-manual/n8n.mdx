@@ -1,5 +1,5 @@
 ---
-title: "Primeros pasos en n8n"
+title: "First steps in n8n"
 ---
 
 ---
@@ -62,7 +62,6 @@ To connect n8n with Zylon's chat models, you can use the Anthropic node that com
 The prerequisites are:
 
 - Having a Zylon API token (see how to obtain token)[/en/api-reference/token-management]
-- Knowing the LLM model available in your Zylon instance (see available models)[/en/operator-manual/ai-presets/presets#ai-presets-reference]
 
 Once you have the prerequisites, you can proceed to configure n8n:
 
@@ -85,7 +84,7 @@ Now that we have the credentials, we can create a simple workflow that uses Zylo
 3. Add an "Anthropic Chat Model" node to the workflow
 4. Configure the node with the following options:
    - **Credentials**: Select the Anthropic credential we created earlier
-   - **Model**: Select "By ID" and enter the model available in your Zylon instance (e.g., qwen-3-14b-awq)
+   - **Model**: Select "By ID" and enter "default" to use the default model in your Zylon instance.
 
 Now you can use Zylon's chat model in n8n to create automated workflows.
 
@@ -100,9 +99,9 @@ To do this, you must first create a workflow in n8n that is designed to be calle
 1. Navigate to the Workflows section in n8n
 2. Create a new workflow
 3. Add an "MCP Server Trigger" node to the workflow
-4. Copy the "Test URL" generated in the MCP Server Trigger node and configure the remaining options according to your needs
+4. Copy the "Production URL" generated in the MCP Server Trigger node and configure the remaining options according to your needs
 5. Add tools to the MCP Server Trigger node to define the actions you want the workflow to perform when called from Zylon chat
-6. Click "Execute Step" to test the workflow and ensure it works correctly
+6. Go back to the workflow main page and activate the workflow by clicking the toggle button in the upper right corner
 
 <Info>
 More information about the MCP Server Trigger node in n8n can be found [here](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/).

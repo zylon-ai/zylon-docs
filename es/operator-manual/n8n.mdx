@@ -60,7 +60,6 @@ Para conectar n8n con los modelos de chat de Zylon, se puede utilizar el nodo de
 Los prerrequisitos son:
 
 - Contar con un token de API de Zylon (ver cómo obtener token)[/es/api-reference/token-management]
-- Conocer el modelo LLM que se tiene en la instancia de Zylon (ver modelos disponibles)[/es/operator-manual/ai-presets/presets#ai-presets-reference]
 
 Una vez que se tienen los prerrequisitos, se puede proceder a configurar n8n:
 
@@ -83,7 +82,7 @@ Ahora que contamos con las credenciales, podemos crear un flujo de trabajo simpl
 3. Añadimos un nodo "Anthropic Chat Model" al flujo de trabajo
 4. Configuramos el nodo con las siguientes opciones:
    - **Credentials**: Seleccionamos la credencial de Anthropic que creamos anteriormente
-   - **Model**: Seleccionamos "By ID" y escribimos el modelo que tenemos en la instancia de Zylon (ej. qwen-3-14b-awq)
+   - **Model**: Seleccionamos "By ID" y escribimos "default" para usar el modelo por defecto en nuestra instancia de Zylon.
 
 Ahora ya podremos utilizar el modelo de chat de Zylon en n8n para crear flujos de trabajo automatizados.
 
@@ -98,9 +97,9 @@ Para ello, en primer lugar se debe crear un flujo de trabajo en n8n que esté di
 1. Nos dirigimos a la sección de Flujos de trabajo (Workflows) en n8n
 2. Creamos un nuevo flujo de trabajo
 3. Añadimos un nodo de tipo "MCP Server Trigger" al flujo de trabajo
-4. Copiamos la "Test URL" que se genera en el nodo MCP Server Trigger y configuramos el resto de opciones según nuestras necesidades
+4. Copiamos la "Production URL" que se genera en el nodo MCP Server Trigger y configuramos el resto de opciones según nuestras necesidades
 5. Añadimos tools al nodo MCP Server Trigger para definir las acciones que queremos que el flujo de trabajo realice cuando sea llamado desde Zylon chat
-6. Pulsamos en "Execute Step" para probar el flujo de trabajo y asegurarnos de que funciona correctamente
+6. Vuelve a la página principal del workflow y activa el workflow haciendo clic en el botón de alternancia en la esquina superior derecha
 
 <Info>
 Más información sobre el nodo MCP Server Trigger en n8n se puede encontrar [aquí](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/).

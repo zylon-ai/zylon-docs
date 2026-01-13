@@ -1,0 +1,123 @@
+---
+title: "Online Installation"
+description: "Install Zylon with full internet access"
+---
+
+import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+
+This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
+
+<Note>
+  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [installation prerequisites](/en/operator-manual/installation/#common-prerequisites).
+</Note>
+
+---
+
+<Steps>
+  <Step title="Install Zylon CLI">
+    <InstallationCli />
+  </Step>
+
+  <Step title="Configure Zylon">
+    <InstallationConfig />
+
+    **For proxy environments**, see the [Proxy Configuration Guide](/en/operator-manual/proxy).
+  </Step>
+
+  <Step title="Install Zylon">
+    Run the installation command with your desired version:
+
+    ```bash
+    sudo zylon-cli install <version>
+    ```
+
+    Replace `<version>` with your target version (e.g., `1.50.0`).
+
+    ### What Gets Installed
+
+    The installation process handles:
+
+    - System dependencies (gcc, git, etc.)
+    - Kubernetes distribution ([k0s](https://k0sproject.io/))
+    - NVIDIA drivers and CUDA (if applicable)
+    - Container runtime and tools (kubectl, helm, helmfile)
+    - Zylon container images
+    - AI models from your configuration
+    - SSL certificate generation
+
+    ### Force Reinstall (If Needed)
+
+    If you encounter errors, force a complete reinstall:
+
+    ```bash
+    sudo zylon-cli install <version> --force
+    ```
+
+    This re-downloads and reinstalls all dependencies and Zylon components. The system downloads only essential data from AWS S3, except for Docker images and AI models which come from their respective sources.
+
+    <Note>
+      Using `--force` is recommended for troubleshooting installation issues.
+    </Note>
+
+    ### Monitor Installation
+
+    Watch the installation progress:
+
+    ```bash
+    # Watch Zylon pods
+    watch sudo k0s kubectl get pods -n zylon
+
+    # Watch GPU validation (if applicable)
+    watch sudo k0s kubectl get pods -n nvidia
+    ```
+
+    Wait until all pods show `1/1` ready status. Initial installation takes approximately 15-60 minutes depending on network speed.
+
+    <Tip>
+      **Reboot after installation** to ensure GPU drivers load properly.
+    </Tip>
+
+    <Danger>
+      **Kernel upgrades break NVIDIA drivers!** Ubuntu's unattended upgrades or cloud provider kernel updates will require driver reinstallation.
+      
+      Test drivers with: `nvidia-smi`
+      
+      Troubleshooting: [NVIDIA Drivers Guide](/en/operator-manual/nvidia-drivers-troubleshooting)
+    </Danger>
+
+    <Warning>
+      If any service remains in `ContainerCrashLoopBackOff` for over 1 hour, the installation has failed. Contact support.
+    </Warning>
+  </Step>
+
+  <Step title="Create Organization">
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configure SSL (Optional)">
+    <Info>
+      **Skip this step** if using Let's Encrypt automatic certificates (default for public-facing instances).
+    </Info>
+
+    For VPN or private cloud deployments, you need to manually install SSL certificates.
+
+    <InstallationSsl />
+  </Step>
+</Steps>
+
+---
+
+## Next Steps
+
+Your Zylon installation is complete! Recommended actions:
+
+- [Configure AI Presets](/en/operator-manual/ai-presets) to optimize for your hardware
+- [Set up SSO](/en/operator-manual/openid) with OpenID Connect
+- [Configure backups](/en/operator-manual/backup) for data protection
+- [Review User Manual](/en/user-manual/quick-start-guide) to get started
+
+For updates, see the [Update Guide](/en/operator-manual/update).

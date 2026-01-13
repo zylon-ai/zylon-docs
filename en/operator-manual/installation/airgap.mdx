@@ -1,0 +1,261 @@
+---
+title: "Airgap Installation"
+description: "Install Zylon in completely offline environments"
+---
+
+import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+
+Airgap installation enables Zylon deployment in environments with zero internet access. This process requires **two separate Linux machines**: one with internet connectivity for downloading bundles, and one offline machine for running Zylon.
+
+<Note>
+  **Prerequisites**: Two Linux machines (Ubuntu 22/24), file transfer capability (SCP/USB/etc), and the [common installation prerequisites](/en/operator-manual/installation/#common-prerequisites) met on the offline machine.
+</Note>
+
+---
+
+## Process Overview
+
+<Steps>
+  <Step title="Online Machine">
+    Download Zylon bundles and AI models with internet access
+  </Step>
+  <Step title="Transfer">
+    Move bundle files to offline machine via secure transfer method
+  </Step>
+  <Step title="Offline Machine">
+    Import and install Zylon without any internet connectivity
+  </Step>
+</Steps>
+
+---
+
+## Part A: Online Machine Setup
+
+<Steps>
+  <Step title="Install CLI">
+    <InstallationCli />
+  </Step>
+
+  <Step title="Configure Zylon">
+    Create the configuration file that will be used on both machines.
+
+    <InstallationConfig />
+
+    ### Airgap Configuration
+
+    Ensure you add the airgap configuration:
+
+    ```yaml
+    airgap:
+      offline_install: true
+      offline_operation: true
+    ```
+
+  </Step>
+
+  <Step title="Download Zylon Bundle">
+    Download the specific Zylon version you want to install:
+
+    ```bash
+    sudo zylon-cli download <version> --airgap
+    ```
+
+    ### Include AI Models (First Installation or Additional Models)
+
+    For your first installation or if you need additional models:
+
+    ```bash
+    sudo zylon-cli download <version> --airgap --models=model-a,model-b,model-c
+    ```
+
+    <Warning>
+      **First installation or additional models require AI models!** Use the `--models` flag to specify which models to include.
+      
+      Check available models:
+      ```bash
+      sudo zylon-cli forge list
+      ```
+      
+      Compare with your AI preset definition to determine required models.
+    </Warning>
+  </Step>
+
+  <Step title="Export Bundle">
+    Package the downloaded files into a transferable bundle:
+
+    ```bash
+    sudo zylon-cli export <version> --airgap
+    ```
+
+    Include models if downloaded:
+
+    ```bash
+    sudo zylon-cli export <version> --airgap --models=model-a,model-b,model-c
+    ```
+
+    This creates `zylon-<version>-airgap.tar` in your current directory. Additionally, it will generate
+    the commands to run on the offline machine for installation to import and install Zylon.
+
+    <Note>
+      Export can take significant time. The resulting tar file may exceed 80GB.
+    </Note>
+  </Step>
+
+  <Step title="Prepare Initial Transfer (First Install Only)">
+    <Warning>
+      **First installation only!** After initial setup, the CLI self-updates from airgap bundles.
+    </Warning>
+
+    Create a bundle with CLI tools and configuration:
+
+    ```bash
+    tar -czf zylon-initial.tar.gz \
+      /usr/local/bin/zylon-cli \
+      /usr/local/bin/zylon-cli-forge \
+      /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Transfer Files">
+    Transfer files to the offline machine using your preferred method (SCP, USB, external drive):
+
+    **First installation:**
+    - `zylon-<version>-airgap.tar` (main bundle)
+    - `zylon-initial.tar.gz` (CLI and config)
+
+    **Subsequent updates:**
+    - `zylon-<version>-airgap.tar` (main bundle only)
+
+    ### SCP Example
+
+    ```bash
+    scp zylon-<version>-airgap.tar user@offline-machine:/tmp/
+    scp zylon-initial.tar.gz user@offline-machine:/tmp/
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Part B: Offline Machine Installation
+
+<Steps>
+  <Step title="Install CLI (First Time Only)">
+    <Warning>
+      **Skip if updating an existing installation.** This is only for first-time installations.
+    </Warning>
+
+    Extract CLI tools and configuration:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-initial.tar.gz -C /
+    sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-cli-forge
+    ```
+
+    Verify installation:
+
+    ```bash
+    sudo zylon-cli version
+    cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    <Note>
+      Future updates automatically update the CLI from airgap bundles—no manual transfer needed.
+    </Note>
+  </Step>
+
+  <Step title="Import Airgap Bundle">
+    Import the Zylon bundle:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli import zylon-<version>-airgap.tar
+    ```
+
+    This process:
+    - Extracts all container images
+    - Installs dependencies offline
+    - Prepares the system for installation
+
+    <Warning>
+      Import can take 30+ minutes depending on bundle size and system performance. Do not interrupt.
+    </Warning>
+  </Step>
+
+  <Step title="Install Zylon">
+    Install Zylon using the imported bundle:
+
+    ```bash
+    sudo zylon-cli install <version> --airgap
+    ```
+
+    Include models if bundled:
+
+    ```bash
+    sudo zylon-cli install <version> --airgap --models=model-a,model-b,model-c
+    ```
+
+    <InstallationMonitor />
+  </Step>
+
+  <Step title="Create Organization">
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configure SSL Certificates">
+    <InstallationSsl />
+  </Step>
+  
+</Steps>
+
+---
+
+## Updating Airgap Installations
+
+To update your airgap installation:
+
+<Steps>
+  <Step title="On Online Machine">
+    1. Download new version:
+       ```bash
+       sudo zylon-cli download <new-version> --airgap [--models=a,b]
+       ```
+    
+    2. Export bundle:
+       ```bash
+       sudo zylon-cli export <new-version> --from <current-version> --airgap [--models=a,b]
+       ```
+    
+    3. Transfer `.tar` file to offline machine
+  </Step>
+
+  <Step title="On Offline Machine">
+    1. Import bundle:
+       ```bash
+       sudo zylon-cli import zylon-<new-version>-airgap.tar
+       ```
+    
+    2. Install:
+       ```bash
+       sudo zylon-cli install <new-version> --airgap [--models=a,b]
+       ```
+  </Step>
+</Steps>
+
+<Note>
+  The CLI automatically updates during the process—no manual transfer needed.
+</Note>
+
+---
+
+## Next Steps
+
+- [Configure AI Presets](/en/operator-manual/ai-presets) to optimize for your hardware
+- [Configure backups](/en/operator-manual/backup) for data protection
+- [Review User Manual](/en/user-manual/quick-start-guide) to get started
+- [Update Guide](/en/operator-manual/update) for future version updates

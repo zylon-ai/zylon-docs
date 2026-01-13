@@ -217,16 +217,33 @@
                 "group": "Installation",
                 "pages": [
                   "en/operator-manual/hardware-requirements",
-                  "en/operator-manual/install",
-                  "en/operator-manual/ports-and-dns",
-                  "en/operator-manual/proxy",
-                  "en/operator-manual/semi-airgap",
-                  "en/operator-manual/troubleshoot",
+                  {
+                    "group": "Installing Zylon",
+                    "pages": [
+                      "en/operator-manual/installation/index",
+                      "en/operator-manual/installation/online",
+                      "en/operator-manual/installation/semi-airgap",
+                      "en/operator-manual/installation/airgap"
+                    ]
+                  },
+                  {
+                    "group": "Network Configuration",
+                    "pages": [
+                      "en/operator-manual/ports-and-dns",
+                      "en/operator-manual/proxy"
+                    ]
+                  },
+                  {
+                    "group": "Troubleshooting",
+                    "pages": [
+                      "en/operator-manual/troubleshooting/troubleshoot",
+                      "en/operator-manual/troubleshooting/nvidia-drivers"
+                    ]
+                  },
                   "en/operator-manual/uninstall",
                   "en/operator-manual/update",
                   "en/operator-manual/backup",
-                  "en/operator-manual/sys-admin-dashboard",
-                  "en/operator-manual/nvidia-drivers-troubleshooting"
+                  "en/operator-manual/sys-admin-dashboard"
                 ]
               },
               {
@@ -278,9 +295,9 @@
           {
             "tab": "Customer Support Manual",
             "icon": "headphones",
-                "pages": [
-                  "en/customer-support-manual/zendesk-client-manual"
-                ]
+            "pages": [
+              "en/customer-support-manual/zendesk-client-manual"
+            ]
           },
           {
             "tab": "Changelog",
@@ -531,9 +548,9 @@
           {
             "tab": "Atención al cliente",
             "icon": "headphones",
-                "pages": [
-                  "es/customer-support-manual/zendesk-client-manual"
-                ]
+            "pages": [
+              "es/customer-support-manual/zendesk-client-manual"
+            ]
           },
           {
             "tab": "Registro de cambios",

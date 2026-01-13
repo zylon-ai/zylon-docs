@@ -1,0 +1,255 @@
+---
+title: "Semi-Airgap Installation"
+description: "Install Zylon in environments with restricted internet access"
+---
+
+import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+
+This guide covers Zylon installation for environments with limited internet access due to firewall restrictions or proxy requirements. The system requires one-time internet connectivity during installation and updates.
+
+<Note>
+  **Prerequisites**: Linux machine with restricted internet, firewall access to specific domains, root access, and a domain name. See [installation prerequisites](/en/operator-manual/installation/#common-prerequisites).
+</Note>
+
+---
+
+## Required Network Access
+
+Your firewall must allow access to these domains:
+
+**Essential Services:**
+- `get.zylon.ai` - CLI installation
+- `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
+- `replicated.app` - Zylon distribution platform
+- `api.replicated.com` - License validation
+- `proxy.replicated.com` - Zylon container images
+
+**Container Registries:**
+- `quay.io` - Third-party container images
+- `ghcr.io` - GitHub container registry
+- `docker.io` - Docker Hub images
+- `registry.k8s.io` - Kubernetes images
+- `reg.kyverno.io` - Kyverno policy engine
+- `nvcr.io` - NVIDIA Container Registry
+
+**AI Models & Dependencies:**
+- `huggingface.co` - AI model repository
+- `xet.huggingface.co` - Hugging Face XET protocol
+- `zylon-hf-mirror.s3.us-east-1.amazonaws.com` - Zylon's AI model mirror
+
+**System Dependencies:**
+- `nvidia.com` - NVIDIA driver packages
+- `developer.download.nvidia.com` - NVIDIA CUDA toolkit
+- `get.k0s.sh` - Kubernetes distribution installer
+- `raw.githubusercontent.com` - GitHub raw content
+- `github.com` - GitHub repositories
+- `*.github.io` - GitHub Pages (various Helm charts)
+- `openebs.github.io` - OpenEBS storage Helm charts
+- `stakater.github.io` - Stakater Helm charts
+- `kyverno.github.io` - Kyverno Helm charts
+
+**Optional (Configuration-Dependent):**
+- `openaipublic.blob.core.windows.net` - Required only for gpt-oss configuration
+
+<Tip>
+  Work with your network team to whitelist these domains before starting installation.
+</Tip>
+
+---
+
+<Steps>
+  <Step title="Install Zylon CLI">
+    <InstallationCli />
+    
+    Ensure your firewall allows access to `get.zylon.ai`.
+  </Step>
+
+  <Step title="Configure Zylon">
+    <InstallationConfig />
+
+    ### Semi-Airgap Specific Configuration
+
+    Add to `/etc/zylon/zylon-conf.yaml`:
+
+    ```yaml
+    airgap:
+      offline_operation: true
+    ```
+
+    ### Local License (If Needed)
+
+    If `api.replicated.com` is blocked during operation, you need a local license. Contact Zylon support to obtain it, then add:
+
+    ```yaml
+    license:
+      email: "champion@company.com"
+      id: "2xo..."
+      type: "Zylon"
+      data: |-
+        [License data provided by Zylon team]
+    ```
+
+    **For proxy configuration**, see the [Proxy Configuration Guide](/en/operator-manual/proxy).
+  </Step>
+
+  <Step title="Install Zylon">
+    Run the installation with your desired version:
+
+    ```bash
+    sudo zylon-cli install <version>
+    ```
+
+    ### Force Reinstall (If Needed)
+
+    If errors occur:
+
+    ```bash
+    sudo zylon-cli install <version> --force
+    ```
+
+    <InstallationMonitor />
+
+    Installation may take 15-60 minutes depending on network speed and firewall restrictions.
+  </Step>
+
+  <Step title="Create Organization">
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configure SSL (Optional)">
+    For VPN or private network deployments, you need to manually install SSL certificates.
+
+    <InstallationSsl />
+  </Step>
+</Steps>
+
+---
+
+## Updating Semi-Airgap Installations
+
+Updates follow the same process as installation with the same network requirements:
+
+```bash
+sudo zylon-cli install <new-version>
+```
+
+Only incremental changes are downloaded during updates. See the [Update Guide](/en/operator-manual/update) for details.
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Cannot Reach Required Domains">
+    - Verify firewall rules with your network team
+    - Test connectivity: `curl -I https://get.zylon.ai`
+    - Check proxy configuration if applicable
+    - Review firewall logs for blocked connections
+  </Accordion>
+
+  <Accordion title="Installation Hangs or Fails">
+    - Confirm all required domains are accessible
+    - Try `--force` flag to reinstall dependencies
+    - Check pod logs: `sudo k0s kubectl logs <pod-name> -n zylon`
+    - Verify adequate disk space
+  </Accordion>
+
+  <Accordion title="License Issues">
+    - If `api.replicated.com` is blocked, obtain local license from Zylon support
+    - Verify `license.data` field is properly formatted in config
+    - Check license expiration with Zylon team
+  </Accordion>
+</AccordionGroup>
+
+For additional support, contact Zylon team with:
+- Network configuration details
+- List of accessible/blocked domains
+- Installation logs and error messages
+
+---
+
+## Next Steps
+
+- [Configure AI Presets](/en/operator-manual/ai-presets) to optimize for your hardware
+- [Set up SSO](/en/operator-manual/openid) with OpenID Connect
+- [Configure backups](/en/operator-manual/backup) for data protection
+- [Review User Manual](/en/user-manual/quick-start-guide) to get started
+
+---
+
+## Docker Images Reference
+
+<Accordion title="Complete Docker Images List">
+  Images downloaded during installation (versions may vary):
+
+  ```yaml
+  docker.io/alpine/k8s:1.29.13
+  docker.io/arizephoenix/phoenix:version-9.2.0
+  docker.io/bitnamilegacy/kubectl:1.25.15
+  docker.io/bitnamilegacy/minio:2025.3.12-debian-12-r0
+  docker.io/bitnamilegacy/postgres-exporter:0.15.0-debian-12-r36
+  docker.io/bitnamilegacy/postgresql:16.3.0-debian-12-r19
+  docker.io/bitnamilegacy/rabbitmq:3.13.4-debian-12-r0
+  docker.io/bitnamilegacy/redis-exporter:1.69.0-debian-12-r1
+  docker.io/bitnamilegacy/redis:7.4.2-debian-12-r6
+  docker.io/grafana/alloy:v1.7.4
+  docker.io/grafana/alloy:v1.8.1
+  docker.io/kubernetesui/dashboard-api:1.10.2
+  docker.io/kubernetesui/dashboard-auth:1.2.3
+  docker.io/kubernetesui/dashboard-metrics-scraper:1.2.2
+  docker.io/kubernetesui/dashboard-web:1.6.1
+  docker.io/library/kong:3.8
+  docker.io/openebs/linux-utils:4.2.0
+  docker.io/openebs/lvm-driver:1.6.1
+  docker.io/openebs/lvm-driver:1.8.0-develop
+  docker.io/openebs/provisioner-localpv:4.4.0-develop
+  docker.io/openebs/zfs-driver:2.6.2
+  docker.io/openebs/zfs-driver:2.9.0-develop
+  docker.io/qdrant/qdrant:v1.13.5
+  docker.io/replicated/replicated-sdk:1.0.0
+  ghcr.io/getsentry/sentry-kubernetes:latest
+  ghcr.io/jimmidyson/configmap-reload:v0.14.0
+  ghcr.io/stakater/reloader:v1.0.116
+  ghcr.io/superblocksteam/agent:v1.19.0
+  nvcr.io/nvidia/cloud-native/gpu-operator-validator:v24.9.2
+  nvcr.io/nvidia/gpu-operator:v24.9.2
+  nvcr.io/nvidia/k8s-device-plugin:v0.17.0
+  nvcr.io/nvidia/k8s/dcgm-exporter:3.3.9-3.6.1-ubuntu22.04
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-backend:0.101.7
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-docling:1.0.9
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-frontend:1.86.6
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-gpt:0.68.1
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-gpt:0.68.5
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-gpt:0.68.6
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-sandbox:1.0.0
+  proxy.replicated.com/proxy/zylon/918593742895.dkr.ecr.us-east-1.amazonaws.com/zylon-triton:1.8.0
+  quay.io/jetstack/cert-manager-acmesolver:v1.15.3
+  quay.io/jetstack/cert-manager-cainjector:v1.15.3
+  quay.io/jetstack/cert-manager-controller:v1.15.3
+  quay.io/jetstack/cert-manager-webhook:v1.15.3
+  quay.io/k0sproject/cni-node:1.3.0-k0s.0
+  quay.io/k0sproject/coredns:1.12.0
+  quay.io/k0sproject/kube-proxy:v1.32.1
+  quay.io/k0sproject/kube-router:v2.4.1-iptables1.8.9-0
+  quay.io/prometheus-operator/prometheus-config-reloader:v0.81.0
+  quay.io/prometheus/node-exporter:v1.9.0
+  reg.kyverno.io/kyverno/background-controller:v1.15.2
+  reg.kyverno.io/kyverno/cleanup-controller:v1.15.2
+  reg.kyverno.io/kyverno/kyverno:v1.15.2
+  reg.kyverno.io/kyverno/kyvernopre:v1.15.2
+  reg.kyverno.io/kyverno/reports-controller:v1.15.2
+  registry.k8s.io/metrics-server/metrics-server:v0.7.2
+  registry.k8s.io/nfd/node-feature-discovery:v0.16.6
+  registry.k8s.io/pause:3.9
+  registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0
+  registry.k8s.io/sig-storage/csi-provisioner:v5.2.0
+  registry.k8s.io/sig-storage/csi-resizer:v1.13.2
+  registry.k8s.io/sig-storage/csi-resizer:v1.8.0
+  registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0
+  registry.k8s.io/sig-storage/snapshot-controller:v8.2.0
+  ```
+</Accordion>

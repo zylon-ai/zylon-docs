@@ -1,0 +1,59 @@
+---
+title: "Getting Started"
+description: "Choose your installation mode based on your security and connectivity needs"
+---
+
+Zylon supports three installation modes to accommodate different network environments. Choose the one that best fits your security and connectivity requirements.
+
+| Feature | Online | Semi-Airgap | Airgap |
+|---------|--------|-------------|--------|
+| Internet Access | Full | Limited | None on target |
+| Setup Complexity | Simple | Moderate | Complex |
+| Security Level | Standard | High | Maximum |
+| Update Process | Simple | Required manual work | Pseudo-manual |
+| Proxy Support | ✓ | ✓ | ✗ |
+
+---
+
+## Prerequisites
+
+All installation modes require:
+
+- **Hardware**: Clean Linux machine (Ubuntu 22/24) meeting [hardware requirements](/en/operator-manual/hardware-requirements)
+- **Access**: Root and SSH access to the machine
+- **Domain**: A domain name for Zylon (e.g., zylon.company.com)
+- **SSL**: Valid SSL certificate (if not using Let's Encrypt)
+- **Reboot**: Ability to reboot the machine when needed
+
+---
+
+## Choose Your Installation Guide
+
+<Steps>
+  <Step title="Assess Your Environment">
+    Determine which installation mode matches your environment and security requirements.
+  </Step>
+  
+  <Step title="Follow the Installation Guide">
+    <CardGroup cols={3}>
+      <Card title="Online Installation" icon="globe" href="/en/operator-manual/installation/online">
+        ---
+        **Best for**: Standard deployments
+      </Card>
+      
+      <Card title="Semi-Airgap" icon="shield-halved" href="/en/operator-manual/installation/semi-airgap">
+      ---
+        **Best for**: Restricted networks
+      </Card>
+      
+      <Card title="Airgap Installation" icon="shield" href="/en/operator-manual/installation/airgap">
+      ---
+        **Best for**: Maximum security
+      </Card>
+    </CardGroup>
+  </Step>
+  
+  <Step title="Post-Installation">
+    After installation, configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
+  </Step>
+</Steps>

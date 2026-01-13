@@ -1,17 +1,184 @@
 ---
-title: Update
+title: "Updating Zylon"
+description: "Guide to update your Zylon installation to newer versions"
 ---
 
-You can update Zylon instance and Zylon CLIs separately, but we recommend to have both up-to-date.
+## Overview
 
-1. Get the latest Zylon CLI version
+You can update both your Zylon CLI and Zylon instance. We recommend keeping both up-to-date to ensure compatibility and access to the latest features.
+
+---
+
+## Update Process
+
+### Step 1: Update the Zylon CLI
+
+First, update the CLI to the latest version:
 
 ```bash
 sudo zylon-cli self-update
 ```
 
-2. Update Zylon to the latest version
+This ensures you have the latest CLI features and bug fixes.
+
+### Step 2: Update Zylon
+
+The update process differs depending on your installation mode:
+
+<Tabs>
+  <Tab title="Online & Semi-Airgap">
+    For online and semi-airgap installations, update to a specific version:
+
+    ```bash
+    sudo zylon-cli install <version>
+    ```
+
+    Replace `<version>` with your desired Zylon version (e.g., `1.50.0`).
+
+    **Force reinstall if needed:**
+
+    If you encounter issues during the update, use the `--force` flag to reinstall all dependencies:
+
+    ```bash
+    sudo zylon-cli install <version> --force
+    ```
+
+    <Note>
+      The update will download only incremental changes. Using `--force` will re-download and reinstall all components.
+    </Note>
+  </Tab>
+
+  <Tab title="Airgap">
+    For airgap installations, follow the airgap update process:
+
+    **On the online machine:**
+
+    1. Download the new version:
+       ```bash
+       sudo zylon-cli download <new-version> --airgap [--models=model-a,model-b]
+       ```
+
+    2. Export the bundle:
+       ```bash
+       sudo zylon-cli export <new-version> --airgap [--models=model-a,model-b]
+       ```
+
+    3. Transfer the resulting `.tar` file to your offline machine
+
+    **On the offline machine:**
+
+    1. Import the new bundle:
+       ```bash
+       sudo zylon-cli import zylon-<new-version>-airgap.tar
+       ```
+
+    2. Install the new version:
+       ```bash
+       sudo zylon-cli install <new-version> --airgap [--models=model-a,model-b]
+       ```
+
+    <Note>
+      The CLI will be automatically updated during the airgap update process. You don't need to manually transfer it again after the initial installation.
+    </Note>
+
+    For detailed airgap update instructions, see the [Airgap Installation Guide](/en/operator-manual/installation/airgap#updating-airgap-installations).
+  </Tab>
+</Tabs>
+
+---
+
+## Monitoring the Update
+
+You can watch the update process to ensure all components are updating correctly:
+
 ```bash
-sudo zylon-cli update
+watch sudo k0s kubectl get pods -n zylon
+
+# Also monitor GPU-related pods if applicable
+watch sudo k0s kubectl get pods -n nvidia
 ```
+
+Wait until all pods return to `1/1` ready status.
+
+---
+
+## After Updating
+
+**Configuration Changes:**
+
+If you modified your Zylon configuration file at `/etc/zylon/zylon-conf.yaml`, you'll need to sync the changes:
+
+```bash
+sudo zylon-cli sync
+```
+
+**Reboot (if needed):**
+
+If the update included GPU driver changes, it's recommended to reboot:
+
+```bash
+sudo reboot
+```
+
+After reboot, verify GPU drivers are working:
+
+```bash
+nvidia-smi
+```
+
+---
+
+## Troubleshooting Updates
+
+**Update fails:**
+- Check internet connectivity (for online/semi-airgap)
+- Verify disk space availability
+- Try using `--force` flag to reinstall
+- Check logs: `sudo k0s kubectl logs <pod-name> -n zylon`
+
+**Pods stuck in error state:**
+- Check pod logs for specific errors
+- Verify configuration file syntax
+- Ensure license is still valid
+- Contact Zylon support if issues persist
+
+**Configuration not applying:**
+- Ensure you ran `sudo zylon-cli sync` after config changes
+- Verify YAML syntax in configuration file
+- Check for validation errors in CLI output
+
+---
+
+## Version Compatibility
+
+- Always update the CLI before updating Zylon
+- Check release notes for any breaking changes
+- Test updates in a non-production environment first if possible
+- Keep backups before major version updates (see [Backup Guide](/en/operator-manual/backup))
+
+---
+
+## Rollback
+
+If you need to rollback to a previous version:
+
+```bash
+sudo zylon-cli install <previous-version>
+```
+
+For airgap installations, you'll need to have the previous version's bundle available.
+
+<Warning>
+  Rolling back may result in data loss if the newer version made incompatible database changes. Always backup before updating.
+</Warning>
+
+---
+
+## Next Steps
+
+After updating:
+- Verify all features are working correctly
+- Check the [Changelog](/en/changelog) for new features
+- Review any new configuration options
+- Update your backup strategy if needed
 

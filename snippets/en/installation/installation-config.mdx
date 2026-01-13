@@ -1,6 +1,6 @@
 Zylon is configured using a YAML file located at `/etc/zylon/zylon-conf.yaml`.
 
-### Generate Configuration Template
+**Generate Configuration Template**
 
 Use the CLI to generate a configuration template:
 
@@ -10,7 +10,7 @@ sudo zylon-cli config
 
 This outputs a template that you must populate with your specific values and save to `/etc/zylon/zylon-conf.yaml`. Root access is required to edit this file.
 
-### Basic Configuration Structure
+**Basic Configuration Structure**
 
 ```yaml
 # Machine configuration
@@ -53,7 +53,7 @@ ingress:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 ```
 
-### Configuration Parameters
+**Configuration Parameters**
 
 | Parameter | Description | Options |
 |-----------|-------------|---------|

@@ -8,6 +8,7 @@ import InstallationConfig from "/snippets/en/installation/installation-config.md
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
 
 Airgap installation enables Zylon deployment in environments with zero internet access. This process requires **two separate Linux machines**: one with internet connectivity for downloading bundles, and one offline machine for running Zylon.
 
@@ -17,7 +18,7 @@ Airgap installation enables Zylon deployment in environments with zero internet 
 
 ---
 
-## Process Overview
+## Installating Zylon in Airgap Environments
 
 <Steps>
   <Step title="Online Machine">
@@ -45,7 +46,7 @@ Airgap installation enables Zylon deployment in environments with zero internet 
 
     <InstallationConfig />
 
-    ### Airgap Configuration
+    **Airgap Configuration**
 
     Ensure you add the airgap configuration:
 
@@ -53,6 +54,28 @@ Airgap installation enables Zylon deployment in environments with zero internet 
     airgap:
       offline_install: true
       offline_operation: true
+    ```
+
+    **Local License**
+
+    Since the offline machine cannot reach `api.replicated.com`, you need a local license. Contact Zylon support to obtain it, then add:
+
+    ```yaml
+    license:
+      email: "champion@company.com"
+      id: "2xo..."
+      type: "Zylon"
+      data: |-
+        [License data provided by Zylon team]
+    ```
+
+    **Disable Let's Encrypt**
+
+    Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
+
+    ```yaml
+    certManagerAnnotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     ```
 
   </Step>
@@ -64,10 +87,9 @@ Airgap installation enables Zylon deployment in environments with zero internet 
     sudo zylon-cli download <version> --airgap
     ```
 
-    ### Include AI Models (First Installation or Additional Models)
+    **Include AI Models (First Installation or Additional Models)**
 
     For your first installation or if you need additional models:
-
     ```bash
     sudo zylon-cli download <version> --airgap --models=model-a,model-b,model-c
     ```
@@ -130,7 +152,7 @@ Airgap installation enables Zylon deployment in environments with zero internet 
     **Subsequent updates:**
     - `zylon-<version>-airgap.tar` (main bundle only)
 
-    ### SCP Example
+    **SCP Example**
 
     ```bash
     scp zylon-<version>-airgap.tar user@offline-machine:/tmp/
@@ -253,9 +275,4 @@ To update your airgap installation:
 
 ---
 
-## Next Steps
-
-- [Configure AI Presets](/en/operator-manual/ai-presets) to optimize for your hardware
-- [Configure backups](/en/operator-manual/backup) for data protection
-- [Review User Manual](/en/user-manual/quick-start-guide) to get started
-- [Update Guide](/en/operator-manual/update) for future version updates
+<InstallationNextSteps />

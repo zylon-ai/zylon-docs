@@ -1,4 +1,4 @@
-### Remove Automatic Certificate Generation
+**Remove Automatic Certificate Generation**
 
 Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
 
@@ -7,7 +7,7 @@ certManagerAnnotations:
   cert-manager.io/cluster-issuer: "letsencrypt-prod"
 ```
 
-### Prepare Certificate Files
+**Prepare Certificate Files**
 
 Kubernetes requires the certificate split into two files:
 
@@ -23,7 +23,7 @@ openssl pkcs12 -in <your-certificate.pfx> -clcerts -nokeys -out tls.crt
 openssl pkcs12 -in <your-certificate.pfx> -nocerts -out tls.key
 ```
 
-### Import Certificate into Kubernetes
+**Import Certificate into Kubernetes**
 
 ```bash
 # Remove any existing certificate
@@ -39,7 +39,7 @@ sudo k0s kubectl create secret tls zylon-tls \
 sudo k0s kubectl describe secret zylon-tls -n zylon
 ```
 
-### Apply Changes
+**Apply Changes**
 
 Reload the Zylon configuration:
 
@@ -47,7 +47,7 @@ Reload the Zylon configuration:
 sudo zylon-cli sync
 ```
 
-### Verify
+**Verify**
 
 Access your Zylon instance at `https://zylon.your-company.com` and confirm:
 - The connection uses HTTPS

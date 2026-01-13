@@ -216,14 +216,15 @@
               {
                 "group": "Installation",
                 "pages": [
-                  "en/operator-manual/hardware-requirements",
                   {
                     "group": "Installing Zylon",
                     "pages": [
                       "en/operator-manual/installation/index",
+                      "en/operator-manual/hardware-requirements",
                       "en/operator-manual/installation/online",
                       "en/operator-manual/installation/semi-airgap",
-                      "en/operator-manual/installation/airgap"
+                      "en/operator-manual/installation/airgap",
+                      "en/operator-manual/uninstall"
                     ]
                   },
                   {
@@ -240,8 +241,6 @@
                       "en/operator-manual/troubleshooting/nvidia-drivers"
                     ]
                   },
-                  "en/operator-manual/uninstall",
-                  "en/operator-manual/update",
                   "en/operator-manual/backup",
                   "en/operator-manual/sys-admin-dashboard"
                 ]

@@ -17,6 +17,8 @@ This guide covers the standard Zylon installation for environments with full int
 
 ---
 
+## Installating Zylon
+
 <Steps>
   <Step title="Install Zylon CLI">
     <InstallationCli />
@@ -37,7 +39,7 @@ This guide covers the standard Zylon installation for environments with full int
 
     Replace `<version>` with your target version (e.g., `1.50.0`).
 
-    ### What Gets Installed
+    **What Gets Installed**
 
     The installation process handles:
 
@@ -49,21 +51,7 @@ This guide covers the standard Zylon installation for environments with full int
     - AI models from your configuration
     - SSL certificate generation
 
-    ### Force Reinstall (If Needed)
-
-    If you encounter errors, force a complete reinstall:
-
-    ```bash
-    sudo zylon-cli install <version> --force
-    ```
-
-    This re-downloads and reinstalls all dependencies and Zylon components. The system downloads only essential data from AWS S3, except for Docker images and AI models which come from their respective sources.
-
-    <Note>
-      Using `--force` is recommended for troubleshooting installation issues.
-    </Note>
-
-    ### Monitor Installation
+    **Monitor Installation**
 
     Watch the installation progress:
 
@@ -111,13 +99,14 @@ This guide covers the standard Zylon installation for environments with full int
 
 ---
 
-## Next Steps
+## Updating Online Installations
 
-Your Zylon installation is complete! Recommended actions:
+Updates follow the same process as installation:
 
-- [Configure AI Presets](/en/operator-manual/ai-presets) to optimize for your hardware
-- [Set up SSO](/en/operator-manual/openid) with OpenID Connect
-- [Configure backups](/en/operator-manual/backup) for data protection
-- [Review User Manual](/en/user-manual/quick-start-guide) to get started
+```bash
+sudo zylon-cli install <new-version>
+```
 
-For updates, see the [Update Guide](/en/operator-manual/update).
+---
+
+<InstallationNextSteps />

@@ -98,9 +98,6 @@ clientSecret: "" //Del paso 11 - Secret value
 redirectUri: "" //Del paso 4
 domain: "" //Tu dominio de sharepoint. ej: https://zylonai.sharepoint.com
 tenantId: "" //Del paso 10 - Directory tenant Id
-entrySite: "" //Opcional: URL del sitio de SharePoint por defecto
-entryList: "" //Opcional: Nombre de la lista por defecto (ej: "Documents")
-entryFolder: "" //Opcional: Nombre de la carpeta por defecto
 
 ```
 
@@ -111,9 +108,6 @@ Y completa las propiedades con los valores generados previamente:
 - redirectUri → mismo valor que en el paso 4
 - domain → Tu URL de SharePoint
 - tenantId → mismo valor que en el paso 10
-- entrySite → (Opcional) URL del sitio de SharePoint por defecto. Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
-- entryList → (Opcional) Nombre de la lista por defecto, ej: "Documents". Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
-- entryFolder → (Opcional) Nombre de la carpeta por defecto. Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
 
 Guarda y cierra el archivo `/etc/zylon/zylon-conf.yaml`
 
@@ -124,35 +118,6 @@ zylon-cli update
 ```
 
 ¡Todo está listo 🎉
-
-## Configurar Carpeta de Apertura por Defecto
-
-Puedes configurar una carpeta de apertura por defecto para la integración de SharePoint. Esto permite que la integración se abra directamente en una carpeta específica cuando los usuarios acceden a SharePoint a través de Zylon, mejorando la experiencia del usuario al omitir pasos de navegación.
-
-Los tres campos opcionales controlan el punto de entrada para la integración:
-
-- `entrySite`: La URL absoluta del sitio de SharePoint (funciona tanto para SharePoint como para OneDrive)
-- `entryList`: El nombre de la lista dentro del sitio (ej: "Documents" es el predeterminado para SharePoint)
-- `entryFolder`: El nombre de la carpeta dentro de la lista
-
-**Importante:** Debes usar rutas absolutas de SharePoint para el campo `entrySite`, incluso para OneDrive. El formato de la ruta debe ser como:
-```
-https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
-```
-
-### Ejemplo de Configuración
-
-Si deseas que la integración se abra por defecto en la carpeta "Defense and Security" en la lista Documents para el usuario `user_example_onmicrosoft_com`, configurarías:
-
-```bash
-entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
-entryList: "Documents" //Predeterminado en SharePoint
-entryFolder: "Defense and Security"
-```
-
-Esta configuración hará que la integración se abra directamente en la carpeta "Defense and Security" cuando los usuarios accedan a SharePoint a través de Zylon.
-
-**Nota:** Los tres campos son opcionales. Si no se configuran o se dejan vacíos, serán ignorados y la integración usará el comportamiento predeterminado (abriendo en el nivel raíz).
 
 ## Solución de Problemas
 

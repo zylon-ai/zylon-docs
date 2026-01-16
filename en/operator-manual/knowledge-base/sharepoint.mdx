@@ -14,7 +14,7 @@ First you need an Azure AD application. We recommend to use a non-personal accou
 
 On the left sidebar Click `Applications` → `App Registrations` → `New Registration`
 
-![imagen.png](sharepoint-images/imagen.png)
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen.png)
 
 2. Provide a meaningful name for the Application.
 3. On Supported Account types choose `Accounts in this organizational directory only`
@@ -26,19 +26,19 @@ https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
 
 1. Click `Register`
 
-![Screenshot 2025-04-07 at 11.23.17.png](images/operator-manual/knowledge-base/sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
+![Screenshot 2025-04-07 at 11.23.17.png](/images/operator-manual/knowledge-base/sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
 
 2. Click on `Redirect URIs`
 
-![image.png](images/operator-manual/knowledge-base/sharepoint-images/image.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image.png)
 
 3. Click on `Add a platform`
 
-![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%201.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%201.png)
 
 4. Click on `Single-Page application`
 
-![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%202.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%202.png)
 
 5. Add the following URL and click `Configure`:
 
@@ -48,7 +48,7 @@ https://{your-zylon-instance}.com
 
 6. Now that the app is created, note the `Application (client) Id` and `Directory (tenant) id` from the `Overview` page.
 
-![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%203.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%203.png)
 
 7. Let’s create an application secret
 
@@ -56,7 +56,7 @@ Navigate to `Certificates & secrets` → Click `+ New client secret` → Add a d
 
 Copy the Client Secret`value`. The secret value will not be accesible later.
 
-![imagen.png](images/operator-manual/knowledge-base/sharepoint-images/imagen%201.png)
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen%201.png)
 
 
 Now we have to configure the API permissions our client application will have.
@@ -80,7 +80,7 @@ Navigate to `API Permissions` → `+ Add a permission` → `Sharepoint` → `Del
 
 After adding both list of permissions click on `Grant admin consent for [Your Org]` and confirm by clicking `Yes`
 
-![image.png](images/operator-manual/knowledge-base/sharepoint-images/image%204.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%204.png)
 
 ## Configure Zylon with your Azure AD app
 

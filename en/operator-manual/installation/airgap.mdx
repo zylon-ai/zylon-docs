@@ -13,7 +13,7 @@ import InstallationNextSteps from "/snippets/en/installation/installation-next-s
 Airgap installation enables Zylon deployment in environments with zero internet access. This process requires **two separate Linux machines**: one with internet connectivity for downloading bundles, and one offline machine for running Zylon.
 
 <Note>
-  **Prerequisites**: Two Linux machines (Ubuntu 22/24), file transfer capability (SCP/USB/etc), and the [common installation prerequisites](/en/operator-manual/installation/#common-prerequisites) met on the offline machine.
+  **Prerequisites**: Two Linux machines (Ubuntu 22/24), file transfer capability (SCP/USB/etc), and the [hardware requirements](/en/operator-manual/installation/hardware-requirements) met on the offline machine.
 </Note>
 
 ---
@@ -66,8 +66,13 @@ Airgap installation enables Zylon deployment in environments with zero internet 
       id: "2xo..."
       type: "Zylon"
       data: |-
-        [License data provided by Zylon team]
+        [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
     ```
+
+    <Warning>
+      Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
+      Just copy the token that starts with `eyJ...` and ends with `...`.
+    </Warning>
 
     **Disable Let's Encrypt**
 

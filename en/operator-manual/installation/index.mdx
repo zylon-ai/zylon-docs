@@ -12,6 +12,36 @@ Zylon supports three installation modes to accommodate different network environ
 | Security Level | Standard | High | Maximum |
 | Update Process | Simple | Required manual work | Pseudo-manual |
 | Proxy Support | ✓ | ✓ | ✗ |
+| Installation Time | ~30-90 min | ~1-2 hours | ~2-3 hours |
+| Update Time | ~15-40 min | ~30-60 min | ~1-2 hours |
+| Requires downtime for updates | Not common, or minutes | Not common, or minutes | Always, 15-60 min |
+
+### Understanding the Installation Modes
+
+#### Internet Access
+- **Online**: The Zylon server has full, unrestricted access to the internet. It can download packages, container images, and updates directly from official repositories and registries.
+- **Semi-Airgap**: The server has limited or controlled internet access, typically through a proxy or firewall with whitelisted domains.
+- **Airgap**: The target server has no internet connection whatsoever. All installation files, container images, and dependencies must be transferred from a connected machine to the isolated target server using offline media (USB drives, internal network transfers, etc.).
+
+#### Setup Complexity
+- **Online**: Straightforward installation using a single command. The installer automatically downloads and configures all required components. Minimal technical expertise required.
+- **Semi-Airgap**: Requires network configuration (proxy settings, firewall rules). You'll need to coordinate with your network security team to whitelist specific domains and ports.
+- **Airgap**: Most complex setup requiring a staging machine with internet access, manual transfer of large installation bundles (70-100 GB), and careful coordination between the connected and isolated environments.
+
+#### Security Level
+- **Online**: Standard security appropriate for most business environments. The server can communicate outbound to download updates and access external services.
+- **High**: Enhanced security through network isolation and controlled access points. Reduces exposure to internet-based threats while maintaining update capabilities through controlled channels.
+- **Maximum**: Highest security posture for sensitive environments (government, defense, healthcare, finance). Complete isolation from external networks eliminates internet-based attack vectors entirely. Ideal for compliance with strict security frameworks (NIST, FedRAMP, classified environments).
+
+#### Update Process
+- **Online**: Fully automated. Run a single update command and the system downloads and applies all updates automatically. Can be scheduled using cron jobs for hands-off maintenance.
+- **Semi-Airgap**: Updates require manual intervention to download update packages on a connected machine, and then apply them. Coordination with network security teams may be needed for installing/updating.
+- **Airgap**: Pseudo-manual process requiring the use of a connected machine to download update bundles, transfer them offline to the target server, and apply them through the CLI. Plan for 1-2 hour maintenance windows for major updates. This will often downtime the Zylon services during the update process.
+
+#### Installation & Update Times
+Times are approximate and depend on your hardware specifications, network speed, and system load:
+- **Installation Time**: Includes downloading (if applicable), extracting, configuring, and starting all Zylon services. Airgap installations take longer due to manual file transfers.
+- **Update Time**: Covers downloading updates, backing up current configuration, applying changes, and restarting services. Always schedule updates during maintenance windows.
 
 ---
 
@@ -54,6 +84,6 @@ All installation modes require:
   </Step>
   
   <Step title="Post-Installation">
-    After installation, configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
+    After installation, configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/operations/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
   </Step>
 </Steps>

@@ -2,10 +2,10 @@ Zylon is configured using a YAML file located at `/etc/zylon/zylon-conf.yaml`.
 
 **Generate Configuration Template**
 
-Use the CLI to generate a configuration template:
+Use the CLI to generate a configuration template. This will create the file if it does not exist:
 
 ```bash
-sudo zylon-cli config
+sudo zylon-cli config init
 ```
 
 This outputs a template that you must populate with your specific values and save to `/etc/zylon/zylon-conf.yaml`. Root access is required to edit this file.

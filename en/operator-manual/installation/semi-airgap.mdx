@@ -13,7 +13,7 @@ import InstallationNextSteps from "/snippets/en/installation/installation-next-s
 This guide covers Zylon installation for environments with limited internet access due to firewall restrictions or proxy requirements. The system requires one-time internet connectivity during installation and updates.
 
 <Note>
-  **Prerequisites**: Linux machine with restricted internet, firewall access to specific domains, root access, and a domain name. See [installation prerequisites](/en/operator-manual/installation/#common-prerequisites).
+  **Prerequisites**: Linux machine with restricted internet, firewall access to specific domains, root access, and a domain name. See [hardware requirements](/en/operator-manual/installation/hardware-requirements).
 </Note>
 
 ---
@@ -25,9 +25,7 @@ Your firewall must allow access to these domains:
 **Essential Services:**
 - `get.zylon.ai` - CLI installation
 - `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
-- `replicated.app` - Zylon distribution platform
-- `api.replicated.com` - License validation
-- `proxy.replicated.com` - Zylon container images
+- `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
 
 **Container Registries:**
 - `quay.io` - Third-party container images
@@ -40,7 +38,6 @@ Your firewall must allow access to these domains:
 **AI Models & Dependencies:**
 - `huggingface.co` - AI model repository
 - `xet.huggingface.co` - Hugging Face XET protocol
-- `zylon-hf-mirror.s3.us-east-1.amazonaws.com` - Zylon's AI model mirror
 
 **System Dependencies:**
 - `nvidia.com` - NVIDIA driver packages
@@ -52,6 +49,11 @@ Your firewall must allow access to these domains:
 - `openebs.github.io` - OpenEBS storage Helm charts
 - `stakater.github.io` - Stakater Helm charts
 - `kyverno.github.io` - Kyverno Helm charts
+
+**Optional (License-Related):**
+- `replicated.app` - Zylon distribution platform
+- `api.replicated.com` - License validation
+- `proxy.replicated.com` - Zylon container images
 
 **Optional (Configuration-Dependent):**
 - `openaipublic.blob.core.windows.net` - Required only for gpt-oss configuration
@@ -67,21 +69,10 @@ Your firewall must allow access to these domains:
 <Steps>
   <Step title="Install Zylon CLI">
     <InstallationCli />
-    
-    Ensure your firewall allows access to `get.zylon.ai`.
   </Step>
 
   <Step title="Configure Zylon">
     <InstallationConfig />
-
-    **Semi-Airgap Specific Configuration**
-
-    Add to `/etc/zylon/zylon-conf.yaml`:
-
-    ```yaml
-    airgap:
-      offline_operation: true
-    ```
 
     **Local License (If Needed)**
 
@@ -93,10 +84,15 @@ Your firewall must allow access to these domains:
       id: "2xo..."
       type: "Zylon"
       data: |-
-        [License data provided by Zylon team]
+        [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
     ```
 
-    **For proxy configuration**, see the [Proxy Configuration Guide](/en/operator-manual/proxy).
+    <Warning>
+      Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
+      Just copy the token that starts with `eyJ...` and ends with `...`.
+    </Warning>
+
+    **For proxy configuration**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
 
     **Disable Let's Encrypt**
 
@@ -113,6 +109,8 @@ Your firewall must allow access to these domains:
     Run the installation with your desired version:
 
     ```bash
+    sudo zylon-cli list-versions
+    # Choose your desired version from the list
     sudo zylon-cli install <version>
     ```
 
@@ -123,6 +121,17 @@ Your firewall must allow access to these domains:
 
   <Step title="Create Organization">
     <InstallationSeed />
+  </Step>
+
+  <Step title="Configure Offline Operation">
+    After validate that Zylon is running correctly, you can enable offline operation. This will configure Zylon to work without internet access.
+    Edit `/etc/zylon/zylon-conf.yaml` and add:
+    ```yaml
+    airgap:
+      offline_operation: true
+    ```
+
+    This will disable connectivity in AI, K8s and other subsystems.
   </Step>
 
   <Step title="Configure SSL (Optional)">
@@ -136,13 +145,36 @@ Your firewall must allow access to these domains:
 
 ## Updating Semi-Airgap Installations
 
-Updates follow the same process as installation with the same network requirements:
+To update the instance, we will need to remove network restrictions temporarily on a connected machine to download update packages. Contact your network security team to whitelist the required domains during this process.
+After downloading, you can reapply the restrictions.
+
+Before to update, be sure to disable offline mode by editing `/etc/zylon/zylon-conf.yaml` and setting:
+
+```yaml
+airgap:
+  offline_operation: false
+```
+
+Then, run the install command with the new version:
 
 ```bash
+sudo zylon-cli list-versions
+# Choose your desired version from the list
 sudo zylon-cli install <new-version>
 ```
 
-Only incremental changes are downloaded during updates.
+Or upgrade directly to the latest version using the upgrade command:
+
+```bash
+sudo zylon-cli upgrade
+```
+
+When the process is complete, re-enable offline mode by setting:
+
+```yaml
+airgap:
+  offline_operation: true
+```
 
 ---
 

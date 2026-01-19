@@ -13,12 +13,12 @@ import InstallationNextSteps from "/snippets/en/installation/installation-next-s
 This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
 
 <Note>
-  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [installation prerequisites](/en/operator-manual/installation/#common-prerequisites).
+  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [installation prerequisites](/en/operator-manual/installation/hardware-requirements).
 </Note>
 
 ---
 
-## Installating Zylon
+## Installating Zylon (Online)
 
 <Steps>
   <Step title="Install Zylon CLI">
@@ -28,7 +28,7 @@ This guide covers the standard Zylon installation for environments with full int
   <Step title="Configure Zylon">
     <InstallationConfig />
 
-    **For proxy environments**, see the [Proxy Configuration Guide](/en/operator-manual/proxy).
+    **For proxy environments**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
   </Step>
 
   <Step title="Install Zylon">
@@ -51,6 +51,8 @@ This guide covers the standard Zylon installation for environments with full int
     - Zylon container images
     - AI models from your configuration
     - SSL certificate generation
+
+    <InstallationMonitor />
   </Step>
 
   <Step title="Create Organization">
@@ -70,12 +72,20 @@ This guide covers the standard Zylon installation for environments with full int
 
 ---
 
-## Updating Online Installations
+## Updating Zylon (Online)
 
 Updates follow the same process as installation:
 
 ```bash
+sudo zylon-cli list-versions
+# Choose your desired version from the list
 sudo zylon-cli install <new-version>
+```
+
+Additionally, you can upgrade directly to the latest version using the upgrade command:
+
+```bash
+sudo zylon-cli upgrade
 ```
 
 ---

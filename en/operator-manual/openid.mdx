@@ -14,48 +14,48 @@ The objective is to obtain 3 values that will be used to configure Zylon to be a
 1. First of all you need to login into https://portal.azure.com/#home console dashboard
 2. Click `Microsoft Entra Id`
 
-![image.png](/images/operator-manual/openid-images/image.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image.png)
 
 3. Register a new App. Click on `App registrations` on the left menu.
 
-![image.png](/images/operator-manual/openid-images/image%201.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%201.png)
 
 4. Click on `New Registration`.
 
-![image.png](/images/operator-manual/openid-images/image%202.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%202.png)
 
 1. A new window will open and you will need to add the following information
 - ⚠️ Redirect URI type is **web**⚠️
 - Domain: `https://zylon.company.com/api/v1/auth/microsoft/callback`. Replace `zylon.company.com` with the domain where Zylon is hosted (It is the same domain as in the config file located in `/etc/zylon/zylon-conf.yaml`).
 - Supported account types: All account types are supported. Choose based on your specific needs.
 
-![image.png](/images/operator-manual/openid-images/image%203.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%203.png)
 
 - In case you want to change it later you can do so in the `Application Overview`
 
-![image.png](/images/operator-manual/openid-images/image%204.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%204.png)
 
 
 5. Save the following value that will be used later in the config file for Zylon.
 - Application (client) ID
 
-![image.png](/images/operator-manual/openid-images/image%205.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%205.png)
 
 6. Now we need to generate the `ClientSecret`. Go to the left menu and click `Manage > Certificates & secrets`
 
-<img src="/images/operator-manual/openid-images/image%206.png" alt="image.png" width="50%"/>
+<img src="/images/operator-manual/openid-images/microsoft/image%206.png" alt="image.png" width="50%"/>
 
 7. Click on `New client secret` and add the required information
 
-![image.png](/images/operator-manual/openid-images/image%207.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%207.png)
 
 8. Copy the `Value` for client secret.
 
-![image.png](/images/operator-manual/openid-images/image%208.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%208.png)
 
 9. Verify that the `User.read`  permission is granted. Click on `API Permissions` on the left menu. You should see it there by default. In case it is missing, grant it.
 
-![image.png](/images/operator-manual/openid-images/image%209.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image%209.png)
 
 10. Add the following configuration to `/etc/zylon/zylon-conf.yaml`
 
@@ -93,4 +93,82 @@ To limit the number of users that are able to log into Zylon check the following
 
 ## Google
 
-Under construction!
+### Create a new Oauth application for Zylon
+
+In order to enable Google SSO for Zylon, you need to create an OAuth 2.0 application in the Google Cloud Console.
+
+Navigate to the [Google Cloud Console](https://console.cloud.google.com/).
+
+<Note>
+    You might need to create a new Google project for Zylon if you don't have one already to host the OAuth application.
+
+    ![create-project](/images/operator-manual/openid-images/google/1-create-project.png)
+</Note>
+
+Navigate to the [Google Auth Section](https://console.cloud.google.com/auth/), to create the app.
+
+![create-oauth-app](/images/operator-manual/openid-images/google/2-create-app.png)
+![oauth-config](/images/operator-manual/openid-images/google/3-configure-audience.png)
+
+For the audience configuration, set it to internal so only users from your organization can log in,
+otherwise you will need to go through Google's verification process.
+
+### Configure the Oauth client
+
+Next, configure the Oauth client
+
+![oauth-client-id](/images/operator-manual/openid-images/google/4-create-oauth-client.png)
+
+Make sure of the following settings:
+- The application type is set to **Web application**.
+- The allowed JavaScript origins is set to `https://zylon.company.com`, replacing `zylon.company.com` with the domain where Zylon is hosted (It is the same domain as the host in the config file located in `/etc/zylon/zylon-conf.yaml`).
+- The authorized redirect URI is set to `https://zylon.company.com/api/v1/auth/google/callback`, same as above replace `zylon.company.com` with the domain where Zylon is hosted.
+- Apply the changes and save the `Client ID` and `Client Secret` that will be used later in the config file for Zylon.
+
+
+Select **Web application** as the application type:
+![oauth-web-app](/images/operator-manual/openid-images/google/5-select-web-app-as-type.png)
+
+Set the authorized redirect URI as mentioned before, double check that the domain is correct
+and the suffix is `/api/v1/auth/google/callback`:
+![oauth-redirect-uri](/images/operator-manual/openid-images/google/6-configure-origin-and-callback.png)
+
+Create the OAuth client and save the `Client ID` and `Client Secret`:
+![oauth-client-created](/images/operator-manual/openid-images/google/7-copy-oauth-data.png)
+
+### Grant openid scope
+
+Navigate to the [Data Access/Scopes section](https://console.cloud.google.com/auth/scopes), and add the following scopes to your application:
+* auth/userinfo.email (To get the user email)
+* auth/userinfo.profile (To get user's name and profile picture)
+* openid (To authenticate users with OpenID Connect)
+
+### Add the configuration to Zylon
+
+Add the following configuration to `/etc/zylon/zylon-conf.yaml`,
+replacing the `clientId` and `clientSecret` values with the ones obtained in the previous steps
+and the `redirectUri` with the correct domain where Zylon is hosted.
+
+<Warn>
+    The config file is a `.yaml` file so indentation, spaces, semicolons, double quotes are very important
+</Warn>
+
+```yaml
+auth:
+  google:
+    enabled: true
+    clientId: "1234567890-abcde.apps.googleusercontent.com"
+    clientSecret: "GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx"
+    redirectUri: "https://zylon.company.com/api/v1/auth/google/callback"
+```
+
+Run the following command to refresh the configuration
+
+```yaml
+sudo zylon-cli sync
+```
+Now you should see the Google SSO option when logging in.
+
+<Tip>
+    In case you don’t see the Google button to log in, clear the browser cache.
+</Tip>

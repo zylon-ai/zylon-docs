@@ -66,7 +66,7 @@ Ejecuta los siguientes comandos:
 sudo zylon-cli install-drivers --force # Reinstalar controladores Nvidia
 helm uninstall gpu-operator -n nvidia # Desinstalar operador GPU
 sudo reboot # Reiniciar el sistema para limpiar cualquier información de GPU en caché
-sudo zylon-cli update # Reinstalar operador GPU cuando el sistema vuelva a estar en línea
+sudo zylon-cli sync # Reinstalar operador GPU cuando el sistema vuelva a estar en línea
 ```
 
 Espera unos minutos y verifica la página de estado nuevamente, el problema debería estar resuelto. La instalación del controlador tomará de 10 a 15 minutos, y 3~5 minutos adicionales hasta que Triton vuelva a estar en línea.
@@ -78,7 +78,7 @@ Si `nvidia-smi` está funcionando correctamente pero el servicio Triton está fa
 ```bash
 helm uninstall gpu-operator -n nvidia
 sudo reboot # Reiniciar para limpiar cualquier información de GPU en caché
-sudo zylon-cli update # Reinstalar operador GPU
+sudo zylon-cli sync # Reinstalar operador GPU
 ```
 
 Espera unos minutos y verifica la página de estado nuevamente, el problema debería estar resuelto. Ten en cuenta que en este caso Triton podría tomar 3~5 minutos para volver a estar en línea.

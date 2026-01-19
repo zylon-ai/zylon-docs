@@ -176,7 +176,7 @@ _Tiempo estimado: 15min a 1hora, dependiendo de la velocidad de red._
 Este paso (instalar / actualizar) hará que Zylon esté disponible en tu máquina asumiendo que el archivo de configuración en `/etc/zylon/zylon-conf.yaml` es correcto.
 
 ```bash
-sudo zylon-cli update
+sudo zylon-cli sync
 ```
 
 Para actualizar Zylon a una versión más nueva, simplemente ejecuta este comando nuevamente. Puedes hacerlo tan frecuentemente como necesites.
@@ -283,7 +283,7 @@ sudo k0s kubectl describe secret zylon-tls -n zylon
 Para recargar los cambios realizados en el archivo de configuración, recarga la configuración.
 
 ```bash
-sudo zylon-cli update
+sudo zylon-cli sync
 ```
 
 Finalmente, ve a tu instancia de Zylon y confirma que la conexión está usando HTTPS.

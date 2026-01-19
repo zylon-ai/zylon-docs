@@ -8,6 +8,13 @@ Create a backup
 
 Usage: `sudo zylon-cli backup --help`
 
+**Flags:**
+
+- `-o, --backup-dir`: Path to the backup dir (default: `/var/backups/zylon`)
+- `-k, --keep-last`: Number of backups to keep (default: `10`)
+- `-u, --unsafe`: Don't stop k0s before backup, this might cause data corruption but won't cause downtime
+- `-y, --yes`: Ask user for confirmation
+
 ## completion
 Generate the autocompletion script for the specified shell
 
@@ -33,10 +40,38 @@ Download a specific version of Zylon
 
 Usage: `sudo zylon-cli download --help`
 
+**Flags:**
+
+- `--airgap`: Enable airgap mode (installs everything)
+- `--arch`: Target CPU architecture
+- `--binaries`: Install portable binaries
+- `--drivers`: Install NVIDIA drivers
+- `--force`: Force reinstallation of existing components
+- `--images`: Install container images
+- `--models`: AI models (can be specified multiple times or comma-separated) (default: `[]`)
+- `--os`: Target OS (ubuntu22, ubuntu24)
+- `--packages`: Install APT packages
+- `--source`: Source to download artifacts from (s3 or source) (default: `s3`)
+
 ## export
 Export a specific version of Zylon artifacts
 
 Usage: `sudo zylon-cli export --help`
+
+**Flags:**
+
+- `--arch`: Target architecture
+- `--from`: Base version for incremental export (exports only differences)
+- `--models`: AI models (can be specified multiple times or comma-separated) (default: `[]`)
+- `--no-binaries`: Exclude portable binaries
+- `--no-cluster-chart`: Exclude cluster Helm charts
+- `--no-drivers`: Exclude NVIDIA drivers
+- `--no-images`: Exclude container images
+- `--no-packages`: Exclude APT packages
+- `--no-zylon-chart`: Exclude Zylon Helm charts
+- `--os`: Target operating system
+- `--output`: Output tar or tar.gz file path (defaults to zylon-{version}-{os}-{arch}.tar)
+- `--yes`: Skip prompts and assume yes for all questions
 
 ## forge
 Forge models for Zylon
@@ -47,6 +82,12 @@ Usage: `sudo zylon-cli forge`
 Forward a command to a running service
 
 Usage: `sudo zylon-cli forward --help`
+
+**Flags:**
+
+- `-a, --args`: Arguments to pass to the command
+- `-c, --command`: Command to run
+- `-s, --service`: Service name
 
 ## help
 Help about any command
@@ -63,15 +104,39 @@ Install Zylon with the current configuration
 
 Usage: `sudo zylon-cli install --help`
 
+**Flags:**
+
+- `--airgap`: Enable airgap mode (installs everything)
+- `--force`: Force reinstallation of existing components
+- `--images`: Install container images
+- `--models`: AI models (can be specified multiple times or comma-separated) (default: `[]`)
+- `--no-binaries`: Exclude portable binaries
+- `--no-cluster-chart`: Exclude cluster Helm charts
+- `--no-drivers`: Exclude NVIDIA drivers
+- `--no-packages`: Exclude APT packages
+- `--no-zylon-chart`: Exclude Zylon Helm charts
+- `--skip-final-checks`: Skip final checks after installation
+- `--skip-migrations`: Skip running migrations before installation
+- `--skip-preflight`: Skip preflight checks before installation
+- `--source`: Source to download artifacts from (s3 or source). Only applicable in non-airgap mode (default: `s3`)
+
 ## install-drivers
 Install NVIDIA drivers
 
 Usage: `sudo zylon-cli install-drivers --help`
 
+**Flags:**
+
+- `-f, --force`: Force install drivers
+
 ## list-versions
 List the currently installed Zylon version
 
 Usage: `sudo zylon-cli list-versions --help`
+
+**Flags:**
+
+- `--changelog`: Show changelog links (default: `true`)
 
 ## preflight-checks
 Execute preflight checks
@@ -88,15 +153,31 @@ Restore from a backup
 
 Usage: `sudo zylon-cli restore --help`
 
+**Flags:**
+
+- `-f, --backup-file`: Path to the backup tar file. If empty, defaults to the latest backup
+
 ## run-sql
 Run SQL commands against Zylon's database
 
 Usage: `sudo zylon-cli run-sql --help`
 
+**Flags:**
+
+- `--db`: Target database (default is 'main') (default: `main`)
+- `-f, --file`: Path to a file containing SQL commands to execute
+- `-s, --sql`: SQL command to execute
+
 ## seed
 Seed the database
 
 Usage: `sudo zylon-cli seed --help`
+
+**Flags:**
+
+- `-p, --admin-password`: Root admin password
+- `-e, --email-regex`: All emails matching this regex will be allowed to join the organizationUsually this would be .*@\.yourdomain\.com
+- `-o, --org-name`: Organization name
 
 ## self-update
 Update the CLI
@@ -108,13 +189,10 @@ Sync kube config
 
 Usage: `sudo zylon-cli sync-kube-config`
 
-## sync
-Update Zylon configuration
-
-Usage: `sudo zylon-cli sync`
-
 ## update
 Update Zylon configuration
+
+**Aliases:** sync
 
 Usage: `sudo zylon-cli update`
 
@@ -122,6 +200,10 @@ Usage: `sudo zylon-cli update`
 Reset the password for a user
 
 Usage: `sudo zylon-cli update-password --help`
+
+**Flags:**
+
+- `-e, --email`: Account email
 
 ## upgrade
 Upgrade Zylon to the latest version

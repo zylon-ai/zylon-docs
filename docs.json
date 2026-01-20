@@ -248,7 +248,8 @@
                   {
                     "group": "Authentication",
                     "pages": [
-                      "en/operator-manual/configuration/authentication/openid"
+                      "en/operator-manual/openid/google",
+                      "en/operator-manual/openid/microsoft"
                     ]
                   },
                   {
@@ -523,7 +524,13 @@
                       "es/operator-manual/ai-presets/troubleshooting"
                     ]
                   },
-                  "es/operator-manual/openid",
+                  {
+                    "group": "Configuración de OpenID",
+                    "pages": [
+                      "es/operator-manual/openid/google",
+                      "es/operator-manual/openid/microsoft"
+                    ]
+                  },
                   {
                     "group": "Configuración de Conectores",
                     "pages": [

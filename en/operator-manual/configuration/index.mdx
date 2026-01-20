@@ -20,7 +20,7 @@ Configure your Zylon instance to meet your organization's specific requirements.
     Run `sudo zylon-cli sync` to apply changes to your running instance
   </Step>
   <Step title="Verify">
-    Check that services restarted successfully: `sudo zylon-cli status`
+    Check that configuration changes have taken effect as expected
   </Step>
 </Steps>
 
@@ -64,8 +64,11 @@ Configure your Zylon instance to meet your organization's specific requirements.
 ## Authentication & Security
 
 <CardGroup cols={2}>
-  <Card title="OpenID Connect" icon="key" href="/en/operator-manual/configuration/authentication/openid">
-    Integrate with identity providers like Microsoft, Google, or custom OpenID servers
+  <Card title="Google SSO" icon="google" href="/en/operator-manual/openid/google">
+    Enable Google Single Sign-On for user authentication
+  </Card>
+  <Card title="Microsoft Entra SSO" icon="microsoft" href="/en/operator-manual/openid/microsoft">
+    Configure Microsoft Entra (Azure AD) Single Sign-On
   </Card>
 </CardGroup>
 

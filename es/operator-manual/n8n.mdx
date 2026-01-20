@@ -15,6 +15,10 @@ Si aún no has configurado n8n en tu instancia de Zylon, puedes consultar el man
 Una vez que n8n esté configurado en la instancia de Zylon, podrás acceder a la interfaz web de n8n, la cual está disponible en la siguiente URL:
 `https://<your_zylon_domain>/n8n`.
 
+<Warning>
+n8n puede redireccionar incorrectamente durante el inicio de sesión, resultando en una URL como `/n8n/n8n` en lugar de `/n8n`, lo cual mostrará un error 404. Si encuentras este error, verifica la URL en la barra de direcciones de tu navegador y corrígela manualmente para usar solo un segmento `/n8n`.
+</Warning>
+
 ## Crear una cuenta en n8n
 
 La primera vez que accedas a la instancia de n8n se te pedirá crear una cuenta de administrador. Esta cuenta tendrá privilegios completos para gestionar usuarios, configurar ajustes globales y administrar todos los workflows de la instancia.

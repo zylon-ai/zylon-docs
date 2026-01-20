@@ -17,6 +17,10 @@ If you haven't configured n8n in your Zylon instance yet, you can check the n8n 
 Once n8n is configured in your Zylon instance, you can access the n8n web interface, which is available at the following URL:
 `https://<your_zylon_domain>/n8n`.
 
+<Warning>
+n8n may redirect incorrectly during login to a URL like `/n8n/n8n` instead of `/n8n`, which will show a 404 Error. If you encounter this error, check the URL in your browser's address bar and manually correct it to use only one `/n8n` path segment.
+</Warning>
+
 ## Creating an Account in n8n
 
 The first time you access the n8n instance, you'll be asked to create an administrator account. This account will have full privileges to manage users, configure global settings, and administer all workflows in the instance.

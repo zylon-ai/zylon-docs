@@ -244,7 +244,13 @@
                       "en/operator-manual/ai-presets/troubleshooting"
                     ]
                   },
-                  "en/operator-manual/openid",
+                  {
+                    "group": "OpenID Configuration",
+                    "pages": [
+                      "en/operator-manual/openid/google",
+                      "en/operator-manual/openid/microsoft"
+                    ]
+                  },
                   {
                     "group": "Connectors Configuration",
                     "pages": [
@@ -280,9 +286,9 @@
           {
             "tab": "Customer Support Manual",
             "icon": "headphones",
-                "pages": [
-                  "en/customer-support-manual/zendesk-client-manual"
-                ]
+            "pages": [
+              "en/customer-support-manual/zendesk-client-manual"
+            ]
           },
           {
             "tab": "Changelog",
@@ -499,7 +505,13 @@
                       "es/operator-manual/ai-presets/troubleshooting"
                     ]
                   },
-                  "es/operator-manual/openid",
+                  {
+                    "group": "Configuración de OpenID",
+                    "pages": [
+                      "es/operator-manual/openid/google",
+                      "es/operator-manual/openid/microsoft"
+                    ]
+                  },
                   {
                     "group": "Configuración de Conectores",
                     "pages": [
@@ -535,9 +547,9 @@
           {
             "tab": "Atención al cliente",
             "icon": "headphones",
-                "pages": [
-                  "es/customer-support-manual/zendesk-client-manual"
-                ]
+            "pages": [
+              "es/customer-support-manual/zendesk-client-manual"
+            ]
           },
           {
             "tab": "Registro de cambios",

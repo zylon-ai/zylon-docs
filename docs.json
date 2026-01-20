@@ -226,7 +226,8 @@
                   "en/operator-manual/update",
                   "en/operator-manual/backup",
                   "en/operator-manual/sys-admin-dashboard",
-                  "en/operator-manual/nvidia-drivers-troubleshooting"
+                  "en/operator-manual/nvidia-drivers-troubleshooting",
+                  "en/operator-manual/n8n"
                 ]
               },
               {
@@ -258,6 +259,7 @@
                   "en/operator-manual/configuration/search",
                   "en/operator-manual/configuration/performance",
                   "en/operator-manual/configuration/whitelabel",
+                  "en/operator-manual/configuration/n8n",
                   {
                     "group": "Features",
                     "pages": [
@@ -479,7 +481,8 @@
                   "es/operator-manual/update",
                   "es/operator-manual/backup",
                   "es/operator-manual/sys-admin-dashboard",
-                  "es/operator-manual/nvidia-drivers-troubleshooting"
+                  "es/operator-manual/nvidia-drivers-troubleshooting",
+                  "es/operator-manual/n8n"
                 ]
               },
               {
@@ -511,6 +514,7 @@
                   "es/operator-manual/configuration/search",
                   "es/operator-manual/configuration/performance",
                   "es/operator-manual/configuration/whitelabel",
+                  "es/operator-manual/configuration/n8n",
                   {
                     "group": "Funciones",
                     "pages": [

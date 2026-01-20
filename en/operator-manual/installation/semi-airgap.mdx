@@ -9,12 +9,17 @@ import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
 import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/en/installation/installation-prerequisites.mdx";
 
 This guide covers Zylon installation for environments with limited internet access due to firewall restrictions or proxy requirements. The system requires one-time internet connectivity during installation and updates.
 
-<Note>
-  **Prerequisites**: Linux machine with restricted internet, firewall access to specific domains, root access, and a domain name. See [hardware requirements](/en/operator-manual/installation/hardware-requirements).
-</Note>
+**Prerequisites Checklist**:
+
+<InstallationPrerequisites />
+- [ ] Proxy server configured with credentials (if required)
+- [ ] Network team has whitelisted required domains and ports (see [Required Network Access](/en/operator-manual/installation/semi-airgap#required-network-access))
+- [ ] Firewall rules allow connections through the proxy
+- [ ] Valid SSL certificate for your domain (Let's Encrypt typically won't work in restricted networks)
 
 ---
 
@@ -27,7 +32,7 @@ Your firewall must allow access to these domains:
 - `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
 - `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
 
-**Container Registries:**
+**Public Container Registries:**
 - `quay.io` - Third-party container images
 - `ghcr.io` - GitHub container registry
 - `docker.io` - Docker Hub images
@@ -36,8 +41,8 @@ Your firewall must allow access to these domains:
 - `nvcr.io` - NVIDIA Container Registry
 
 <Info>
-  Since Zylon relies on container images, network access to original registries is required during installation and updates.
-  If your security policies restrict access to container registries, consider move to an airgap installation using [Zylon Airgap Installation Guide](/en/operator-manual/installation/airgap).
+  Since Zylon required public open-source images, network access to original registries is required during installation and updates.
+  If your security policies restrict access to public container registries, consider move to an airgap installation using [Zylon Airgap Installation Guide](/en/operator-manual/installation/airgap).
 </Info>
 
 **AI Models & Dependencies (Only applicable if you need custom AI models):**
@@ -49,10 +54,6 @@ Your firewall must allow access to these domains:
 - `api.replicated.com` - License validation
 - `proxy.replicated.com` - Zylon container images
 
-<Tip>
-  Work with your network team to whitelist these domains before starting installation.
-</Tip>
-
 ---
 
 ## Installating Zylon in Semi-Airgap Environments
@@ -62,10 +63,9 @@ Your firewall must allow access to these domains:
     _Estimated time: 2 min_
 
     <Warning>
-      Before to start the installation, we will validate that we have connectivity to download and install the Zylon CLI.
-
+      Before to start the installation, validate that your machine can reach `get.zylon.ai`:
       ```bash
-      curl -sLv get.zylon.ai
+      curl -sLv get.zylon.ai -m 3 | exit 1
       ```
 
       If the connection is giving errors, work with your network team to resolve them. Once connectivity is verified, you can proceed.
@@ -84,6 +84,14 @@ Your firewall must allow access to these domains:
     ```
 
     Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+
+    <Info>
+      Are you having issues with network connectivity? Considering move to an [Airgap Installation](/en/operator-manual/installation/airgap).
+    </Info>
+
+    <Note>
+      Zylon requires all checks to pass before providing installation support.
+    </Note>
 
   </Step>
 
@@ -110,7 +118,9 @@ Your firewall must allow access to these domains:
       Just copy the token that starts with `eyJ...`.
     </Warning>
 
-    **For proxy configuration**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
+    **Proxy configuration (If Needed)**
+    
+    Refer to the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy) to set up proxy settings in your configuration.
 
     **Disable Let's Encrypt**
 
@@ -209,7 +219,7 @@ sudo zylon-cli list-versions
 sudo zylon-cli install <new-version>
 ```
 
-Or upgrade directly to the latest version using the upgrade command:
+Alternatively, you can upgrade directly to the latest version using the upgrade command:
 
 ```bash
 sudo zylon-cli upgrade

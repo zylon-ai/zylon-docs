@@ -7,6 +7,25 @@ Configure your Zylon instance to meet your organization's specific requirements.
 
 ---
 
+## Configuration Workflow
+
+<Steps>
+  <Step title="Edit Configuration">
+    Modify `/etc/zylon/zylon-conf.yaml` with your desired settings
+  </Step>
+  <Step title="Validate Changes">
+    Review your configuration for syntax errors and compatibility
+  </Step>
+  <Step title="Apply Configuration">
+    Run `sudo zylon-cli sync` to apply changes to your running instance
+  </Step>
+  <Step title="Verify">
+    Check that services restarted successfully: `sudo zylon-cli status`
+  </Step>
+</Steps>
+
+---
+
 ## Core Configuration
 
 <CardGroup cols={2}>
@@ -54,9 +73,6 @@ Configure your Zylon instance to meet your organization's specific requirements.
 Enable or disable specific features to control what's available to your users.
 
 <CardGroup cols={2}>
-  <Card title="Feature Overview" icon="toggle-on" href="/en/operator-manual/configuration/features/index">
-    Manage feature flags and understand available capabilities
-  </Card>
   <Card title="Audit Logging" icon="list" href="/en/operator-manual/configuration/features/feat-audit">
     Track user actions and system events for compliance and security
   </Card>
@@ -88,30 +104,6 @@ Enable or disable specific features to control what's available to your users.
   <Card title="Performance Tuning" icon="gauge-high" href="/en/operator-manual/configuration/performance">
     Optimize resource utilization and threading for better performance
   </Card>
-  <Card title="CLI Reference" icon="terminal" href="/en/operator-manual/configuration/cli">
-    Complete command-line interface reference for managing Zylon
-  </Card>
 </CardGroup>
 
 ---
-
-## Configuration Workflow
-
-<Steps>
-  <Step title="Edit Configuration">
-    Modify `/etc/zylon/zylon-conf.yaml` with your desired settings
-  </Step>
-  <Step title="Validate Changes">
-    Review your configuration for syntax errors and compatibility
-  </Step>
-  <Step title="Apply Configuration">
-    Run `sudo zylon-cli sync` to apply changes to your running instance
-  </Step>
-  <Step title="Verify">
-    Check that services restarted successfully: `sudo zylon-cli status`
-  </Step>
-</Steps>
-
-<Tip>
-  Always backup your configuration file before making significant changes: `sudo cp /etc/zylon/zylon-conf.yaml /etc/zylon/zylon-conf.yaml.backup`
-</Tip>

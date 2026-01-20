@@ -9,12 +9,19 @@ import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
 import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/en/installation/installation-prerequisites.mdx";
 
 This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
 
-<Note>
-  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [hardware prerequisites](/en/operator-manual/installation/hardware-requirements) for details. 
-</Note>
+
+**Prerequisites Checklist**:
+
+<InstallationPrerequisites />
+- [ ] Full, unrestricted internet access on the target machine
+- [ ] Firewall allows outbound connections to Docker registries and package repositories
+- [ ] Either:
+  - [ ] Port 80 and 443 open for Let's Encrypt automatic SSL certificate generation, OR
+  - [ ] Valid SSL certificate ready for manual configuration
 
 ---
 
@@ -41,6 +48,10 @@ This guide covers the standard Zylon installation for environments with full int
       Are you having issues with network connectivity? Considering move to a [Semi-Airgap Installation](/en/operator-manual/installation/semi-airgap) or [Airgap Installation](/en/operator-manual/installation/airgap).
     </Info>
 
+    <Note>
+      Zylon requires all checks to pass before providing installation support.
+    </Note>
+
   </Step>
 
   <Step title="Configure Zylon">
@@ -48,7 +59,6 @@ This guide covers the standard Zylon installation for environments with full int
 
     <InstallationConfig />
 
-    **For proxy environments**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
   </Step>
 
   <Step title="Install Zylon">
@@ -110,7 +120,7 @@ sudo zylon-cli list-versions
 sudo zylon-cli install <new-version>
 ```
 
-Additionally, you can upgrade directly to the latest version using the upgrade command:
+Alternatively, you can upgrade directly to the latest version using the upgrade command:
 
 ```bash
 sudo zylon-cli upgrade

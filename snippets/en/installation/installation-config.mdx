@@ -1,73 +1,25 @@
 Zylon is configured using a YAML file located at `/etc/zylon/zylon-conf.yaml`.
 
-**Generate Configuration Template**
+**Generate Initial Configuration**
 
-Use the CLI to generate a configuration template. This will create the file if it does not exist:
-
+Use the CLI to generate an initial configuration file:
 ```bash
 sudo zylon-cli config init
 ```
 
-This outputs a template that you must populate with your specific values and save to `/etc/zylon/zylon-conf.yaml`. Root access is required to edit this file.
+This opens an interactive prompt to guide you through configuration options.
 
-**Basic Configuration Structure**
-
-```yaml
-# Machine configuration
-node:
-  distro: "ubuntu22"  # or ubuntu24
-  arch: "x86_64"      # or arm64
-  drivers: "generic"
-
-# Cluster type (k0s is the only supported option)
-cluster:
-  type: "k0s"
-
-# Release channel
-channel: "stable"  # or unstable (under request)
-
-# License information (provided by Zylon team)
-license:
-  email: "champion@company.com"
-  id: "2oq..."  # Your license ID
-
-# AI configuration
-ai:
-  preset: "baseline-24g"  # See AI Presets documentation
-
-# Company identifier for telemetry
-companyIdentifier: "your-company"
-
-# Telemetry settings
-observability:
-  crashReporting: true
-  usageMetrics: true
-
-# Network configuration
-ingress:
-  host: "zylon.your-company.com"
-  enabled: true
-  tlsEnabled: true
-  certManagerAnnotations:
-    # For automatic SSL with Let's Encrypt
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+<Info>
+To skip the interactive prompt and generate a base configuration with defaults, use:
+```bash
+sudo zylon-cli config init -y
 ```
 
-**Configuration Parameters**
+</Info>
 
-| Parameter | Description | Options |
-|-----------|-------------|---------|
-| `node.distro` | Operating system version | `ubuntu22`, `ubuntu24` |
-| `node.arch` | CPU architecture | `x86_64`, `arm64` |
-| `node.drivers` | Hardware driver type | `generic` |
-| `cluster.type` | Kubernetes distribution | `k0s` (only supported) |
-| `channel` | Release channel | `stable`, `unstable` |
-| `license.email` | Your registered email | Provided during registration |
-| `license.id` | Your license key | Received from Zylon team |
-| `ai.preset` | Hardware capacity preset | [See AI Presets](/en/operator-manual/ai-presets) |
-| `companyIdentifier` | Organization identifier | e.g., `acme-corp` |
-| `ingress.host` | Your domain name | e.g., `zylon.company.com` |
+**View Current Configuration**
+```bash
+sudo zylon-cli config show
+```
 
-<Tip>
-  For detailed configuration options, refer to the [Configuration Guide](/en/operator-manual/configuration/index).
-</Tip>
+For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).

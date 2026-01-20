@@ -1,25 +1,117 @@
 ---
-title: "Configuration"
-description: "All configurations that an instance allows to do"
+title: "Configuration Overview"
+description: "Complete guide to configuring your Zylon instance"
 ---
 
+Configure your Zylon instance to meet your organization's specific requirements. This section covers AI models, network settings, authentication, features, and advanced configurations.
+
+---
+
+## Core Configuration
+
 <CardGroup cols={2}>
-  <Card title="AI Presets" icon="laptop" href="/en/operator-manual/configuration/ai-presets">
-    Configure AI presets based on your GPU memory capacity and enable specialized capabilities for your Zylon instance
+  <Card title="AI Presets" icon="brain" href="/en/operator-manual/ai-presets/getting-started">
+    Configure AI models based on GPU capacity and enable specialized capabilities
   </Card>
-  <Card title="Search" icon="magnifying-glass" href="/en/operator-manual/configuration/search">
-    Configure search languages and keyword search settings to optimize content discovery and retrieval
+  <Card title="Knowledge Connectors" icon="database" href="/en/operator-manual/knowledge-base/index">
+    Connect to external data sources like SharePoint, Confluence, and file systems
   </Card>
-  <Card title="OpenID" icon="link" href="/en/operator-manual/configuration/authentication/openid">
-    Configure identity server to use in Zylon, as Microsoft or Google
+  <Card title="Search Configuration" icon="magnifying-glass" href="/en/operator-manual/configuration/search">
+    Configure search languages and keyword search settings for optimal content discovery
   </Card>
-  <Card title="Knowledge Connectors" icon="lock" href="/en/operator-manual/knowledge-base/index">
-    Set up knowledge connectors Confluence, Sharepoint, etc
-  </Card>
-  <Card title="Observability" icon="chart-line" href="/en/operator-manual/configuration/observability">
-    Set up telemetry, crash reporting, and usage metrics with domain whitelisting for monitoring and support
-  </Card>
-  <Card title="Performance Tweaks" icon="gauge-high" href="/en/operator-manual/configuration/performance">
-    Optimize machine resource utilization and configure threading for improved ingestion performance
+  <Card title="White Label" icon="palette" href="/en/operator-manual/configuration/whitelabel">
+    Customize branding, logos, and appearance to match your organization
   </Card>
 </CardGroup>
+
+---
+
+## Network & Connectivity
+
+<CardGroup cols={2}>
+  <Card title="Ports & DNS" icon="network-wired" href="/en/operator-manual/configuration/network/ports-and-dns">
+    Configure required network ports and DNS settings
+  </Card>
+  <Card title="Proxy Configuration" icon="shield" href="/en/operator-manual/configuration/network/proxy">
+    Set up HTTP/HTTPS proxy for restricted network environments
+  </Card>
+</CardGroup>
+
+---
+
+## Authentication & Security
+
+<CardGroup cols={2}>
+  <Card title="OpenID Connect" icon="key" href="/en/operator-manual/configuration/authentication/openid">
+    Integrate with identity providers like Microsoft, Google, or custom OpenID servers
+  </Card>
+</CardGroup>
+
+---
+
+## Features & Capabilities
+
+Enable or disable specific features to control what's available to your users.
+
+<CardGroup cols={2}>
+  <Card title="Feature Overview" icon="toggle-on" href="/en/operator-manual/configuration/features/index">
+    Manage feature flags and understand available capabilities
+  </Card>
+  <Card title="Audit Logging" icon="list" href="/en/operator-manual/configuration/features/feat-audit">
+    Track user actions and system events for compliance and security
+  </Card>
+  <Card title="Database Connector" icon="database" href="/en/operator-manual/configuration/features/feat-database">
+    Enable direct database querying from chat conversations
+  </Card>
+  <Card title="MCP Connector" icon="plug" href="/en/operator-manual/configuration/features/feat-mcp">
+    Integrate Model Context Protocol tools for extended capabilities
+  </Card>
+  <Card title="Web Extract" icon="file-code" href="/en/operator-manual/configuration/features/feat-webextract">
+    Extract and parse content from web pages in real-time
+  </Card>
+  <Card title="Web Search" icon="globe" href="/en/operator-manual/configuration/features/feat-websearch">
+    Enable internet search capabilities within chat conversations
+  </Card>
+  <Card title="Multimodal Support" icon="image" href="/en/operator-manual/configuration/features/feat-multimodal">
+    Enable image processing and vision capabilities in AI models
+  </Card>
+</CardGroup>
+
+---
+
+## Advanced Settings
+
+<CardGroup cols={2}>
+  <Card title="Observability" icon="chart-line" href="/en/operator-manual/configuration/observability">
+    Configure telemetry, crash reporting, and usage metrics for monitoring
+  </Card>
+  <Card title="Performance Tuning" icon="gauge-high" href="/en/operator-manual/configuration/performance">
+    Optimize resource utilization and threading for better performance
+  </Card>
+  <Card title="CLI Reference" icon="terminal" href="/en/operator-manual/configuration/cli">
+    Complete command-line interface reference for managing Zylon
+  </Card>
+</CardGroup>
+
+---
+
+## Configuration Workflow
+
+<Steps>
+  <Step title="Edit Configuration">
+    Modify `/etc/zylon/zylon-conf.yaml` with your desired settings
+  </Step>
+  <Step title="Validate Changes">
+    Review your configuration for syntax errors and compatibility
+  </Step>
+  <Step title="Apply Configuration">
+    Run `sudo zylon-cli sync` to apply changes to your running instance
+  </Step>
+  <Step title="Verify">
+    Check that services restarted successfully: `sudo zylon-cli status`
+  </Step>
+</Steps>
+
+<Tip>
+  Always backup your configuration file before making significant changes: `sudo cp /etc/zylon/zylon-conf.yaml /etc/zylon/zylon-conf.yaml.backup`
+</Tip>

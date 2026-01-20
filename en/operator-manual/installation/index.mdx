@@ -16,69 +16,30 @@ Zylon supports three installation modes to accommodate different network environ
 | Update Time | ~15-40 min | ~30-60 min | ~1-2 hours |
 | Requires downtime for updates | Not common, or minutes | Not common, or minutes | Always, 15-60 min |
 
-### Understanding the Installation Modes
-
-#### Internet Access
-- **Online**: The Zylon server has full, unrestricted access to the internet. It can download packages, container images, and updates directly from official repositories and registries.
-- **Semi-Airgap**: The server has limited or controlled internet access, typically through a proxy or firewall with whitelisted domains.
-- **Airgap**: The target server has no internet connection whatsoever. All installation files, container images, and dependencies must be transferred from a connected machine to the isolated target server using offline media (USB drives, internal network transfers, etc.).
-
-#### Setup Complexity
-- **Online**: Straightforward installation using a single command. The installer automatically downloads and configures all required components. Minimal technical expertise required.
-- **Semi-Airgap**: Requires network configuration (proxy settings, firewall rules). You'll need to coordinate with your network security team to whitelist specific domains and ports.
-- **Airgap**: Most complex setup requiring a staging machine with internet access, manual transfer of large installation bundles (70-100 GB), and careful coordination between the connected and isolated environments.
-
-#### Security Level
-- **Online**: Standard security appropriate for most business environments. The server can communicate outbound to download updates and access external services.
-- **High**: Enhanced security through network isolation and controlled access points. Reduces exposure to internet-based threats while maintaining update capabilities through controlled channels.
-- **Maximum**: Highest security posture for sensitive environments (government, defense, healthcare, finance). Complete isolation from external networks eliminates internet-based attack vectors entirely. Ideal for compliance with strict security frameworks (NIST, FedRAMP, classified environments).
-
-#### Update Process
-- **Online**: Fully automated. Run a single update command and the system downloads and applies all updates automatically. Can be scheduled using cron jobs for hands-off maintenance.
-- **Semi-Airgap**: Updates require manual intervention to download update packages on a connected machine, and then apply them. Coordination with network security teams may be needed for installing/updating.
-- **Airgap**: Pseudo-manual process requiring the use of a connected machine to download update bundles, transfer them offline to the target server, and apply them through the CLI. Plan for 1-2 hour maintenance windows for major updates. This will often downtime the Zylon services during the update process.
-
-#### Installation & Update Times
-Times are approximate and depend on your hardware specifications, network speed, and system load:
-- **Installation Time**: Includes downloading (if applicable), extracting, configuring, and starting all Zylon services. Airgap installations take longer due to manual file transfers.
-- **Update Time**: Covers downloading updates, backing up current configuration, applying changes, and restarting services. Always schedule updates during maintenance windows.
-
----
-
-## Prerequisites
-
-All installation modes require:
-
-- **Hardware**: Clean Linux machine (Ubuntu 22/24) meeting [hardware requirements](/en/operator-manual/hardware-requirements)
-- **Access**: Root and SSH access to the machine
-- **Domain**: A domain name for Zylon (e.g., zylon.company.com)
-- **SSL**: Valid SSL certificate (if not using Let's Encrypt)
-- **Reboot**: Ability to reboot the machine when needed
-
----
 
 ## Choose Your Installation Guide
 
 <Steps>
   <Step title="Assess Your Environment">
-    Determine which installation mode matches your environment and security requirements.
+    Determine which installation mode matches your environment and security requirements. Consider factors like internet access, security policies, and update procedures.
+    More details on each mode are provided below.
   </Step>
   
   <Step title="Follow the Installation Guide">
     <CardGroup cols={3}>
       <Card title="Online Installation" icon="globe" href="/en/operator-manual/installation/online">
         ---
-        **Best for**: Standard deployments
+        **Best for**: Standard deployments. More details [here](/en/operator-manual/installation#online-installation)
       </Card>
       
       <Card title="Semi-Airgap" icon="shield-halved" href="/en/operator-manual/installation/semi-airgap">
       ---
-        **Best for**: Restricted networks
+        **Best for**: Restricted networks. More details [here](/en/operator-manual/installation#semi-airgap-installation)
       </Card>
       
       <Card title="Airgap Installation" icon="shield" href="/en/operator-manual/installation/airgap">
       ---
-        **Best for**: Maximum security
+        **Best for**: Maximum security. More details [here](/en/operator-manual/installation#airgap-installation)
       </Card>
     </CardGroup>
   </Step>
@@ -87,3 +48,59 @@ All installation modes require:
     After installation, configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/operations/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
   </Step>
 </Steps>
+
+### Understanding better the Installation Modes
+
+#### Online Installation
+The Zylon server has full, unrestricted access to the internet. It can download packages, container images, and updates directly from official repositories and registries.
+
+- **Setup Complexity**: Straightforward installation using a single command. The installer automatically downloads and configures all required components. Minimal technical expertise required.
+- **Security Level**: Standard security appropriate for most business environments. The server can communicate outbound to download updates and access external services.
+- **Update Process**: Fully automated. Run a single update command and the system downloads and applies all updates automatically. Can be scheduled using cron jobs for hands-off maintenance.
+- **Proxy Support**: Supported if needed
+- **Installation Time**: ~30-90 minutes depending on your network speed and hardware
+- **Update Time**: ~15-40 minutes. Downtime is not common, or just a few minutes when required.
+
+#### Semi-Airgap Installation
+The server has limited or controlled internet access, typically through a proxy or firewall with whitelisted domains.
+
+- **Setup Complexity**: Moderate. Requires network configuration (proxy settings, firewall rules). You'll need to coordinate with your network security team to whitelist specific domains and ports.
+- **Security Level**: Enhanced security through network isolation and controlled access points. Reduces exposure to internet-based threats while maintaining update capabilities through controlled channels.
+- **Update Process**: Updates require manual intervention to download update packages on a connected machine, and then apply them. Coordination with network security teams may be needed for installing/updating.
+- **Proxy Support**: Supported and typically required
+- **Installation Time**: ~1-2 hours including network configuration
+- **Update Time**: ~30-60 minutes. Downtime is not common, or just a few minutes when required.
+
+#### Airgap Installation
+The target server has no internet connection whatsoever. All installation files, container images, and dependencies must be transferred from a connected machine to the isolated target server using offline media (USB drives, internal network transfers, etc.).
+
+- **Setup Complexity**: Most complex setup requiring a staging machine with internet access, manual transfer of large installation bundles (70-100 GB), and careful coordination between the connected and isolated environments.
+- **Security Level**: Highest security posture for sensitive environments (government, defense, healthcare, finance). Complete isolation from external networks eliminates internet-based attack vectors entirely. Ideal for compliance with strict security frameworks (NIST, FedRAMP, classified environments).
+- **Update Process**: Pseudo-manual process requiring the use of a connected machine to download update bundles, transfer them offline to the target server, and apply them through the CLI. Plan for 1-2 hour maintenance windows for major updates. This will often cause downtime for Zylon services during the update process.
+- **Proxy Support**: Not applicable (no internet connection)
+- **Installation Time**: ~2-3 hours including file transfers
+- **Update Time**: ~1-2 hours. Always requires 15-60 minutes of downtime.
+
+---
+
+## Prerequisites
+
+For a smooth sailing make sure you pass this checklist before you begin the installation:
+
+- The target machine is clean of any other software that can interfere with it. That means no docker, no kubernetes, http servers, no Nvidia drivers, etc.
+- You have root and SSH access to the machine
+- The machine has stable and strong Internet connection
+- You can reboot the machine if needed
+- Your firewall is not blocking connections to any website.
+  - In case you run in a restricted environment, check the [semi-airgap instructions](/en/operator-manual/semi-airgap)
+- The machine has `curl` installed
+- You have a domain for Zylon ready (ex: zylon.your-company.com)
+  - If your instance is not open to the internet  you have a valid SSL certificate for that domain, it will be needed as the last step of the installation.
+
+Once you have fulfilled the hardware requirements and have a domain ready it is time to install Zylon!
+
+For single instance setups Zylon it’s installed using it’s CLI `zylon-cli` on the machine where you want to run it. To start the install process make sure that:
+
+- At install time, the machine has internet connection (After Zylon has been installed internet connection it is not a requirement)
+- You have ssh access to the machine
+- Firewall rules will not block the CLI to download any Zylon container images or certificate generation

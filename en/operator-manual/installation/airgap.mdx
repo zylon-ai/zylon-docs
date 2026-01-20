@@ -16,6 +16,15 @@ Airgap installation enables Zylon deployment in environments with zero internet 
   **Prerequisites**: Two Linux machines (Ubuntu 22/24), file transfer capability (SCP/USB/etc), and the [hardware requirements](/en/operator-manual/installation/hardware-requirements) met on the offline machine.
 </Note>
 
+## Required Network Access
+
+In your online machine, ensure firewall access to these domains:
+
+**Essential Services (Mandatory):**
+- `get.zylon.ai` - CLI installation
+- `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
+- `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
+
 ---
 
 ## Installating Zylon in Airgap Environments
@@ -38,10 +47,24 @@ Airgap installation enables Zylon deployment in environments with zero internet 
 
 <Steps>
   <Step title="Install CLI">
+    _Estimated time: 2 min_
+
+    <Warning>
+      Before to start the installation, we will validate that we have connectivity to download and install the Zylon CLI.
+
+      ```bash
+      curl -sLv get.zylon.ai
+      ```
+
+      If the connection is giving errors, work with your network team to resolve them. Once connectivity is verified, you can proceed.
+    </Warning>
+
     <InstallationCli />
   </Step>
 
   <Step title="Configure Zylon">
+    _Estimated time: 10min_
+
     Create the configuration file that will be used on both machines.
 
     <InstallationConfig />
@@ -95,6 +118,8 @@ Airgap installation enables Zylon deployment in environments with zero internet 
   </Step>
 
   <Step title="Download Zylon Bundle">
+    _Estimated time: 5min to 45min, depending on network speed._
+
     Download the specific Zylon version you want to install:
 
     ```bash
@@ -123,6 +148,8 @@ Airgap installation enables Zylon deployment in environments with zero internet 
   </Step>
 
   <Step title="Export Bundle">
+    _Estimated time: 15 to 60 min, depending on selected models and version._
+
     Package the downloaded files into a transferable bundle:
 
     ```bash
@@ -183,6 +210,8 @@ Airgap installation enables Zylon deployment in environments with zero internet 
 
 <Steps>
   <Step title="Install CLI (First Time Only)">
+    _Estimated time: 2 min_
+
     <Warning>
       **Skip if updating an existing installation.** This is only for first-time installations.
     </Warning>
@@ -207,7 +236,22 @@ Airgap installation enables Zylon deployment in environments with zero internet 
     </Note>
   </Step>
 
+  <Step title="Verify Zylon minimum requirements">
+    Ensure your machine meets the [hardware requirements](/en/operator-manual/hardware-requirements) for Zylon.
+
+    To validate automatically if your installation meets the minimum requirements, run:
+
+    ```bash
+    sudo zylon-cli preflight-checks --fresh-system -v
+    ```
+
+    Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+
+  </Step>
+
   <Step title="Import Airgap Bundle">
+    _Estimated time: 10 to 60 min, depending on bundle size and system performance._
+
     Import the Zylon bundle:
 
     ```bash
@@ -226,6 +270,8 @@ Airgap installation enables Zylon deployment in environments with zero internet 
   </Step>
 
   <Step title="Install Zylon">
+    _Estimated time: 15min to 1hour, depending on system performance._
+
     Install Zylon using the imported bundle:
 
     ```bash
@@ -242,10 +288,14 @@ Airgap installation enables Zylon deployment in environments with zero internet 
   </Step>
 
   <Step title="Create Organization">
+    _Estimated time: 5 min_
+
     <InstallationSeed />
   </Step>
 
   <Step title="Configure SSL Certificates">
+    _Estimated time: 10 min_
+
     <InstallationSsl />
   </Step>
   

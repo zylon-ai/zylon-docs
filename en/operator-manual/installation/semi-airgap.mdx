@@ -22,7 +22,7 @@ This guide covers Zylon installation for environments with limited internet acce
 
 Your firewall must allow access to these domains:
 
-**Essential Services:**
+**Essential Services (Mandatory):**
 - `get.zylon.ai` - CLI installation
 - `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
 - `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
@@ -35,28 +35,19 @@ Your firewall must allow access to these domains:
 - `reg.kyverno.io` - Kyverno policy engine
 - `nvcr.io` - NVIDIA Container Registry
 
-**AI Models & Dependencies:**
+<Info>
+  Since Zylon relies on container images, network access to original registries is required during installation and updates.
+  If your security policies restrict access to container registries, consider move to an airgap installation using [Zylon Airgap Installation Guide](/en/operator-manual/installation/airgap).
+</Info>
+
+**AI Models & Dependencies (Only applicable if you need custom AI models):**
 - `huggingface.co` - AI model repository
 - `xet.huggingface.co` - Hugging Face XET protocol
 
-**System Dependencies:**
-- `nvidia.com` - NVIDIA driver packages
-- `developer.download.nvidia.com` - NVIDIA CUDA toolkit
-- `get.k0s.sh` - Kubernetes distribution installer
-- `raw.githubusercontent.com` - GitHub raw content
-- `github.com` - GitHub repositories
-- `*.github.io` - GitHub Pages (various Helm charts)
-- `openebs.github.io` - OpenEBS storage Helm charts
-- `stakater.github.io` - Stakater Helm charts
-- `kyverno.github.io` - Kyverno Helm charts
-
-**Optional (License-Related):**
+**License Validation (Only applicable if Replicated license is used):**
 - `replicated.app` - Zylon distribution platform
 - `api.replicated.com` - License validation
 - `proxy.replicated.com` - Zylon container images
-
-**Optional (Configuration-Dependent):**
-- `openaipublic.blob.core.windows.net` - Required only for gpt-oss configuration
 
 <Tip>
   Work with your network team to whitelist these domains before starting installation.
@@ -68,10 +59,37 @@ Your firewall must allow access to these domains:
 
 <Steps>
   <Step title="Install Zylon CLI">
+    _Estimated time: 2 min_
+
+    <Warning>
+      Before to start the installation, we will validate that we have connectivity to download and install the Zylon CLI.
+
+      ```bash
+      curl -sLv get.zylon.ai
+      ```
+
+      If the connection is giving errors, work with your network team to resolve them. Once connectivity is verified, you can proceed.
+    </Warning>
+
     <InstallationCli />
   </Step>
 
+  <Step title="Verify Zylon minimum requirements">
+    Ensure your machine meets the [hardware requirements](/en/operator-manual/hardware-requirements) for Zylon.
+
+    To validate automatically if your installation meets the minimum requirements, run:
+
+    ```bash
+    sudo zylon-cli preflight-checks --network --fresh-system -v
+    ```
+
+    Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+
+  </Step>
+
   <Step title="Configure Zylon">
+    _Estimated time: 10min_
+
     <InstallationConfig />
 
     **Local License (If Needed)**
@@ -89,7 +107,7 @@ Your firewall must allow access to these domains:
 
     <Warning>
       Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
-      Just copy the token that starts with `eyJ...` and ends with `...`.
+      Just copy the token that starts with `eyJ...`.
     </Warning>
 
     **For proxy configuration**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
@@ -106,6 +124,8 @@ Your firewall must allow access to these domains:
   </Step>
 
   <Step title="Install Zylon">
+    _Estimated time: 15min to 1hour, depending on system performance and network speed._
+
     Run the installation with your desired version:
 
     ```bash
@@ -113,6 +133,15 @@ Your firewall must allow access to these domains:
     # Choose your desired version from the list
     sudo zylon-cli install <version>
     ```
+    The installation process handles:
+
+    - System dependencies (gcc, git, etc.)
+    - Kubernetes distribution ([k0s](https://k0sproject.io/))
+    - NVIDIA drivers and CUDA (if applicable)
+    - Container runtime and tools (kubectl, helm)
+    - Zylon container images
+    - AI models from your configuration
+    - SSL certificate generation (if using Let's Encrypt)
 
     <InstallationMonitor />
 
@@ -120,10 +149,14 @@ Your firewall must allow access to these domains:
   </Step>
 
   <Step title="Create Organization">
+    _Estimated time: 5 min_
+
     <InstallationSeed />
   </Step>
 
   <Step title="Configure Offline Operation">
+    _Estimated time: 5 min_
+
     After validate that Zylon is running correctly, you can enable offline operation. This will configure Zylon to work without internet access.
     Edit `/etc/zylon/zylon-conf.yaml` and add:
     ```yaml
@@ -131,10 +164,17 @@ Your firewall must allow access to these domains:
       offline_operation: true
     ```
 
+    And sync the configuration:
+    ```bash
+    sudo zylon-cli sync
+    ```
+
     This will disable connectivity in AI, K8s and other subsystems.
   </Step>
 
   <Step title="Configure SSL (Optional)">
+    _Estimated time: 10 min_
+
     For VPN or private network deployments, you need to manually install SSL certificates.
 
     <InstallationSsl />
@@ -155,7 +195,13 @@ airgap:
   offline_operation: false
 ```
 
-Then, run the install command with the new version:
+Validate if Zylon has connectivity again by running:
+
+```bash
+sudo zylon-cli preflight-checks --network -v
+```
+
+If all checks pass, proceed to download and install the update:
 
 ```bash
 sudo zylon-cli list-versions

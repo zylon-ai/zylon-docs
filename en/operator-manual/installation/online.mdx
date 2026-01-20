@@ -13,7 +13,7 @@ import InstallationNextSteps from "/snippets/en/installation/installation-next-s
 This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
 
 <Note>
-  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [installation prerequisites](/en/operator-manual/installation/hardware-requirements).
+  **Prerequisites**: Clean Linux machine (Ubuntu 22/24) with root access, a domain name, and full internet connectivity. See [hardware prerequisites](/en/operator-manual/installation/hardware-requirements) for details. 
 </Note>
 
 ---
@@ -22,19 +22,43 @@ This guide covers the standard Zylon installation for environments with full int
 
 <Steps>
   <Step title="Install Zylon CLI">
+    _Estimated time: 2 min_
+
     <InstallationCli />
   </Step>
 
+  <Step title="Verify Zylon minimum requirements">
+    Ensure your machine meets the [hardware requirements](/en/operator-manual/hardware-requirements) for Zylon.
+
+    To validate automatically if your installation meets the minimum requirements, run:
+
+    ```bash
+    sudo zylon-cli preflight-checks --network --fresh-system -v
+    ```
+
+    Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+    <Info>
+      Are you having issues with network connectivity? Considering move to a [Semi-Airgap Installation](/en/operator-manual/installation/semi-airgap) or [Airgap Installation](/en/operator-manual/installation/airgap).
+    </Info>
+
+  </Step>
+
   <Step title="Configure Zylon">
+    _Estimated time: 10min_
+
     <InstallationConfig />
 
     **For proxy environments**, see the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy).
   </Step>
 
   <Step title="Install Zylon">
+    _Estimated time: 15min to 1hour, depending on system performance and network speed._
+
     Run the installation command with your desired version:
 
     ```bash
+    sudo zylon-cli list-versions
+    # Choose your desired version from the list
     sudo zylon-cli install <version>
     ```
 
@@ -47,19 +71,23 @@ This guide covers the standard Zylon installation for environments with full int
     - System dependencies (gcc, git, etc.)
     - Kubernetes distribution ([k0s](https://k0sproject.io/))
     - NVIDIA drivers and CUDA (if applicable)
-    - Container runtime and tools (kubectl, helm, helmfile)
+    - Container runtime and tools (kubectl, helm)
     - Zylon container images
     - AI models from your configuration
-    - SSL certificate generation
+    - SSL certificate generation (if using Let's Encrypt)
 
     <InstallationMonitor />
   </Step>
 
   <Step title="Create Organization">
+    _Estimated time: 5 min_
+
     <InstallationSeed />
   </Step>
 
   <Step title="Configure SSL (Optional)">
+    _Estimated time: 10 min_
+
     <Info>
       **Skip this step** if using Let's Encrypt automatic certificates (default for public-facing instances).
     </Info>

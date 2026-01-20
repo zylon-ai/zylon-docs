@@ -12,8 +12,8 @@ Usage: `sudo zylon-cli backup --help`
 
 - `-o, --backup-dir`: Path to the backup dir (default: `/var/backups/zylon`)
 - `-k, --keep-last`: Number of backups to keep (default: `10`)
-- `-u, --unsafe`: Don't stop k0s before backup, this might cause data corruption but won't cause downtime
-- `-y, --yes`: Ask user for confirmation
+- `-u, --unsafe`: Do not stop k0s before taking the backup. Use only when avoiding downtime is more important than data safety (for example in non-production or test environments), as this may lead to data corruption and is not recommended for production backups.
+- `-y, --yes`: Skip user confirmation
 
 ## completion
 Generate the autocompletion script for the specified shell
@@ -71,7 +71,7 @@ Usage: `sudo zylon-cli export --help`
 - `--no-zylon-chart`: Exclude Zylon Helm charts
 - `--os`: Target operating system
 - `--output`: Output tar or tar.gz file path (defaults to zylon-{version}-{os}-{arch}.tar)
-- `--yes`: Skip prompts and assume yes for all questions
+- `--yes`: Skip user confirmation
 
 ## forge
 Forge models for Zylon
@@ -138,10 +138,16 @@ Usage: `sudo zylon-cli list-versions --help`
 
 - `--changelog`: Show changelog links (default: `true`)
 
-## preflight-checks
+## preflight
 Execute preflight checks
 
-Usage: `sudo zylon-cli preflight-checks`
+Usage: `sudo zylon-cli preflight --help`
+
+**Flags:**
+
+- `--fresh-system`: Validate fresh system installations
+- `--network`: Validate network access to required domains (for semi-airgap installations)
+- `-v, --verbose`: Enable verbose output with detailed information
 
 ## restart
 Restart Zylon services
@@ -176,7 +182,7 @@ Usage: `sudo zylon-cli seed --help`
 **Flags:**
 
 - `-p, --admin-password`: Root admin password
-- `-e, --email-regex`: All emails matching this regex will be allowed to join the organizationUsually this would be .*@\.yourdomain\.com
+- `-e, --email-regex`: All emails matching this regex will be allowed to join the organization. Usually this would be .*@\.yourdomain\.com
 - `-o, --org-name`: Organization name
 
 ## self-update

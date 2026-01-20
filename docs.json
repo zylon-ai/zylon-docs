@@ -144,6 +144,12 @@
                 "pages": [
                   "en/user-manual/password-recovery"
                 ]
+              },
+              {
+                "group": "n8n",
+                "pages": [
+                  "en/user-manual/n8n"
+                ]
               }
             ]
           },
@@ -404,6 +410,12 @@
                 "group": "Perfil",
                 "pages": [
                   "es/user-manual/password-recovery"
+                ]
+              },
+              {
+                "group": "n8n",
+                "pages": [
+                  "es/user-manual/n8n"
                 ]
               }
             ]

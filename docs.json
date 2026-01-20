@@ -264,7 +264,6 @@
                   {
                     "group": "Features & Capabilities",
                     "pages": [
-                      "en/operator-manual/configuration/features/index",
                       "en/operator-manual/configuration/features/feat-mcp",
                       "en/operator-manual/configuration/features/feat-database",
                       "en/operator-manual/configuration/features/feat-audit",
@@ -279,7 +278,8 @@
                       "en/operator-manual/configuration/observability",
                       "en/operator-manual/configuration/search",
                       "en/operator-manual/configuration/performance",
-                      "en/operator-manual/configuration/whitelabel"
+                      "en/operator-manual/configuration/whitelabel",
+                      "en/operator-manual/configuration/n8n"
                     ]
                   },
                   "en/operator-manual/configuration/cli"
@@ -505,7 +505,8 @@
                   "es/operator-manual/update",
                   "es/operator-manual/backup",
                   "es/operator-manual/sys-admin-dashboard",
-                  "es/operator-manual/nvidia-drivers-troubleshooting"
+                  "es/operator-manual/nvidia-drivers-troubleshooting",
+                  "es/operator-manual/n8n"
                 ]
               },
               {
@@ -537,6 +538,7 @@
                   "es/operator-manual/configuration/search",
                   "es/operator-manual/configuration/performance",
                   "es/operator-manual/configuration/whitelabel",
+                  "es/operator-manual/configuration/n8n",
                   {
                     "group": "Funciones",
                     "pages": [

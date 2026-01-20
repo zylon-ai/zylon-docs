@@ -45,6 +45,7 @@ Una cadena de conexión es como una dirección que le dice al sistema dónde enc
 - Microsoft SQL Server
 - PostgreSQL
 - MySQL
+- DB2
 
 
 #### Cadena de conexión
@@ -62,6 +63,7 @@ Esto es lo que significa cada parte (pide a tu equipo de TI los valores correcto
 SQL Server: mssql+pyodbc://username:password@server:1433/database
 PostgreSQL: postgresql://username:password@server:5432/database
 MySQL: mysql+mysqldb://username:password@server:3306/database
+DB2: db2+ibm_db://username:password@server:50000/database
 ```
 
 **Examples**
@@ -90,6 +92,14 @@ MySQL: mysql+mysqldb://username:password@server:3306/database
     mysql+mysqldb://appuser:secret123@127.0.0.1:3306/inventory
 
     mysql+mysqldb://localhost:3306/reports
+    ```
+
+    ```sql DB2
+    db2+ibm_db://db2admin:password123@db2server.company.com:50000/SALESDB
+
+    db2+ibm_db://dbuser:mypassword@192.168.1.50:50000/PRODDATA
+
+    db2+ibm_db://localhost:50000/TESTDB
     ```
 
     Recuerda: Reemplaza `username`, `password`, `server` y `database` con tus valores reales.

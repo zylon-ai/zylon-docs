@@ -3,94 +3,87 @@ title: "Getting Started"
 description: "Choose your installation mode based on your security and connectivity needs"
 ---
 
-Zylon supports three installation modes to accommodate different network environments. Choose the one that best fits your security and connectivity requirements.
+Zylon supports three installation modes. Choose based on your network environment and security requirements.
 
-| Feature | Online | Semi-Airgap | Airgap |
-|---------|--------|-------------|--------|
-| Internet Access | Full | Limited | None on target |
-| Setup Complexity | Simple | Moderate | Complex |
-| Security Level | Standard | High | Maximum |
-| Update Process | Simple | Required manual work | Pseudo-manual |
-| Proxy Support | ✓ | ✓ | ✗ |
-| Installation Time | ~30-90 min | ~1-2 hours | ~2-3 hours |
-| Update Time | ~15-40 min | ~30-60 min | ~1-2 hours |
-| Requires downtime for updates | Not common, or minutes | Not common, or minutes | Always, 15-60 min |
+## Quick Comparison
 
-This table summarizes the key differences between the three installation modes. Detailed guides for each mode are provided below.
+|  | Online | Semi-Airgap | Airgap |
+|---|--------|-------------|--------|
+| **Use Case** | Standard deployments | Restricted networks | Maximum security |
+| **Internet Access** | Full | Limited | None |
+| **Complexity** | Simple | Moderate | Complex |
+| **Installation Time** | 30-90 min | 1-2 hours | 2-3 hours |
+| **Update Time** | 15-40 min | 30-60 min | 1-2 hours |
+| **Update Downtime** | Rare | Rare | Always (15-60 min) |
 
+---
 
-## Choose Your Installation Guide
+## Installation Modes
+
+<Tabs>
+  <Tab title="Online">
+    ### Online Installation
+    
+    **Use when**: Standard deployments with full internet access
+    
+    **How it works**: Server downloads packages and images directly from official repositories.
+    
+    **Key characteristics**:
+    - Automated setup and updates
+    - Minimal downtime for updates
+    - Standard security posture
+    
+    **Installation Guide** → [Online Installation](/en/operator-manual/installation/online)
+  </Tab>
+  
+  <Tab title="Semi-Airgap">
+    ### Semi-Airgap Installation
+    
+    **Use when**: Restricted networks with controlled internet via proxy/firewall
+    
+    **How it works**: Limited access through whitelisted domains and proxy configuration.
+    
+    **Key characteristics**:
+    - Requires open domains and ports
+    - Requires internet connectivity in install/update phases
+    - In operational mode, functions like airgap (no external connectivity needed)
+    - Minimal downtime for updates
+    - Proxy support
+    
+    **Installation Guide** → [Semi-Airgap Installation](/en/operator-manual/installation/semi-airgap)
+  </Tab>
+  
+  <Tab title="Airgap">
+    ### Airgap Installation
+    
+    **Use when**: Maximum security required, no internet access allowed
+    
+    **How it works**: Transfer 70-100 GB bundles from online machine via offline media to target server.
+    
+    **Key characteristics**:
+    - Requires two linux machines (online and offline)
+    - All installation process is offline on target
+    - Manual update process (download, transfer, apply)
+    - Always requires downtime (15-60 min)
+    
+    **Installation Guide** → [Airgap Installation](/en/operator-manual/installation/airgap)
+  </Tab>
+</Tabs>
+
+---
+
+## Installation Steps
 
 <Steps>
-  <Step title="Assess Your Environment">
-    Determine which installation mode matches your environment and security requirements. Consider factors like internet access, security policies, and update procedures.
-    More details on each mode are provided below.
+  <Step title="Choose Your Mode">
+    Select the mode matching your security policy and network environment.
   </Step>
   
-  <Step title="Follow the Installation Guide">
-    <CardGroup cols={3}>
-      <Card title="Online Installation" icon="globe" href="/en/operator-manual/installation/online">
-        ---
-        **Best for**: Standard deployments. More details [here](/en/operator-manual/installation#online-installation)
-      </Card>
-      
-      <Card title="Semi-Airgap" icon="shield-halved" href="/en/operator-manual/installation/semi-airgap">
-      ---
-        **Best for**: For restricted networks. More details [here](/en/operator-manual/installation#semi-airgap-installation)
-      </Card>
-      
-      <Card title="Airgap Installation" icon="shield" href="/en/operator-manual/installation/airgap">
-      ---
-        **Best for**: Maximum security. More details [here](/en/operator-manual/installation#airgap-installation)
-      </Card>
-    </CardGroup>
+  <Step title="Run Installation">
+    Follow the guide for your chosen mode. All modes use the Zylon CLI installer.
   </Step>
   
   <Step title="Post-Installation">
-    After installation, configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/operations/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
+    Configure [AI Presets](/en/operator-manual/ai-presets), set up [backups](/en/operator-manual/operations/backup), and review the [User Manual](/en/user-manual/quick-start-guide).
   </Step>
 </Steps>
-
----
-
-### Understanding better the Installation Modes
-
-#### Online Installation
-
-**Overview**: The Zylon server has full, unrestricted access to the internet. It can download packages, container images, and updates directly from official repositories and registries.
-
-**Features**:
-- **Setup Complexity**: Straightforward installation using a single command. The installer automatically downloads and configures all required components. Minimal technical expertise required.
-- **Security Level**: Standard security appropriate for most business environments. The server can communicate outbound to download updates and access external services.
-- **Update Process**: Fully automated. Run a single update command and the system downloads and applies all updates automatically. Can be scheduled using cron jobs for hands-off maintenance.
-- **Proxy Support**: Supported if needed
-- **Installation Time**: ~30-90 minutes depending on your network speed and hardware
-- **Update Time**: ~15-40 minutes. Downtime is not common, or just a few minutes when required.
-
----
-
-#### Semi-Airgap Installation
-
-**Overview**: The server has limited or controlled internet access, typically through a proxy or firewall with whitelisted domains.
-
-**Features**:
-- **Setup Complexity**: Moderate. Requires network configuration (proxy settings, firewall rules). You'll need to coordinate with your network security team to whitelist specific domains and ports.
-- **Security Level**: Enhanced security through network isolation and controlled access points. Reduces exposure to internet-based threats while maintaining update capabilities through controlled channels.
-- **Update Process**: Updates require manual intervention to download update packages on a connected machine, and then apply them. Coordination with network security teams may be needed for installing/updating.
-- **Proxy Support**: Supported and typically required
-- **Installation Time**: ~1-2 hours including network configuration
-- **Update Time**: ~30-60 minutes. Downtime is not common, or just a few minutes when required.
-
----
-
-#### Airgap Installation
-
-**Overview**: The target server has no internet connection whatsoever. All installation files, container images, and dependencies must be transferred from a connected machine to the isolated target server using offline media (USB drives, internal network transfers, etc.).
-
-**Features**:
-- **Setup Complexity**: Most complex setup requiring a staging machine with internet access, manual transfer of large installation bundles (70-100 GB), and careful coordination between the connected and isolated environments.
-- **Security Level**: Highest security posture for sensitive environments (government, defense, healthcare, finance). Complete isolation from external networks eliminates internet-based attack vectors entirely. Ideal for compliance with strict security frameworks (NIST, FedRAMP, classified environments).
-- **Update Process**: Pseudo-manual process requiring the use of a connected machine to download update bundles, transfer them offline to the target server, and apply them through the CLI. Plan for 1-2 hour maintenance windows for major updates. This will often cause downtime for Zylon services during the update process.
-- **Proxy Support**: Not applicable (no internet connection)
-- **Installation Time**: ~2-3 hours including file transfers
-- **Update Time**: ~1-2 hours. Always requires 15-60 minutes of downtime.

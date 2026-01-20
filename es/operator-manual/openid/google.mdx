@@ -1,97 +1,6 @@
 ---
-title: Integraciones OpenID (SSO)
+title: Integración con Google (SSO)
 ---
-
-## Cuenta de Microsoft
-
-### Agregar una nueva aplicación para Zylon
-
-El objetivo es obtener 3 valores que se utilizarán para configurar Zylon para poder iniciar sesión con una cuenta de Microsoft.
-
-- `Application (client) ID`
-- `Client Secret`
-
-1. Primero necesitas iniciar sesión en el panel de consola https://portal.azure.com/#home
-2. Haz clic en `Microsoft Entra Id`
-
-![image.png](/images/operator-manual/openid-images/microsoft/image.png)
-
-3. Registra una nueva aplicación. Haz clic en `App registrations` en el menú izquierdo.
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%201.png)
-
-4. Haz clic en `New Registration`.
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%202.png)
-
-1. Se abrirá una nueva ventana y necesitarás agregar la siguiente información
-- ⚠️ El tipo de Redirect URI es **web**⚠️
-- Dominio: `https://zylon.company.com/api/v1/auth/microsoft/callback`. Reemplaza `zylon.company.com` con el dominio donde está alojado Zylon (Es el mismo dominio que en el archivo de configuración ubicado en `/etc/zylon/zylon-conf.yaml`).
-- Tipos de cuenta admitidos: Se admiten todos los tipos de cuenta. Elige según tus necesidades específicas.
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%203.png)
-
-- En caso de que quieras cambiarlo más tarde, puedes hacerlo en `Application Overview`
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%204.png)
-
-
-5. Guarda el siguiente valor que se usará más tarde en el archivo de configuración para Zylon.
-- Application (client) ID
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%205.png)
-
-6. Ahora necesitamos generar el `ClientSecret`. Ve al menú izquierdo y haz clic en `Manage > Certificates & secrets`
-
-<img src="/images/operator-manual/openid-images/microsoft/image%206.png" alt="image.png" width="50%"/>
-
-7. Haz clic en `New client secret` y agrega la información requerida
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%207.png)
-
-8. Copia el `Value` del secreto del cliente.
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%208.png)
-
-9. Verifica que el permiso `User.read` esté concedido. Haz clic en `API Permissions` en el menú izquierdo. Deberías verlo allí por defecto. En caso de que falte, concédelo.
-
-![image.png](/images/operator-manual/openid-images/microsoft/image%209.png)
-
-10. Agrega la siguiente configuración a `/etc/zylon/zylon-conf.yaml`
-
-<Warn>
-    El archivo de configuración es un archivo `.yaml` por lo que la sangría, espacios, punto y coma, comillas dobles son muy importantes
-</Warn>
-
-```yaml
-auth:
-  microsoft:
-    enabled: true
-    redirectUri: "https://zylon.company.com/api/v1/auth/microsoft/callback"
-    tenantId: "common"
-    clientId: "8c7d......"
-    clientSecret: ".RS8Q~....."
-```
-
-Ejecuta el siguiente comando para actualizar la configuración
-
-```yaml
-sudo zylon-cli update
-```
-
-Ahora deberías ver el SSO de Microsoft Account
-
-<Tip>
-    En caso de que no veas el botón de Microsoft Account para iniciar sesión, limpia la caché del navegador.
-</Tip>
-
-### Cómo gestionar usuarios
-
-Para limitar el número de usuarios que pueden iniciar sesión en Zylon, consulta el siguiente enlace, por defecto todos en el Directorio pueden acceder a Zylon y se les otorgará el rol `member`
-
-[https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/what-is-access-management](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/what-is-access-management)
-
-## Google
 
 ### Crear una nueva aplicación OAuth para Zylon
 
@@ -101,11 +10,7 @@ Accede a la [Consola de Google Cloud](https://console.cloud.google.com/).
 
 <Note>
     Es posible que necesites crear un nuevo proyecto de Google para Zylon si aún no tienes uno.
-
-    ```
     ![create-project](/images/operator-manual/openid-images/google/1-create-project.png)
-    ```
-
 </Note>
 
 Ve a la [sección de Autenticación de Google](https://console.cloud.google.com/auth/) para crear la aplicación.
@@ -156,7 +61,8 @@ sustituyendo los valores de `clientId` y `clientSecret` por los obtenidos en los
 y `redirectUri` por el dominio correcto donde está alojado Zylon.
 
 <Warn>
-    El archivo de configuración es un archivo `.yaml`, por lo que la indentación, los espacios, los puntos y coma y las comillas dobles son relevantes.
+    El archivo de configuración es un archivo `.yaml`, por lo que la indentación, los espacios, los puntos y coma y las
+    comillas dobles son relevantes.
 </Warn>
 
 ```yaml

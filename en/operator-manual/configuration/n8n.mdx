@@ -12,7 +12,7 @@ n8n support is available starting from Zylon 1.53
 
 ### Important Considerations
 - **Version management**: Zylon manages the deployed n8n version to ensure compatibility with the rest of the system. Manual n8n updates are not available.
-- **Access**: n8n is available at the `/n8n` path of your Zylon instance (for example: `https://your-zylon-instance.com/n8n`)
+- **Access**: n8n is available at its own subdomain (for default: `https://n8n.your-zylon-instance.com`)
 - **User management**: User management in n8n is independent from Zylon users. Users must be created and managed directly within the n8n interface.
 
 ### Configuration
@@ -22,6 +22,7 @@ To enable n8n in your environment, you only need to modify the corresponding opt
 ```yaml
 n8n:
   enabled: true  # Set to false to disable n8n
+  host: ""  # Specify a custom host if needed.
   publicApi:
     enabled: false  # Enable n8n's public REST API
   externalConnection:
@@ -44,6 +45,36 @@ The `license` fields only apply when `externalConnection.enabled` is set to `tru
 In airgap mode, `externalConnection.enabled` will always be `false` regardless 
 of the configured value ([Semi-airgap installation](/en/operator-manual/semi-airgap))
 </Warning>
+
+### SSL Certificates Configuration
+
+<Warning>
+This section is only necessary if you are not using Let's Encrypt certificates
+</Warning>
+
+If your Zylon installation uses manual SSL certificates (not Let's Encrypt), you will need to create an additional Kubernetes secret specifically for n8n.
+
+First, ensure you have completed all the steps in the [manual SSL certificates installation guide](/en/operator-manual/install#step-6-optional-:-manually-installing-ssl-certificates).
+
+#### Create a Secret for n8n
+
+Once you have your certificate files ready (`tls.crt` and `tls.key`), create a secret in the Kubernetes cluster specifically for n8n:
+
+```bash
+# Create the n8n SSL secret
+sudo k0s kubectl create secret tls zylon-tls-n8n --key tls.key --cert tls.crt -n zylon
+
+# Verify the secret was created correctly
+sudo k0s kubectl describe secret zylon-tls-n8n -n zylon
+```
+
+After creating the secret, reload the configuration:
+
+```bash
+sudo zylon-cli sync
+```
+
+Your n8n instance will now use HTTPS with the configured SSL certificates.
 
 ### External Connections
 

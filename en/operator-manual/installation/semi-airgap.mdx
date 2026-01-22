@@ -5,6 +5,7 @@ description: "Install Zylon in environments with restricted internet access"
 
 import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
 import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
@@ -100,36 +101,63 @@ Your firewall must allow access to these domains:
 
     <InstallationConfig />
 
-    **Local License (If Needed)**
+    <Tabs>
+      <Tab title="Auto Configuration">
+        If you executed `sudo zylon-cli config init`, all configuration is set.
+        Review `/etc/zylon/zylon-conf.yaml` to confirm settings. You can know more information about which settings are required in [Manual Configuration](#manual-configuration) section.
 
-    If `api.replicated.com` is blocked during operation, you need a local license. Contact Zylon support to obtain it, then add:
+        <Info>
+          If you need to re-run the configuration wizard, execute:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
 
-    ```yaml
-    license:
-      email: "champion@company.com"
-      id: "2xo..."
-      type: "Zylon"
-      data: |-
-        [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+        You can 
+
+      </Tab>
+      <Tab title="Manual Configuration">
+        <InstallationManualConfig />
+
+        **Local License (If Needed)**
+
+        If `api.replicated.com` is blocked during operation, you need a local license. Contact Zylon support to obtain it, then add:
+
+        ```yaml
+        license:
+          email: "champion@company.com"
+          id: "2xo..."
+          type: "Zylon"
+          data: |-
+            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+        ```
+
+        <Warning>
+          Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
+          Just copy the token that starts with `eyJ...`.
+        </Warning>
+
+        **Proxy configuration (If Needed)**
+        
+        Refer to the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy) to set up proxy settings in your configuration.
+
+        **Disable Let's Encrypt**
+
+        Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
+
+        ```yaml
+        certManagerAnnotations:
+          cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        ```
+      </Tab>
+    </Tabs>
+
+    **View Current Configuration**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
     ```
 
-    <Warning>
-      Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
-      Just copy the token that starts with `eyJ...`.
-    </Warning>
-
-    **Proxy configuration (If Needed)**
-    
-    Refer to the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy) to set up proxy settings in your configuration.
-
-    **Disable Let's Encrypt**
-
-    Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
-
-    ```yaml
-    certManagerAnnotations:
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    ```
+    For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).
 
   </Step>
 

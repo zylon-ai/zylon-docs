@@ -10,16 +10,10 @@ sudo zylon-cli config init
 This opens an interactive prompt to guide you through configuration options.
 
 <Info>
-To skip the interactive prompt and generate a base configuration with defaults, use:
+If for any reason you got stuck during the interactive prompt, you can skip it by adding the `-y` flag to auto-generate a default configuration:
 ```bash
 sudo zylon-cli config init -y
 ```
+You will need to manually edit `/etc/zylon/zylon-conf.yaml` afterward to set your desired configuration based on the [manual configuration](#manual-configuration) section.
 
 </Info>
-
-**View Current Configuration**
-```bash
-sudo zylon-cli config show
-```
-
-For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).

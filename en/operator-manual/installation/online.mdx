@@ -5,6 +5,7 @@ description: "Install Zylon with full internet access"
 
 import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
 import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
@@ -58,6 +59,34 @@ This guide covers the standard Zylon installation for environments with full int
     _Estimated time: 10min_
 
     <InstallationConfig />
+
+    <Tabs>
+      <Tab title="Auto Configuration">
+        If you executed `sudo zylon-cli config init`, all configuration is set.
+        Review `/etc/zylon/zylon-conf.yaml` to confirm settings. You can know more information about which settings are required in [Manual Configuration](#manual-configuration) section.
+
+        <Info>
+          If you need to re-run the configuration wizard, execute:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
+
+        You can 
+
+      </Tab>
+      <Tab title="Manual Configuration">
+        <InstallationManualConfig />
+      </Tab>
+    </Tabs>
+
+
+    **View Current Configuration**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).
 
   </Step>
 

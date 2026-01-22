@@ -5,6 +5,7 @@ description: "Install Zylon in completely offline environments"
 
 import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
 import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
 import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
@@ -74,51 +75,59 @@ In your online machine, ensure firewall access to these domains:
 
     <InstallationConfig />
 
-    **Airgap Configuration**
+    <Tabs>
+      <Tab title="Auto Configuration">
+        If you executed `sudo zylon-cli config init`, all configuration is set.
+        Review `/etc/zylon/zylon-conf.yaml` to confirm settings. You can know more information about which settings are required in [Manual Configuration](#manual-configuration) section.
 
-    Ensure you add the airgap configuration:
+        <Info>
+          If you need to re-run the configuration wizard, execute:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
 
-    ```yaml
-    airgap:
-      offline_install: true
-      offline_operation: true
+      </Tab>
+      <Tab title="Manual Configuration">
+        <InstallationManualConfig />
+
+        **Airgap Settings**
+
+        Ensure these settings are included to indicate airgap installation and operation:
+
+        ```yaml
+        airgap:
+          offline_install: true
+          offline_operation: true
+        ```
+
+        **Local License**
+
+        Since the offline machine cannot reach `api.replicated.com`, you need a local license. Contact Zylon support to obtain it, then add:
+
+        ```yaml
+        license:
+          email: "champion@company.com"
+          id: "2xo..."
+          type: "Zylon"
+          data: |-
+            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+        ```
+
+        <Warning>
+          Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
+          Just copy the token that starts with `eyJ...` and ends with `...`.
+        </Warning>
+
+      </Tab>
+    </Tabs>
+
+    **View Current Configuration**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
     ```
 
-    **Local License**
-
-    Since the offline machine cannot reach `api.replicated.com`, you need a local license. Contact Zylon support to obtain it, then add:
-
-    ```yaml
-    license:
-      email: "champion@company.com"
-      id: "2xo..."
-      type: "Zylon"
-      data: |-
-        [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
-    ```
-
-    <Warning>
-      Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
-      Just copy the token that starts with `eyJ...` and ends with `...`.
-    </Warning>
-
-    **Disable Let's Encrypt**
-
-    Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
-
-    ```yaml
-    certManagerAnnotations:
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    ```
-
-    **Disable telemetry & crash reporting**
-    To disable telemetry and crash reporting, add the following section:
-
-    ```yaml
-    observability:
-      crashReporting: false
-      usageMetrics: false
-    ```
+    For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).
 
   </Step>
 
@@ -128,17 +137,11 @@ In your online machine, ensure firewall access to these domains:
     Download the specific Zylon version you want to install:
 
     ```bash
-    sudo zylon-cli list-versions
-    # Choose your desired version from the list
-    sudo zylon-cli download <version> --airgap
+    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
     ```
 
-    **Include AI Models (First Installation or Additional Models)**
-
-    For your first installation or if you need additional models:
-    ```bash
-    sudo zylon-cli download <version> --airgap --models=model-a,model-b,model-c
-    ```
+    Replace `<version>` with your target version (e.g., `1.50.0`).
+    The `--models` flag is used to specify which AI models to include in the download. You can list multiple models separated by commas.
 
     <Warning>
       **First installation or additional models require AI models!** Use the `--models` flag to specify which models to include.
@@ -147,24 +150,17 @@ In your online machine, ensure firewall access to these domains:
       ```bash
       sudo zylon-cli forge list
       ```
-      
-      Compare with your AI preset definition to determine required models.
+      Compare with your AI preset definition to determine required models. More preset details [here](/en/operator-manual/configuration/ai-presets).
     </Warning>
   </Step>
 
   <Step title="Export Bundle">
     _Estimated time: 15 to 60 min, depending on selected models and version._
 
-    Package the downloaded files into a transferable bundle:
+    Export the downloaded version into an airgap bundle. If you included models during download, ensure to include them here as well:
 
     ```bash
-    sudo zylon-cli export <version> --airgap
-    ```
-
-    Include models if downloaded:
-
-    ```bash
-    sudo zylon-cli export <version> --airgap --models=model-a,model-b,model-c
+    sudo zylon-cli export <version> --airgap [--models=model-a,model-b,model-c]
     ```
 
     This creates `zylon-<version>-airgap.tar` in your current directory. Additionally, it will generate
@@ -183,10 +179,27 @@ In your online machine, ensure firewall access to these domains:
     Create a bundle with CLI tools and configuration:
 
     ```bash
-    tar -czf zylon-initial.tar.gz \
+    sudo tar -czf zylon-initial.tar.gz \
       /usr/local/bin/zylon-cli \
       /usr/local/bin/zylon-forge-cli \
       /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Prepare Certificates (Optional)">
+    _Estimated time: 5 min_
+
+    If your Zylon instance is in a private network or VPN, you need to manually provide SSL certificates.
+    Prepare them for transfer:
+
+    Gather your SSL certificate files:
+    - `crt.pem` (Certificate + Intermediate)
+    - `key.pem` (Private Key)
+
+    Create a tarball for transfer:
+
+    ```bash
+    sudo tar -czf zylon-ssl-certs.tar.gz crt.pem key.pem
     ```
   </Step>
 
@@ -196,6 +209,7 @@ In your online machine, ensure firewall access to these domains:
     **First installation:**
     - `zylon-<version>-airgap.tar` (main bundle)
     - `zylon-initial.tar.gz` (CLI and config)
+    - `zylon-ssl-certs.tar.gz` (SSL certs, if applicable)
 
     **Subsequent updates:**
     - `zylon-<version>-airgap.tar` (main bundle only)
@@ -205,6 +219,7 @@ In your online machine, ensure firewall access to these domains:
     ```bash
     scp zylon-<version>-airgap.tar user@offline-machine:/tmp/
     scp zylon-initial.tar.gz user@offline-machine:/tmp/
+    scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
     ```
   </Step>
 </Steps>
@@ -272,21 +287,22 @@ In your online machine, ensure firewall access to these domains:
     <Warning>
       Import can take 30+ minutes depending on bundle size and system performance. Do not interrupt.
     </Warning>
+
+    Verify that import completed successfully by checking installed versions:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+
   </Step>
 
   <Step title="Install Zylon">
     _Estimated time: 15min to 1hour, depending on system performance._
 
-    Install Zylon using the imported bundle:
+    Install Zylon using the imported bundle, including airgap flag and models:
 
     ```bash
-    sudo zylon-cli install <version> --airgap
-    ```
-
-    Include models if bundled:
-
-    ```bash
-    sudo zylon-cli install <version> --airgap --models=model-a,model-b,model-c
+    sudo zylon-cli install <version> --airgap [--models=model-a,model-b,model-c]
     ```
 
     <InstallationMonitor />
@@ -298,8 +314,17 @@ In your online machine, ensure firewall access to these domains:
     <InstallationSeed />
   </Step>
 
-  <Step title="Configure SSL Certificates">
+  <Step title="Configure SSL Certificates (If applicable)">
     _Estimated time: 10 min_
+
+    If you prepared SSL certificates on the online machine, extract them now:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-ssl-certs.tar.gz -C /tmp/
+    ls /tmp/crt.pem /tmp/key.pem
+    ```
+    If you see both files, proceed to install them as follows:
 
     <InstallationSsl />
   </Step>
@@ -395,6 +420,13 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     <Warning>
       This may take 10-30 minutes. Don't interrupt the process.
     </Warning>
+
+    Verify that import completed successfully by checking installed versions:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+
   </Step>
 
   <Step title="On Offline Machine: Apply Update">

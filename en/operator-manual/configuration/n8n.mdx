@@ -112,7 +112,11 @@ n8n provides CLI commands that allow selective export and import of entities. Th
 - **Migration from other environments**: If you want to migrate n8n information to Zylon from another existing environment
 - **Selective import**: Export specific workflows from other environments and import them into Zylon without needing to migrate the entire instance
 
-### Export Commands
+<Info>
+For more information about CLI commands, see the [official n8n documentation](https://docs.n8n.io/hosting/cli-commands/).
+</Info>
+
+### Basic Export Commands
 
 **Export all workflows:**
 ```bash
@@ -143,7 +147,7 @@ Use the `--decrypted` option when migrating between instances with different enc
 n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
 ```
 
-### Import Commands
+### Basic Import Commands
 
 **Import workflows:**
 ```bash
@@ -215,4 +219,3 @@ Exported entities retain their original IDs, so importing them will overwrite ex
 Export files must be located in an accessible directory within the pod, typically `/home/node/.n8n/`.
 </Warning>
 
-For more information about CLI commands, see the [official n8n documentation](https://docs.n8n.io/hosting/cli-commands/).

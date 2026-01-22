@@ -164,6 +164,9 @@ n8n import:credentials --input=/home/node/.n8n/credentials.json
 <Nota>
 It is expected that the database is empty before the import; this can be enforced with the --truncateTables parameter.
 </Nota>
+<Warning>
+Only works if the export database type matches the target database type. Zylon n8n uses PostgreSQL.
+</Warning>
 
 **Import complete instance:**
 ```bash

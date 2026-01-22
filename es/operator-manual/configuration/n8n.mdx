@@ -164,6 +164,12 @@ Se espera que la base de datos esté vacía antes de la importación, esto se pu
 </Nota>
 
 **Importar instancia completa:**
+
+<Warning>
+Solo funciona si el tipo de base de datos de exportación coincide con el tipo de base de datos de destino. Zylon n8n utiliza PostgreSQL.
+</Warning>
+
+
 ```bash
 n8n import:entities --inputDir ./outputs --truncateTables true
 ```

@@ -139,7 +139,7 @@ Usa la opción `--decrypted` cuando migres entre instancias con diferentes clave
 
 **Exportar instancia completa:**
 ```bash
-n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
 ```
 
 ### Comandos de Importación
@@ -159,9 +159,18 @@ n8n import:workflow --input=/home/node/.n8n/workflow-42.json
 n8n import:credentials --input=/home/node/.n8n/credentials.json
 ```
 
+<Nota>
+Se espera que la base de datos esté vacía antes de la importación, esto se puede forzar con el --truncateTables parámetro.
+</Nota>
+
+**Importar instancia completa:**
+```bash
+n8n import:entities --inputDir ./outputs --truncateTables true
+```
+
 ### Transferir archivos desde tu máquina local
 
-Si necesitas importar workflows o credenciales desde archivos JSON ubicados en tu máquina local, primero debes transferirlos al pod de n8n:
+Si necesitas importar workflows, credenciales u otros archivos ubicados en tu máquina local, primero debes transferirlos al pod de n8n:
 
 #### 1. Obtener el ID del volumen persistente
 

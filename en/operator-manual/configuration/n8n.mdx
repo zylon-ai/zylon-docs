@@ -140,7 +140,7 @@ Use the `--decrypted` option when migrating between instances with different enc
 
 **Export complete instance:**
 ```bash
-n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
 ```
 
 ### Import Commands
@@ -160,9 +160,19 @@ n8n import:workflow --input=/home/node/.n8n/workflow-42.json
 n8n import:credentials --input=/home/node/.n8n/credentials.json
 ```
 
+**Import all instance:**
+<Nota>
+It is expected that the database is empty before the import; this can be enforced with the --truncateTables parameter.
+</Nota>
+
+**Import complete instance:**
+```bash
+n8n import:entities --inputDir ./outputs --truncateTables true
+```
+
 ### Transfer Files from Your Local Machine
 
-If you need to import workflows or credentials from JSON files located on your local machine, you must first transfer them to the n8n pod:
+If you need to import workflows, credentials or other files located on your local machine, you must first transfer them to the n8n pod:
 
 #### 1. Get the Persistent Volume ID
 

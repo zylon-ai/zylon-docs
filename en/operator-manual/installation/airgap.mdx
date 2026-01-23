@@ -151,6 +151,16 @@ In your online machine, ensure firewall access to these domains:
       sudo zylon-cli forge list
       ```
       Compare with your AI preset definition to determine required models. More preset details [here](/en/operator-manual/configuration/ai-presets).
+
+      For example, if you preset is `baseline-24g`, include:
+      ```bash
+      --models=qwen/qwen3-14b-awq,mixedbread-ai/mxbai-embed-large-v1
+      ```
+
+      If you are using extra capabilities like `multilingual`, include:
+      ```bash
+      --models=qwen/qwen3-14b-awq,intfloat/multilingual-e5-large
+      ```
     </Warning>
   </Step>
 

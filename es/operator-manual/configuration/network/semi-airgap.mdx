@@ -1,22 +1,22 @@
 ---
-title: "Semi-airgap installation"
-description: "Instructions for installing Zylon in a semi-airgapped environment"
+title: "Instalación semi-airgap"
+description: "Instrucciones para instalar Zylon en un entorno semi-airgapped"
 ---
 
-We considered a semi-airgapped environment to be one where the target machine has limited
-internet access, is under a very restrictive firewall or proxy but still can pull
-some resources from the internet at least once during the initial setup.
+Consideramos un entorno semi-airgapped como aquel donde la máquina objetivo tiene acceso limitado
+a internet, está bajo un firewall o proxy muy restrictivo pero aún puede obtener
+algunos recursos de internet al menos una vez durante la configuración inicial.
 
 <Tip>
-    Check out the [proxy guide](/en/operator-manual/proxy) if you need to configure a proxy.
+    Consulta la [guía de proxy](/es/operator-manual/configuration/network/proxy) si necesitas configurar un proxy.
 </Tip>
 
-To Zylon installation is possible, at minimum all these requirements must be met:
-* It's possible to run apt-get to install system dependencies
-  * If apt is not available the following packages must be installed manually:
+Para que la instalación de Zylon sea posible, como mínimo se deben cumplir todos estos requisitos:
+* Es posible ejecutar apt-get para instalar dependencias del sistema
+  * Si apt no está disponible, los siguientes paquetes deben instalarse manualmente:
 `gcc`, `make`, `wget`, `git`, `curl`, `gpg`
-* The server clock is synchronized with a NTP server
-* All these domains are reachable:
+* El reloj del servidor está sincronizado con un servidor NTP
+* Todos estos dominios son accesibles:
   * `get.zylon.ai`
   * `zylon-cli.s3.us-east-1.amazonaws.com`
   * `quay.io`
@@ -41,11 +41,11 @@ To Zylon installation is possible, at minimum all these requirements must be met
   * `replicated.app`
   * `api.replicated.com`
   * `proxy.replicated.com`
-* Note: Depending on your configuration, additional domains may be required:
+* Nota: Dependiendo de tu configuración, pueden requerirse dominios adicionales:
   * gpt-oss: `openaipublic.blob.core.windows.net`
 
-These are the the docker images that will be downloaded during installation, hosted
-in docker, our private Zylon image repository, or github (versions might vary as we update Zylon)
+Estas son las imágenes de docker que se descargarán durante la instalación, alojadas
+en docker, nuestro repositorio de imágenes privado de Zylon, o github (las versiones pueden variar a medida que actualizamos Zylon)
 
 ```yaml expandable
 docker.io/alpine/k8s:1.29.13
@@ -115,22 +115,22 @@ registry.k8s.io/sig-storage/csi-resizer:v1.8.0
 registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0
 registry.k8s.io/sig-storage/snapshot-controller:v8.2.0
 ```
-## Requistes
-You are required to have a local Zylon License in case `api.replicated.com` cannot be reached during operation time.
-To obtain your local Zylon License, please reach out to Zylon team.
+## Requisitos
+Se requiere tener una Licencia Local de Zylon en caso de que `api.replicated.com` no sea accesible durante el tiempo de operación.
+Para obtener tu Licencia Local de Zylon, por favor contacta al equipo de Zylon.
 
-## Enable semi-airgapped environment
-Add to the configuration file located in `/etc/zylon/zylon-conf.yaml` the following snippet:
+## Habilitar entorno semi-airgapped
+Agrega al archivo de configuración ubicado en `/etc/zylon/zylon-conf.yaml` el siguiente fragmento:
 ```yaml
 airgap:
   offline_operation: true
 ```
 
-In case you need the local license add the `type` and `data` properties to the `license` block in the configuration file.
+En caso de que necesites la licencia local, agrega las propiedades `type` y `data` al bloque `license` en el archivo de configuración.
 ```yaml
 license:
-  email: "dev@zylon.ai" // remains as it was
-  id: "2xo..." // remains as it was
+  email: "dev@zylon.ai" // permanece como estaba
+  id: "2xo..." // permanece como estaba
   type: "Zylon"
   data: |-
     eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVC.eyJhdWQiOiJ6eWxvbi5haSIsImlzcyI6Inp5bG9uLmF
@@ -138,11 +138,10 @@ license:
     ...
     YWA9VSHEGmsoxFn85i0
 ```
-## Update process in a semi-airgapped environment
+## Proceso de actualización en un entorno semi-airgapped
 
-For all practical purposes, the update process is the same as the installation process,
-so the same requirements apply. (Note that only the incremental updates will be downloaded during the
-update process). This means, internet connectivity towards the mentioned domains.
-
+Para todos los propósitos prácticos, el proceso de actualización es el mismo que el proceso de instalación,
+por lo que se aplican los mismos requisitos. (Nota que solo las actualizaciones incrementales se descargarán durante el
+proceso de actualización). Esto significa, conectividad a internet hacia los dominios mencionados.
 
 

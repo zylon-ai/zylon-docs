@@ -38,12 +38,11 @@ and other resources programmatically through REST endpoints ([API Documentation]
 </Info>
 
 <Warning>
-The `license` fields only apply when `externalConnection.enabled` is set to `true` and an internet connection is available.
+  The `license` fields only apply when `externalConnection.enabled` is set to `true` and an internet connection is available.
 </Warning>
 
 <Warning>
-In airgap mode, `externalConnection.enabled` will always be `false` regardless 
-of the configured value ([Semi-airgap installation](/en/operator-manual/configuration/network/semi-airgap))
+  In airgap mode, `externalConnection.enabled` will always be `false` regardless of the configured value.
 </Warning>
 
 ### SSL Certificates Configuration
@@ -53,8 +52,7 @@ This section is only necessary if you are not using Let's Encrypt certificates
 </Warning>
 
 If your Zylon installation uses manual SSL certificates (not Let's Encrypt), you will need to create an additional Kubernetes secret specifically for n8n.
-
-First, ensure you have completed all the steps in the [manual SSL certificates installation guide](/en/operator-manual/installation/install#step-6-optional-manually-installing-ssl-certificates).
+More information in the [installation guide](/en/operator-manual/installation/index).
 
 #### Create a Secret for n8n
 

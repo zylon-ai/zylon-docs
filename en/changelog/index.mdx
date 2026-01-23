@@ -346,8 +346,7 @@ writing SQL queries.
     support new features and functionality.**
 
     In case you want to keep any of the above settings (model, context window, etc), you have to rollback the preset
-    as detailed in [**Deprecated Presets**](Installing%20Zylon%2019600531e9a7807e8c08c5a971d0c8fa.md) to rollback
-    section.
+    as detailed in [**AI Presets Configuration**](/en/operator-manual/ai-presets/configuration).
   </Note>
 </Update>
 
@@ -423,8 +422,7 @@ writing SQL queries.
   **Bugfixes and improvements:**
 
   - Light files get higher priority than heavy files on ingestion queue to expedite the process and avoid queues
-    blocked by a single heavy file. More info in [(Optional) Performance
-    tweaks](Installing%20Zylon%2019600531e9a7807e8c08c5a971d0c8fa.md)
+    blocked by a single heavy file. More info in [Performance Configuration](/en/operator-manual/configuration/performance)
   - When a non-UTF-8 HTML is ingested, now the content is processed correctly
   - Improved CSV delimiter and header auto-detection
   - Improved tables ingestion for higher data retrieval accuracy
@@ -435,8 +433,7 @@ writing SQL queries.
   ### File System Knowledge Base Integration
 
   Now is possible to add a new integration for the Knowledge Base, in case you have a File System powered by SMB.
-  Check how to configure this integration [1. Gather Your Samba Server
-  Information](Knowledge%20Base%20Integrations%2019e00531e9a7800ead89c50730a8771d/File%20System%2020a00531e9a78015b95ee7d8831f2ee0.md)
+  Check how to configure this integration in the [File System Knowledge Base documentation](/en/operator-manual/knowledge-base/file-system)
 
   ![image.png](https://i.imgur.com/grtGwyG.png)
 
@@ -465,8 +462,6 @@ writing SQL queries.
   ### Automatic chat name
 
   Similar to Agent Flows, now chats get an automatic name based on the initial message from the user
-
-  [demo3.mov](Changelog%201ce00531e9a780c9ba62edd04d1abe21/demo3.mov)
 
   ### Whitelabel
 
@@ -536,8 +531,7 @@ writing SQL queries.
   sudo zylon-cli self-update
   ```
 
-  1. (Optional) Do a [backup using
-     zylon-cli](Backups%20and%20Disaster%20Recovery%2019600531e9a780f2b1c1c15603d50837.md) before starting the process.
+  1. (Optional) Do a [backup using zylon-cli](/en/operator-manual/operations/backup) before starting the process.
   2. Prepare and update Nvidia Drivers and Toolkit:
 
   ```bash

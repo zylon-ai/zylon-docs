@@ -99,7 +99,9 @@ clientSecret: "" //From step 11 - Secret value
 redirectUri: "" //From step 4
 domain: "" //Your sharepoint domain. ex: https://zylonai.sharepoint.com
 tenantId: "" //From step 10 - Directory tenant Id
-
+entrySite: "" //Optional: Default Entry SharePoint site URL
+entryList: "" //Optional: Default Entry list name (e.g., "Documents")
+entryFolder: "" //Optional: Default Entry folder name
 ```
 
 And fill the properties with the values generated previously:
@@ -109,7 +111,9 @@ And fill the properties with the values generated previously:
 - redirectUri → same value as step 4
 - domain → Your sharepoint url
 - tenantId → same value as step 10
-
+- entrySite → (Optional) Default SharePoint site URL. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryList → (Optional) Default list name, e.g., "Documents". See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryFolder → (Optional) Default folder name. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
 Save and close `/etc/zylon/zylon-conf.yaml` file
 
 Finally, execute the following command to reset Zylon and update the config
@@ -119,6 +123,35 @@ zylon-cli sync
 ```
 
 You are all set 🎉
+
+## Configuring Default Opening Folder
+
+You can configure a default opening folder for the SharePoint integration. This allows the integration to open directly to a specific folder when users access SharePoint through Zylon, improving the user experience by skipping navigation steps.
+
+The three optional fields control the entry point for the integration:
+
+- `entrySite`: The absolute SharePoint site URL (works for both SharePoint and OneDrive)
+- `entryList`: The list name within the site (e.g., "Documents" is the default for SharePoint)
+- `entryFolder`: The folder name within the list
+
+**Important:** You must use absolute SharePoint paths for the `entrySite` field, even for OneDrive. The path format should be like:
+```
+https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
+```
+
+### Example Configuration
+
+If you want the integration to open by default to the "Defense and Security" folder in the Documents list for the user `user_example_onmicrosoft_com`, you would configure:
+
+```bash
+entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
+entryList: "Documents" //Default on SharePoint
+entryFolder: "Defense and Security"
+```
+
+This configuration will make the integration open directly to the "Defense and Security" folder when users access SharePoint through Zylon.
+
+**Note:** All three fields are optional. If they are not set or left empty, they will be ignored and the integration will use the default behavior (opening at the root level).
 
 ## Troubleshooting
 

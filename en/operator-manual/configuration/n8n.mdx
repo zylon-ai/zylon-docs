@@ -42,7 +42,7 @@ The `license` fields only apply when `externalConnection.enabled` is set to `tru
 
 <Warning>
 In airgap mode, `externalConnection.enabled` will always be `false` regardless 
-of the configured value ([Semi-airgap installation](/en/operator-manual/semi-airgap))
+of the configured value ([Semi-airgap installation](/en/operator-manual/configuration/semi-airgap))
 </Warning>
 
 ### External Connections
@@ -59,11 +59,11 @@ These restrictions ensure that n8n operates without external dependencies.
 
 n8n uses Zylon's global proxy configuration. The system automatically manages proxy certificates and endpoints, so no additional n8n-specific configuration is required.
 
-If your organization uses a proxy, configure it following the [proxy configuration guide](/en/operator-manual/proxy).
+If your organization uses a proxy, configure it following the [proxy configuration guide](/en/operator-manual/configuration/network/proxy).
 
 ## Backup Management
 
-n8n uses PostgreSQL as its database, which means all n8n information is automatically included in Zylon's standard database backups. For more information about backup management, see the [Zylon backup documentation](/en/operator-manual/backup).
+n8n uses PostgreSQL as its database, which means all n8n information is automatically included in Zylon's standard database backups. For more information about backup management, see the [Zylon backup documentation](/en/operator-manual/operations/backup).
 For specific use cases involving workflow migration or transfer between environments, see the [Workflow Import and Export](#workflow-import-and-export) section.
 
 ## Apply Configuration

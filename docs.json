@@ -246,7 +246,8 @@
                     "group": "Network & Connectivity",
                     "pages": [
                       "en/operator-manual/configuration/network/ports-and-dns",
-                      "en/operator-manual/configuration/network/proxy"
+                      "en/operator-manual/configuration/network/proxy",
+                      "en/operator-manual/configuration/network/semi-airgap"
                     ]
                   },
                   {
@@ -531,7 +532,8 @@
                     "group": "Red y Conectividad",
                     "pages": [
                       "es/operator-manual/configuration/network/ports-and-dns",
-                      "es/operator-manual/configuration/network/proxy"
+                      "es/operator-manual/configuration/network/proxy",
+                      "es/operator-manual/configuration/network/semi-airgap"
                     ]
                   },
                   {

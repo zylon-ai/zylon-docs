@@ -1,32 +1,32 @@
 ---
-title: "Tabular Analysis"
-description: "The tabular analysis tool is used to analyze and query numerical data from tables, spreadsheets, and structured documents that have been previously ingested."
+title: "Análisis tabular"
+description: "La herramienta de análisis tabular se usa para analizar y consultar datos numéricos de tablas, hojas de cálculo y documentos estructurados que han sido previamente ingeridos."
 ---
 
-## How it Works
+## Cómo funciona
 
-When you add the tabular analysis tool and the specified context to your API request, Zylon follows these steps:
+Cuando añades la herramienta de análisis tabular y el contexto especificado a tu solicitud de API, Zylon sigue estos pasos:
 
-1. **Analyzes query intent**: Zylon understands your analytical question and determines what specific data analysis needs to be performed.
-2. **Processes tabular data**: Executes analysis using the tool against the ingested tabular data, focusing on numerical calculations and data insights.
-3. **Returns analytical results**: Provides direct analytical answers based on the data processing and calculations performed.
+1. **Analiza la intención de la consulta**: Zylon entiende tu pregunta analítica y determina qué análisis de datos específico necesita realizarse.
+2. **Procesa datos tabulares**: Ejecuta análisis usando la herramienta contra los datos tabulares ingeridos, enfocándose en cálculos numéricos e insights de datos.
+3. **Devuelve resultados analíticos**: Proporciona respuestas analíticas directas basadas en el procesamiento de datos y cálculos realizados.
 
-## Important Notes
+## Notas importantes
 
-- To use this tool, you must specify the **type `tabular_analysis_v1`**.
-- The `tool_context` must contain at least one artifact of type **`ingested_artifact`**.
-- Artifacts must contain tabular data such as **CSV files**, **Excel spreadsheets**, **PDFs with tables**, or other structured data formats.
+- Para usar esta herramienta, debes especificar el **tipo `tabular_analysis_v1`**.
+- El `tool_context` debe contener al menos un artefacto de tipo **`ingested_artifact`**.
+- Los artefactos deben contener datos tabulares como **archivos CSV**, **hojas de cálculo Excel**, **PDFs con tablas** u otros formatos de datos estructurados.
 
-## Example Usage
+## Ejemplo de uso
 
-In this practical example, we upload a CSV file containing stock price data and then perform analytical queries to find specific insights.
+En este ejemplo práctico, subimos un archivo CSV que contiene datos de precios de acciones y luego realizamos consultas analíticas para encontrar insights específicos.
 
 <Steps>
-<Step title="Upload the Document">
-    First, you need to upload a CSV file or similar tabular document that contains the data you want to analyze. For detailed instructions on how to ingest documents, refer to the [Ingest Content API documentation](/en/api-reference/artifacts/ingest-content).
+<Step title="Subir el documento">
+    Primero, necesitas subir un archivo CSV o documento tabular similar que contenga los datos que quieres analizar. Para instrucciones detalladas sobre cómo ingerir documentos, consulta la documentación de la [Herramienta de búsqueda semántica](/en/api-reference/tools/built-in/semantic-search-tool).
 </Step>
-<Step title="Perform Tabular Analysis">
-    Once the document is processed, we perform the analytical query by specifying messages, tools, context, and tool choice in the request body.
+<Step title="Realizar análisis tabular">
+    Una vez que el documento está procesado, realizamos la consulta analítica especificando mensajes, herramientas, contexto y elección de herramienta en el cuerpo de la solicitud.
     <Tabs>
       <Tab title="Shell">
         ```
@@ -64,8 +64,8 @@ In this practical example, we upload a CSV file containing stock price data and 
       </Tab>
     </Tabs>
     </Step>
-<Step title="Response">
-    The system responds with the analytical processing performed and the direct answer to your query:
+<Step title="Respuesta">
+    El sistema responde con el procesamiento analítico realizado y la respuesta directa a tu consulta:
      ```
       {
         "id": "msg_978e1f57031a41b2bc9140dfe2696ccd",

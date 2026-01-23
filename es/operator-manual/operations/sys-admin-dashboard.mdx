@@ -49,3 +49,47 @@ Después de iniciar sesión, podrás ver el estado de tu instalación de Zylon, 
 - Pods
 - Logs
 - Métricas básicas sobre el uso de CPU y memoria
+
+## Preguntas frecuentes
+
+### ❓ ¿Por dónde empiezo cuando algo no funciona?
+
+Cuando abres el panel de Kubernetes por primera vez, verás una vista general del estado de tus cargas de trabajo y del clúster.
+Esta vista muestra el estado actual de los recursos en ejecución, como Pods, Deployments y el uso básico de CPU y memoria.
+
+![image](/images/operator-manual/k8s-1.png)
+
+---
+
+### ❓ ¿Qué namespace debo seleccionar?
+
+Zylon utiliza varios namespaces, pero la mayoría de los problemas relacionados con workspaces y la plataforma estarán en el namespace `zylon`.
+
+1. Abre el desplegable de namespaces en la **esquina superior izquierda** del dashboard
+2. Selecciona el namespace que quieras revisar
+3. El dashboard se actualizará y mostrará únicamente los componentes del sistema de ese namespace
+
+Esto ayuda a reducir el ruido y asegura que estás inspeccionando los recursos correctos.
+
+![image](/images/operator-manual/k8s-2.png)
+---
+
+### ❓ ¿Cómo puedo ver los logs de un Pod?
+
+Para inspeccionar los logs de un Pod concreto:
+
+1. Haz clic en el **nombre del Pod** que quieres investigar
+2. Esto abrirá la página de detalles del Pod, donde podrás ver:
+- Estado
+- Eventos
+- Uso de recursos
+- Contenedores
+3. En la **esquina superior derecha**, haz clic en **Logs**
+
+![image](/images/operator-manual/k8s-3.png)
+
+Desde aquí puedes:
+- Ver los logs en tiempo real
+- Descargar los logs para analizarlos offline si tu instancia está en modo *airgap*
+
+Los logs suelen ser la forma más rápida de identificar errores de configuración, fallos durante el arranque o problemas en tiempo de ejecución.

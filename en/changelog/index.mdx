@@ -72,7 +72,7 @@ This unlocks compatibility with:
 <Update label="1.48.1" description="October 27, 2025">
   ## 🛠️ Platform
   ### ✨ Features
-  - Zylon now offers proxy support. Learn more about it [here](/en/operator-manual/proxy).
+  - Zylon now offers proxy support. Learn more about it [here](/en/operator-manual/configuration/network/proxy).
   - Introduced a Status page that provides information about the overall system health at `https://your-zylon-instance.com/status`
   ### 🐛 Bug Fixes
   - Stability improvement for long chats: Fixed crashes that occurred when reducing the context window size.
@@ -99,7 +99,7 @@ This unlocks compatibility with:
   - **Database Connector Improvements**: Now supports database views and provides richer contextual data, enabling the model to generate more accurate and grounded responses.
   - **Customizable Top Users View**: Adjust the number of top users displayed in the Usage Dashboard to suit your organizational needs.
   - **MCP Connector Integration**: You can now use MCP connectors in your Zylon instance.
-    - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/experimental-features).
+    - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/features).
     - Learn how to use it with the [User Manual](/en/user-manual/tools/mcp-connector).
   - **Image Support in Chats**: You can now chat with your images, _if the image model is enabled_.
 
@@ -122,7 +122,7 @@ This unlocks compatibility with:
 
   ### ✨ Features
 
-  - **GPT-OSS Model Now Available**: You can now access our experimental GPT-OSS model in both 24GB and 48GB configurations, giving you more powerful AI capabilities for complex tasks. More information in [experimental presets](/en/operator-manual/configuration/ai-presets#3-3-experimental-presets).
+  - **GPT-OSS Model Now Available**: You can now access our experimental GPT-OSS model in both 24GB and 48GB configurations, giving you more powerful AI capabilities for complex tasks. More information in [experimental presets](/en/operator-manual/ai-presets/presets#experimental-presets).
 
   ### 🐛 Bug Fixes
 
@@ -136,7 +136,7 @@ This unlocks compatibility with:
 
   ## 🛠️ Platform
 
-  - Use your own AI models: You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. . More information in [customizing the default presets](/en/operator-manual/configuration/ai-presets#6-customizing-the-default-presets).
+  - Use your own AI models: You can now plug in your own fine-tuned AI models without losing any of the platform's features. This gives you more control and flexibility over how the AI behaves. More information in [customizing the default presets](/en/operator-manual/ai-presets/advanced-customization).
   - Vision support improved: Fixed a bug that sometimes prevented AI tools from loading when visual (image) features were turned on.
 
   </Update>
@@ -146,7 +146,7 @@ This unlocks compatibility with:
 ### ✨ Features
 - Database Connector: Connect seamlessly to PostgreSQL, MySQL, and MSSQL databases and ask questions in chats, enabling intuitive data retrieval without 
 writing SQL queries.
-  - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/experimental-features).
+  - This feature is in **Alpha phase** and [needs to be enabled](/en/operator-manual/configuration/features).
   - Learn how to use it with the [User Manual](/en/user-manual/tools/database-connector).
 - Agent Flow - New menu options for an enhanced user experience:
   - Retry: Allows users to restart failed workflows with a single click.
@@ -173,7 +173,7 @@ writing SQL queries.
 
 ## 💼 Workspace
 ### ✨ Features
-- Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/en/operator-manual/configuration/ai-presets#vision-enabled-alternatives). The brand new capabilities added are:
+- Enhanced Slides Content Extraction thanks to run a Vision Language Model (VLM) in conjuntion with a Large Language Model (LLM). Please check the new alternative presets to understand [how to configure and enable it](/en/operator-manual/ai-presets/presets#vision-enabled-alternatives). The brand new capabilities added are:
   - **Intelligent Content Understanding**: Implemented VLM-powered extraction that can analyze and understand complex visual content including slides, diagrams, charts, and images.
   - **Contextual Analysis**: VLM integration enables better comprehension of slide context, relationships between visual elements, and textual content within images.
 - Display the last update time for Agent Flows.
@@ -341,8 +341,7 @@ writing SQL queries.
     support new features and functionality.**
 
     In case you want to keep any of the above settings (model, context window, etc), you have to rollback the preset
-    as detailed in [**Deprecated Presets**](Installing%20Zylon%2019600531e9a7807e8c08c5a971d0c8fa.md) to rollback
-    section.
+    as detailed in [**AI Presets Configuration**](/en/operator-manual/ai-presets/getting-started).
   </Note>
 </Update>
 
@@ -418,8 +417,7 @@ writing SQL queries.
   **Bugfixes and improvements:**
 
   - Light files get higher priority than heavy files on ingestion queue to expedite the process and avoid queues
-    blocked by a single heavy file. More info in [(Optional) Performance
-    tweaks](Installing%20Zylon%2019600531e9a7807e8c08c5a971d0c8fa.md)
+    blocked by a single heavy file. More info in [Performance Configuration](/en/operator-manual/configuration/performance)
   - When a non-UTF-8 HTML is ingested, now the content is processed correctly
   - Improved CSV delimiter and header auto-detection
   - Improved tables ingestion for higher data retrieval accuracy
@@ -430,8 +428,7 @@ writing SQL queries.
   ### File System Knowledge Base Integration
 
   Now is possible to add a new integration for the Knowledge Base, in case you have a File System powered by SMB.
-  Check how to configure this integration [1. Gather Your Samba Server
-  Information](Knowledge%20Base%20Integrations%2019e00531e9a7800ead89c50730a8771d/File%20System%2020a00531e9a78015b95ee7d8831f2ee0.md)
+  Check how to configure this integration in the [File System Knowledge Base documentation](/en/operator-manual/knowledge-base/file-system)
 
   ![image.png](https://i.imgur.com/grtGwyG.png)
 
@@ -461,7 +458,7 @@ writing SQL queries.
 
   Similar to Agent Flows, now chats get an automatic name based on the initial message from the user
 
-  [demo3.mov](Changelog%201ce00531e9a780c9ba62edd04d1abe21/demo3.mov)
+  {/* [demo3.mov](Changelog%201ce00531e9a780c9ba62edd04d1abe21/demo3.mov) */}
 
   ### Whitelabel
 
@@ -531,8 +528,7 @@ writing SQL queries.
   sudo zylon-cli self-update
   ```
 
-  1. (Optional) Do a [backup using
-     zylon-cli](Backups%20and%20Disaster%20Recovery%2019600531e9a780f2b1c1c15603d50837.md) before starting the process.
+  1. (Optional) Do a [backup using zylon-cli](/en/operator-manual/operations/backup) before starting the process.
   2. Prepare and update Nvidia Drivers and Toolkit:
 
   ```bash

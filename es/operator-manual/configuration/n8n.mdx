@@ -3,7 +3,7 @@ title: "n8n"
 ---
 
 <Tip>
-El soporte de n8n está disponible a partir de Zylon 1.53
+El soporte de n8n está disponible a partir de Zylon 1.52
 </Tip>
 
 ## Integración de n8n
@@ -12,7 +12,7 @@ El soporte de n8n está disponible a partir de Zylon 1.53
 
 ### Consideraciones importantes
 - **Gestión de versiones**: Zylon gestiona la versión de n8n desplegada para asegurar la compatibilidad con el resto del sistema. Las actualizaciones manuales de n8n no están disponibles.
-- **Acceso**: n8n está disponible en la ruta `/n8n` de tu instancia de Zylon (por ejemplo: `https://tu-instancia-zylon.com/n8n`)
+- **Acceso**: n8n está disponible en su propio subdominio (por defecto: `https://n8n.tu-instancia-zylon.com`)
 - **Gestión de usuarios**: La gestión de usuarios en n8n es independiente de los usuarios de Zylon. Los usuarios deben crearse y gestionarse directamente dentro de la interfaz de n8n.
 
 ### Configuración
@@ -22,6 +22,7 @@ Para habilitar n8n en tu entorno solo necesitas modificar la opción correspondi
 ```yaml
 n8n:
   enabled: true  # Establecer en false para deshabilitar n8n
+  host: ""  # (opcional) Especifica un host personalizado.
   publicApi:
     enabled: false  # Habilitar la API REST pública de n8n
   externalConnection:
@@ -39,8 +40,38 @@ Los campos de `license` solo aplican cuando `externalConnection.enabled` está c
 </Warning>
 <Warning>
 En modo airgap, `externalConnection.enabled` siempre estará en `false` independientemente del valor configurado
-([Instalación semi-airgap](/es/operator-manual/semi-airgap))
+([Instalación semi-airgap](/es/operator-manual/configuration/network/semi-airgap))
 </Warning>
+
+### Configuración de Certificados SSL
+
+<Warning>
+Esta sección es necesaria únicamente si no estás utilizando certificados de Let's Encrypt
+</Warning>
+
+Si tu instalación de Zylon utiliza certificados SSL manuales (no Let's Encrypt), necesitarás crear un secret adicional de Kubernetes específicamente para n8n.
+
+Primero, asegúrate de haber completado todos los pasos de la [guía de instalación de certificados SSL manuales](/es/operator-manual/installation/install#step-6-optional-manually-installing-ssl-certificates).
+
+#### Crear un Secret para n8n
+
+Una vez tengas tus archivos de certificado listos (`tls.crt` y `tls.key`), crea un secret en el cluster de Kubernetes específicamente para n8n:
+
+```bash
+# Crear el secret SSL de n8n
+sudo k0s kubectl create secret tls zylon-tls-n8n --key tls.key --cert tls.crt -n zylon
+
+# Verifica que se creó correctamente
+sudo k0s kubectl describe secret zylon-tls-n8n -n zylon
+```
+
+Después de crear el secret, recarga la configuración:
+
+```bash
+sudo zylon-cli sync
+```
+
+Tu instancia de n8n ahora utilizará HTTPS con los certificados SSL configurados.
 
 ### External Connections
 
@@ -57,11 +88,11 @@ Estas restricciones aseguran que n8n opere sin dependencias externas.
 n8n utiliza la configuración global de proxy de Zylon. El propio sistema se encarga de gestionar automáticamente los certificados y endpoints del proxy, 
 por lo que no se requiere configuración adicional específica para n8n.
 
-Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/proxy).
+Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/configuration/network/proxy).
 
 ## Gestión de  Backups
 
-n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los backups estándar de base de datos de Zylon. Para más información sobre la gestión de backups, consulta la [documentación de backups de Zylon](/es/operator-manual/backup).
+n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los backups estándar de base de datos de Zylon. Para más información sobre la gestión de backups, consulta la [documentación de backups de Zylon](/es/operator-manual/operations/backup).
 
 Para casos específicos de migración o transferencia de workflows entre entornos, consulta la sección [Importación y Exportación de Workflows](#importación-y-exportación-de-workflows).
 
@@ -80,7 +111,11 @@ n8n proporciona comandos CLI que permiten la exportación e importación selecti
 - **Migración desde otros entornos**: Si se desea migrar a Zylon información de n8n desde otro entorno existente.
 - **Importación selectiva**: Exportar workflows específicos desde otros entornos e importarlos en Zylon sin necesidad de migrar la instancia completa.
 
-### Comandos de Exportación
+<Info>
+Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).
+</Info>
+
+### Comandos básicos de Exportación
 
 **Exportar todos los workflows:**
 ```bash
@@ -108,10 +143,10 @@ Usa la opción `--decrypted` cuando migres entre instancias con diferentes clave
 
 **Exportar instancia completa:**
 ```bash
-n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
 ```
 
-### Comandos de Importación
+### Comandos básicos de Importación
 
 **Importar workflows:**
 ```bash
@@ -128,9 +163,24 @@ n8n import:workflow --input=/home/node/.n8n/workflow-42.json
 n8n import:credentials --input=/home/node/.n8n/credentials.json
 ```
 
+<Nota>
+Se espera que la base de datos esté vacía antes de la importación, esto se puede forzar con el --truncateTables parámetro.
+</Nota>
+
+**Importar instancia completa:**
+
+<Warning>
+Solo funciona si el tipo de base de datos de exportación coincide con el tipo de base de datos de destino. Zylon n8n utiliza PostgreSQL.
+</Warning>
+
+
+```bash
+n8n import:entities --inputDir ./outputs --truncateTables true
+```
+
 ### Transferir archivos desde tu máquina local
 
-Si necesitas importar workflows o credenciales desde archivos JSON ubicados en tu máquina local, primero debes transferirlos al pod de n8n:
+Si necesitas importar workflows, credenciales u otros archivos ubicados en tu máquina local, primero debes transferirlos al pod de n8n:
 
 #### 1. Obtener el ID del volumen persistente
 
@@ -170,4 +220,3 @@ Las entidades exportadas conservan sus IDs originales, por lo que importarlas so
 Los archivos de exportación deben ubicarse en un directorio accesible dentro del pod, típicamente `/home/node/.n8n/`.
 </Warning>
 
-Para más información sobre comandos CLI, consulta la [documentación oficial de n8n](https://docs.n8n.io/hosting/cli-commands/).

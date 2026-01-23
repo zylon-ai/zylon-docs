@@ -16,44 +16,44 @@ El objetivo es obtener 3 valores que se utilizarán para configurar Zylon para p
 
 3. Registra una nueva aplicación. Haz clic en `App registrations` en el menú izquierdo.
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%201.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_1.png)
 
 4. Haz clic en `New Registration`.
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%202.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_2.png)
 
 1. Se abrirá una nueva ventana y necesitarás agregar la siguiente información
 - ⚠️ El tipo de Redirect URI es **web**⚠️
 - Dominio: `https://zylon.company.com/api/v1/auth/microsoft/callback`. Reemplaza `zylon.company.com` con el dominio donde está alojado Zylon (Es el mismo dominio que en el archivo de configuración ubicado en `/etc/zylon/zylon-conf.yaml`).
 - Tipos de cuenta admitidos: Se admiten todos los tipos de cuenta. Elige según tus necesidades específicas.
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%203.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_3.png)
 
 - En caso de que quieras cambiarlo más tarde, puedes hacerlo en `Application Overview`
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%204.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_4.png)
 
 
 5. Guarda el siguiente valor que se usará más tarde en el archivo de configuración para Zylon.
 - Application (client) ID
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%205.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_5.png)
 
 6. Ahora necesitamos generar el `ClientSecret`. Ve al menú izquierdo y haz clic en `Manage > Certificates & secrets`
 
-<img src="/images/operator-manual/openid-images/microsoft/image%206.png" alt="image.png" width="50%"/>
+<img src="/images/operator-manual/openid-images/microsoft/image_6.png" alt="image.png" width="50%"/>
 
 7. Haz clic en `New client secret` y agrega la información requerida
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%207.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_7.png)
 
 8. Copia el `Value` del secreto del cliente.
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%208.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_8.png)
 
 9. Verifica que el permiso `User.read` esté concedido. Haz clic en `API Permissions` en el menú izquierdo. Deberías verlo allí por defecto. En caso de que falte, concédelo.
 
-![image.png](/images/operator-manual/openid-images/microsoft/image%209.png)
+![image.png](/images/operator-manual/openid-images/microsoft/image_9.png)
 
 10. Agrega la siguiente configuración a `/etc/zylon/zylon-conf.yaml`
 

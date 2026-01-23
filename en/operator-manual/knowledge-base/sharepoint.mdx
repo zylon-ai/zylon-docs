@@ -34,11 +34,11 @@ https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
 
 3. Click on `Add a platform`
 
-![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%201.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_1.png)
 
 4. Click on `Single-Page application`
 
-![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%202.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_2.png)
 
 5. Add the following URL and click `Configure`:
 
@@ -48,7 +48,7 @@ https://{your-zylon-instance}.com
 
 6. Now that the app is created, note the `Application (client) Id` and `Directory (tenant) id` from the `Overview` page.
 
-![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%203.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_3.png)
 
 7. Let’s create an application secret
 
@@ -56,7 +56,7 @@ Navigate to `Certificates & secrets` → Click `+ New client secret` → Add a d
 
 Copy the Client Secret`value`. The secret value will not be accesible later.
 
-![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen%201.png)
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen_1.png)
 
 
 Now we have to configure the API permissions our client application will have.
@@ -80,7 +80,7 @@ Navigate to `API Permissions` → `+ Add a permission` → `Sharepoint` → `Del
 
 After adding both list of permissions click on `Grant admin consent for [Your Org]` and confirm by clicking `Yes`
 
-![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image%204.png)
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_4.png)
 
 ## Configure Zylon with your Azure AD app
 
@@ -104,11 +104,11 @@ tenantId: "" //From step 10 - Directory tenant Id
 
 And fill the properties with the values generated previously:
 
-- clientId → value generated on [step 10](sharepoint-images.md)
-- clientSecret → value generated on [step 11](sharepoint-images.md)
-- redirectUri → same value as [step 4](sharepoint-images.md)
+- clientId → Application client Id (from step 10)
+- clientSecret → Secret value (from step 11)
+- redirectUri → same value as step 4
 - domain → Your sharepoint url
-- tenantId → same value as [step 10](sharepoint-images.md)
+- tenantId → Directory tenant Id (from step 10)
 
 Save and close `/etc/zylon/zylon-conf.yaml` file
 
@@ -129,6 +129,6 @@ Clear the browser cache and try again.
 ### When I click on `Upload files -> From Sharepoint` the log in is not working
 
 - Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
-- Check that `redirectUri` is the same as [step 4](sharepoint-images.md) and that
+- Check that `redirectUri` is the same as step 4 and that
 your domain from sharepoint is right
 - Check that the `tenantId` being used matches the one under the `Overview` page of your application on Azure AD

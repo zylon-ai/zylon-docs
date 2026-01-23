@@ -104,11 +104,11 @@ tenantId: "" //From step 10 - Directory tenant Id
 
 And fill the properties with the values generated previously:
 
-- clientId → value generated on [step 10](sharepoint-images.md)
-- clientSecret → value generated on [step 11](sharepoint-images.md)
-- redirectUri → same value as [step 4](sharepoint-images.md)
+- clientId → value generated on step 10
+- clientSecret → value generated on step 11
+- redirectUri → same value as step 4
 - domain → Your sharepoint url
-- tenantId → same value as [step 10](sharepoint-images.md)
+- tenantId → same value as step 10
 
 Save and close `/etc/zylon/zylon-conf.yaml` file
 
@@ -129,6 +129,5 @@ Clear the browser cache and try again.
 ### When I click on `Upload files -> From Sharepoint` the log in is not working
 
 - Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
-- Check that `redirectUri` is the same as [step 4](sharepoint-images.md) and that
-your domain from sharepoint is right
+- Check that `redirectUri` is the same as step 4 and that your domain from sharepoint is right
 - Check that the `tenantId` being used matches the one under the `Overview` page of your application on Azure AD

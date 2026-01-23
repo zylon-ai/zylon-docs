@@ -3,7 +3,7 @@ title: "n8n"
 ---
 
 <Tip>
-n8n support is available starting from Zylon 1.53
+n8n support is available starting from Zylon 1.52
 </Tip>
 
 ## n8n Integration
@@ -12,7 +12,7 @@ n8n support is available starting from Zylon 1.53
 
 ### Important Considerations
 - **Version management**: Zylon manages the deployed n8n version to ensure compatibility with the rest of the system. Manual n8n updates are not available.
-- **Access**: n8n is available at the `/n8n` path of your Zylon instance (for example: `https://your-zylon-instance.com/n8n`)
+- **Access**: n8n is available at its own subdomain (for default: `https://n8n.your-zylon-instance.com`)
 - **User management**: User management in n8n is independent from Zylon users. Users must be created and managed directly within the n8n interface.
 
 ### Configuration
@@ -22,6 +22,7 @@ To enable n8n in your environment, you only need to modify the corresponding opt
 ```yaml
 n8n:
   enabled: true  # Set to false to disable n8n
+  host: ""  # Specify a custom host if needed.
   publicApi:
     enabled: false  # Enable n8n's public REST API
   externalConnection:
@@ -44,6 +45,36 @@ The `license` fields only apply when `externalConnection.enabled` is set to `tru
 In airgap mode, `externalConnection.enabled` will always be `false` regardless 
 of the configured value ([Semi-airgap installation](/en/operator-manual/configuration/network/semi-airgap))
 </Warning>
+
+### SSL Certificates Configuration
+
+<Warning>
+This section is only necessary if you are not using Let's Encrypt certificates
+</Warning>
+
+If your Zylon installation uses manual SSL certificates (not Let's Encrypt), you will need to create an additional Kubernetes secret specifically for n8n.
+
+First, ensure you have completed all the steps in the [manual SSL certificates installation guide](/en/operator-manual/install#step-6-optional-:-manually-installing-ssl-certificates).
+
+#### Create a Secret for n8n
+
+Once you have your certificate files ready (`tls.crt` and `tls.key`), create a secret in the Kubernetes cluster specifically for n8n:
+
+```bash
+# Create the n8n SSL secret
+sudo k0s kubectl create secret tls zylon-tls-n8n --key tls.key --cert tls.crt -n zylon
+
+# Verify the secret was created correctly
+sudo k0s kubectl describe secret zylon-tls-n8n -n zylon
+```
+
+After creating the secret, reload the configuration:
+
+```bash
+sudo zylon-cli sync
+```
+
+Your n8n instance will now use HTTPS with the configured SSL certificates.
 
 ### External Connections
 
@@ -81,7 +112,11 @@ n8n provides CLI commands that allow selective export and import of entities. Th
 - **Migration from other environments**: If you want to migrate n8n information to Zylon from another existing environment
 - **Selective import**: Export specific workflows from other environments and import them into Zylon without needing to migrate the entire instance
 
-### Export Commands
+<Info>
+For more information about CLI commands, see the [official n8n documentation](https://docs.n8n.io/hosting/cli-commands/).
+</Info>
+
+### Basic Export Commands
 
 **Export all workflows:**
 ```bash
@@ -109,10 +144,10 @@ Use the `--decrypted` option when migrating between instances with different enc
 
 **Export complete instance:**
 ```bash
-n8n export:workflow --all --backup --output=/home/node/.n8n/backup.json
+n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
 ```
 
-### Import Commands
+### Basic Import Commands
 
 **Import workflows:**
 ```bash
@@ -129,9 +164,22 @@ n8n import:workflow --input=/home/node/.n8n/workflow-42.json
 n8n import:credentials --input=/home/node/.n8n/credentials.json
 ```
 
+**Import all instance:**
+<Nota>
+It is expected that the database is empty before the import; this can be enforced with the --truncateTables parameter.
+</Nota>
+<Warning>
+Only works if the export database type matches the target database type. Zylon n8n uses PostgreSQL.
+</Warning>
+
+**Import complete instance:**
+```bash
+n8n import:entities --inputDir ./outputs --truncateTables true
+```
+
 ### Transfer Files from Your Local Machine
 
-If you need to import workflows or credentials from JSON files located on your local machine, you must first transfer them to the n8n pod:
+If you need to import workflows, credentials or other files located on your local machine, you must first transfer them to the n8n pod:
 
 #### 1. Get the Persistent Volume ID
 
@@ -171,4 +219,3 @@ Exported entities retain their original IDs, so importing them will overwrite ex
 Export files must be located in an accessible directory within the pod, typically `/home/node/.n8n/`.
 </Warning>
 
-For more information about CLI commands, see the [official n8n documentation](https://docs.n8n.io/hosting/cli-commands/).

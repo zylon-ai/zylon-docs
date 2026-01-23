@@ -14,12 +14,12 @@ If you haven't configured n8n in your Zylon instance yet, you can check the n8n 
 
 # Getting Started
 
-Once n8n is configured in your Zylon instance, you can access the n8n web interface, which is available at the following URL:
-`https://<your_zylon_domain>/n8n`.
+Once n8n is configured in your Zylon instance, you can access the n8n web interface, which is available by default at the following URL:
+`https://n8n.<your_zylon_domain>`.
 
-<Warning>
-n8n may redirect incorrectly during login to a URL like `/n8n/n8n` instead of `/n8n`, which will show a 404 Error. If you encounter this error, check the URL in your browser's address bar and manually correct it to use only one `/n8n` path segment.
-</Warning>
+<Note>
+It is possible that a custom domain was configured for n8n during the installation process.
+</Note>
 
 ## Creating an Account in n8n
 
@@ -27,7 +27,7 @@ The first time you access the n8n instance, you'll be asked to create an adminis
 
 **Steps to create the administrator account:**
 
-1. Go to `https://<your_zylon_domain>/n8n`
+1. Go to `https://n8n.<your_zylon_domain>/n8n`
 2. Complete the registration form
 3. Accept the terms of use
 4. Click "Create account"
@@ -54,17 +54,13 @@ Only administrators can create new users in n8n.
 6. Click **"Create invite link"**
 7. Share the invitation link with the new user
 
-<Warning>
-n8n currently doesn't store invitation links correctly. Please make sure to copy and send the link to the invitee when you create their access. If the original link is lost, it will be necessary to delete the user and create a new one.
-</Warning>
-
 # Connecting to Zylon Chat Model
 
 To connect n8n with Zylon's chat models, you can use the Anthropic node that comes integrated with n8n, as Zylon is compatible with Anthropic nodes in n8n, enabling seamless integration.
 
 The prerequisites are:
 
-- Having a Zylon API token (see how to obtain token)[/en/api-reference/token-management]
+- Having a Zylon API token [see how to obtain token](/en/api-reference/token-management)
 
 Once you have the prerequisites, you can proceed to configure n8n:
 

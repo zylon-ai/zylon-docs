@@ -223,7 +223,7 @@
                 "group": "Installation",
                 "pages": [
                   "en/operator-manual/installation/hardware-requirements",
-                  "en/operator-manual/installation/guide",
+                  "en/operator-manual/installation/install",
                   "en/operator-manual/installation/update",
                   "en/operator-manual/installation/uninstall"
                 ]
@@ -507,22 +507,14 @@
               {
                 "group": "Instalación",
                 "pages": [
-                  "es/operator-manual/hardware-requirements",
-                  "es/operator-manual/install",
-                  "es/operator-manual/ports-and-dns",
-                  "es/operator-manual/proxy",
-                  "es/operator-manual/semi-airgap",
-                  "es/operator-manual/troubleshoot",
-                  "es/operator-manual/uninstall",
-                  "es/operator-manual/update",
-                  "es/operator-manual/backup",
-                  "es/operator-manual/sys-admin-dashboard",
-                  "es/operator-manual/nvidia-drivers-troubleshooting",
-                  "es/operator-manual/n8n"
+                  "es/operator-manual/installation/hardware-requirements",
+                  "es/operator-manual/installation/install",
+                  "es/operator-manual/installation/update",
+                  "es/operator-manual/installation/uninstall"
                 ]
               },
               {
-                "group": "Configuración de la Instancia de Zylon",
+                "group": "Configuración",
                 "pages": [
                   "es/operator-manual/configuration/index",
                   {
@@ -536,14 +528,21 @@
                     ]
                   },
                   {
-                    "group": "Configuración de OpenID",
+                    "group": "Red y Conectividad",
+                    "pages": [
+                      "es/operator-manual/configuration/network/ports-and-dns",
+                      "es/operator-manual/configuration/network/proxy"
+                    ]
+                  },
+                  {
+                    "group": "Autenticación",
                     "pages": [
                       "es/operator-manual/openid/google",
                       "es/operator-manual/openid/microsoft"
                     ]
                   },
                   {
-                    "group": "Configuración de Conectores",
+                    "group": "Conectores de Bases de Conocimiento",
                     "pages": [
                       "es/operator-manual/knowledge-base/index",
                       "es/operator-manual/knowledge-base/sharepoint",
@@ -552,13 +551,8 @@
                       "es/operator-manual/knowledge-base/claromentis"
                     ]
                   },
-                  "es/operator-manual/configuration/observability",
-                  "es/operator-manual/configuration/search",
-                  "es/operator-manual/configuration/performance",
-                  "es/operator-manual/configuration/whitelabel",
-                  "es/operator-manual/configuration/n8n",
                   {
-                    "group": "Funciones",
+                    "group": "Funciones y Capacidades",
                     "pages": [
                       "es/operator-manual/configuration/features/index",
                       "es/operator-manual/configuration/features/feat-mcp",
@@ -569,7 +563,31 @@
                       "es/operator-manual/configuration/features/feat-multimodal"
                     ]
                   },
+                  {
+                    "group": "Configuración Avanzada",
+                    "pages": [
+                      "es/operator-manual/configuration/observability",
+                      "es/operator-manual/configuration/search",
+                      "es/operator-manual/configuration/performance",
+                      "es/operator-manual/configuration/whitelabel",
+                      "es/operator-manual/configuration/n8n"
+                    ]
+                  },
                   "es/operator-manual/configuration/cli"
+                ]
+              },
+              {
+                "group": "Mantenimiento y Operaciones",
+                "pages": [
+                  "es/operator-manual/operations/backup",
+                  "es/operator-manual/operations/sys-admin-dashboard"
+                ]
+              },
+              {
+                "group": "Solución de Problemas",
+                "pages": [
+                  "es/operator-manual/troubleshooting/troubleshoot",
+                  "es/operator-manual/troubleshooting/nvidia-drivers"
                 ]
               }
             ]

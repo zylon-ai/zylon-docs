@@ -12,12 +12,12 @@ Si aún no has configurado n8n en tu instancia de Zylon, puedes consultar el man
 
 # Primeros pasos
 
-Una vez que n8n esté configurado en la instancia de Zylon, podrás acceder a la interfaz web de n8n, la cual está disponible en la siguiente URL:
-`https://<your_zylon_domain>/n8n`.
+Una vez que n8n esté configurado en la instancia de Zylon, podrás acceder a la interfaz web de n8n, la cual está disponible por defecto en la siguiente URL:
+`https://n8n.<your_zylon_domain>`.
 
-<Warning>
-n8n puede redireccionar incorrectamente durante el inicio de sesión, resultando en una URL como `/n8n/n8n` en lugar de `/n8n`, lo cual mostrará un error 404. Si encuentras este error, verifica la URL en la barra de direcciones de tu navegador y corrígela manualmente para usar solo un segmento `/n8n`.
-</Warning>
+<Note>
+Es posible que durante el proceso de instalación se haya configurado un dominio personalizado para n8n.
+</Note>
 
 ## Crear una cuenta en n8n
 
@@ -25,7 +25,7 @@ La primera vez que accedas a la instancia de n8n se te pedirá crear una cuenta 
 
 **Pasos para crear la cuenta de administrador:**
 
-1. Accede a `https://<your_zylon_domain>/n8n`
+1. Accede a `https://n8n.<your_zylon_domain>`
 2. Completa el formulario de registro
 3. Acepta los términos de uso
 4. Haz clic en "Crear cuenta"
@@ -52,10 +52,6 @@ Solo los administradores pueden crear nuevos usuarios en n8n.
 6. Haz clic en **"Create invite link"**
 7. Comparte el enlace de invitación con el nuevo usuario
 
-<Warning>
-n8n actualmente no almacena los enlaces de invitación correctamente. Por favor, asegúrate de copiar y enviar el enlace al invitado cuando crees su acceso.
-Si el enlace original se pierde, será necesario eliminar el usuario y crear uno nuevo.
-</Warning>
 
 # Conectar con Zylon chat model
 
@@ -63,7 +59,7 @@ Para conectar n8n con los modelos de chat de Zylon, se puede utilizar el nodo de
 
 Los prerrequisitos son:
 
-- Contar con un token de API de Zylon (ver cómo obtener token)[/es/api-reference/token-management]
+- Contar con un token de API de Zylon [ver cómo obtener token](/es/api-reference/token-management)
 
 Una vez que se tienen los prerrequisitos, se puede proceder a configurar n8n:
 

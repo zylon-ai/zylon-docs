@@ -176,7 +176,7 @@
                     "group": "Built-in",
                     "pages": [
                       "en/api-reference/tools/built-in/semantic-search-tool",
-                      "en/api-reference/tools/built-in/tabular_analysis-tool",
+                      "en/api-reference/tools/built-in/tabular-analysis-tool",
                       "en/api-reference/tools/built-in/web-extract-tool",
                       "en/api-reference/tools/built-in/database-query-tool"
                     ]
@@ -443,7 +443,7 @@
                     "group": "Integradas",
                     "pages": [
                       "es/api-reference/tools/built-in/semantic-search-tool",
-                      "es/api-reference/tools/built-in/tabular_analysis-tool",
+                      "es/api-reference/tools/built-in/tabular-analysis-tool",
                       "es/api-reference/tools/built-in/web-extract-tool",
                       "es/api-reference/tools/built-in/database-query-tool"
                     ]

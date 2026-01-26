@@ -1,0 +1,19 @@
+Zylon se configura mediante un archivo YAML ubicado en `/etc/zylon/zylon-conf.yaml`.
+
+**Generar Configuración Inicial**
+
+Usa la CLI para generar un archivo de configuración inicial:
+```bash
+sudo zylon-cli config init
+```
+
+Esto abre un prompt interactivo que te guía a través de las opciones de configuración.
+
+<Info>
+Si por alguna razón te quedas atascado durante el prompt interactivo, puedes omitirlo añadiendo la bandera `-y` para auto-generar una configuración por defecto:
+```bash
+sudo zylon-cli config init -y
+```
+Después necesitarás editar manualmente `/etc/zylon/zylon-conf.yaml` para establecer tu configuración deseada basándote en la sección de [configuración manual](#manual-configuration).
+
+</Info>

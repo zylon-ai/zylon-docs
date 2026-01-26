@@ -4,39 +4,133 @@ title: "Performance tweaks"
 
 ## Docling
 
-To fine-tune the machine resources, and be able to use all machine resources in ingestion process, we provide the following configuration to configure based on the machine:
-
 ### Performance Configuration
 
-1. **Number of workers**: This is the configuration that determines how many workers Docling will have. We recommend leaving it at 2, where 1 worker will process large files and the other will process smaller files.
-2. **Number of threads**: This configuration will be used to limit the capacity that our internal extraction service will use. Consider that this number should be lower to the maximum cores that machine has.
+Docling uses a worker pool architecture where workers are automatically split into two groups for quality of service:
+- **Small file workers**: Process files less than 1MB and less than 100 pages
+- **Large file workers**: Process files greater than or equal to 1MB or greater than or equal to 100 pages
 
-**Important**: The number of threads must be divisible by the number of workers.
+This prevents large files from blocking the processing queue.
 
-In case you want to test and improve the performance, consider configure as:
+#### Configuration Parameters
 
-```yaml
-external:
-  docling:
-    numWorkers: M
-    numThreads: N
-```
+**numWorkers**: Total number of workers (automatically split 50/50 between small and large file processing)
 
-### Optional Configuration
+**numThreads**: Total threads available across all workers. Each worker receives `numThreads / numWorkers` threads.
 
-1. **Table mode**: Controls the table extraction strategy:
-   - `accurate`: Maximum precision for complex tables. Higher processing time. Default option.
-   - `fast`: Optimized for speed with good accuracy. Lower processing time.
-   - `none`: Disables table extraction. No processing time.
+<Accordion title="Configuration Constraints and Strategy">
 
-2. **Do cell matching**: Enables matching of table cells to improve structure recognition. Recommended for complex tables. By default is `true`.
+**Constraints**
+- `numWorkers >= 2` and must be even
+- `numThreads >= 2`
+- `numThreads` must be divisible by `numWorkers`
+- Recommended: Leave at least 20-30% of cores free for system processes
 
-3. **Force full page OCR**: Forces OCR processing on entire pages instead of selective regions. Use when standard extraction misses content. This will increase the processing time significantly. By default is `false`.
+**Strategy**
 
-```yaml
-external:
-  docling:
-    tableMode: "accurate"
-    doCellMatching: true
-    forceFullPageOCR: false
-```
+**High concurrency, small files** → Many workers, fewer threads per worker
+- Maximizes parallel processing of multiple small documents
+- Use when processing many PDFs under 100 pages
+
+**Low concurrency, large files** → Fewer workers, more threads per worker
+- Allocates more computational power per document
+- Use when processing scanned books or technical manuals
+
+</Accordion>
+
+### Extra Configuration
+
+**tableMode**: Controls table extraction strategy
+- `accurate`: Maximum precision, higher processing time (default)
+- `fast`: Speed-optimized with good accuracy
+- `none`: Disables table extraction
+
+**doCellMatching**: Enables table cell matching for improved structure recognition. Recommended for complex tables (default: `true`)
+
+**forceFullPageOCR**: Forces full-page OCR instead of selective regions. Use when standard extraction misses content. Significantly increases processing time (default: `false`)
+
+### Example Configurations
+
+The following examples considering a system with 48 CPU cores. Adjust `numWorkers` and `numThreads` based on your system's CPU count and workload characteristics.
+
+<AccordionGroup>
+  <Accordion title="Balanced Workload">
+
+  **Use case**: Steady workload with moderate file volume and average file sizes
+
+  **What this does**: Middle ground between high throughput and heavy processing. Provides 3 workers for small files and 3 for large files with 6 threads each, balancing concurrency and processing power.
+
+  ```yaml
+  external:
+    docling:
+      # Performance
+      numWorkers: 4   # 2 for small files, 2 for large files
+      numThreads: 36  # 9 threads per worker, leaving 12 cores free
+      
+      # Extra configuration
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Many small documents (High Throughput)">
+
+  **Use case**: Processing large volumes of documents under 100 pages and under 1MB
+
+  **What this does**: Maximizes concurrent file processing with 8 workers for small files and 8 for large files. Reduces threads per worker to increase parallelism. Uses fast table extraction to optimize speed over precision.
+
+  ```yaml
+  external:
+    docling:
+      # Performance
+      numWorkers: 16  # 8 for small files, 8 for large files
+      numThreads: 32  # 2 threads per worker, leaving 16 cores free
+      
+      # Extra configuration
+      tableMode: "fast"        # Prioritize speed
+      doCellMatching: false    # Disable for faster processing
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Heavy Documents (Complex or Large Files)">
+
+  **Use case**: Processing fewer but larger or more complex documents with detailed tables
+  **What this does**: Allocates more computational power per document with 8 threads per worker. Uses only 2 workers for small files and 2 for large files to focus resources on thorough processing of complex content.
+
+  ```yaml
+  external:
+    docling:
+      # Performance
+      numWorkers: 4   # 2 for small files, 2 for large files
+      numThreads: 32  # 8 threads per worker, leaving 16 cores free
+      
+      # Extra configuration
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Scanned Documents (OCR Intensive)">
+
+  **Use case**: Processing primarily scanned documents or images requiring full OCR extraction
+
+  **What this does**: Reduces worker count to allocate more threads per worker for intensive OCR processing. Enables full page OCR to extract text from scanned images. Uses fewer workers (2 for small, 2 for large) with 6 threads each to handle the computational demand of OCR.
+
+  ```yaml
+  external:
+    docling:
+      # Performance
+      numWorkers: 4   # 2 for small files, 2 for large files
+      numThreads: 40  # 10 threads per worker, leaving 8 cores free
+      
+      # Extra configuration
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: true  # Required for scanned documents
+  ```
+
+  </Accordion>
+</AccordionGroup>

@@ -58,7 +58,7 @@ The following examples considering a system with 48 CPU cores. Adjust `numWorker
 
   **Use case**: Steady workload with moderate file volume and average file sizes
 
-  **What this does**: Middle ground between high throughput and heavy processing. Provides 3 workers for small files and 3 for large files with 6 threads each, balancing concurrency and processing power.
+  **What this does**: Middle ground between high throughput and heavy processing. Provides 2 workers for small files and 2 for large files with 9 threads each, balancing concurrency and processing power.
 
   ```yaml
   external:

@@ -117,8 +117,8 @@ The following examples consider a system with 48 CPU cores. Adjust `numWorkers` 
 
   **Use case**: Processing primarily scanned documents or images requiring full OCR extraction
 
-  **What this does**: Reduces worker count to allocate more threads per worker for intensive OCR processing. Enables full page OCR to extract text from scanned images. Uses fewer workers (2 for small, 2 for large) with 6 threads each to handle the computational demand of OCR.
-
+  **What this does**: Reduces worker count to allocate more threads per worker for intensive OCR processing. Enables full page OCR to extract text from scanned images. Uses fewer workers (2 for small, 2 for large) with 10 threads each to maximize processing power per document.
+  
   ```yaml
   external:
     docling:

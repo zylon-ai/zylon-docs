@@ -4,39 +4,134 @@ title: "Ajustes de rendimiento"
 
 ## Docling
 
-Para ajustar finamente los recursos de la máquina y poder usar todos los recursos de la máquina en el proceso de ingesta, proporcionamos la siguiente configuración para configurar según la máquina:
+### Configuración de rendimiento
 
-### Configuración de Rendimiento
+Docling utiliza una arquitectura de pool de workers donde los workers se dividen automáticamente en dos grupos para calidad de servicio:
+- **Workers de archivos pequeños**: Procesan archivos menores a 1MB y con menos de 100 páginas
+- **Workers de archivos grandes**: Procesan archivos mayores o iguales a 1MB o con 100 páginas o más
 
-1. **Número de workers**: Esta es la configuración que determina cuántos workers tendrá Docling. Recomendamos dejarlo en 2, donde 1 worker procesará archivos grandes y el otro procesará archivos más pequeños.
-2. **Número de threads**: Esta configuración se usará para limitar la capacidad que nuestro servicio de extracción interno usará. Considera que este número debe ser menor al máximo de núcleos que tiene la máquina.
+Esto evita que los archivos grandes bloqueen la cola de procesamiento.
 
-**Importante**: El número de threads debe ser divisible por el número de workers.
+#### Parámetros de configuración
 
-En caso de que quieras probar y mejorar el rendimiento, considera configurar como:
+**numWorkers**: Número total de workers (se dividen automáticamente 50/50 entre procesamiento de archivos pequeños y grandes)
 
-```yaml
-external:
-  docling:
-    numWorkers: M
-    numThreads: N
-```
+**numThreads**: Total de hilos disponibles entre todos los workers. Cada worker recibe `numThreads / numWorkers` hilos.
 
-### Configuración Opcional
+<Accordion title="Restricciones y estrategia de configuración">
 
-1. **Modo de tabla**: Controla la estrategia de extracción de tablas:
-   - `accurate`: Máxima precisión para tablas complejas. Mayor tiempo de procesamiento. Opción por defecto.
-   - `fast`: Optimizado para velocidad con buena precisión. Menor tiempo de procesamiento.
-   - `none`: Deshabilita la extracción de tablas. Sin tiempo de procesamiento.
+**Restricciones**
+- `numWorkers >= 2` y debe ser par
+- `numThreads >= 2`
+- `numThreads` debe ser divisible por `numWorkers`
+- Recomendado: Dejar al menos 20-30% de los núcleos libres para procesos del sistema
 
-2. **Hacer coincidencia de celdas**: Habilita la coincidencia de celdas de tabla para mejorar el reconocimiento de estructura. Recomendado para tablas complejas. Por defecto es `true`.
+**Estrategia**
 
-3. **Forzar OCR de página completa**: Fuerza el procesamiento OCR en páginas completas en lugar de regiones selectivas. Usa cuando la extracción estándar pierde contenido. Esto aumentará significativamente el tiempo de procesamiento. Por defecto es `false`.
+**Alta concurrencia, archivos pequeños** → Muchos workers, menos hilos por worker
+- Maximiza el procesamiento paralelo de múltiples documentos pequeños
+- Usar cuando se procesan muchos PDFs de menos de 100 páginas
 
-```yaml
-external:
-  docling:
-    tableMode: "accurate"
-    doCellMatching: true
-    forceFullPageOCR: false
-```
+**Baja concurrencia, archivos grandes** → Menos workers, más hilos por worker
+- Asigna más poder computacional por documento
+- Usar cuando se procesan libros escaneados o manuales técnicos
+
+</Accordion>
+
+### Configuración adicional
+
+**tableMode**: Controla la estrategia de extracción de tablas
+- `accurate`: Máxima precisión, mayor tiempo de procesamiento (predeterminado)
+- `fast`: Optimizado para velocidad con buena precisión
+- `none`: Deshabilita la extracción de tablas
+
+**doCellMatching**: Habilita el matching de celdas de tabla para mejorar el reconocimiento de estructura. Recomendado para tablas complejas (predeterminado: `true`)
+
+**forceFullPageOCR**: Fuerza OCR de página completa en lugar de regiones selectivas. Usar cuando la extracción estándar omite contenido. Incrementa significativamente el tiempo de procesamiento (predeterminado: `false`)
+
+### Configuraciones de ejemplo
+
+Los siguientes ejemplos consideran un sistema con 48 núcleos de CPU. Ajusta `numWorkers` y `numThreads` según el número de CPUs de tu sistema y las características de tu carga de trabajo.
+
+<AccordionGroup>
+  <Accordion title="Carga de trabajo balanceada">
+
+  **Caso de uso**: Carga de trabajo constante con volumen moderado de archivos y tamaños promedio
+
+  **Qué hace esto**: Punto medio entre alto rendimiento y procesamiento pesado. Proporciona 2 workers para archivos pequeños y 2 para archivos grandes con 9 hilos cada uno, balanceando concurrencia y poder de procesamiento.
+
+  ```yaml
+  external:
+    docling:
+      # Rendimiento
+      numWorkers: 4   # 2 para archivos pequeños, 2 para archivos grandes
+      numThreads: 36  # 9 hilos por worker, dejando 12 núcleos libres
+      
+      # Configuración adicional
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Muchos documentos pequeños (Alto rendimiento)">
+
+  **Caso de uso**: Procesamiento de grandes volúmenes de documentos de menos de 100 páginas y menores a 1MB
+
+  **Qué hace esto**: Maximiza el procesamiento concurrente de archivos con 8 workers para archivos pequeños y 8 para archivos grandes. Reduce hilos por worker para incrementar el paralelismo. Usa extracción rápida de tablas para optimizar velocidad sobre precisión.
+
+  ```yaml
+  external:
+    docling:
+      # Rendimiento
+      numWorkers: 16  # 8 para archivos pequeños, 8 para archivos grandes
+      numThreads: 32  # 2 hilos por worker, dejando 16 núcleos libres
+      
+      # Configuración adicional
+      tableMode: "fast"        # Priorizar velocidad
+      doCellMatching: false    # Deshabilitar para procesamiento más rápido
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Documentos pesados (Archivos complejos o grandes)">
+
+  **Caso de uso**: Procesamiento de documentos menos numerosos pero más grandes o complejos con tablas detalladas
+  
+  **Qué hace esto**: Asigna más poder computacional por documento con 8 hilos por worker. Usa solo 2 workers para archivos pequeños y 2 para archivos grandes para enfocar recursos en el procesamiento exhaustivo de contenido complejo.
+
+  ```yaml
+  external:
+    docling:
+      # Rendimiento
+      numWorkers: 4   # 2 para archivos pequeños, 2 para archivos grandes
+      numThreads: 32  # 8 hilos por worker, dejando 16 núcleos libres
+      
+      # Configuración adicional
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: false
+  ```
+
+  </Accordion>
+  <Accordion title="Documentos escaneados (Intensivo en OCR)">
+
+  **Caso de uso**: Procesamiento principalmente de documentos escaneados o imágenes que requieren extracción OCR completa
+
+  **Qué hace esto**: Reduce el número de workers para asignar más hilos por worker para procesamiento OCR intensivo. Habilita OCR de página completa para extraer texto de imágenes escaneadas. Usa menos workers (2 para pequeños, 2 para grandes) con 10 hilos cada uno para maximizar el poder de procesamiento por documento.
+  
+  ```yaml
+  external:
+    docling:
+      # Rendimiento
+      numWorkers: 4   # 2 para archivos pequeños, 2 para archivos grandes
+      numThreads: 40  # 10 hilos por worker, dejando 8 núcleos libres
+      
+      # Configuración adicional
+      tableMode: "accurate"
+      doCellMatching: true
+      forceFullPageOCR: true  # Requerido para documentos escaneados
+  ```
+
+  </Accordion>
+</AccordionGroup>

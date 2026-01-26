@@ -1,0 +1,159 @@
+---
+title: "Instalación Online"
+description: "Instala Zylon con acceso completo a internet"
+---
+
+import InstallationCli from "/snippets/es/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/es/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/es/installation/installation-manual-config.mdx";
+import InstallationSeed from "/snippets/es/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/es/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/es/installation/installation-monitor.mdx";
+import InstallationNextSteps from "/snippets/es/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/es/installation/installation-prerequisites.mdx";
+
+Esta guía cubre la instalación estándar de Zylon para entornos con acceso completo a internet. El sistema descargará automáticamente todas las dependencias requeridas, imágenes de contenedores y modelos de IA.
+
+**Lista de Prerrequisitos**:
+
+<InstallationPrerequisites />
+- [ ] Acceso completo y sin restricciones a internet en la máquina objetivo
+- [ ] El firewall permite conexiones salientes a registros de Docker y repositorios de paquetes
+- [ ] Ya sea:
+  - [ ] Puertos 80 y 443 abiertos para la generación automática de certificados SSL de Let's Encrypt, O
+  - [ ] Certificado SSL válido listo para configuración manual
+
+---
+
+## Instalando Zylon (Online)
+
+<Steps>
+  <Step title="Instalar Zylon CLI">
+    _Tiempo estimado: 2 min_
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Verificar requisitos mínimos de Zylon">
+    Asegúrate de que tu máquina cumple con los [requisitos de hardware](/es/operator-manual/installation/hardware-requirements) para Zylon.
+
+    Para validar automáticamente si tu instalación cumple con los requisitos mínimos, ejecuta:
+
+    ```bash
+    sudo zylon-cli preflight-checks --network --fresh-system -v
+    ```
+
+    Resuelve cualquier problema reportado antes de proceder con la instalación. No podrás continuar hasta que todas las comprobaciones previas pasen.
+    <Info>
+      ¿Tienes problemas con la conectividad de red? Considera cambiar a una [Instalación Semi-Airgap](/es/operator-manual/installation/semi-airgap) o [Instalación Airgap](/es/operator-manual/installation/airgap).
+    </Info>
+
+    <Note>
+      Zylon requiere que todas las comprobaciones pasen antes de proporcionar soporte de instalación.
+    </Note>
+
+  </Step>
+
+  <Step title="Configurar Zylon">
+    _Tiempo estimado: 10min_
+
+    <InstallationConfig />
+
+    <Tabs>
+      <Tab title="Configuración Automática">
+        Si ejecutaste `sudo zylon-cli config init`, toda la configuración está establecida.
+        Revisa `/etc/zylon/zylon-conf.yaml` para confirmar la configuración. Puedes obtener más información sobre qué configuraciones son requeridas en la sección [Configuración Manual](#manual-configuration).
+
+        <Info>
+          Si necesitas volver a ejecutar el asistente de configuración, ejecuta:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
+
+        Puedes 
+
+      </Tab>
+      <Tab title="Configuración Manual">
+        <InstallationManualConfig />
+      </Tab>
+    </Tabs>
+
+
+    **Ver Configuración Actual**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Para información detallada sobre todas las opciones de configuración disponibles, consulta la [Guía de Configuración](/es/operator-manual/configuration/index).
+
+  </Step>
+
+  <Step title="Instalar Zylon">
+    _Tiempo estimado: 15min a 1hora, dependiendo del rendimiento del sistema y velocidad de red._
+
+    Ejecuta el comando de instalación con tu versión deseada:
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Elige tu versión deseada de la lista
+    sudo zylon-cli install <version>
+    ```
+
+    Reemplaza `<version>` con tu versión objetivo (por ejemplo, `1.50.0`).
+
+    **Qué se Instala**
+
+    El proceso de instalación maneja:
+
+    - Dependencias del sistema (gcc, git, etc.)
+    - Distribución de Kubernetes ([k0s](https://k0sproject.io/))
+    - Controladores NVIDIA y CUDA (si aplica)
+    - Runtime de contenedores y herramientas (kubectl, helm)
+    - Imágenes de contenedores de Zylon
+    - Modelos de IA de tu configuración
+    - Generación de certificados SSL (si usas Let's Encrypt)
+
+    <InstallationMonitor />
+  </Step>
+
+  <Step title="Crear Organización">
+    _Tiempo estimado: 5 min_
+
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configurar SSL (Opcional)">
+    _Tiempo estimado: 10 min_
+
+    <Info>
+      **Omite este paso** si usas certificados automáticos de Let's Encrypt (por defecto para instancias públicas).
+    </Info>
+
+    Para despliegues en VPN o nube privada, necesitas instalar manualmente certificados SSL.
+
+    <InstallationSsl />
+  </Step>
+</Steps>
+
+---
+
+## Actualizando Zylon (Online)
+
+Las actualizaciones siguen el mismo proceso que la instalación:
+
+```bash
+sudo zylon-cli list-versions
+# Elige tu versión deseada de la lista
+sudo zylon-cli install <new-version>
+```
+
+Alternativamente, puedes actualizar directamente a la última versión usando el comando de actualización:
+
+```bash
+sudo zylon-cli upgrade
+```
+
+---
+
+<InstallationNextSteps />

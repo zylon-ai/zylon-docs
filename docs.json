@@ -508,9 +508,11 @@
               {
                 "group": "Instalación",
                 "pages": [
+                  "es/operator-manual/installation/index",
                   "es/operator-manual/installation/hardware-requirements",
-                  "es/operator-manual/installation/install",
-                  "es/operator-manual/installation/update",
+                  "es/operator-manual/installation/online",
+                  "es/operator-manual/installation/semi-airgap",
+                  "es/operator-manual/installation/airgap",
                   "es/operator-manual/installation/uninstall"
                 ]
               },
@@ -532,8 +534,7 @@
                     "group": "Red y Conectividad",
                     "pages": [
                       "es/operator-manual/configuration/network/ports-and-dns",
-                      "es/operator-manual/configuration/network/proxy",
-                      "es/operator-manual/configuration/network/semi-airgap"
+                      "es/operator-manual/configuration/network/proxy"
                     ]
                   },
                   {
@@ -556,7 +557,6 @@
                   {
                     "group": "Funciones y Capacidades",
                     "pages": [
-                      "es/operator-manual/configuration/features/index",
                       "es/operator-manual/configuration/features/feat-mcp",
                       "es/operator-manual/configuration/features/feat-database",
                       "es/operator-manual/configuration/features/feat-audit",

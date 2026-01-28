@@ -1,0 +1,42 @@
+Después de que Zylon esté instalado y en funcionamiento, crea tu organización y cuenta de administrador root.
+
+**Prepara la Información**
+
+Necesitarás:
+
+- **Nombre de organización**: El nombre de tu empresa o equipo (se puede cambiar más tarde)
+- **Contraseña de administrador**: Contraseña segura para el administrador root (se puede cambiar más tarde)
+  - Usa caracteres alfanuméricos debido a limitaciones de codificación con símbolos especiales
+- **Regex de correo electrónico**: Patrón para permitir automáticamente que los usuarios se unan
+  - Para correos `name@company.com`, usa: `.*@company\.com`
+  - Para SSO (Microsoft Entra, Google), puedes usar: `.*`
+
+**Ejecuta el Comando Seed**
+
+```bash
+sudo zylon-cli seed \
+  --org-name "Mi Organización" \
+  --admin-password "contraseña-segura" \
+  --email-regex ".*@tuempresa\.com"
+```
+
+El comando esperará si Zylon no está completamente listo.
+
+<Danger>
+  **Ejecutar el comando seed BORRARÁ TODOS LOS DATOS.** Solo ejecútalo una vez durante la configuración inicial de Zylon.
+</Danger>
+
+**Credenciales de Inicio de Sesión**
+
+Después de hacer el seed, usa estas credenciales para iniciar sesión:
+
+```
+Usuario: admin@zylon.ai
+Contraseña: [la contraseña que estableciste]
+```
+
+El correo electrónico del administrador root siempre es `admin@zylon.ai` y no se puede cambiar.
+
+<Note>
+  Después del primer inicio de sesión, puedes crear administradores adicionales y configurar la autenticación SSO.
+</Note>

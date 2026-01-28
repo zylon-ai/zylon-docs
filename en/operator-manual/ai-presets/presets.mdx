@@ -9,12 +9,12 @@ Set the AI preset in your Zylon configuration file using the `ai.preset` propert
 
 Base presets provide standard configurations optimized for general-purpose AI workloads.
 
-| Preset         | Required GPU Memory | Compatible Hardware Examples  |
-|----------------|---------------------|-------------------------------|
-| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     |
-| `baseline-32g` | 32GB                | RTX 5090                      |
-| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     |
-| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) |
+| Preset         | Required GPU Memory | Compatible Hardware Examples  | Models                                                      |
+|----------------|---------------------|-------------------------------|-------------------------------------------------------------|
+| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
 
 ### Configuration Example
 
@@ -35,10 +35,10 @@ Zylon provides alternative presets that offer specialized configurations trading
 
 These presets include specialized computer vision capabilities in the ingestion pipeline, allowing the system to process and understand images, documents, and visual content.
 
-| Preset                             | Required GPU Memory | Trade-off                  |
-|------------------------------------|---------------------|----------------------------|
-| `alternatives.baseline-48g-vision` | 48GB                | Smaller model (Qwen 3 14B) |
-| `alternatives.baseline-96g-vision` | 96GB                | Smaller model (Qwen 3 14B) |
+| Preset                             | Required GPU Memory | Trade-off                  | Models                                                                                  |
+|------------------------------------|---------------------|----------------------------|-----------------------------------------------------------------------------------------|
+| `alternatives.baseline-48g-vision` | 48GB                | Smaller model (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `alternatives.baseline-96g-vision` | 96GB                | Smaller model (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
 
 **When to use vision-enabled presets:**
 
@@ -61,10 +61,10 @@ The use of these presets probably requires modifying the inference server's shar
 
 These presets use smaller AI models to provide significantly larger context windows, allowing for extended conversations and complex analysis tasks.
 
-| Preset                              | Required GPU Memory | Trade-off                  |
-|-------------------------------------|---------------------|----------------------------|
-| `alternatives.baseline-48g-context` | 48GB                | Smaller model (Qwen 3 14B) |
-| `alternatives.baseline-96g-context` | 96GB                | Smaller model (Qwen 3 14B) |
+| Preset                              | Required GPU Memory | Trade-off                  | Models                                                      |
+|-------------------------------------|---------------------|----------------------------|-------------------------------------------------------------|
+| `alternatives.baseline-48g-context` | 48GB                | Smaller model (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `alternatives.baseline-96g-context` | 96GB                | Smaller model (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
 
 **When to use context-optimized presets:**
 
@@ -91,13 +91,13 @@ Experimental presets are under active development and may not be stable. Use onl
 
 Experimental presets provide access to cutting-edge models and configurations that are being evaluated for future releases. These presets may have different performance characteristics or stability compared to baseline presets.
 
-| Preset                     | Required GPU Memory | Model Family | Status |
-|----------------------------|---------------------|--------------|--------|
-| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   |
-| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   |
-| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   |
-| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   |
-| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  |
+| Preset                     | Required GPU Memory | Model Family | Status | Models                                                                            |
+|----------------------------|---------------------|--------------|--------|-----------------------------------------------------------------------------------|
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  | google/gemma-3n-e4b-it, mixedbread-ai/mxbai-embed-large-v1                        |
 
 **Configuration Example:**
 

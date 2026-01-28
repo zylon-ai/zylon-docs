@@ -1,25 +1,115 @@
 ---
-title: "Configuración"
-description: "Todas las configuraciones que una instancia permite hacer"
+title: "Descripción General de la Configuración"
+description: "Guía completa para configurar su instancia de Zylon"
 ---
 
+Configure su instancia de Zylon para satisfacer los requisitos específicos de su organización. Esta sección cubre modelos de IA, configuración de red, autenticación, funciones y configuraciones avanzadas.
+
+---
+
+## Flujo de Trabajo de Configuración
+
+<Steps>
+  <Step title="Editar Configuración">
+    Modifique `/etc/zylon/zylon-conf.yaml` con la configuración deseada
+  </Step>
+  <Step title="Validar Cambios">
+    Revise su configuración para detectar errores de sintaxis y compatibilidad
+  </Step>
+  <Step title="Aplicar Configuración">
+    Ejecute `sudo zylon-cli sync` para aplicar los cambios a su instancia en ejecución
+  </Step>
+  <Step title="Verificar">
+    Compruebe que los cambios de configuración hayan tenido el efecto esperado
+  </Step>
+</Steps>
+
+---
+
+## Configuración Principal
+
 <CardGroup cols={2}>
-  <Card title="Presets de IA" icon="laptop" href="/es/operator-manual/ai-presets">
-    Configura presets de IA basados en la capacidad de memoria de tu GPU y habilita capacidades especializadas para tu instancia de Zylon
+  <Card title="Preajustes de IA" icon="brain" href="/es/operator-manual/ai-presets/getting-started">
+    Configure modelos de IA basados en la capacidad de GPU y habilite capacidades especializadas
   </Card>
-  <Card title="Búsqueda" icon="magnifying-glass" href="/es/operator-manual/configuration/search">
-    Configura idiomas de búsqueda y ajustes de búsqueda por palabras clave para optimizar el descubrimiento y recuperación de contenido
+  <Card title="Conectores de Conocimiento" icon="database" href="/es/operator-manual/knowledge-base/index">
+    Conéctese a fuentes de datos externas como SharePoint, Confluence y sistemas de archivos
   </Card>
-  <Card title="OpenID" icon="link" href="/es/operator-manual/openid">
-    Configura el servidor de identidad para usar en Zylon, como Microsoft o Google
+  <Card title="Integración n8n" icon="chart-diagram" href="/es/operator-manual/configuration/n8n">
+    Habilite y configure la automatización de flujos de trabajo n8n dentro de Zylon
   </Card>
-  <Card title="Conectores de Conocimiento" icon="lock" href="/es/operator-manual/knowledge-base/index">
-    Configura conectores de conocimiento Confluence, Sharepoint, etc
+  <Card title="Configuración de Búsqueda" icon="magnifying-glass" href="/es/operator-manual/configuration/search">
+    Configure idiomas de búsqueda y ajustes de búsqueda por palabras clave para un descubrimiento óptimo de contenido
   </Card>
-  <Card title="Observabilidad" icon="chart-line" href="/es/operator-manual/configuration/observability">
-    Configura telemetría, reportes de fallos y métricas de uso con lista blanca de dominios para monitoreo y soporte
-  </Card>
-  <Card title="Ajustes de Rendimiento" icon="gauge-high" href="/es/operator-manual/configuration/performance">
-    Optimiza la utilización de recursos de la máquina y configura el threading para mejorar el rendimiento de ingesta
+  <Card title="Marca Blanca" icon="palette" href="/es/operator-manual/configuration/whitelabel">
+    Personalice la marca, logotipos y apariencia para que coincidan con su organización
   </Card>
 </CardGroup>
+
+---
+
+## Red y Conectividad
+
+<CardGroup cols={2}>
+  <Card title="Puertos y DNS" icon="network-wired" href="/es/operator-manual/configuration/network/ports-and-dns">
+    Configure los puertos de red y la configuración de DNS necesarios
+  </Card>
+  <Card title="Configuración de Proxy" icon="shield" href="/es/operator-manual/configuration/network/proxy">
+    Configure proxy HTTP/HTTPS para entornos de red restringidos
+  </Card>
+</CardGroup>
+
+---
+
+## Autenticación y Seguridad
+
+<CardGroup cols={2}>
+  <Card title="SSO de Google" icon="google" href="/es/operator-manual/openid/google">
+    Habilite el inicio de sesión único de Google para la autenticación de usuarios
+  </Card>
+  <Card title="SSO de Microsoft Entra" icon="microsoft" href="/es/operator-manual/openid/microsoft">
+    Configure el inicio de sesión único de Microsoft Entra (Azure AD)
+  </Card>
+</CardGroup>
+
+---
+
+## Funciones y Capacidades
+
+Habilite o deshabilite funciones específicas para controlar lo que está disponible para sus usuarios.
+
+<CardGroup cols={2}>
+  <Card title="Registro de Auditoría" icon="list" href="/es/operator-manual/configuration/features/feat-audit">
+    Realice un seguimiento de las acciones del usuario y los eventos del sistema para cumplimiento y seguridad
+  </Card>
+  <Card title="Conector de Base de Datos" icon="database" href="/es/operator-manual/configuration/features/feat-database">
+    Habilite consultas directas a bases de datos desde conversaciones de chat
+  </Card>
+  <Card title="Conector MCP" icon="plug" href="/es/operator-manual/configuration/features/feat-mcp">
+    Integre herramientas del Protocolo de Contexto de Modelo para capacidades extendidas
+  </Card>
+  <Card title="Soporte Multimodal" icon="image" href="/es/operator-manual/configuration/features/feat-multimodal">
+    Habilite el procesamiento de imágenes y capacidades de visión en modelos de IA
+  </Card>
+  <Card title="Extracción Web" icon="file-code" href="/es/operator-manual/configuration/features/feat-webextract">
+    Extraiga y analice contenido de páginas web en tiempo real
+  </Card>
+  <Card title="Búsqueda Web" icon="globe" href="/es/operator-manual/configuration/features/feat-websearch">
+    Habilite capacidades de búsqueda en internet dentro de conversaciones de chat
+  </Card>
+</CardGroup>
+
+---
+
+## Configuración Avanzada
+
+<CardGroup cols={2}>
+  <Card title="Observabilidad" icon="chart-line" href="/es/operator-manual/configuration/observability">
+    Configure telemetría, reportes de fallos y métricas de uso para monitoreo
+  </Card>
+  <Card title="Ajuste de Rendimiento" icon="gauge-high" href="/es/operator-manual/configuration/performance">
+    Optimice la utilización de recursos y el threading para un mejor rendimiento
+  </Card>
+</CardGroup>
+
+---

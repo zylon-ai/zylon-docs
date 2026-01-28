@@ -3,67 +3,216 @@ title: "CLI de Zylon"
 description: "Todos los comandos disponibles en la CLI"
 ---
 
-## backfill-agent-flow-content  
-Indexa contenido para flujos de agente creados antes de Zylon v1.43.0.
-
-## backup  
-Crea una copia de seguridad del estado actual del sistema.
+## backup
+Crear una copia de seguridad
 
 Uso: `sudo zylon-cli backup --help`
 
-## config  
-Inicializa el archivo de configuración para Zylon en `/etc/zylon/zylon-conf.yaml`.
+**Banderas:**
+
+- `-o, --backup-dir`: Ruta al directorio de copias de seguridad (predeterminado: `/var/backups/zylon`)
+- `-k, --keep-last`: Número de copias de seguridad a mantener (predeterminado: `10`)
+- `-u, --unsafe`: No detener k0s antes de tomar la copia de seguridad. Úselo solo cuando evitar el tiempo de inactividad sea más importante que la seguridad de los datos (por ejemplo, en entornos de no producción o de prueba), ya que esto puede provocar corrupción de datos y no se recomienda para copias de seguridad de producción.
+- `-y, --yes`: Omitir confirmación del usuario
+
+## completion
+Generar el script de autocompletado para el shell especificado
+
+Uso: `sudo zylon-cli completion`
+
+## config
+Administrar configuración
 
 Uso: `sudo zylon-cli config`
 
-## doctor  
-Realiza varias verificaciones para ver el estado general en el clúster k8s para Zylon.
+## create-api-token
+Crear un token API para Zylon
+
+Uso: `sudo zylon-cli create-api-token`
+
+## doctor
+Verificar el estado de salud de la instalación de Zylon
 
 Uso: `sudo zylon-cli doctor`
-## install-drivers  
-Instala los controladores NVIDIA necesarios para soporte GPU. Usa la bandera `--force` para desinstalar cualquier controlador previamente instalado y reinstalarlos.
 
-Uso: `sudo zylon-cli install-drivers --force true/false`
+## download
+Descargar una versión específica de Zylon
 
-## restart  
-Reinicia los servicios de Zylon.
+Uso: `sudo zylon-cli download --help`
 
-## restore  
-Restaura el estado del sistema desde una copia de seguridad previamente creada.
+**Banderas:**
 
-Uso: `sudo zylon-cli restore -f path/to/backup.tgz`
+- `--airgap`: Habilitar modo airgap (instala todo)
+- `--arch`: Arquitectura de CPU de destino
+- `--binaries`: Instalar binarios portátiles
+- `--drivers`: Instalar controladores NVIDIA
+- `--force`: Forzar reinstalación de componentes existentes
+- `--images`: Instalar imágenes de contenedor
+- `--models`: Modelos de IA (se puede especificar varias veces o separados por comas) (predeterminado: `[]`)
+- `--os`: SO de destino (ubuntu22, ubuntu24)
+- `--packages`: Instalar paquetes APT
+- `--source`: Fuente desde la cual descargar artefactos (s3 o source) (predeterminado: `s3`)
 
+## export
+Exportar una versión específica de artefactos de Zylon
 
-## seed  
-Pobla la base de datos con datos iniciales o de prueba.
-Usa junto con `--help` para información adicional
-<Danger>
- Esta es una acción irreversible. Establece la base de datos al estado inicial.
-</Danger>
+Uso: `sudo zylon-cli export --help`
 
-Uso: `sudo zylon-cli seed`
-## self-update  
-Actualiza Zylon CLI (interfaz de línea de comandos) a la última versión.
+**Banderas:**
+
+- `--arch`: Arquitectura de destino
+- `--from`: Versión base para exportación incremental (exporta solo las diferencias)
+- `--models`: Modelos de IA (se puede especificar varias veces o separados por comas) (predeterminado: `[]`)
+- `--no-binaries`: Excluir binarios portátiles
+- `--no-cluster-chart`: Excluir gráficos Helm del clúster
+- `--no-drivers`: Excluir controladores NVIDIA
+- `--no-images`: Excluir imágenes de contenedor
+- `--no-packages`: Excluir paquetes APT
+- `--no-zylon-chart`: Excluir gráficos Helm de Zylon
+- `--os`: Sistema operativo de destino
+- `--output`: Ruta del archivo tar o tar.gz de salida (predeterminado: zylon-{version}-{os}-{arch}.tar)
+- `--yes`: Omitir confirmación del usuario
+
+## forge
+Forjar modelos para Zylon
+
+Uso: `sudo zylon-cli forge`
+
+## forward
+Reenviar un comando a un servicio en ejecución
+
+Uso: `sudo zylon-cli forward --help`
+
+**Banderas:**
+
+- `-a, --args`: Argumentos a pasar al comando
+- `-c, --command`: Comando a ejecutar
+- `-s, --service`: Nombre del servicio
+
+## help
+Ayuda sobre cualquier comando
+
+Uso: `sudo zylon-cli help`
+
+## import
+Importar artefactos de Zylon desde un archivo tar o tar.gz
+
+Uso: `sudo zylon-cli import`
+
+## install
+Instalar Zylon con la configuración actual
+
+Uso: `sudo zylon-cli install --help`
+
+**Banderas:**
+
+- `--airgap`: Habilitar modo airgap (instala todo)
+- `--force`: Forzar reinstalación de componentes existentes
+- `--images`: Instalar imágenes de contenedor
+- `--models`: Modelos de IA (se puede especificar varias veces o separados por comas) (predeterminado: `[]`)
+- `--no-binaries`: Excluir binarios portátiles
+- `--no-cluster-chart`: Excluir gráficos Helm del clúster
+- `--no-drivers`: Excluir controladores NVIDIA
+- `--no-packages`: Excluir paquetes APT
+- `--no-zylon-chart`: Excluir gráficos Helm de Zylon
+- `--skip-final-checks`: Omitir verificaciones finales después de la instalación
+- `--skip-migrations`: Omitir la ejecución de migraciones antes de la instalación
+- `--skip-preflight`: Omitir verificaciones previas antes de la instalación
+- `--source`: Fuente desde la cual descargar artefactos (s3 o source). Solo aplicable en modo no airgap (predeterminado: `s3`)
+
+## install-drivers
+Instalar controladores NVIDIA
+
+Uso: `sudo zylon-cli install-drivers --help`
+
+**Banderas:**
+
+- `-f, --force`: Forzar instalación de controladores
+
+## list-versions
+Listar la versión de Zylon actualmente instalada
+
+Uso: `sudo zylon-cli list-versions --help`
+
+**Banderas:**
+
+- `--changelog`: Mostrar enlaces de registro de cambios (predeterminado: `true`)
+- `--offline`: Indicar instalación sin conexión (sin acceso a S3)
+
+## preflight
+Ejecutar verificaciones previas
+
+Uso: `sudo zylon-cli preflight --help`
+
+**Banderas:**
+
+- `--fresh-system`: Validar instalaciones de sistema nuevo
+- `--network`: Validar acceso de red a los dominios requeridos (para instalaciones semi-airgap)
+- `-v, --verbose`: Habilitar salida detallada con información detallada
+
+## restart
+Reiniciar servicios de Zylon
+
+Uso: `sudo zylon-cli restart`
+
+## restore
+Restaurar desde una copia de seguridad
+
+Uso: `sudo zylon-cli restore --help`
+
+**Banderas:**
+
+- `-f, --backup-file`: Ruta al archivo tar de copia de seguridad. Si está vacío, se predetermina a la copia de seguridad más reciente
+
+## run-sql
+Ejecutar comandos SQL contra la base de datos de Zylon
+
+Uso: `sudo zylon-cli run-sql --help`
+
+**Banderas:**
+
+- `--db`: Base de datos de destino (predeterminado es 'main') (predeterminado: `main`)
+- `-f, --file`: Ruta a un archivo que contiene comandos SQL a ejecutar
+- `-s, --sql`: Comando SQL a ejecutar
+
+## seed
+Poblar la base de datos
+
+Uso: `sudo zylon-cli seed --help`
+
+**Banderas:**
+
+- `-p, --admin-password`: Contraseña del administrador raíz
+- `-e, --email-regex`: Todos los correos electrónicos que coincidan con esta expresión regular podrán unirse a la organización. Normalmente esto sería .*@\.sudominio\.com
+- `-o, --org-name`: Nombre de la organización
+
+## self-update
+Actualizar la CLI
 
 Uso: `sudo zylon-cli self-update`
 
+## sync-kube-config
+Sincronizar configuración de kube
 
-## setup  
-Configura e inicializa un nuevo nodo de Zylon. También recarga cambios en el archivo de configuración.
+Uso: `sudo zylon-cli sync-kube-config`
 
-Uso: `sudo zylon-cli setup`
+## update
+Actualizar configuración de Zylon
 
-## uninstall-drivers  
-Desinstala los controladores NVIDIA actualmente instalados.
-
-Uso: `sudo zylon-cli uninstall-drivers`
-
-## update  
-Actualiza la instancia de Zylon a la última versión.
+**Alias:** sync
 
 Uso: `sudo zylon-cli update`
 
-## update-password <a id="update-password" />
-Restablece la contraseña para un usuario especificado.
+## update-password
+Restablecer la contraseña para un usuario
 
-Uso: `sudo zylon-cli update-password -e "user@example.com"`
+Uso: `sudo zylon-cli update-password --help`
+
+**Banderas:**
+
+- `-e, --email`: Correo electrónico de la cuenta
+
+## upgrade
+Actualizar Zylon a la última versión
+
+Uso: `sudo zylon-cli upgrade`

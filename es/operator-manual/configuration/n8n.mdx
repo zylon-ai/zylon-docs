@@ -36,22 +36,19 @@ La API pública de n8n permite gestionar workflows, ejecuciones, credenciales
 y otros recursos de forma programática mediante endpoints REST ([Documentación de la API](https://docs.n8n.io/api/))
 </Info>
 <Warning>
-Los campos de `license` solo aplican cuando `externalConnection.enabled` está configurado en `true` y se tiene conexión a internet.
+  Los campos de `license` solo aplican cuando `externalConnection.enabled` está configurado en `true` y se tiene conexión a internet.
 </Warning>
 <Warning>
-En modo airgap, `externalConnection.enabled` siempre estará en `false` independientemente del valor configurado
-([Instalación semi-airgap](/es/operator-manual/configuration/network/semi-airgap))
+  En modo Semi/Full AirGap, `externalConnection.enabled` siempre estará en `false` independientemente del valor configurado.
 </Warning>
 
-### Configuración de Certificados SSL
+### Configuración de Certificados SSL (Opcional)
 
 <Warning>
-Esta sección es necesaria únicamente si no estás utilizando certificados de Let's Encrypt
+  Esta sección es necesaria únicamente si no estás utilizando certificados de Let's Encrypt
 </Warning>
 
 Si tu instalación de Zylon utiliza certificados SSL manuales (no Let's Encrypt), necesitarás crear un secret adicional de Kubernetes específicamente para n8n.
-
-Primero, asegúrate de haber completado todos los pasos de la [guía de instalación de certificados SSL manuales](/es/operator-manual/installation/install#step-6-optional-manually-installing-ssl-certificates).
 
 #### Crear un Secret para n8n
 

@@ -81,7 +81,7 @@ Your firewall must allow access to these domains:
     To validate automatically if your installation meets the minimum requirements, run:
 
     ```bash
-    sudo zylon-cli preflight-checks --network --fresh-system -v
+    sudo zylon-cli preflight --network --fresh-system -v
     ```
 
     Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
@@ -236,7 +236,7 @@ airgap:
 Validate if Zylon has connectivity again by running:
 
 ```bash
-sudo zylon-cli preflight-checks --network -v
+sudo zylon-cli preflight --network -v
 ```
 
 If all checks pass, proceed to download and install the update:

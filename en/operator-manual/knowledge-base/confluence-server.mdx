@@ -1,0 +1,72 @@
+---
+title: Confluence Server
+---
+
+Zylon integrates directly with **Confluence Server / Data Center** using the **Confluence REST API**
+No Atlassian application, OAuth configuration, or external services are required.
+
+---
+
+## Requirements
+
+- A running *Confluence Data Server* instance
+- A **Confluence user account** with access to the Spaces you want to import
+- Network access from Zylon to the Confluence instance
+
+---
+
+## Authentication
+
+Zylon authenticates using **Basic Authentication**:
+
+- **Username**: Confluence username
+- **Password**: Confluence password
+
+The permissions available to Zylon are exactly the permissions of the user you authenticate with.
+
+---
+
+## Configure Zylon
+
+Edit the Zylon configuration file located at:
+
+```bash
+/etc/zylon/zylon-conf.yaml
+```
+
+<Tip> The configuration file is YAML. Be careful with indentation, spaces, and quoting. </Tip>
+
+Add the following configuration:
+```yaml
+integration:
+  confluenceServer:
+    enabled: true
+    domain: "http://your-confluence-domain:8090"
+```
+
+Configuration fields
+
+**enabled**
+Enables the Confluence Server connector.
+
+**domain**
+Base URL of your Confluence Server instance.
+
+Examples:
+http://confluence.company.local:8090
+https://confluence.company.com
+
+## Troubleshooting
+
+### I try to upload files to the knowledge base and Confluence button is greyed out
+
+Clear the browser cache and try again.
+
+### When I click on `Upload files -> From Confluence` the log in is not working
+
+- Check that the `domain` copy pasted correctly into Zylon config file
+- Check that the `username` and `password` used are correct.
+
+### I don’t see any space to import
+
+- Make sure you have logged in into Confluence with an account that has access to spaces.

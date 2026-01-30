@@ -1,0 +1,74 @@
+---
+title: Confluence Server
+---
+
+Zylon se integra directamente con **Confluence Server / Data Center** mediante la **API REST de Confluence**.
+No se requiere ninguna aplicación de Atlassian, configuración OAuth ni servicios externos.
+
+---
+
+## Requisitos
+
+- Una instancia de *Confluence Data Server* en ejecución
+- Una **cuenta de usuario de Confluence** con acceso a los Espacios que quieras importar
+- Acceso de red desde Zylon a la instancia de Confluence
+
+---
+
+## Autenticación
+
+Zylon se autentica mediante **autenticación básica (Basic Authentication)**:
+
+- **Usuario**: nombre de usuario de Confluence
+- **Contraseña**: contraseña de Confluence
+
+Los permisos disponibles para Zylon son exactamente los permisos del usuario con el que te autentiques.
+
+---
+
+## Configurar Zylon
+
+Edita el archivo de configuración de Zylon ubicado en:
+
+```bash
+/etc/zylon/zylon-conf.yaml
+```
+
+<Tip> El archivo de configuración es YAML. Ten cuidado con la indentación, los espacios y las comillas. </Tip>
+
+Añade la siguiente configuración:
+```yaml
+integration:
+  confluenceServer:
+    enabled: true
+    domain: "http://your-confluence-domain:8090"
+```
+
+Campos de configuración
+
+**enabled**
+Habilita el conector de Confluence Server.
+
+**domain**
+URL base de tu instancia de Confluence Server.
+
+Ejemplos:
+http://confluence.company.local:8090
+https://confluence.company.com
+
+
+## Solución de Problemas
+
+### Intento cargar archivos a la base de conocimiento y el botón de Confluence está deshabilitado
+
+Limpia la caché del navegador e intenta de nuevo.
+
+### Cuando hago clic en `Upload files -> From Confluence` el inicio de sesión no funciona
+
+- Verifica que el `domain` este copiado y pegado correctamente en el archivo de configuración de Zylon
+- Verifica que el `username` y `password` usados son correctos.
+
+### No veo ningún espacio para importar
+
+- Asegúrate de haber iniciado sesión en Confluence con una cuenta que tenga acceso a espacios.
+- Verifica que los permisos requeridos sean correctos como se muestra en el paso 6

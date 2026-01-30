@@ -88,6 +88,7 @@
                     "pages": [
                       "en/user-manual/connectors/sharepoint",
                       "en/user-manual/connectors/confluence",
+                      "en/user-manual/connectors/confluence-server",
                       "en/user-manual/connectors/file-system",
                       "en/user-manual/connectors/claromentis"
                     ]
@@ -263,6 +264,7 @@
                       "en/operator-manual/knowledge-base/index",
                       "en/operator-manual/knowledge-base/sharepoint",
                       "en/operator-manual/knowledge-base/confluence",
+                      "en/operator-manual/knowledge-base/confluence-server",
                       "en/operator-manual/knowledge-base/file-system",
                       "en/operator-manual/knowledge-base/claromentis"
                     ]
@@ -374,6 +376,7 @@
                     "pages": [
                       "es/user-manual/connectors/sharepoint",
                       "es/user-manual/connectors/confluence",
+                      "es/user-manual/connectors/confluence-server",
                       "es/user-manual/connectors/file-system",
                       "es/user-manual/connectors/claromentis"
                     ]
@@ -549,6 +552,7 @@
                       "es/operator-manual/knowledge-base/index",
                       "es/operator-manual/knowledge-base/sharepoint",
                       "es/operator-manual/knowledge-base/confluence",
+                      "es/operator-manual/knowledge-base/confluence-server",
                       "es/operator-manual/knowledge-base/file-system",
                       "es/operator-manual/knowledge-base/claromentis"
                     ]

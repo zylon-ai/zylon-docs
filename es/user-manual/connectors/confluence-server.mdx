@@ -1,0 +1,25 @@
+---
+title: Conector de Confluence Server
+description: Importa páginas de una instancia de Confluence Server / Data Center on-premise y manténlas sincronizadas bajo demanda.
+---
+
+Puedes importar **Espacios** de una instancia de **Confluence Server / Data Center** a la que tengas acceso.
+
+Después de importar, usa el botón **Actualizar** (dentro del menú de 3 puntos) para **sincronizar** con la fuente:
+
+- Detecta **cambios de contenido** en las páginas.
+- Añade **páginas nuevas** y **elimina** las eliminadas.
+- Refleja **movimientos y renombrados**, manteniendo la estructura sincronizada con la jerarquía del Espacio de Confluence.
+
+Confluence Server no utiliza carpetas.
+En su lugar, **las páginas y sus páginas hijas** se usan para recrear la jerarquía.
+
+> Todos los que tengan acceso al Proyecto tendrán acceso a las páginas que conectes, independientemente de los permisos originales en Confluence.
+
+![](/images/confluence_login.png)
+![](/images/confluence_picker.jpg)
+
+<Info>
+    Consulta cómo habilitar el conector en el
+    [Manual del operador](/es/operator-manual/knowledge-base/confluence-server)
+</Info>

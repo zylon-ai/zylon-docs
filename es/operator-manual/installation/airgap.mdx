@@ -127,21 +127,20 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     sudo cat /etc/zylon/zylon-conf.yaml
     ```
 
+    Puedes editar el archivo de configuración directamente usando tu editor de texto preferido (por ejemplo, `nano`, `vim`):
+
+    ```bash
+    # Elige uno de los siguientes comandos:
+    sudo nano /etc/zylon/zylon-conf.yaml
+    sudo vim /etc/zylon/zylon-conf.yaml
+    ```
+
     Para información detallada sobre todas las opciones de configuración disponibles, consulta la [Guía de Configuración](/es/operator-manual/configuration/index).
 
   </Step>
 
   <Step title="Descargar Bundle de Zylon">
-    _Tiempo estimado: 5min a 45min, dependiendo de la velocidad de red._
-
-    Descarga la versión específica de Zylon que quieres instalar:
-
-    ```bash
-    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
-    ```
-
-    Reemplaza `<version>` con tu versión objetivo (por ejemplo, `1.50.0`).
-    La bandera `--models` se usa para especificar qué modelos de IA incluir en la descarga. Puedes listar múltiples modelos separados por comas.
+    _Tiempo estimado: 15min a 2h, dependiendo de la velocidad de red._
 
     <Warning>
       **¡La primera instalación o modelos adicionales requieren modelos de IA!** Usa la bandera `--models` para especificar qué modelos incluir.
@@ -162,18 +161,30 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
       --models=qwen/qwen3-14b-awq,intfloat/multilingual-e5-large
       ```
     </Warning>
+
+    Descarga la versión específica de Zylon que quieres instalar:
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Elige tu versión deseada de la lista
+    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
+    ```
+
+    Reemplaza `<version>` con tu versión objetivo (por ejemplo, `1.50.0`).
+    La bandera `--models` se usa para especificar qué modelos de IA incluir en la descarga. Puedes listar múltiples modelos separados por comas.
   </Step>
 
   <Step title="Exportar Bundle">
-    _Tiempo estimado: 15 a 60 min, dependiendo de los modelos seleccionados y versión._
+    _Tiempo estimado: 15 a 120 min, dependiendo de los modelos seleccionados y versión._
 
     Exporta la versión descargada en un bundle airgap. Si incluiste modelos durante la descarga, asegúrate de incluirlos aquí también:
 
     ```bash
-    sudo zylon-cli export <version> --airgap [--models=model-a,model-b,model-c]
+    # Misma versión y modelos que el paso de descarga
+    sudo zylon-cli export <version> [--models=model-a,model-b,model-c]
     ```
 
-    Esto crea `zylon-<version>-airgap.tar` en tu directorio actual. Adicionalmente, generará
+    Esto crea `zylon-<version>-<so>-<arch>.tar` en tu directorio actual. Adicionalmente, generará
     los comandos para ejecutar en la máquina offline para la instalación para importar e instalar Zylon. Almacena estos comandos de forma segura.
 
     <Note>
@@ -217,17 +228,17 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     Transfiere archivos a la máquina offline usando tu método preferido (SCP, USB, unidad externa):
 
     **Primera instalación:**
-    - `zylon-<version>-airgap.tar` (bundle principal)
+    - `zylon-<version>-<so>-<arch>.tar` (bundle principal)
     - `zylon-initial.tar.gz` (CLI y config)
     - `zylon-ssl-certs.tar.gz` (certificados SSL, si aplica)
 
     **Actualizaciones subsecuentes:**
-    - `zylon-<version>-airgap.tar` (solo bundle principal)
+    - `zylon-<version>-<so>-<arch>.tar` (solo bundle principal)
 
     **Ejemplo SCP**
 
     ```bash
-    scp zylon-<version>-airgap.tar user@offline-machine:/tmp/
+    scp zylon-<version>-<arch>-<so>.tar user@offline-machine:/tmp/
     scp zylon-initial.tar.gz user@offline-machine:/tmp/
     scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
     ```
@@ -286,7 +297,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-<version>-airgap.tar
+    sudo zylon-cli import zylon-<version>-<so>-<arch>.tar
     ```
 
     Este proceso:
@@ -393,7 +404,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     sudo zylon-cli export <new-version> --from <current-version> --airgap --models=new-model-a,new-model-b
     ```
 
-    Esto genera `zylon-<new-version>-airgap.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
+    Esto genera `zylon-<new-version>-<so>-<arch>.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
 
     <Note>
       Los bundles diferenciales típicamente son 5-20 GB vs. 80+ GB para bundles completos.
@@ -405,7 +416,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     **Ejemplo SCP:**
     ```bash
-    scp zylon-<new-version>-airgap.tar user@offline-machine:/tmp/
+    scp zylon-<new-version>-<so>-<arch>.tar user@offline-machine:/tmp/
     ```
 
     **Métodos alternativos:**
@@ -419,7 +430,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-<new-version>-airgap.tar
+    sudo zylon-cli import zylon-<new-version>-<so>-<arch>.tar
     ```
 
     El proceso de importación:

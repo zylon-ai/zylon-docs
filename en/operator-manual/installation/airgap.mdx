@@ -184,7 +184,7 @@ In your online machine, ensure firewall access to these domains:
     sudo zylon-cli export <version> [--models=model-a,model-b,model-c]
     ```
 
-    This creates `zylon-<version>-<so>-<arch>.tar` in your current directory. Additionally, it will generate
+    This creates `zylon-<version>-<os>-<arch>.tar` in your current directory. Additionally, it will generate
     the commands to run on the offline machine for installation to import and install Zylon. Store these commands safely.
 
     <Note>
@@ -228,17 +228,17 @@ In your online machine, ensure firewall access to these domains:
     Transfer files to the offline machine using your preferred method (SCP, USB, external drive):
 
     **First installation:**
-    - `zylon-<version>-<so>-<arch>.tar` (main bundle)
+    - `zylon-<version>-<os>-<arch>.tar` (main bundle)
     - `zylon-initial.tar.gz` (CLI and config)
     - `zylon-ssl-certs.tar.gz` (SSL certs, if applicable)
 
     **Subsequent updates:**
-    - `zylon-<version>-<so>-<arch>.tar` (main bundle only)
+    - `zylon-<version>-<os>-<arch>.tar` (main bundle only)
 
     **SCP Example**
 
     ```bash
-    scp zylon-<version>-<so>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-<version>-<os>-<arch>.tar user@offline-machine:/tmp/
     scp zylon-initial.tar.gz user@offline-machine:/tmp/
     scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
     ```
@@ -297,7 +297,7 @@ In your online machine, ensure firewall access to these domains:
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-<version>-<so>-<arch>.tar
+    sudo zylon-cli import zylon-<version>-<os>-<arch>.tar
     ```
 
     This process:
@@ -404,7 +404,7 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     sudo zylon-cli export <new-version> --from <current-version> --models=new-model-a,new-model-b
     ```
 
-    This generates `zylon-<new-version>-to-<old-version>-<so>-<arch>.tar` and displays the import/install commands to run on the offline machine as well.
+    This generates `zylon-<new-version>-to-<old-version>-<os>-<arch>.tar` and displays the import/install commands to run on the offline machine as well.
 
     <Note>
       Differential bundles are typically 5-20 GB vs. 80+ GB for full bundles.
@@ -416,7 +416,7 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
 
     **SCP Example:**
     ```bash
-    scp zylon-<new-version>-to-<old-version>-<so>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
     ```
 
     **Alternative methods:**
@@ -430,7 +430,7 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-<new-version>-to-<old-version>-<so>-<arch>.tar
+    sudo zylon-cli import zylon-<new-version>-to-<old-version>-<os>-<arch>.tar
     ```
 
     The import process:

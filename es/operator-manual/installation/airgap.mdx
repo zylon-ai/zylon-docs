@@ -391,7 +391,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     Exporta un bundle de actualización incremental:
 
     ```bash
-    sudo zylon-cli export <new-version> --from <current-version> --airgap
+    sudo zylon-cli export <new-version> --from <current-version>
     ```
 
     La bandera `--from` crea un bundle diferencial que contiene solo cambios entre versiones, reduciendo significativamente el tamaño del bundle y tiempo de transferencia.
@@ -401,10 +401,10 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     Si cambias el preset, los requisitos de GPU, o necesitas nuevos modelos, inclúyelos:
     
     ```bash
-    sudo zylon-cli export <new-version> --from <current-version> --airgap --models=new-model-a,new-model-b
+    sudo zylon-cli export <new-version> --from <current-version> --models=new-model-a,new-model-b
     ```
 
-    Esto genera `zylon-<new-version>-<so>-<arch>.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
+    Esto genera `zylon-<new-version>-to-<old-version>-<so>-<arch>.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
 
     <Note>
       Los bundles diferenciales típicamente son 5-20 GB vs. 80+ GB para bundles completos.
@@ -416,7 +416,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     **Ejemplo SCP:**
     ```bash
-    scp zylon-<new-version>-<so>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-<new-version>-to-<old-version>-<so>-<arch>.tar user@offline-machine:/tmp/
     ```
 
     **Métodos alternativos:**
@@ -430,7 +430,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-<new-version>-<so>-<arch>.tar
+    sudo zylon-cli import zylon-<new-version>-to-<old-version>-<so>-<arch>.tar
     ```
 
     El proceso de importación:

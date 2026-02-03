@@ -1,0 +1,25 @@
+---
+title: Confluence Server connector
+description: Import pages from an on-premise Confluence Server / Data Center instance and keep them in sync on demand.
+---
+
+You can import **Spaces** from a **Confluence Server / Data Center** instance that you have access to.
+
+After importing, use the **Update** button (within the 3-dots menu) to **sync** with the source:
+
+- Detects **content changes** in pages.
+- Adds **new pages** and **removes** deleted ones.
+- Reflects **moves and renames**, keeping the structure in sync with the Confluence Space hierarchy.
+
+Confluence Server does not use folders.
+Instead, **pages and their child pages** are used to recreate the hierarchy.
+
+> Everyone with access to the Project will have access to the pages you connect, independently of the original permissions in Confluence.
+
+![](/images/confluence_login.png)
+![](/images/confluence_picker.jpg)
+
+<Info>
+    Check how to enable the connector in the
+    [Operator Manual](/en/operator-manual/knowledge-base/confluence-local)
+</Info>

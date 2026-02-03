@@ -304,7 +304,8 @@
                 "pages": [
                   "en/operator-manual/troubleshooting/troubleshoot",
                   "en/operator-manual/troubleshooting/nvidia-drivers",
-                  "en/operator-manual/troubleshooting/ai"
+                  "en/operator-manual/troubleshooting/ai",
+                  "en/operator-manual/troubleshooting/exporting-logs",
                 ]
               }
             ]
@@ -590,8 +591,9 @@
                 "group": "Solución de Problemas",
                 "pages": [
                   "es/operator-manual/troubleshooting/troubleshoot",
-                  "es/operator-manual/troubleshooting/nvidia-drivers",
-                  "es/operator-manual/troubleshooting/ai"
+                  "es/operator-manual/troubleshooting/ai",
+                  "es/operator-manual/troubleshooting/exporting-logs",
+                  "es/operator-manual/troubleshooting/nvidia-drivers"
                 ]
               }
             ]

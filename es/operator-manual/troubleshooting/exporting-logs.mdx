@@ -1,0 +1,98 @@
+---
+title: "Exportar logs"
+---
+
+Esta guía te ayuda a exportar logs precisos para que el equipo de soporte resuelva incidentes más rápido y con menos idas y vueltas. Como Zylon se ejecuta localmente en tu infraestructura y muchas veces en entornos totalmente air‑gap, estos logs son la forma más segura y confiable de entender lo que ocurrió sin acceder directamente a tus datos. Los pasos están pensados para usuarios no técnicos y muestran las diferencias entre Chrome, Edge y Firefox.
+
+## Antes de empezar
+
+1. Abre la app de Zylon en tu navegador.
+2. Ve a la pantalla donde ocurre el problema.
+3. Mantén esta pestaña abierta mientras sigues los pasos.
+
+## Logs del frontend (respuestas del navegador)
+
+Hay dos formas de compartir los logs del frontend. Puedes enviar un archivo HAR completo o compartir una sola respuesta desde la lista de solicitudes.
+Un HAR (HTTP Archive) es un archivo que contiene todas las solicitudes y respuestas de red de una página. Esto puede acelerar la investigación. Si quieres compartir solo una respuesta específica, sigue los pasos de log individual debajo.
+
+### Google Chrome
+
+1. Abre las herramientas de desarrollador.
+2. Presiona `F12` en Windows o `Cmd + Option + I` en Mac.
+3. Haz clic en la pestaña `Network`.
+4. Marca `Preserve log` para que las solicitudes no se borren al recargar.
+5. Repite el problema (haz los mismos clics o la misma acción).
+6. Para exportar un HAR: haz clic derecho en la lista de solicitudes y elige `Save all as HAR with content`, luego comparte el archivo con soporte.
+6. En la lista de solicitudes, haz clic en la que corresponda a la acción que acabas de hacer.
+7. En el panel derecho, abre la pestaña `Response`.
+8. Haz clic derecho dentro de la respuesta y elige `Copy`.
+9. Pega la respuesta en un archivo de texto y compártelo con soporte.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/LOiqjMdOCNw"
+    title="Zylon Workspace - Exporting web logs on Chrome"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+### Microsoft Edge
+
+1. Abre las herramientas de desarrollador.
+2. Presiona `F12` en Windows o `Cmd + Option + I` en Mac.
+3. Haz clic en la pestaña `Network`.
+4. Marca `Preserve log` para que las solicitudes no se borren al recargar.
+5. Repite el problema (haz los mismos clics o la misma acción).
+6. Para exportar un HAR: haz clic derecho en la lista de solicitudes y elige `Save all as HAR with content`, luego comparte el archivo con soporte.
+6. En la lista de solicitudes, haz clic en la que corresponda a la acción que acabas de hacer.
+7. En el panel derecho, abre la pestaña `Response`.
+8. Haz clic derecho dentro de la respuesta y elige `Copy`.
+9. Pega la respuesta en un archivo de texto y compártelo con soporte.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/nMErrL50zHQ"
+    title="Zylon Workspace - Exporting web logs on Edge"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+### Mozilla Firefox
+
+1. Abre las herramientas de desarrollador.
+2. Presiona `F12` en Windows o `Cmd + Option + I` en Mac.
+3. Haz clic en la pestaña `Network`.
+4. Repite el problema (haz los mismos clics o la misma acción).
+5. Para exportar un HAR: haz clic derecho en la lista de solicitudes y elige `Save All As HAR`, luego comparte el archivo con soporte.
+5. En la lista de solicitudes, haz clic en la que corresponda a la acción que acabas de hacer.
+6. En el panel derecho, abre la pestaña `Response`.
+7. Haz clic derecho dentro de la respuesta y elige `Copy`.
+8. Pega la respuesta en un archivo de texto y compártelo con soporte.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/notcVPpYBpM"
+    title="Zylon Workspace - Exporting web logs on Firefox"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+Si no encuentras la solicitud, prueba estos pasos rápidos.
+
+1. Asegúrate de estar en la pestaña `Network`.
+2. Recarga la página y repite la acción.
+3. Busca filtros como `Fetch/XHR` y selecciónalos.
+
+## Logs que no son del frontend (backend, servicios de AI y otros pods)
+
+Los logs de problemas que no son del frontend deben obtenerse desde el pod correspondiente (backend, servicios de AI u otros componentes). Puedes revisar tus pods para ubicar el servicio correcto antes de recolectarlos.
+Consulta la guía del panel de administración del sistema para ver el estado de pods y servicios: [sys-admin-dashboard.mdx](es/operator-manual/operations/sys-admin-dashboard.mdx)

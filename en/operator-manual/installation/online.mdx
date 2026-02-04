@@ -26,7 +26,7 @@ This guide covers the standard Zylon installation for environments with full int
 
 ---
 
-## Installing Zylon (Online)
+## Installing Zylon
 
 <Steps>
   <Step title="Install Zylon CLI">
@@ -147,7 +147,7 @@ This guide covers the standard Zylon installation for environments with full int
 
 ---
 
-## Updating Zylon (Online)
+## Updating Zylon
 
 Updates follow the same process as installation:
 
@@ -162,6 +162,26 @@ Alternatively, you can upgrade directly to the latest version using the upgrade 
 ```bash
 sudo zylon-cli upgrade
 ```
+
+---
+
+## Migrating to Online
+
+If you have an existing Zylon installation (semi-airgap or airgap) and want to migrate it to a fully online environment, 
+follow this guide. This process preserves your data, and configuration, while transitioning to online operation.
+
+<Info>
+  **Migration differs from fresh installation:**
+  - Your existing configuration and data will be preserved
+  - Organization and users already exist
+</Info>
+
+To migrate an existing Zylon installation (Semi-Airgap, or Airgap) to an Online installation, follow these steps:
+
+1. **Ensure connectivity**: Verify that the target machine has full internet access.
+2. **Update configuration**: Run `sudo zylon-cli config init --force` to update the configuration for online operation.
+3. **Refresh configuration**: Execute `sudo zylon-cli sync` to apply the new configuration settings.
+4. **Verify operation**: Confirm that all services are functioning correctly with internet access.
 
 ---
 

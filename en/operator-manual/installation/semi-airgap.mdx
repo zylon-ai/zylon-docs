@@ -57,7 +57,7 @@ Your firewall must allow access to these domains:
 
 ---
 
-## Installing Zylon in Semi-Airgap Environments
+## Installing Zylon
 
 <Steps>
   <Step title="Install Zylon CLI">
@@ -229,7 +229,7 @@ Your firewall must allow access to these domains:
 
 ---
 
-## Updating Semi-Airgap Installations
+## Updating Zylon
 
 To update the instance, we will need to remove network restrictions temporarily on a connected machine to download update packages. Contact your network security team to whitelist the required domains during this process.
 After downloading, you can reapply the restrictions.
@@ -267,6 +267,34 @@ When the process is complete, re-enable offline mode by setting:
 airgap:
   offline_operation: true
 ```
+
+---
+
+## Migrating to Semi-Airgap
+
+If you have an existing Zylon installation (online or full-airgap) and want to migrate it to a semi airgapped environment, follow this guide. 
+This process preserves your data, and configuration, while transitioning to offline operation.
+
+<Info>
+  **Migration differs from fresh installation:**
+  - Your existing configuration and data will be preserved
+  - SSL certificates will be migrated
+  - Organization and users already exist
+</Info>
+
+To migrate an existing Zylon installation (Online, or Airgap) to an Online installation, follow these steps:
+
+1. **Ensure connectivity**: Verify that the target machine has connectivity with below domains.
+2. **Update configuration**: Run `sudo zylon-cli config init --force` to update the configuration for online operation. Be sure to configure as [Configure Zylon](#configure-zylon) step describes.
+  * Be sure to select Semi-Airgap when you run the configuration wizard.
+  * If you don't have connectivity with replicated domains, be sure to request a local license to Zylon support team.
+4. **Disable offline mode**: Edit `/etc/zylon/zylon-conf.yaml` and set:
+    ```yaml
+    airgap:
+      offline_operation: false
+    ```
+5. **Refresh configuration**: Execute `sudo zylon-cli sync` to apply the new configuration settings.
+6. **Verify operation**: Confirm that all services are functioning correctly.
 
 ---
 

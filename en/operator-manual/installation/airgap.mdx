@@ -8,7 +8,6 @@ import InstallationConfig from "/snippets/en/installation/installation-config.md
 import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
 import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
 import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
-import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
 import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
 import InstallationPrerequisites from "/snippets/en/installation/installation-prerequisites.mdx";
 
@@ -83,7 +82,7 @@ In your online machine, ensure firewall access to these domains:
 
 ---
 
-## Installing Zylon in Airgap Environments
+## Installing Zylon
 
 <Steps>
   <Step title="Online Machine">
@@ -372,8 +371,6 @@ In your online machine, ensure firewall access to these domains:
     ```bash
     sudo zylon-cli install <version> --airgap [--models=model-a,model-b,model-c]
     ```
-
-    <InstallationMonitor />
   </Step>
 
   <Step title="Create Organization">
@@ -401,7 +398,7 @@ In your online machine, ensure firewall access to these domains:
 
 ---
 
-## Updating Airgap Installations
+## Updating Zylon
 
 Updates in airgap environments follow a similar two-machine workflow. The process is faster than initial installation since you're only transferring changes, not the entire platform.
 
@@ -508,6 +505,313 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     
     ```bash
     sudo zylon-cli install <new-version> --airgap --models=new-model-a,new-model-b
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Migrating to Airgap
+
+If you have an existing Zylon installation (online or semi-airgap) and want to migrate it to a fully airgapped environment, follow this guide. This process preserves your data, configuration, and SSL certificates while transitioning to offline operation.
+
+<Info>
+  **Migration differs from fresh installation:**
+  - Your existing configuration and data will be preserved
+  - SSL certificates will be migrated
+  - Organization and users already exist
+</Info>
+
+**Migration Prerequisites:**
+- [ ] Existing Zylon installation (online or semi-airgap) with access
+- [ ] Online machine with internet access for downloading migration bundles
+- [ ] Method to transfer files (70-100 GB) between machines
+- [ ] Target airgap machine with NO internet connection
+- [ ] Root and SSH access to all machines involved
+
+---
+
+### Part A: Extract from Existing Zylon Machine
+
+<Steps>
+  <Step title="Extract Current Configuration">
+    _Estimated time: 5 min_
+
+    Copy the current Zylon configuration file:
+
+    ```bash
+    # On existing Zylon machine
+    sudo cp /etc/zylon/zylon-conf.yaml /tmp/zylon-conf-backup.yaml
+    ```
+  </Step>
+
+  <Step title="Extract SSL Certificates">
+    _Estimated time: 5 min_
+
+    Extract the current SSL certificates from Kubernetes to avoid regeneration:
+
+    ```bash
+    # Extract certificate from Kubernetes secret
+    sudo k0s kubectl get secret zylon-tls -n zylon -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/tls.crt
+    sudo k0s kubectl get secret zylon-tls -n zylon -o jsonpath='{.data.tls\.key}' | base64 -d > /tmp/tls.key
+
+    # Verify files were created
+    ls -lh /tmp/tls.crt /tmp/tls.key
+    ```
+
+    <Note>
+      If the certificate extraction fails, it means you're using Let's Encrypt auto-generation. In this case, you'll need to provide your own certificates or continue using Let's Encrypt on the airgap machine (not recommended for airgap environments).
+    </Note>
+  </Step>
+
+  <Step title="Transfer Files to Online Machine">
+    Transfer the configuration and certificates to your online machine:
+
+    **SCP Example:**
+
+    ```bash
+    # From existing Zylon machine to online machine
+    scp /tmp/zylon-conf-backup.yaml user@online-machine:/tmp/
+    scp /tmp/tls.crt user@online-machine:/tmp/
+    scp /tmp/tls.key user@online-machine:/tmp/
+    ```
+
+    **Alternative methods:**
+    - USB drive
+    - Secure internal file transfer
+    - Network share
+  </Step>
+</Steps>
+
+---
+
+### Part B: Prepare bundle on Online Machine
+
+<Steps>
+  <Step title="Install Zylon CLI">
+    _Estimated time: 2 min_
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Transfer Configuration File">
+    _Estimated time: 2 min_
+
+    Place the backed-up configuration in the correct location:
+
+    ```bash
+    sudo mkdir -p /etc/zylon
+    sudo cp /tmp/zylon-conf-backup.yaml /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Reconfigure for Airgap">
+    _Estimated time: 10 min_
+
+    Run the configuration wizard to update settings for airgap deployment:
+
+    ```bash
+    sudo zylon-cli config init --force
+    ```
+
+    The wizard will guide you through updating the following settings:
+
+    **Potential Required Changes:**
+
+    1. **Installation Type**: Change from your current type (online/semi-airgap) to **Airgap**
+
+    2. **SSL Certificates**: The wizard will prompt for certificates in text format:
+      - Paste the contents of `/tmp/tls.crt` when prompted for the certificate
+      - Paste the contents of `/tmp/tls.key` when prompted for the private key
+
+      <Accordion title="How to view Certificate Contents:">
+        ```bash
+        # Display certificate (copy this output)
+        cat /tmp/tls.crt
+
+        # Display private key (copy this output)
+        cat /tmp/tls.key
+        ```
+      </Accordion>
+
+      <Warning>
+        When pasting certificates into the wizard:
+        - Include the full content including `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` headers
+        - Maintain proper line breaks and formatting
+        - Do not add extra spaces or characters
+      </Warning>
+
+    3. **License Information** (if changing channel):
+       - License Email: Provided by Zylon team
+       - License ID: Provided by Zylon team
+       - License Data: Full license token provided by Zylon team
+
+       <Warning>
+          Ensure the license data is copied exactly as provided, preserving formatting and line breaks.
+        </Warning>
+
+    4. **Channel** (if applicable):
+       - Change from `stable` to `X` (or as instructed by Zylon)
+
+    6. **Review All Other Settings**: The wizard will display current values—confirm or update as needed
+
+    **Verify Updated Configuration:**
+
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Confirm that everything is set correctly for AirGap operation.
+  </Step>
+
+  <Step title="Download Migration Bundle">
+    _Estimated time: 15 min to 1 hour_
+
+    Download the Zylon version bundle (without AI models, as they already exist):
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Choose your target version
+    sudo zylon-cli download <version> --airgap
+    ```
+
+    <Note>
+      We're **not** including `--models` flag because:
+      - Existing AI models from your current installation will be preserved
+      - If you need to add new models, include them with `--models=model-a,model-b`. More info in fresh installation guide below.
+    </Note>
+  </Step>
+
+  <Step title="Export Migration Bundle">
+    _Estimated time: 15 to 60 min_
+
+    Export the migration bundle:
+
+    ```bash
+    sudo zylon-cli export <version>
+    ```
+
+    This creates `zylon-<version>-<os>-<arch>.tar` in your current directory.
+  </Step>
+
+  <Step title="Prepare Migration Package">
+    _Estimated time: 5 min_
+
+    Create a complete migration package with CLI tools and configuration:
+
+    ```bash
+    sudo tar -czf zylon-migration.tar.gz \
+      /usr/local/bin/zylon-cli \
+      /usr/local/bin/zylon-forge-cli \
+      /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Transfer Files to Airgap Machine">
+    Transfer the migration package to your airgap machine:
+
+    **Files to transfer:**
+    - `zylon-<version>-<os>-<arch>.tar` (main bundle)
+    - `zylon-migration.tar.gz` (CLI and updated config)
+
+    **SCP Example:**
+
+    ```bash
+    scp zylon-<version>-<os>-<arch>.tar user@airgap-machine:/tmp/
+    scp zylon-migration.tar.gz user@airgap-machine:/tmp/
+    ```
+  </Step>
+</Steps>
+
+---
+
+### Part C: Migrate to Airgap on Offline Machine
+
+<Steps>
+  <Step title="Stop Existing Zylon (If Applicable)">
+    _Estimated time: 5 min_
+
+    <Warning>
+      Only perform this step if you're migrating on the same physical machine. Skip if deploying to a new airgap machine.
+    </Warning>
+
+    If migrating on the same machine, stop the current Zylon installation:
+
+    ```bash
+    sudo zylon-cli uninstall
+    ```
+  </Step>
+
+  <Step title="Extract Migration Package">
+    _Estimated time: 2 min_
+
+    Extract the CLI tools and configuration:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-migration.tar.gz -C /
+    sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+    ```
+
+    Verify extraction:
+
+    ```bash
+    sudo zylon-cli version
+    cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Should show:
+
+    ```yaml
+    airgap:
+      offline_install: true
+      offline_operation: true
+    ```
+  </Step>
+
+  <Step title="Verify System Requirements">
+    Ensure the airgap machine meets all requirements:
+
+    ```bash
+    sudo zylon-cli preflight -v
+    ```
+
+    Address any issues before proceeding.
+  </Step>
+
+  <Step title="Import Migration Bundle">
+    _Estimated time: 10 to 60 min_
+
+    Import the Zylon bundle:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli import zylon-<version>-<os>-<arch>.tar
+    ```
+
+    This process:
+    - Extracts all container images
+    - Installs dependencies offline
+    - Prepares the system for installation
+
+    <Warning>
+      Import can take 30+ minutes. Do not interrupt the process.
+    </Warning>
+
+    Verify import completion:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+  </Step>
+
+  <Step title="Install Zylon in Airgap Mode">
+    _Estimated time: 15 min to 1 hour_
+
+    Install Zylon using the imported bundle:
+
+    ```bash
+    sudo zylon-cli install <version> --airgap
     ```
   </Step>
 </Steps>

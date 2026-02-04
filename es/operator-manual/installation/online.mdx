@@ -25,7 +25,7 @@ Esta guía cubre la instalación estándar de Zylon para entornos con acceso com
 
 ---
 
-## Instalando Zylon (Online)
+## Instalando Zylon
 
 <Steps>
   <Step title="Instalar Zylon CLI">
@@ -146,7 +146,7 @@ Esta guía cubre la instalación estándar de Zylon para entornos con acceso com
 
 ---
 
-## Actualizando Zylon (Online)
+## Actualizando Zylon
 
 Las actualizaciones siguen el mismo proceso que la instalación:
 
@@ -161,6 +161,25 @@ Alternativamente, puedes actualizar directamente a la última versión usando el
 ```bash
 sudo zylon-cli upgrade
 ```
+
+---
+
+## Migrando a Online
+
+Si tienes una instalación existente de Zylon (semi-airgap o airgap) y quieres migrarla a un entorno completamente online, sigue esta guía. Este proceso preserva tus datos y configuración, mientras realiza la transición a operación online.
+
+<Info>
+  **La migración difiere de la instalación nueva:**
+  - Tu configuración y datos existentes serán preservados
+  - La organización y usuarios ya existen
+</Info>
+
+Para migrar una instalación existente de Zylon (Semi-Airgap, o Airgap) a una instalación Online, sigue estos pasos:
+
+1. **Asegurar conectividad**: Verifica que la máquina objetivo tenga acceso completo a internet.
+2. **Actualizar configuración**: Ejecuta `sudo zylon-cli config init --force` para actualizar la configuración para operación online.
+3. **Refrescar configuración**: Ejecuta `sudo zylon-cli sync` para aplicar los nuevos ajustes de configuración.
+4. **Verificar operación**: Confirma que todos los servicios funcionan correctamente con acceso a internet.
 
 ---
 

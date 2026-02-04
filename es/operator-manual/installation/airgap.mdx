@@ -17,12 +17,11 @@ La instalación airgap permite el despliegue de Zylon en entornos con acceso cer
 **Lista de Prerrequisitos**:
 
 <InstallationPrerequisites />
-- [ ] Máquina de staging con acceso a internet para descargar bundles de instalación
+- [ ] Máquina online con acceso a internet para descargar bundles de instalación
 - [ ] Método para transferir archivos (70-100 GB) a la máquina objetivo aislada (unidad USB, red interna, etc.)
 - [ ] La máquina objetivo NO tiene conexión a internet
 - [ ] Certificado SSL válido para tu dominio
-- [ ] Almacenamiento suficiente en la máquina de staging y medio de transferencia para bundles grandes
-
+- [ ] Almacenamiento suficiente en la máquina online y medio de transferencia para bundles grandes
 ---
 
 ## Acceso de Red Requerido
@@ -33,6 +32,53 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 - `get.zylon.ai` - Instalación de CLI
 - `zylon-cli.s3.us-east-1.amazonaws.com` - Binarios de CLI y dependencias
 - `zylon-artifacts.s3.us-east-1.amazonaws.com` - Archivos de instalación y actualizaciones de Zylon
+
+<Warning>
+  Estos dominios deben ser accesibles desde la máquina en línea para descargar bundles y actualizaciones de Zylon.
+  Si no hay acceso directo a internet, puede configurar un servidor proxy.
+
+  <Accordion title="Configuración de Ajustes de Proxy">
+    Configure las siguientes variables de entorno antes de ejecutar cualquier comando de Zylon CLI:
+
+    ```bash
+    export HTTP_PROXY="http://proxy.company.com:8080"
+    export HTTPS_PROXY="http://proxy.company.com:8080"
+    ```
+
+    **Uso de Certificados Autofirmados**
+
+    Si su proxy usa un certificado autofirmado, también debe configurar el certificado CA:
+
+    ```bash
+    export SSL_CERT_FILE="/path/to/your/ca-cert.pem"
+    export REQUESTS_CA_BUNDLE="/path/to/your/ca-cert.pem"
+    ```
+
+    **Verificar Configuración de Proxy**
+
+    Pruebe la conectividad a través del proxy antes de continuar:
+
+    ```bash
+    # Probar conectividad HTTP
+    curl -v -x $HTTP_PROXY http://get.zylon.ai
+
+    # Probar conectividad HTTPS (si usa certificado autofirmado)
+    curl -v -x $HTTPS_PROXY --cacert $SSL_CERT_FILE https://get.zylon.ai
+    ```
+
+    **Ejecutar Comandos con sudo**
+
+    ⚠️ **Importante:** El comando `sudo` no preserva las variables de entorno por defecto. Debe usar la bandera `-E` para pasar la configuración del proxy a comandos que requieren privilegios elevados:
+
+    ```bash
+    # Incorrecto
+    sudo zylon-cli download <version> --airgap
+    
+    # Correcto
+    sudo -E zylon-cli download <version> --airgap
+    ```
+  </Accordion>
+</Warning>
 
 ---
 
@@ -52,7 +98,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
 ---
 
-## Parte A: Configuración de Máquina Online
+### Parte A: Configuración de Máquina Online
 
 <Steps>
   <Step title="Instalar CLI">
@@ -247,7 +293,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
 ---
 
-## Parte B: Instalación de Máquina Offline
+### Parte B: Instalación de Máquina Offline
 
 <Steps>
   <Step title="Instalar CLI (Solo Primera Vez)">

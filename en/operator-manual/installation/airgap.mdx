@@ -17,11 +17,11 @@ Airgap installation enables Zylon deployment in environments with zero internet 
 **Prerequisites Checklist**:
 
 <InstallationPrerequisites />
-- [ ] Staging machine with internet access to download installation bundles
+- [ ] Online machine with internet access to download installation bundles
 - [ ] Method to transfer files (70-100 GB) to the isolated target machine (USB drive, internal network, etc.)
 - [ ] Target machine has NO internet connection
 - [ ] Valid SSL certificate for your domain
-- [ ] Sufficient storage on staging machine and transfer media for large bundles
+- [ ] Sufficient storage on online machine and transfer media for large bundles
 
 ---
 
@@ -33,6 +33,53 @@ In your online machine, ensure firewall access to these domains:
 - `get.zylon.ai` - CLI installation
 - `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
 - `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
+
+<Warning>
+  These domains must be reachable from the online machine to download Zylon bundles and updates.
+  If direct internet access is not available, you can configure a proxy server.
+
+  <Accordion title="Configuring Proxy Settings">
+    Set the following environment variables before running any Zylon CLI commands:
+
+    ```bash
+    export HTTP_PROXY="http://proxy.company.com:8080"
+    export HTTPS_PROXY="http://proxy.company.com:8080"
+    ```
+
+    **Using Self-Signed Certificates**
+
+    If your proxy uses a self-signed certificate, you must also configure the CA certificate:
+
+    ```bash
+    export SSL_CERT_FILE="/path/to/your/ca-cert.pem"
+    export REQUESTS_CA_BUNDLE="/path/to/your/ca-cert.pem"
+    ```
+
+    **Verify Proxy Configuration**
+
+    Test connectivity through the proxy before proceeding:
+
+    ```bash
+    # Test HTTP connectivity
+    curl -v -x $HTTP_PROXY http://get.zylon.ai
+
+    # Test HTTPS connectivity (if using self-signed cert)
+    curl -v -x $HTTPS_PROXY --cacert $SSL_CERT_FILE https://get.zylon.ai
+    ```
+
+    **Running Commands with sudo**
+
+    ⚠️ **Important:** The `sudo` command does not preserve environment variables by default. You must use the `-E` flag to pass proxy settings to commands requiring elevated privileges:
+
+    ```bash
+    # Wrong
+    sudo zylon-cli download <version> --airgap
+
+    # Correct
+    sudo -E zylon-cli download <version> --airgap
+    ```
+  </Accordion>
+</Warning>
 
 ---
 
@@ -52,7 +99,7 @@ In your online machine, ensure firewall access to these domains:
 
 ---
 
-## Part A: Online Machine Setup
+### Part A: Online Machine Setup
 
 <Steps>
   <Step title="Install CLI">
@@ -247,7 +294,7 @@ In your online machine, ensure firewall access to these domains:
 
 ---
 
-## Part B: Offline Machine Installation
+### Part B: Offline Machine Installation
 
 <Steps>
   <Step title="Install CLI (First Time Only)">

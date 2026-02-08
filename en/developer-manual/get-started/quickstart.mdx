@@ -1,0 +1,121 @@
+---
+title: "Quickstart"
+description: "Make your first API call to ZylonGPT in under 2 minutes."
+---
+
+ZylonGPT exposes a **Messages API**. You send a `messages` array, and you get back a structured `message` response with content blocks (text, tool calls, and more).
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{base_url}` in the examples).
+
+## In 2 minutes
+
+<Steps>
+  <Step title="Get an API token">
+    If you don’t have a token yet, follow: [Token Management](/en/api-reference/token-management).
+  </Step>
+
+  <Step title="Set your API token">
+    ```bash
+    export API_TOKEN="YOUR_API_TOKEN"
+    ```
+
+    <Tip>
+      Replace `{base_url}` in the examples with your Zylon hostname (for example `zylon.me` or `zylon.company.com`).
+      For self-hosted installs, required headers may differ (see [Token Management](/en/api-reference/token-management)).
+    </Tip>
+  </Step>
+
+  <Step title="Send your first message">
+    ```bash
+    curl -X POST "https://{base_url}/gpt/v1/messages" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "default",
+        "max_tokens": 64,
+        "messages": [
+          { "role": "user", "content": "Say only: Zylon ok" }
+        ]
+      }'
+    ```
+
+    Example response (your `id` and timestamps will differ):
+
+    ```json
+    {
+      "id": "msg_2ed04155a067458c9b43f412520b74d5",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "start_timestamp": "2026-02-06T10:33:25.542878Z",
+          "stop_timestamp": "2026-02-06T10:33:25.680211Z",
+          "text": "Zylon ok"
+        }
+      ],
+      "model": "private-gpt",
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 85,
+        "output_tokens": 4
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Stream responses (optional)">
+    Set `stream: true` to receive **Server-Sent Events (SSE)**.
+
+    ```bash
+    curl -N -X POST "https://{base_url}/gpt/v1/messages" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -H "Accept: text/event-stream" \
+      -d '{
+        "model": "default",
+        "stream": true,
+        "max_tokens": 64,
+        "messages": [
+          { "role": "user", "content": "Say only: stream ok" }
+        ]
+      }'
+    ```
+
+    Example streamed events (truncated):
+
+    ```text
+    event: message_start
+    data: {"type":"message_start","message":{"id":"msg_d5bbbbdfd4e4457297e814c97e7a29ff","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+    event: content_block_delta
+    data: {"type":"content_block_delta","index":0,"block_id":"block_019c3283b9f5745fb382fccbb3763446","delta":{"type":"text_delta","text":"stream"}}
+
+    event: message_stop
+    data: {"type":"message_stop"}
+    ```
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Build with Zylon: Overview" icon="terminal" href="/en/developer-manual/build-with-zylon/overview">
+    Learn the core building blocks (messages, artifacts, and tools).
+  </Card>
+
+  <Card title="Messages API" icon="laptop-code" href="/en/developer-manual/build-with-zylon/working-with-messages">
+    Learn the request format, content blocks, multi-turn chats, and streaming.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+- **401/403**: Your token is invalid/expired (or missing required headers on self-hosted installs). See [Token Management](/en/api-reference/token-management).
+- **404**: Check your base URL. For this hosted API, use `https://zylon.me/gpt/v1/`.
+- **400 (model not found)**: Use `"model": "default"` unless you’ve been given a specific model name.
+- **405**: You’re using the wrong method. `/messages` is `POST`.

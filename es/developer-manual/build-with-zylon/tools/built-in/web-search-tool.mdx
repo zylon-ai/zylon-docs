@@ -1,0 +1,57 @@
+---
+title: "Herramienta de búsqueda web"
+description: "Busca en la web durante un mensaje."
+---
+
+Usa la búsqueda web cuando quieres que el asistente busque información online (por ejemplo, “encuentra la documentación oficial de X”).
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+- Tool spec: `{ "name": "web_search", "type": "web_search_v1" }`
+- No requiere `tool_context`
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida la forma del request:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Search the web for: Example Domain" }
+    ],
+    "tools": [
+      { "name": "web_search", "type": "web_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar la request, envía el mismo body a `POST /messages`.
+
+<Tip>
+  Si la búsqueda web está deshabilitada en tu despliegue, `POST /messages` devuelve un bloque `tool_result` con un error.
+</Tip>
+
+## Siguientes pasos
+
+- Aprende cómo aparecen herramientas en los bloques de contenido: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
+

@@ -1,0 +1,51 @@
+---
+title: "Web Fetch tool"
+description: "Fetch and extract a URL mentioned in the message."
+---
+
+Use Web Fetch when your user asks about a web page. You include the URL in the message, enable the tool, and the assistant can fetch and extract readable text from the page.
+
+## Prerequisites
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+
+## Requirements
+
+- Tool spec: `{ "name": "web_extract", "type": "web_extract_v1" }`
+- No `tool_context` required
+
+## Basic request and response
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "Summarize: https://example.com/" }
+    ],
+    "tools": [
+      { "name": "web_extract", "type": "web_extract_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`.
+
+## Tips
+
+- Be explicit in the user message about what you want from the page (summary, key facts, etc.).
+- If your deployment restricts outbound network access, Web Extract may be disabled.

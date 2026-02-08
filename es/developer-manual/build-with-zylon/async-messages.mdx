@@ -1,0 +1,140 @@
+---
+title: "Mensajes asíncronos"
+description: "Inicia una request de Messages de forma asíncrona y luego haz stream de eventos o consulta el estado por message_id."
+---
+
+Los mensajes asíncronos te permiten iniciar una generación y observarla más tarde. Esto es útil cuando no puedes mantener una conexión HTTP abierta (por ejemplo, jobs en background o conexiones inestables).
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+## Inicio rápido
+
+### 1) Inicia un mensaje asíncrono
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/async" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Say only: async ok" }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b",
+  "status": "pending",
+  "message": "Request initiated successfully"
+}
+```
+
+### 2) Haz stream de eventos (SSE)
+
+Usa el `message_id` del paso anterior:
+
+```bash
+MESSAGE_ID="YOUR_MESSAGE_ID"
+```
+
+```bash
+curl -N "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/stream" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Accept: text/event-stream"
+```
+
+Eventos de ejemplo (truncado):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_97be8a330c0c4d22a2b65c27e108109f","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c2f10b8d379f38e6038860485e849","delta":{"type":"text_delta","text":"async"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## Consulta de estado (opcional)
+
+Si no quieres consumir el stream, puedes consultar el estado:
+
+```bash
+curl "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/status" \
+  -H "Authorization: Bearer $API_TOKEN"
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b",
+  "status": "completed",
+  "created_at": "2026-02-05T18:29:10.365169Z",
+  "updated_at": "2026-02-05T18:29:11.107558Z",
+  "completed_at": "2026-02-05T18:29:11.107558Z",
+  "error_message": "",
+  "stream_type": "chat_completion",
+  "metadata": {
+    "message_count": 1,
+    "tools_enabled": false,
+    "thinking_enabled": false,
+    "citations_enabled": false
+  }
+}
+```
+
+## Cancelar y eliminar
+
+### Cancelar un stream
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/cancel" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "message": "Stream cancelled successfully",
+  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b"
+}
+```
+
+### Eliminar un stream
+
+```bash
+curl -i -X DELETE "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/delete" \
+  -H "Authorization: Bearer $API_TOKEN"
+```
+
+Respuesta de ejemplo (truncada):
+
+```text
+HTTP/2 200
+
+null
+```
+
+## Errores comunes
+
+- **Usar el ID incorrecto**: el evento SSE `message_start` incluye el `id` del mensaje del asistente, pero los endpoints asíncronos usan el `message_id` devuelto por `POST /messages/async`.
+- **Olvidar el header de SSE**: establece `Accept: text/event-stream` en `.../stream`.
+- **Eliminar demasiado pronto**: una vez eliminado, los endpoints de status/stream devuelven `404`.
+
+## Siguientes pasos
+
+- Aprende el formato de la API de mensajes: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
+

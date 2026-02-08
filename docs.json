@@ -158,35 +158,58 @@
             "icon": "code",
             "groups": [
               {
-                "group": "API Documentation",
-                "icon": "book",
+                "group": "First Steps",
+                "icon": "rocket",
                 "pages": [
-                  "en/api-reference/how-to-use",
+                  "en/developer-manual/get-started/intro-to-zylon",
                   "en/api-reference/token-management",
-                  "en/api-reference/zylon-gpt-api",
-                  "en/api-reference/workspace-api"
+                  "en/developer-manual/get-started/quickstart"
                 ]
               },
               {
-                "group": "Tools",
-                "icon": "toolbox",
+                "group": "Build with Zylon",
+                "icon": "cubes",
                 "pages": [
-                  "en/api-reference/tools/introduction-to-tools",
+                  "en/developer-manual/build-with-zylon/overview",
+                  "en/developer-manual/build-with-zylon/working-with-messages",
+                  "en/developer-manual/build-with-zylon/working-with-artifacts",
                   {
-                    "group": "Built-in",
+                    "group": "Tools",
                     "pages": [
-                      "en/api-reference/tools/built-in/semantic-search-tool",
-                      "en/api-reference/tools/built-in/tabular-analysis-tool",
-                      "en/api-reference/tools/built-in/web-extract-tool",
-                      "en/api-reference/tools/built-in/database-query-tool"
-                    ]
-                  },
-                  {
-                    "group": "Custom",
-                    "pages": [
-                      "en/api-reference/tools/custom/custom-tools"
+                      "en/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                      {
+                        "group": "Built-in",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                          "en/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                          "en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                          "en/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                          "en/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                        ]
+                      },
+                      {
+                        "group": "Custom",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                        ]
+                      }
                     ]
                   }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "icon": "terminal",
+            "groups": [
+              {
+                "group": "Using the API",
+                "icon": "book",
+                "pages": [
+                  "en/api-reference/how-to-use",
+                  "en/api-reference/workspace-api",
+                  "en/api-reference/zylon-gpt-api"
                 ]
               },
               {
@@ -446,35 +469,58 @@
             "icon": "code",
             "groups": [
               {
-                "group": "Documentación de la API",
-                "icon": "book",
+                "group": "Primeros pasos",
+                "icon": "rocket",
                 "pages": [
-                  "es/api-reference/how-to-use",
+                  "es/developer-manual/get-started/intro-to-zylon",
                   "es/api-reference/token-management",
-                  "es/api-reference/zylon-gpt-api",
-                  "es/api-reference/workspace-api"
+                  "es/developer-manual/get-started/quickstart"
                 ]
               },
               {
-                "group": "Herramientas",
-                "icon": "toolbox",
+                "group": "Construye con Zylon",
+                "icon": "cubes",
                 "pages": [
-                  "es/api-reference/tools/introduction-to-tools",
+                  "es/developer-manual/build-with-zylon/overview",
+                  "es/developer-manual/build-with-zylon/working-with-messages",
+                  "es/developer-manual/build-with-zylon/working-with-artifacts",
                   {
-                    "group": "Integradas",
+                    "group": "Herramientas",
                     "pages": [
-                      "es/api-reference/tools/built-in/semantic-search-tool",
-                      "es/api-reference/tools/built-in/tabular-analysis-tool",
-                      "es/api-reference/tools/built-in/web-extract-tool",
-                      "es/api-reference/tools/built-in/database-query-tool"
-                    ]
-                  },
-                  {
-                    "group": "Personalizadas",
-                    "pages": [
-                      "es/api-reference/tools/custom/custom-tools"
+                      "es/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                      {
+                        "group": "Integradas",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                          "es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                          "es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                          "es/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                          "es/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                        ]
+                      },
+                      {
+                        "group": "Personalizadas",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                        ]
+                      }
                     ]
                   }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referencia de la API",
+            "icon": "terminal",
+            "groups": [
+              {
+                "group": "Usar la API",
+                "icon": "book",
+                "pages": [
+                  "es/api-reference/how-to-use",
+                  "es/api-reference/workspace-api",
+                  "es/api-reference/zylon-gpt-api"
                 ]
               },
               {

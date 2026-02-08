@@ -1,0 +1,122 @@
+---
+title: "Inicio rápido"
+description: "Haz tu primera llamada a la API de ZylonGPT en menos de 2 minutos."
+---
+
+ZylonGPT expone una **API de mensajes**. Envías un array `messages` y recibes un `message` estructurado con bloques de contenido (texto, llamadas a herramientas y más).
+
+## Requisitos previos
+
+- Un token de API. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- Tu hostname de Zylon (reemplaza `{base_url}` en los ejemplos).
+
+## En 2 minutos
+
+<Steps>
+  <Step title="Consigue un token de API">
+    Si aún no tienes un token, sigue: [Gestión de tokens](/es/api-reference/token-management).
+  </Step>
+
+  <Step title="Configura tu token">
+    ```bash
+    export API_TOKEN="YOUR_API_TOKEN"
+    ```
+
+    <Tip>
+      Reemplaza `{base_url}` en los ejemplos con tu hostname de Zylon (por ejemplo `zylon.me` o `zylon.company.com`).
+      En instalaciones self-hosted, los headers requeridos pueden variar (consulta [Gestión de tokens](/es/api-reference/token-management)).
+    </Tip>
+  </Step>
+
+  <Step title="Envía tu primer mensaje">
+    ```bash
+    curl -X POST "https://{base_url}/gpt/v1/messages" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "default",
+        "max_tokens": 64,
+        "messages": [
+          { "role": "user", "content": "Say only: Zylon ok" }
+        ]
+      }'
+    ```
+
+    Respuesta de ejemplo (tu `id` y timestamps variarán):
+
+    ```json
+    {
+      "id": "msg_2ed04155a067458c9b43f412520b74d5",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "start_timestamp": "2026-02-06T10:33:25.542878Z",
+          "stop_timestamp": "2026-02-06T10:33:25.680211Z",
+          "text": "Zylon ok"
+        }
+      ],
+      "model": "private-gpt",
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 85,
+        "output_tokens": 4
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Streaming de respuestas (opcional)">
+    Establece `stream: true` para recibir **Server-Sent Events (SSE)**.
+
+    ```bash
+    curl -N -X POST "https://{base_url}/gpt/v1/messages" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -H "Accept: text/event-stream" \
+      -d '{
+        "model": "default",
+        "stream": true,
+        "max_tokens": 64,
+        "messages": [
+          { "role": "user", "content": "Say only: stream ok" }
+        ]
+      }'
+    ```
+
+    Eventos de ejemplo (truncado):
+
+    ```text
+    event: message_start
+    data: {"type":"message_start","message":{"id":"msg_d5bbbbdfd4e4457297e814c97e7a29ff","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+    event: content_block_delta
+    data: {"type":"content_block_delta","index":0,"block_id":"block_019c3283b9f5745fb382fccbb3763446","delta":{"type":"text_delta","text":"stream"}}
+
+    event: message_stop
+    data: {"type":"message_stop"}
+    ```
+  </Step>
+</Steps>
+
+## Siguientes pasos
+
+<CardGroup cols={2}>
+  <Card title="Construye con Zylon: Visión general" icon="terminal" href="/es/developer-manual/build-with-zylon/overview">
+    Aprende los bloques base (mensajes, artefactos y herramientas).
+  </Card>
+
+  <Card title="API de mensajes" icon="laptop-code" href="/es/developer-manual/build-with-zylon/working-with-messages">
+    Aprende el formato de request, bloques de contenido, chats multi-turno y streaming.
+  </Card>
+</CardGroup>
+
+## Solución de problemas
+
+- **401/403**: tu token es inválido/expiró (o faltan headers requeridos en instalaciones self-hosted). Consulta [Gestión de tokens](/es/api-reference/token-management).
+- **404**: revisa tu base URL. Para la API hosted, usa `https://zylon.me/gpt/v1/`.
+- **400 (model not found)**: usa `"model": "default"` salvo que te hayan dado un nombre específico.
+- **405**: estás usando el método incorrecto. `/messages` es `POST`.
+

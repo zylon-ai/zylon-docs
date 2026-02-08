@@ -1,0 +1,68 @@
+---
+title: "Herramienta de búsqueda semántica"
+description: "Busca chunks relevantes dentro de tus artefactos ingeridos durante un mensaje."
+---
+
+Usa la búsqueda semántica cuando quieres que el asistente recupere información de artefactos previamente ingeridos (documentos, notas, PDFs, HTML y más).
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+- Tool spec: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida una request que habilita búsqueda semántica sobre una colección:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What does the artifact say?" }
+    ],
+    "tools": [
+      { "name": "semantic_search", "type": "semantic_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
+      }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar la request, envía el mismo body a `POST /messages`.
+
+## Consejos
+
+- Mantén `tool_context` estrecho (usa una colección y el conjunto mínimo de artefactos).
+- Si no obtienes resultados relevantes, ingiere texto más limpio (o divide documentos grandes en artefactos pequeños).
+
+## Siguientes pasos
+
+- Ingiere y gestiona artefactos: [API de artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Aprende cómo aparecen los bloques de herramientas: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
+

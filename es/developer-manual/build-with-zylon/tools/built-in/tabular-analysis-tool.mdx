@@ -1,0 +1,62 @@
+---
+title: "Herramienta de análisis tabular"
+description: "Analiza artefactos tabulares (CSV, spreadsheets o tablas) durante un mensaje."
+---
+
+Usa el análisis tabular cuando quieres que el asistente calcule respuestas a partir de datos estructurados (por ejemplo: “promedio por grupo”, “valor máximo”, “tendencia en el tiempo”).
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+- Tool spec: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con datos tabulares
+
+## Solicitud y respuesta básicas
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What is the row with the highest value?" }
+    ],
+    "tools": [
+      { "name": "tabular_analysis", "type": "tabular_analysis_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": { "collection": "docs_examples" }
+      }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar la request, envía el mismo body a `POST /messages`.
+
+## Consejos
+
+- Ingiere CSVs con buenos headers.
+- Si tu tabla está dentro de un PDF, considera ingerirla como un artefacto separado para mejorar la precisión.
+
+## Siguientes pasos
+
+- Ingiere datos tabulares: [API de artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
+

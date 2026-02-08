@@ -1,0 +1,56 @@
+---
+title: "Web Search tool"
+description: "Search the web during a message."
+---
+
+Use Web Search when you want the assistant to look up information online (for example, “find the official docs for X”).
+
+## Prerequisites
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+
+## Requirements
+
+- Tool spec: `{ "name": "web_search", "type": "web_search_v1" }`
+- No `tool_context` required
+
+## Basic request and response
+
+This example validates the request shape:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Search the web for: Example Domain" }
+    ],
+    "tools": [
+      { "name": "web_search", "type": "web_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`.
+
+<Tip>
+  If Web Search is disabled in your deployment, `POST /messages` returns a `tool_result` block with an error message.
+</Tip>
+
+## Next steps
+
+- Learn how tools appear in message content blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)

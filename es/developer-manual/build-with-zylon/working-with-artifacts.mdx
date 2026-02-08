@@ -1,0 +1,365 @@
+---
+title: "API de artefactos"
+description: "Ingiere texto, archivos o URLs en una colección para recuperarlos y reutilizarlos más tarde."
+---
+
+Un **artefacto** es una pieza de contenido que ingieres en Zylon para poder recuperarla después (por ejemplo, como contexto para una aplicación). Los artefactos viven dentro de una **colección**, y cada artefacto tiene un ID estable (`artifact`).
+
+Los artefactos pueden ser:
+
+- **Texto**: strings que proporcionas directamente
+- **Archivo**: bytes en base64 (por ejemplo, `.txt` o `.pdf`)
+- **URI**: una URL que Zylon descarga e ingiere
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+Consulta [Gestión de tokens](/es/api-reference/token-management) si aún no tienes un token.
+
+## Solicitud y respuesta básicas
+
+Ingiere un artefacto de texto en una colección.
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples",
+    "artifact": "docs_text_artifact",
+    "input": {
+      "type": "text",
+      "value": "Zylon artifacts let you attach knowledge to a collection."
+    },
+    "metadata": {
+      "file_name": "docs_text_artifact.txt",
+      "source": "docs"
+    }
+  }'
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_text_artifact",
+      "doc_metadata": {
+        "file_name": "docs_text_artifact.txt",
+        "artifact_id": "docs_text_artifact",
+        "collection": "docs_examples"
+      }
+    }
+  ]
+}
+```
+
+## Inputs de artefactos
+
+### TextArtifact
+
+Usa `input.type: "text"` para texto directo.
+
+### FileArtifact (base64)
+
+Usa `input.type: "file"` y pasa bytes en base64 en `input.value`:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples",
+    "artifact": "docs_file_artifact",
+    "input": {
+      "type": "file",
+      "value": "SGVsbG8gZnJvbSBmaWxlIGFydGlmYWN0Lgo="
+    },
+    "metadata": {
+      "file_name": "docs_file_artifact.txt",
+      "source": "docs"
+    }
+  }'
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_file_artifact",
+      "doc_metadata": {
+        "file_name": "docs_file_artifact.txt",
+        "artifact_id": "docs_file_artifact",
+        "collection": "docs_examples"
+      }
+    }
+  ]
+}
+```
+
+### UriArtifact
+
+Usa `input.type: "uri"` y pasa una URL en `input.value`:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples",
+    "artifact": "docs_uri_artifact",
+    "input": {
+      "type": "uri",
+      "value": "https://example.com/"
+    },
+    "metadata": {
+      "file_name": "example.html",
+      "source": "docs"
+    }
+  }'
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_uri_artifact",
+      "doc_metadata": {
+        "file_name": "example.html",
+        "artifact_id": "docs_uri_artifact",
+        "collection": "docs_examples"
+      }
+    }
+  ]
+}
+```
+
+## Listar artefactos ingeridos
+
+```bash
+curl "https://{base_url}/gpt/v1/artifacts/list?collection=docs_examples" \
+  -H "Authorization: Bearer $API_TOKEN"
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [{ "object": "ingest.document", "artifact": "docs_text_artifact" }]
+}
+```
+
+## Recuperar contenido
+
+### Contenido completo
+
+Usa `POST /artifacts/content` para obtener el texto completo:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/content" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context_filter": {
+      "collection": "docs_examples",
+      "artifacts": ["docs_text_artifact"]
+    }
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "data": [
+    {
+      "artifact_id": "docs_text_artifact",
+      "content": "Zylon artifacts let you attach knowledge to a collection.\n\n"
+    }
+  ]
+}
+```
+
+### Contenido en chunks (optimizado para chat)
+
+Usa `POST /artifacts/chunked-content` para recuperar contenido dividido en bloques:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/chunked-content" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context_filter": {
+      "collection": "docs_examples",
+      "artifacts": ["docs_text_artifact"]
+    },
+    "max_tokens": 50
+  }'
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "data": [
+    {
+      "artifact_id": "docs_text_artifact",
+      "content": [
+        { "type": "source", "sources": [{ "object": "context.chunk", "id": "4b79b446-4e86-4204-a795-be3134a3c82d" }] },
+        { "type": "text", "text": "**Context Information**:\n..." }
+      ]
+    }
+  ]
+}
+```
+
+## Eliminar artefactos
+
+### Eliminar (sync)
+
+```bash
+curl -i -X POST "https://{base_url}/gpt/v1/artifacts/delete" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples",
+    "artifact": "docs_text_artifact"
+  }'
+```
+
+Respuesta de ejemplo (truncada):
+
+```text
+HTTP/2 200
+
+null
+```
+
+### Eliminar (async)
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/delete/async" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "delete_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_uri_artifact"
+    }
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{ "task_id": "5bbc0990-56c6-4433-80fc-21b6a5b4a84d" }
+```
+
+Consultar estado de la tarea:
+
+```bash
+TASK_ID="YOUR_TASK_ID"
+```
+
+```bash
+curl "https://{base_url}/gpt/v1/artifacts/delete/async/$TASK_ID" \
+  -H "Authorization: Bearer $API_TOKEN"
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "task_id": "5bbc0990-56c6-4433-80fc-21b6a5b4a84d",
+  "task_status": "PENDING",
+  "task_result": null
+}
+```
+
+<Tip>
+  Sigue consultando hasta que `task_status` sea `"SUCCESS"` o `"FAILURE"`.
+  Si falla mientras se está poblando un índice, reintenta tras una pequeña espera.
+</Tip>
+
+## Ingesta asíncrona
+
+Para inputs grandes, usa ingesta asíncrona y consulta hasta completar:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_text_artifact_async",
+      "input": { "type": "text", "value": "This artifact was ingested asynchronously." },
+      "metadata": { "file_name": "docs_text_artifact_async.txt", "source": "docs" }
+    }
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{ "task_id": "6e5c6e76-8c49-4835-95d6-75b07ee50fa3" }
+```
+
+Consulta hasta que `task_status` sea `"SUCCESS"`:
+
+```bash
+TASK_ID="YOUR_TASK_ID"
+```
+
+```bash
+curl "https://{base_url}/gpt/v1/artifacts/ingest/async/$TASK_ID" \
+  -H "Authorization: Bearer $API_TOKEN"
+```
+
+Respuesta de ejemplo (truncada):
+
+```json
+{
+  "task_id": "6e5c6e76-8c49-4835-95d6-75b07ee50fa3",
+  "task_status": "PENDING",
+  "task_result": null
+}
+```
+
+## Errores comunes
+
+- **Falta `file_name` en metadata**: si incluyes `metadata`, proporciona `file_name` con extensión (por ejemplo `doc.txt`).
+- **Colección incorrecta**: los IDs `artifact` están asociados a una `collection`. Usa la misma colección para ingerir, listar y recuperar.
+- **Consultar demasiado rápido**: las tareas asíncronas pueden tardar minutos. Si falla una consulta, reintenta tras una pequeña espera y añade backoff.
+- **Eliminar demasiado pronto**: si eliminas justo después de ingerir, puedes ver un `IndexNotReadyException`. Espera un momento y reintenta.
+
+## Siguientes pasos
+
+<CardGroup cols={2}>
+  <Card title="API de mensajes" icon="laptop-code" href="/es/developer-manual/build-with-zylon/working-with-messages">
+    Usa contexto recuperado dentro de conversaciones.
+  </Card>
+
+  <Card title="Herramientas" icon="toolbox" href="/es/developer-manual/build-with-zylon/tools/introduction-to-tools">
+    Busca y analiza tus artefactos durante un mensaje.
+  </Card>
+</CardGroup>

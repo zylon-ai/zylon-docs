@@ -1,0 +1,318 @@
+---
+title: "API de mensajes"
+description: "Aprende el formato de request de Messages: roles, bloques de contenido, conversaciones multi-turno, prompts del sistema, streaming y salida JSON estructurada."
+---
+
+La API de mensajes es el núcleo de ZylonGPT. Envías un historial de conversación y Zylon devuelve el siguiente mensaje del asistente como una **lista de bloques de contenido** (texto, llamadas a herramientas, resultados y más).
+
+## Requisitos previos
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+Consulta [Gestión de tokens](/es/api-reference/token-management) si aún no tienes un token.
+
+## Solicitud y respuesta básicas
+
+Envía un mensaje de usuario y recibe un mensaje del asistente.
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "temperature": 0,
+    "messages": [
+      { "role": "user", "content": "Reply with exactly: hello" }
+    ]
+  }'
+```
+
+Respuesta de ejemplo (tu `id` y timestamps variarán):
+
+```json
+{
+  "id": "msg_03389d276697456e89f199bf511f8fd5",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:33:52.829356Z",
+      "stop_timestamp": "2026-02-06T10:33:52.891110Z",
+      "text": "hello"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 84,
+    "output_tokens": 2
+  }
+}
+```
+
+Para renderizar texto plano, concatena los `text` de los bloques donde `type` sea `"text"`.
+
+## Estructura de `messages`
+
+Como mínimo, envía:
+
+- `model`: el modelo a usar (normalmente `"default"`)
+- `messages`: el historial de la conversación
+- `max_tokens`: el máximo de tokens a generar
+
+Cada mensaje incluye:
+
+- `role`: `"user"` o `"assistant"`
+- `content`: un string o un array de bloques de contenido
+
+## Contenido: string vs bloques
+
+Para casos simples, `content` puede ser un string (como en el ejemplo anterior).
+
+Si necesitas inputs más ricos, envía `content` como un array de bloques. Por ejemplo, un solo bloque de texto:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "temperature": 0,
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Reply with exactly: blocks ok" }
+        ]
+      }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "id": "msg_3343e8d7eeeb466e811b6551e88d0fbd",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:34:02.022145Z",
+      "stop_timestamp": "2026-02-06T10:34:02.110557Z",
+      "text": "blocks ok"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": { "input_tokens": 85, "output_tokens": 3 }
+}
+```
+
+## Conversaciones multi-turno
+
+Para continuar una conversación, incluye los turnos anteriores en `messages`:
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 16,
+    "temperature": 0,
+    "messages": [
+      { "role": "user", "content": "My name is Ada." },
+      { "role": "assistant", "content": "Nice to meet you." },
+      { "role": "user", "content": "What is my name? Reply with only the name, no punctuation." }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "id": "msg_9b14c8fd514741d29a0dff8996ca9213",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:34:12.924887Z",
+      "stop_timestamp": "2026-02-06T10:34:12.974785Z",
+      "text": "Ada"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": { "input_tokens": 135, "output_tokens": 2 }
+}
+```
+
+## Prompts del sistema
+
+Usa el campo top-level `system` para controlar el comportamiento del asistente (en lugar de un mensaje con role `"system"`):
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 8,
+    "temperature": 0,
+    "system": {
+      "text": "You are a calculator. Reply with only the number.",
+      "use_default_prompt": false
+    },
+    "messages": [
+      { "role": "user", "content": "2+2" }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "id": "msg_7260cde300fc40268177fc046764cd45",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:34:21.935736Z",
+      "stop_timestamp": "2026-02-06T10:34:21.982402Z",
+      "text": "4"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": { "input_tokens": 93, "output_tokens": 2 }
+}
+```
+
+## Salida JSON estructurada (json_schema)
+
+Si necesitas salida legible por máquinas, establece `response_format.type` a `json_schema` y proporciona un schema. Zylon devuelve el JSON como texto dentro de un bloque `text`.
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ok": { "type": "boolean" },
+          "message": { "type": "string" }
+        },
+        "required": ["ok", "message"]
+      }
+    },
+    "system": { "text": "Return ONLY valid JSON.", "use_default_prompt": false },
+    "messages": [
+      { "role": "user", "content": "Confirm the API is working." }
+    ]
+  }'
+```
+
+Respuesta de ejemplo:
+
+```json
+{
+  "id": "msg_11e1a0ceef7f437c8424076bc3bb805d",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:34:34.612739Z",
+      "stop_timestamp": "2026-02-06T10:34:35.086291Z",
+      "text": "{\"ok\":true,\"message\":\"API is working\"}"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": { "input_tokens": 90, "output_tokens": 12 }
+}
+```
+
+## Errores comunes
+
+- **Método incorrecto**: `/messages` es `POST`, no `GET`.
+- **Falta el header de auth**: incluye `Authorization: Bearer ...`.
+- **Base URL incorrecta**: la API hosted usa `https://zylon.me/gpt/v1/` (incluyendo el slash final).
+- **Body inválido**: usa `POST /messages/validate` para detectar errores de schema antes de tiempo.
+
+## Streaming (SSE)
+
+Establece `stream: true` para recibir una respuesta `text/event-stream` con eventos como `content_block_delta` (deltas de tokens).
+
+```bash
+curl -N -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "model": "default",
+    "stream": true,
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Say only: stream ok" }
+    ]
+  }'
+```
+
+Eventos de ejemplo (truncado):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_d5bbbbdfd4e4457297e814c97e7a29ff","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c3283b9f5745fb382fccbb3763446","delta":{"type":"text_delta","text":"stream"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## Chats asíncronos
+
+Para generaciones de larga duración (o si necesitas iniciar una request y observarla más tarde), puedes usar la API de mensajes asíncronos:
+
+- Iniciar: `POST /messages/async`
+- Observar via SSE: `GET /messages/async/{message_id}/stream`
+- Consultar estado: `GET /messages/async/{message_id}/status`
+- Cancelar/eliminar: `POST /messages/async/{message_id}/cancel`, `DELETE /messages/async/{message_id}/delete`
+
+## Siguientes pasos
+
+<CardGroup cols={2}>
+  <Card title="Herramientas" icon="toolbox" href="/es/developer-manual/build-with-zylon/tools/introduction-to-tools">
+    Permite que Zylon use herramientas integradas y personalizadas durante un mensaje.
+  </Card>
+
+  <Card title="Mensajes asíncronos" icon="clock" href="/es/developer-manual/build-with-zylon/async-messages">
+    Inicia mensajes de forma asíncrona y luego consume el stream o consulta el estado.
+  </Card>
+</CardGroup>
+

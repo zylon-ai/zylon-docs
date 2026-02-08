@@ -1,0 +1,63 @@
+---
+title: "Database Query tool"
+description: "Query a SQL database from natural language during a message."
+---
+
+Use Database Query when you want the assistant to answer questions from a SQL database. You provide a database connection in `tool_context`.
+
+## Prerequisites
+
+```bash
+export API_TOKEN="YOUR_API_TOKEN"
+```
+
+If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+
+## Requirements
+
+- Tool spec: `{ "name": "database_query", "type": "database_query_v1" }`
+- `tool_context`: at least one `sql_database` artifact with a `connection_string`
+
+## Basic request and response
+
+This example validates the request shape using a placeholder connection string.
+
+To avoid a connectivity check during validation, it sets `tool_choice.type` to `"none"`. When you’re ready to execute the tool, switch `tool_choice.type` to `"auto"` (or force the tool) and send the request to `POST /messages`.
+
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "How many customers are in the database?" }
+    ],
+    "tools": [
+      { "name": "database_query", "type": "database_query_v1" }
+    ],
+    "tool_choice": { "type": "none" },
+    "tool_context": [
+      {
+        "type": "sql_database",
+        "connection_string": "postgresql://readonly_user:readonly_pass@db.example.com:5432/app",
+        "ssl": true
+      }
+    ]
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, set `tool_choice.type` to `"auto"` and send the same body to `POST /messages`.
+
+## Security tips
+
+- Use a **read-only** database user.
+- Restrict network access to the DB and rotate credentials.
+- Limit schemas/tables exposed whenever possible.

@@ -1,5 +1,5 @@
 ---
-title: "AI Perf"
+title: "AI Inference Performance"
 description: "Troubleshooting guide for diagnosing and improving AI inference performance in Zylon."
 ---
 
@@ -91,7 +91,7 @@ def build_http_request(
         f"Host: {config.host}",
         "Content-Type: application/json",
         f"Authorization: Bearer {bearer_token}",
-        "anthropic-version: 2023-06-01",
+
         f"Content-Length: {len(body)}",
         "Connection: close",
         "",

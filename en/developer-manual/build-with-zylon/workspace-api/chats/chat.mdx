@@ -1,0 +1,71 @@
+---
+title: "Chat"
+description: "Run ad-hoc chats without creating a thread."
+---
+
+The Chat endpoints let you send a one-off request using the same message format as the Messages API, without creating a thread or interaction record.
+
+## Basic request and response
+
+Send an ad-hoc request with `POST /v1/app/chat`.
+
+```bash
+curl -X POST "https://{base_url}/v1/app/chat" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+{
+  "id": "msg_5f2e1d3c4b6a7c8d",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
+  ]
+}
+```
+
+## Validate a chat request
+
+```bash
+curl -X POST "https://{base_url}/v1/app/chat/validate" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+Example response:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## Errors and edge cases
+
+- **400**: invalid message schema (use `/chat/validate` to debug).
+- **413**: request too large.

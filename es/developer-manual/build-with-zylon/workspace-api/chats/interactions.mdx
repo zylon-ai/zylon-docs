@@ -1,0 +1,153 @@
+---
+title: "Interacciones"
+description: "Crea y administra interacciones dentro de un hilo."
+---
+
+Las interacciones son intercambios individuales dentro de un hilo. Puedes crearlas, consultar detalles, cancelar trabajos en curso o hacer streaming del output.
+
+## Solicitud básica y respuesta
+
+Crea una interacción con `POST /v1/app/thread/{threadId}/interaction`.
+
+```bash
+curl -X POST "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+    "all_artifacts": false,
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "Summarize the artifact in three bullets." }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
+  }'
+```
+
+Ejemplo de respuesta (InteractionDTO):
+
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "thread_id": "thread_3f2a1c4d5b6e7f8a",
+  "state": "Completed",
+  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+  "all_artifacts": false,
+  "user_input": {
+    "role": "user",
+    "content": [
+      { "type": "text", "text": "Summarize the artifact in three bullets." }
+    ]
+  },
+  "assistant_output": {
+    "id": "msg_3d2c1b4a5f6e7d8c",
+    "created": 1739036500,
+    "model": "default",
+    "stop_reason": "end_turn",
+    "content": [
+      { "type": "text", "text": "• Ticket volume rose 12% week-over-week\n• Billing issues drove 38% of cases\n• Priority bugs were resolved within 48 hours" }
+    ],
+    "usage": { "input_tokens": 180, "output_tokens": 52 }
+  },
+  "created_at": "2026-02-08T14:41:10Z",
+  "created_by": {
+    "id": "user_4b7c2a1d9e5f3c8b",
+    "org_id": "org_2f3a9d1c7b5e4a8f",
+    "account_id": "acct_6c8a1f3b2d4e5f7a",
+    "name": "Sasha Patel",
+    "email": "sasha@auroralabs.com",
+    "state": "Active",
+    "roles": ["AppAdmin"],
+    "created_at": "2026-02-08T14:12:45Z"
+  }
+}
+```
+
+## Obtener una interacción
+
+```bash
+curl "https://{base_url}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (InteractionDTO):
+
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "thread_id": "thread_3f2a1c4d5b6e7f8a",
+  "state": "Completed",
+  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+  "all_artifacts": false,
+  "created_at": "2026-02-08T14:41:10Z"
+}
+```
+
+## Cancelar o eliminar una interacción
+
+<Tabs>
+  <Tab title="Cancelar">
+```bash
+curl -X POST "https://{base_url}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/cancel" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+  <Tab title="Eliminar">
+```bash
+curl -X DELETE "https://{base_url}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "state": "Completed"
+}
+```
+  </Tab>
+</Tabs>
+
+## Streaming de una interacción
+
+```bash
+curl -N "https://{base_url}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/stream" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Accept: text/event-stream"
+```
+
+Ejemplo de stream (recortado):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_3d2c1b4a5f6e7d8c","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"• Ticket volume rose 12%"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## Errores y casos límite
+
+- **409**: ya completada al cancelar.
+- **404**: interacción no encontrada.

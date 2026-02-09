@@ -7,51 +7,73 @@ The Messages API is the core of ZylonGPT. You send a conversation history, and Z
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-See [Token Management](/en/api-reference/token-management) if you don’t have an API token yet.
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{base_url}` in the examples).
 
 ## Basic request and response
 
 Send one user message and get back one assistant message.
 
+<Tabs>
+  <Tab title="Single message">
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 32,
     "temperature": 0,
     "messages": [
-      { "role": "user", "content": "Reply with exactly: hello" }
+      { "role": "user", "content": "Write a one-sentence status update about deploying a billing dashboard and fixing three bugs." }
     ]
   }'
 ```
+  </Tab>
+
+  <Tab title="Content blocks">
+```bash
+curl -X POST "https://{base_url}/gpt/v1/messages" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "temperature": 0,
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Write a one-sentence status update about deploying a billing dashboard and fixing three bugs." }
+        ]
+      }
+    ]
+  }'
+```
+  </Tab>
+</Tabs>
 
 Example response (your `id` and timestamps will differ):
 
 ```json
 {
-  "id": "msg_03389d276697456e89f199bf511f8fd5",
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
   "type": "message",
   "role": "assistant",
   "content": [
     {
       "type": "text",
-      "start_timestamp": "2026-02-06T10:33:52.829356Z",
-      "stop_timestamp": "2026-02-06T10:33:52.891110Z",
-      "text": "hello"
+      "start_timestamp": "2026-02-06T13:23:16.876744Z",
+      "stop_timestamp": "2026-02-06T13:23:16.975362Z",
+      "text": "Deployed the new billing dashboard and resolved three bugs successfully."
     }
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
   "stop_sequence": null,
   "usage": {
-    "input_tokens": 84,
-    "output_tokens": 2
+    "input_tokens": 95,
+    "output_tokens": 16
   }
 }
 ```
@@ -71,60 +93,13 @@ Each message has:
 - `role`: `"user"` or `"assistant"`
 - `content`: either a string, or an array of content blocks
 
-## Content: string vs blocks
-
-For simple text-only use cases, `content` can be a string (as shown above).
-
-If you need richer inputs, send `content` as an array of blocks. For example, a single text block:
-
-```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "default",
-    "max_tokens": 32,
-    "temperature": 0,
-    "messages": [
-      {
-        "role": "user",
-        "content": [
-          { "type": "text", "text": "Reply with exactly: blocks ok" }
-        ]
-      }
-    ]
-  }'
-```
-
-Example response:
-
-```json
-{
-  "id": "msg_3343e8d7eeeb466e811b6551e88d0fbd",
-  "type": "message",
-  "role": "assistant",
-  "content": [
-    {
-      "type": "text",
-      "start_timestamp": "2026-02-06T10:34:02.022145Z",
-      "stop_timestamp": "2026-02-06T10:34:02.110557Z",
-      "text": "blocks ok"
-    }
-  ],
-  "model": "private-gpt",
-  "stop_reason": "end_turn",
-  "stop_sequence": null,
-  "usage": { "input_tokens": 85, "output_tokens": 3 }
-}
-```
-
 ## Multi-turn conversations
 
 To continue a conversation, include the prior turns in `messages`:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -166,18 +141,15 @@ Use the top-level `system` field to control assistant behavior (instead of a `"s
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 8,
     "temperature": 0,
-    "system": {
-      "text": "You are a calculator. Reply with only the number.",
-      "use_default_prompt": false
-    },
+    "system": { "text": "You are a support agent. Reply with only a short ticket title.", "use_default_prompt": false },
     "messages": [
-      { "role": "user", "content": "2+2" }
+      { "role": "user", "content": "The login button on mobile doesn't work." }
     ]
   }'
 ```
@@ -186,21 +158,21 @@ Example response:
 
 ```json
 {
-  "id": "msg_7260cde300fc40268177fc046764cd45",
+  "id": "msg_4e328dc4baeb42b8a18dc0c4abd89468",
   "type": "message",
   "role": "assistant",
   "content": [
     {
       "type": "text",
-      "start_timestamp": "2026-02-06T10:34:21.935736Z",
-      "stop_timestamp": "2026-02-06T10:34:21.982402Z",
-      "text": "4"
+      "start_timestamp": "2026-02-06T13:37:36.368426Z",
+      "stop_timestamp": "2026-02-06T13:37:36.446733Z",
+      "text": "Mobile login button not working"
     }
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
   "stop_sequence": null,
-  "usage": { "input_tokens": 93, "output_tokens": 2 }
+  "usage": { "input_tokens": 100, "output_tokens": 6 }
 }
 ```
 
@@ -210,7 +182,7 @@ If you need machine-readable output, set `response_format.type` to `json_schema`
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -221,15 +193,15 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "ok": { "type": "boolean" },
-          "message": { "type": "string" }
+          "status": { "type": "string" },
+          "next_step": { "type": "string" }
         },
-        "required": ["ok", "message"]
+        "required": ["status", "next_step"]
       }
     },
     "system": { "text": "Return ONLY valid JSON.", "use_default_prompt": false },
     "messages": [
-      { "role": "user", "content": "Confirm the API is working." }
+      { "role": "user", "content": "We deployed the billing dashboard. Return a status and the next step." }
     ]
   }'
 ```
@@ -238,30 +210,23 @@ Example response:
 
 ```json
 {
-  "id": "msg_11e1a0ceef7f437c8424076bc3bb805d",
+  "id": "msg_eaf35004b4654234be5e767ea09e72e6",
   "type": "message",
   "role": "assistant",
   "content": [
     {
       "type": "text",
-      "start_timestamp": "2026-02-06T10:34:34.612739Z",
-      "stop_timestamp": "2026-02-06T10:34:35.086291Z",
-      "text": "{\"ok\":true,\"message\":\"API is working\"}"
+      "start_timestamp": "2026-02-06T13:39:44.864978Z",
+      "stop_timestamp": "2026-02-06T13:39:45.412991Z",
+      "text": "{\"status\":\"success\",\"next_step\":\"Monitor adoption and collect feedback.\"}"
     }
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
   "stop_sequence": null,
-  "usage": { "input_tokens": 90, "output_tokens": 12 }
+  "usage": { "input_tokens": 98, "output_tokens": 16 }
 }
 ```
-
-## Common mistakes
-
-- **Wrong method**: `/messages` is `POST`, not `GET`.
-- **Missing auth header**: include `Authorization: Bearer ...`.
-- **Wrong base URL**: this hosted API uses `https://zylon.me/gpt/v1/` (including the trailing slash).
-- **Invalid request body**: use `POST /messages/validate` to catch schema mistakes early.
 
 ## Streaming (SSE)
 
@@ -269,15 +234,15 @@ Set `stream: true` to receive a `text/event-stream` response containing events l
 
 ```bash
 curl -N -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
     "model": "default",
     "stream": true,
-    "max_tokens": 64,
+    "max_tokens": 32,
     "messages": [
-      { "role": "user", "content": "Say only: stream ok" }
+      { "role": "user", "content": "Give a three-word tagline for a productivity app." }
     ]
   }'
 ```
@@ -286,14 +251,33 @@ Example streamed events (truncated):
 
 ```text
 event: message_start
-data: {"type":"message_start","message":{"id":"msg_d5bbbbdfd4e4457297e814c97e7a29ff","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+data: {"type":"message_start","message":{"id":"msg_b55d29718361410bad4f80f8f67c6b72","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","content_block":{"type":"text","start_timestamp":"2026-02-06T13:18:37.331257Z","text":""}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"block_id":"block_019c3283b9f5745fb382fccbb3763446","delta":{"type":"text_delta","text":"stream"}}
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","delta":{"type":"text_delta","text":"Focus"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","delta":{"type":"text_delta","text":" fast daily"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","stop_timestamp":"2026-02-06T13:18:37.417617Z","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044"}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"input_tokens":90,"output_tokens":3}}
 
 event: message_stop
 data: {"type":"message_stop"}
 ```
+
+## Common mistakes
+
+- **Wrong method**: `/messages` is `POST`, not `GET`.
+- **Missing auth header**: include `Authorization: Bearer ...`.
+- **Wrong base URL**: use `https://{base_url}/gpt/v1/`.
+- **Invalid request body**: use `POST /messages/validate` to catch schema mistakes early.
 
 ## Async chats
 

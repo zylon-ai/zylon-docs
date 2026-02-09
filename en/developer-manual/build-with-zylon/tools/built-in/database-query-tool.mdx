@@ -1,38 +1,33 @@
 ---
 title: "Database Query tool"
-description: "Query a SQL database from natural language during a message."
+description: "Query a SQL database from natural language."
 ---
 
-Use Database Query when you want the assistant to answer questions from a SQL database. You provide a database connection in `tool_context`.
+Use Database Query when you want the assistant to translate natural language into SQL over a configured database connection.
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+- An API token. See [Token Management](/en/api-reference/token-management).
+- A database connection string you can share with Zylon.
 
 ## Requirements
 
 - Tool spec: `{ "name": "database_query", "type": "database_query_v1" }`
-- `tool_context`: at least one `sql_database` artifact with a `connection_string`
+- `tool_context`: one `sql_database` context with `connection_string`
 
 ## Basic request and response
 
-This example validates the request shape using a placeholder connection string.
-
-To avoid a connectivity check during validation, it sets `tool_choice.type` to `"none"`. When you’re ready to execute the tool, switch `tool_choice.type` to `"auto"` (or force the tool) and send the request to `POST /messages`.
+This example validates a request that enables database query. For validation, it sets `tool_choice` to `none` so the validator doesn’t try to connect.
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 128,
     "messages": [
-      { "role": "user", "content": "How many customers are in the database?" }
+      { "role": "user", "content": "What were total Q1 subscriptions by plan?" }
     ],
     "tools": [
       { "name": "database_query", "type": "database_query_v1" }
@@ -41,7 +36,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
     "tool_context": [
       {
         "type": "sql_database",
-        "connection_string": "postgresql://readonly_user:readonly_pass@db.example.com:5432/app",
+        "connection_string": "postgresql://readonly:password@db.example.com:5432/analytics",
+        "schemas": ["public"],
         "ssl": true
       }
     ]
@@ -54,10 +50,13 @@ Example response:
 { "valid": true, "errors": null }
 ```
 
-To run the request, set `tool_choice.type` to `"auto"` and send the same body to `POST /messages`.
+To run the request, send the same body to `POST /messages` and set `tool_choice` to `{ \"type\": \"auto\" }`.
 
-## Security tips
+## Tips
 
-- Use a **read-only** database user.
-- Restrict network access to the DB and rotate credentials.
-- Limit schemas/tables exposed whenever possible.
+- Use a read-only database user.
+- Limit schemas to reduce inspection time.
+
+## Next steps
+
+- Learn how messages return tool blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)

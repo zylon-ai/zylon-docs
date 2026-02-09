@@ -1,0 +1,108 @@
+---
+title: "Analytics"
+description: "Track usage totals, rankings, and time series metrics."
+---
+
+Analytics endpoints summarize how your workspace is being used across projects and users.
+
+## Basic request and response
+
+Start with totals to get a usage snapshot from `GET /v1/app/organization/analytics/totals`.
+
+```bash
+curl "https://{base_url}/v1/app/organization/analytics/totals" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+{
+  "projects_total": 12,
+  "threads_total": 184,
+  "interactions_total": 1420,
+  "agent_flows_total": 36,
+  "uploaded_artifacts_total": 87
+}
+```
+
+## Active users ranking
+
+```bash
+curl "https://{base_url}/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  {
+    "user": {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    },
+    "interactions_created": 46,
+    "agent_flows_created": 4
+  }
+]
+```
+
+## Active projects ranking
+
+```bash
+curl "https://{base_url}/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  {
+    "project": {
+      "id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Customer Insights",
+      "goal": "Summarize weekly support trends.",
+      "deadline": "2026-03-01T00:00:00Z",
+      "visibility": "Private",
+      "member_count": 4,
+      "default_member_role": "Editor",
+      "default_role_enabled": true,
+      "project_context": "Support analytics for Q1.",
+      "answer_context": "Use approved templates.",
+      "is_pinned": true
+    },
+    "interactions_created": 112,
+    "agent_flows_created": 12
+  }
+]
+```
+
+## Time series
+
+```bash
+curl "https://{base_url}/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  { "date": "2026-02-02", "value": 18 },
+  { "date": "2026-02-03", "value": 25 },
+  { "date": "2026-02-04", "value": 21 }
+]
+```
+
+## Errors and edge cases
+
+- **400**: invalid date range or type.
+- **403**: insufficient permissions.

@@ -1,23 +1,22 @@
 ---
-title: "Mensajes asíncronos"
-description: "Inicia una request de Messages de forma asíncrona y luego haz stream de eventos o consulta el estado por message_id."
+title: "Async messages"
+description: "Inicia un mensaje async y luego streamea o consulta el estado."
 ---
 
-Los mensajes asíncronos te permiten iniciar una generación y observarla más tarde. Esto es útil cuando no puedes mantener una conexión HTTP abierta (por ejemplo, jobs en background o conexiones inestables).
+Los mensajes async te permiten iniciar una generación y observarla después (útil para jobs en background o conexiones inestables).
 
 ## Requisitos previos
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Tu hostname de Zylon (reemplaza `{base_url}` en los ejemplos).
 
-## Inicio rápido
+## Quickstart
 
-### 1) Inicia un mensaje asíncrono
+### 1) Inicia un mensaje async
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/async" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -28,61 +27,58 @@ curl -X POST "https://{base_url}/gpt/v1/messages/async" \
   }'
 ```
 
-Respuesta de ejemplo:
+Ejemplo de respuesta:
 
 ```json
 {
-  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b",
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
   "status": "pending",
   "message": "Request initiated successfully"
 }
 ```
 
-### 2) Haz stream de eventos (SSE)
+### 2) Stream de eventos (SSE)
 
 Usa el `message_id` del paso anterior:
 
 ```bash
-MESSAGE_ID="YOUR_MESSAGE_ID"
-```
-
-```bash
-curl -N "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/stream" \
-  -H "Authorization: Bearer $API_TOKEN" \
+curl -N "https://{base_url}/gpt/v1/messages/async/{message_id}/stream" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Accept: text/event-stream"
 ```
 
-Eventos de ejemplo (truncado):
+Ejemplo de eventos (truncado):
 
 ```text
 event: message_start
-data: {"type":"message_start","message":{"id":"msg_97be8a330c0c4d22a2b65c27e108109f","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+data: {"type":"message_start","message":{"id":"msg_4b5a3cd9158b41278e0cc5f8263ece39","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
 
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"block_id":"block_019c2f10b8d379f38e6038860485e849","delta":{"type":"text_delta","text":"async"}}
+event: ping
+data: {"type":"ping"}
+
+event: error
+data: {"type": "error", "error": {"type": "api_error", "message": "Api Error"}, "exception": {"type": "RuntimeError", "message": "<AioRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:107.22.191.42:443: Failed to connect to remote host: Timeout occurred: FD Shutdown\"\n\tdebug_error_string = \"UNKNOWN:Error received from peer  {grpc_message:\"failed to connect to all addresses; last error: UNKNOWN: ipv4:107.22.191.42:443: Failed to connect to remote host: Timeout occurred: FD Shutdown\", grpc_status:14, created_time:\"2026-02-08T13:35:09.534948595+00:00\"}\"\n>"}}
 
 event: message_stop
 data: {"type":"message_stop"}
 ```
 
-## Consulta de estado (opcional)
-
-Si no quieres consumir el stream, puedes consultar el estado:
+## Consultar estado (opcional)
 
 ```bash
-curl "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/status" \
-  -H "Authorization: Bearer $API_TOKEN"
+curl "https://{base_url}/gpt/v1/messages/async/{message_id}/status" \
+  -H "Authorization: Bearer {api_token}"
 ```
 
-Respuesta de ejemplo:
+Ejemplo de respuesta:
 
 ```json
 {
-  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b",
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
   "status": "completed",
-  "created_at": "2026-02-05T18:29:10.365169Z",
-  "updated_at": "2026-02-05T18:29:11.107558Z",
-  "completed_at": "2026-02-05T18:29:11.107558Z",
+  "created_at": "2026-02-08T13:31:55.692228Z",
+  "updated_at": "2026-02-08T13:32:16.267793Z",
+  "completed_at": "2026-02-08T13:32:16.267793Z",
   "error_message": "",
   "stream_type": "chat_completion",
   "metadata": {
@@ -96,45 +92,17 @@ Respuesta de ejemplo:
 
 ## Cancelar y eliminar
 
-### Cancelar un stream
+Endpoints disponibles (sin body):
 
-```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/cancel" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-Respuesta de ejemplo:
-
-```json
-{
-  "message": "Stream cancelled successfully",
-  "message_id": "93e8050c-7d9c-470c-829b-252a3ee9e82b"
-}
-```
-
-### Eliminar un stream
-
-```bash
-curl -i -X DELETE "https://{base_url}/gpt/v1/messages/async/$MESSAGE_ID/delete" \
-  -H "Authorization: Bearer $API_TOKEN"
-```
-
-Respuesta de ejemplo (truncada):
-
-```text
-HTTP/2 200
-
-null
-```
+- `POST /messages/async/{message_id}/cancel`
+- `DELETE /messages/async/{message_id}/delete`
 
 ## Errores comunes
 
-- **Usar el ID incorrecto**: el evento SSE `message_start` incluye el `id` del mensaje del asistente, pero los endpoints asíncronos usan el `message_id` devuelto por `POST /messages/async`.
-- **Olvidar el header de SSE**: establece `Accept: text/event-stream` en `.../stream`.
-- **Eliminar demasiado pronto**: una vez eliminado, los endpoints de status/stream devuelven `404`.
+- **ID incorrecto**: el evento `message_start` incluye el `id` del mensaje, pero los endpoints async usan `message_id`.
+- **Header SSE**: usa `Accept: text/event-stream`.
+- **Eliminar demasiado pronto**: una vez eliminado, `status/stream` devuelve `404`.
 
-## Siguientes pasos
+## Próximos pasos
 
-- Aprende el formato de la API de mensajes: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
-
+- Formato de mensajes: [Working with messages](/es/developer-manual/build-with-zylon/working-with-messages)

@@ -91,7 +91,6 @@ def build_http_request(
         f"Host: {config.host}",
         "Content-Type: application/json",
         f"Authorization: Bearer {bearer_token}",
-
         f"Content-Length: {len(body)}",
         "Connection: close",
         "",

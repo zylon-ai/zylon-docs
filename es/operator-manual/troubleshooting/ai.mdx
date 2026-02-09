@@ -1,5 +1,5 @@
 ---
-title: "Rendimiento de IA"
+title: "Rendimiento de Inferencia de IA"
 description: "Guía de resolución de problemas para diagnosticar y mejorar el rendimiento de inferencia de IA en Zylon."
 ---
 
@@ -91,7 +91,6 @@ def build_http_request(
         f"Host: {config.host}",
         "Content-Type: application/json",
         f"Authorization: Bearer {bearer_token}",
-
         f"Content-Length: {len(body)}",
         "Connection: close",
         "",

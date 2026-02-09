@@ -1,0 +1,153 @@
+---
+title: "Hilos"
+description: "Crea, lista y actualiza hilos que agrupan interacciones de chat."
+---
+
+Los hilos agrupan interacciones dentro de un proyecto. Úsalos para organizar conversaciones y recuperar historial.
+
+## Solicitud básica y respuesta
+
+Lista hilos del proyecto con `GET /v1/app/project/{projectId}/thread`.
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "data": [
+    {
+      "id": "thread_3f2a1c4d5b6e7f8a",
+      "name": "Weekly Support Brief",
+      "visibility": "Private",
+      "created_at": "2026-02-08T14:40:00Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Crear un hilo
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+
+## Crear hilo e interacción en una sola llamada
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread/interaction" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+
+## Obtener o actualizar un hilo
+
+<Tabs>
+  <Tab title="Obtener hilo">
+```bash
+curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "id": "thread_3f2a1c4d5b6e7f8a",
+  "name": "Weekly Support Brief",
+  "visibility": "Private"
+}
+```
+  </Tab>
+  <Tab title="Actualizar hilo">
+```bash
+curl -X PUT "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+</Tabs>
+
+## Eliminar un hilo
+
+```bash
+curl -X DELETE "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## Listar interacciones del hilo
+
+```bash
+curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "data": [
+    {
+      "id": "inter_5a7b9c1d3e5f7a9b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "thread_id": "thread_3f2a1c4d5b6e7f8a",
+      "state": "Completed",
+      "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+      "all_artifacts": false,
+      "created_at": "2026-02-08T14:41:10Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Errores y casos límite
+
+- **403**: no eres miembro del proyecto.
+- **404**: hilo no encontrado.

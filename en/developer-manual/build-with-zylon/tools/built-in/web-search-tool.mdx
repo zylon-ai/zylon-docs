@@ -1,17 +1,13 @@
 ---
 title: "Web Search tool"
-description: "Search the web during a message."
+description: "Search the web from a natural language query."
 ---
 
-Use Web Search when you want the assistant to look up information online (for example, “find the official docs for X”).
+Use Web Search when you need the assistant to run a quick web query and return results.
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+- An API token. See [Token Management](/en/api-reference/token-management).
 
 ## Requirements
 
@@ -20,17 +16,17 @@ If you don’t have a token yet, see [Token Management](/en/api-reference/token-
 
 ## Basic request and response
 
-This example validates the request shape:
+This example validates a request that enables the web search tool:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 64,
     "messages": [
-      { "role": "user", "content": "Search the web for: Example Domain" }
+      { "role": "user", "content": "Find recent updates about the EU AI Act." }
     ],
     "tools": [
       { "name": "web_search", "type": "web_search_v1" }
@@ -47,10 +43,11 @@ Example response:
 
 To run the request, send the same body to `POST /messages`.
 
-<Tip>
-  If Web Search is disabled in your deployment, `POST /messages` returns a `tool_result` block with an error message.
-</Tip>
+## Tips
+
+- Use a focused query to reduce noisy results.
+- Combine with a system prompt to control summarization style.
 
 ## Next steps
 
-- Learn how tools appear in message content blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)
+- Learn how messages return tool blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)

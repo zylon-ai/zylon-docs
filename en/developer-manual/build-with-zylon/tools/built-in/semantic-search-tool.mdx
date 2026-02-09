@@ -7,11 +7,8 @@ Use Semantic Search when you want the assistant to retrieve information from pre
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Ingested artifacts to search (see [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)).
 
 ## Requirements
 
@@ -24,13 +21,13 @@ This example validates a request that enables semantic search over a collection:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 128,
     "messages": [
-      { "role": "user", "content": "What does the artifact say?" }
+      { "role": "user", "content": "What shipped in the latest billing dashboard release?" }
     ],
     "tools": [
       { "name": "semantic_search", "type": "semantic_search_v1" }

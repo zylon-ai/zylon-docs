@@ -1,34 +1,33 @@
 ---
 title: "Tabular Analysis tool"
-description: "Analyze tabular artifacts (CSV, spreadsheets, or tables) during a message."
+description: "Analyze ingested tabular artifacts during a message."
 ---
 
-Use Tabular Analysis when you want the assistant to compute answers from structured data (for example: “average by group”, “max value”, “trend over time”).
+Use Tabular Analysis when you want the assistant to perform calculations over tabular data (CSV, TSV, or tables extracted from documents).
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Ingested tabular artifacts to analyze.
 
 ## Requirements
 
 - Tool spec: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
-- `tool_context`: at least one `ingested_artifact` containing tabular data (CSV/Excel/table)
+- `tool_context`: at least one `ingested_artifact` with a `context_filter`
 
 ## Basic request and response
 
+This example validates a request that enables tabular analysis over a collection:
+
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 128,
     "messages": [
-      { "role": "user", "content": "What is the row with the highest value?" }
+      { "role": "user", "content": "What is the average of the Q1 revenue column?" }
     ],
     "tools": [
       { "name": "tabular_analysis", "type": "tabular_analysis_v1" }
@@ -37,7 +36,10 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
     "tool_context": [
       {
         "type": "ingested_artifact",
-        "context_filter": { "collection": "docs_examples" }
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
       }
     ]
   }'
@@ -53,9 +55,10 @@ To run the request, send the same body to `POST /messages`.
 
 ## Tips
 
-- Ingest CSVs with good headers.
-- If your table is embedded in a PDF, consider ingesting the table as a separate artifact to improve accuracy.
+- Ensure the artifact content is a clean table (CSV/TSV is best).
+- Keep the table small enough for quick analysis.
 
 ## Next steps
 
-- Ingest tabular data: [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Ingest and manage artifacts: [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Learn how messages return tool blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)

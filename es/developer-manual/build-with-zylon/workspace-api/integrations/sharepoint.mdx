@@ -1,0 +1,48 @@
+---
+title: "Integración SharePoint"
+description: "Sincroniza documentos de SharePoint en el workspace."
+---
+
+Las integraciones de SharePoint ingieren bibliotecas y documentos. **Habilita SharePoint a nivel de instancia primero**—consulta la guía del operador: [Configuración de SharePoint](/es/operator-manual/knowledge-base/sharepoint).
+
+Si se requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+
+## Solicitud básica y respuesta
+
+Obtén la configuración con `GET /v1/app/integration/sharepoint/{integrationId}/config`.
+
+```bash
+curl "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "site_url": "https://auroralabs.sharepoint.com/sites/support",
+  "library": "Shared Documents"
+}
+```
+
+## Iniciar sincronización
+
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (SyncEvent):
+
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 18,
+  "integration_item_count": 64
+}
+```
+
+## Errores y casos límite
+
+- **403**: integración no habilitada o sin permisos.
+- **404**: integración no encontrada.

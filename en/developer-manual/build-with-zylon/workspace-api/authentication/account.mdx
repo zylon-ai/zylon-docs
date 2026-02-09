@@ -1,0 +1,249 @@
+---
+title: "Account"
+description: "Manage accounts, org membership, and API tokens."
+---
+
+Use Account endpoints to list accounts, manage account roles, reset passwords, and create or revoke API tokens. You can also list organizations linked to an account and join an organization by ID.
+
+## Basic request and response
+
+List the accounts visible to your token with `GET /v1/account`.
+
+```bash
+curl "https://{base_url}/v1/account" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  {
+    "id": "acct_6c8a1f3b2d4e5f7a",
+    "email": "sasha@auroralabs.com",
+    "name": "Sasha Patel",
+    "given_name": "Sasha",
+    "family_name": "Patel",
+    "provider": "Credentials",
+    "users": [
+      {
+        "id": "user_4b7c2a1d9e5f3c8b",
+        "org_id": "org_2f3a9d1c7b5e4a8f",
+        "account_id": "acct_6c8a1f3b2d4e5f7a",
+        "name": "Sasha Patel",
+        "email": "sasha@auroralabs.com",
+        "state": "Active",
+        "roles": ["AppAdmin"],
+        "created_at": "2026-02-08T14:12:45Z"
+      }
+    ],
+    "roles": ["AppAdmin"]
+  }
+]
+```
+
+## Get an account
+
+```bash
+curl "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (AccountDTO):
+
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "given_name": "Sasha",
+  "family_name": "Patel",
+  "provider": "Credentials",
+  "users": [
+    {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "roles": ["AppAdmin"]
+}
+```
+
+## Update account roles
+
+```bash
+curl -X POST "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "roles": ["AppAdmin", "Developer"]
+  }'
+```
+
+Example response:
+
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "given_name": "Sasha",
+  "family_name": "Patel",
+  "provider": "Credentials",
+  "users": [],
+  "roles": ["AppAdmin", "Developer"]
+}
+```
+
+## Update your password
+
+```bash
+curl -X PUT "https://{base_url}/v1/account/me" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "current_password": "S3cure!Passw0rd",
+    "new_password": "N3w!Passw0rd2026"
+  }'
+```
+
+Example response:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## Reset an account password
+
+```bash
+curl -X POST "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "new_password": "Temp!Passw0rd2026"
+  }'
+```
+
+Example response:
+
+```json
+{
+  "new_password": "Temp!Passw0rd2026"
+}
+```
+
+## List API tokens
+
+```bash
+curl "https://{base_url}/v1/account/token" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  {
+    "name": "ci-deploy",
+    "token": "v1---redacted",
+    "hashed_token": "sha256:2b7f...",
+    "token_email": "sasha@auroralabs.com",
+    "last_used_at": "2026-02-08T13:58:10Z",
+    "created_at": "2026-02-01T09:12:00Z",
+    "valid_until": "2026-08-01T00:00:00Z"
+  }
+]
+```
+
+## Create an API token
+
+```bash
+curl -X POST "https://{base_url}/v1/account/token" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "ci-deploy",
+    "revoke_existing": false,
+    "valid_until": "2026-08-01T00:00:00Z"
+  }'
+```
+
+Example response:
+
+```json
+{
+  "name": "ci-deploy",
+  "token": "v1---redacted",
+  "hashed_token": "sha256:2b7f...",
+  "token_email": "sasha@auroralabs.com",
+  "last_used_at": null,
+  "created_at": "2026-02-08T14:22:00Z",
+  "valid_until": "2026-08-01T00:00:00Z"
+}
+```
+
+## Revoke an API token
+
+```bash
+curl -X DELETE "https://{base_url}/v1/account/token" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+"ok"
+```
+
+## List organizations for an account
+
+```bash
+curl "https://{base_url}/v1/account/organization" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+[
+  {
+    "name": "Aurora Labs",
+    "context": "Enterprise R&D and analytics.",
+    "email_regex": ".*@auroralabs.com"
+  }
+]
+```
+
+## Join an organization
+
+```bash
+curl -X POST "https://{base_url}/v1/account/organization/org_2f3a9d1c7b5e4a8f/join" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (UserDTO):
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:25:31Z"
+}
+```
+
+## Errors and edge cases
+
+- **401/403**: missing or invalid API token.
+- **409**: token name already exists.
+- **404**: account or organization not found.

@@ -1,0 +1,231 @@
+---
+title: "Artefactos"
+description: "Ingiere, actualiza y recupera artefactos a nivel proyecto en la Workspace API."
+---
+
+Los artefactos son objetos de contenido del proyecto (texto, archivos o links) que alimentan la búsqueda y el análisis. Usa estos endpoints para subir o sincronizar contenido y luego leer, actualizar o eliminar.
+
+## Solicitud básica y respuesta
+
+Crea un artefacto con `POST /v1/app/project/{projectId}/artifact`.
+
+<Tabs>
+  <Tab title="Texto">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "InlineText",
+    "source": "User",
+    "name": "Q1 Support Summary",
+    "description": "Weekly summary notes.",
+    "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
+  }'
+```
+  </Tab>
+  <Tab title="Archivo">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Document",
+    "source": "User",
+    "name": "support-brief-q1.pdf",
+    "description": "Q1 support brief (PDF).",
+    "raw_content": "JVBERi0xLjQKJ..."
+  }'
+```
+  </Tab>
+  <Tab title="URI">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Link",
+    "source": "User",
+    "name": "Product FAQ",
+    "external_url": "https://docs.auroralabs.com/faq"
+  }'
+```
+  </Tab>
+</Tabs>
+
+Ejemplo de respuesta (ArtifactDTO):
+
+```json
+{
+  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Q1 Support Summary",
+  "description": "Weekly summary notes.",
+  "type": "InlineText",
+  "source": "User",
+  "state": "Ready",
+  "ingest_status": "Processing",
+  "has_content": true,
+  "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:30:12Z"
+}
+```
+
+## Listar artefactos
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "data": [
+    {
+      "id": "artifact_2b4d6f8a1c3e5a7b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "source": "User",
+      "state": "Ready",
+      "ingest_status": "Done",
+      "has_content": true,
+      "created_at": "2026-02-08T14:30:12Z",
+      "updated_at": "2026-02-08T14:31:02Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Obtener un artefacto
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Q1 Support Summary",
+  "type": "InlineText",
+  "source": "User",
+  "state": "Ready",
+  "ingest_status": "Done",
+  "has_content": true,
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:31:02Z"
+}
+```
+
+## Actualizar un artefacto
+
+```bash
+curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Q1 Support Summary (final)",
+    "description": "Finalized weekly summary notes.",
+    "plain_text_content": "Ticket volume rose 12% week-over-week..."
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "name": "Q1 Support Summary (final)",
+  "description": "Finalized weekly summary notes.",
+  "type": "InlineText",
+  "source": "User",
+  "ingest_status": "Done",
+  "updated_at": "2026-02-08T14:45:21Z"
+}
+```
+
+## Eliminar un artefacto
+
+```bash
+curl -X DELETE "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "state": "Deleted"
+}
+```
+
+## Metadatos privados
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/private" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (objeto sin esquema):
+
+```json
+{}
+```
+
+## Descargar contenido crudo
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/download" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.
+```
+
+## Obtener contenido parseado
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/parsed-content" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+Ticket volume rose 12% week-over-week.
+Billing issues drove 38% of cases.
+Priority bugs were resolved within 48 hours.
+```
+
+## Sincronizar un artefacto
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/sync" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 202 Accepted
+```
+
+## Errores y casos límite
+
+- **409**: artefacto ya en procesamiento.
+- **413**: contenido demasiado grande.
+- **404**: artefacto no encontrado.

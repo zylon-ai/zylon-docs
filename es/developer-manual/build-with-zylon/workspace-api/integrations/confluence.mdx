@@ -1,0 +1,48 @@
+---
+title: "Integración Confluence"
+description: "Lee y sincroniza contenido de Confluence en el workspace."
+---
+
+Las integraciones de Confluence ingieren páginas y espacios para usarlos como artefactos. **Debes habilitar Confluence a nivel de instancia primero**—consulta la guía del operador: [Configuración de Confluence](/es/operator-manual/knowledge-base/confluence).
+
+Si la integración requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+
+## Solicitud básica y respuesta
+
+Obtén la configuración con `GET /v1/app/integration/confluence/{integrationId}/config`.
+
+```bash
+curl "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "space_key": "SUP",
+  "base_url": "https://confluence.auroralabs.com"
+}
+```
+
+## Iniciar sincronización
+
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (SyncEvent):
+
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 42,
+  "integration_item_count": 120
+}
+```
+
+## Errores y casos límite
+
+- **403**: integración no habilitada o sin permisos.
+- **404**: integración no encontrada.

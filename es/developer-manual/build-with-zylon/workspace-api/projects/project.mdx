@@ -1,0 +1,231 @@
+---
+title: "Proyectos"
+description: "Crea proyectos, actualiza metadatos y ejecuta chat a nivel proyecto."
+---
+
+Los proyectos son la unidad del workspace que contiene hilos, artefactos y contexto de equipo. Usa estos endpoints para crear y configurar proyectos, transferir ownership y lanzar chats con alcance de proyecto.
+
+## Solicitud básica y respuesta
+
+Crea un proyecto con `POST /v1/app/project`.
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Insights",
+    "goal": "Summarize weekly support trends.",
+    "deadline": 1709337600,
+    "visibility": "Private"
+  }'
+```
+
+Ejemplo de respuesta (ProjectDTO):
+
+```json
+{
+  "id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Customer Insights",
+  "goal": "Summarize weekly support trends.",
+  "deadline": "2026-03-01T00:00:00Z",
+  "visibility": "Private",
+  "member_count": 1,
+  "default_member_role": "Editor",
+  "default_role_enabled": true,
+  "project_context": "Support analytics for Q1.",
+  "answer_context": "Use approved templates.",
+  "is_pinned": false
+}
+```
+
+## Obtener un proyecto
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Customer Insights",
+  "goal": "Summarize weekly support trends.",
+  "visibility": "Private"
+}
+```
+
+## Actualizar un proyecto
+
+<Tabs>
+  <Tab title="PUT">
+```bash
+curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Insights",
+    "goal": "Summarize weekly support and churn signals.",
+    "deadline": "2026-03-15T00:00:00Z",
+    "visibility": "Private",
+    "project_context": "Support analytics for Q1.",
+    "answer_context": "Return answers in a weekly memo format.",
+    "default_member_role": "Editor",
+    "default_role_enabled": true
+  }'
+```
+
+Ejemplo de respuesta (ProjectDTO):
+
+```json
+{
+  "id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Customer Insights",
+  "goal": "Summarize weekly support and churn signals.",
+  "deadline": "2026-03-15T00:00:00Z",
+  "visibility": "Private",
+  "member_count": 3,
+  "default_member_role": "Editor",
+  "default_role_enabled": true,
+  "project_context": "Support analytics for Q1.",
+  "answer_context": "Return answers in a weekly memo format.",
+  "is_pinned": true
+}
+```
+  </Tab>
+  <Tab title="PATCH">
+```bash
+curl -X PATCH "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_context": "Support analytics for Q1 with strict PII handling."
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+</Tabs>
+
+## Eliminar un proyecto
+
+```bash
+curl -X DELETE "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## Salir o transferir un proyecto
+
+<Tabs>
+  <Tab title="Salir del proyecto">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/leave" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+  <Tab title="Transferir ownership">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "new_owner_id": "user_9d1c3b5a7f2e4c6d"
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+</Tabs>
+
+## Información de usuario en proyecto
+
+<Tabs>
+  <Tab title="Obtener info">
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+  <Tab title="Actualizar info">
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "is_pinned": true
+  }'
+```
+
+Ejemplo de respuesta:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+</Tabs>
+
+## Chat con alcance de proyecto
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/chat" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "all_artifacts": true,
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "Summarize the latest support trends in three bullets." }
+          ]
+        }
+      ],
+      "max_tokens": 80,
+      "temperature": 0.2
+    }
+  }'
+```
+
+Ejemplo de respuesta (esquema no definido en OpenAPI):
+
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "state": "Completed"
+}
+```
+
+## Errores y casos límite
+
+- **403**: no eres miembro del proyecto.
+- **404**: proyecto no encontrado.
+- **409**: el usuario destino no es elegible para transferir.

@@ -1,17 +1,14 @@
 ---
-title: "Herramienta de búsqueda semántica"
-description: "Busca chunks relevantes dentro de tus artefactos ingeridos durante un mensaje."
+title: "Semantic Search tool"
+description: "Busca en artefactos ingeridos durante un mensaje."
 ---
 
-Usa la búsqueda semántica cuando quieres que el asistente recupere información de artefactos previamente ingeridos (documentos, notas, PDFs, HTML y más).
+Usa Semantic Search cuando quieras recuperar información de artefactos ingeridos (documentos, notas, PDFs, HTML, etc.).
 
 ## Requisitos previos
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Artefactos ingeridos para buscar.
 
 ## Requisitos
 
@@ -20,17 +17,17 @@ Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/toke
 
 ## Solicitud y respuesta básicas
 
-Este ejemplo valida una request que habilita búsqueda semántica sobre una colección:
+Este ejemplo valida una request que habilita semantic search:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 128,
     "messages": [
-      { "role": "user", "content": "What does the artifact say?" }
+      { "role": "user", "content": "What shipped in the latest billing dashboard release?" }
     ],
     "tools": [
       { "name": "semantic_search", "type": "semantic_search_v1" }
@@ -48,21 +45,20 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
   }'
 ```
 
-Respuesta de ejemplo:
+Ejemplo de respuesta:
 
 ```json
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar la request, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo body a `POST /messages`.
 
-## Consejos
+## Tips
 
-- Mantén `tool_context` estrecho (usa una colección y el conjunto mínimo de artefactos).
-- Si no obtienes resultados relevantes, ingiere texto más limpio (o divide documentos grandes en artefactos pequeños).
+- Mantén `tool_context` acotado.
+- Si los resultados no son relevantes, ingesta texto más limpio.
 
-## Siguientes pasos
+## Próximos pasos
 
-- Ingiere y gestiona artefactos: [API de artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
-- Aprende cómo aparecen los bloques de herramientas: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
-
+- Ingesta de artefactos: [Artifacts API](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)

@@ -1,30 +1,16 @@
 ---
 title: "Visión general"
-description: "Los bloques principales para construir con ZylonGPT: mensajes, artefactos y herramientas."
+description: "Elige la API correcta: ZylonGPT para interacciones con el modelo y Workspace API para organizaciones, usuarios y proyectos."
 ---
 
-La mayoría de aplicaciones con ZylonGPT siguen el mismo ciclo:
+Zylon ofrece dos superficies de API. Usa **ZylonGPT** cuando necesitas respuestas del modelo, llamadas a herramientas y chat con artefactos. Usa **Workspace API** cuando necesitas gestionar organizaciones, usuarios, proyectos, hilos e integraciones.
 
-1. **Ingerir conocimiento** que quieres que el asistente use (Artefactos).
-2. **Generar una respuesta** (Mensajes).
-3. **Recuperar o analizar** ese conocimiento (Herramientas).
+<CardGroup cols={2}>
+  <Card title="API de ZylonGPT" icon="sparkles" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Construye experiencias de chat con Mensajes, Artefactos y Herramientas.
+  </Card>
 
-Esta sección se enfoca en las piezas que combinarás para construir funcionalidades reales.
-
-## Mensajes
-
-La API de mensajes es cómo hablas con el modelo: envías un historial de conversación y recibes el siguiente mensaje del asistente como bloques de contenido estructurados.
-
-Empieza aquí: [API de mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
-
-## Artefactos
-
-Los artefactos te permiten persistir contexto en Zylon (texto, archivos o URLs) dentro de una colección, para recuperarlo y reutilizarlo en futuras solicitudes.
-
-Empieza aquí: [API de artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
-
-## Herramientas
-
-Las herramientas permiten ejecutar operaciones específicas (como buscar artefactos, analizar datos tabulares o extraer una página web) como parte de una respuesta.
-
-Empieza aquí: [Herramientas](/es/developer-manual/build-with-zylon/tools/introduction-to-tools)
+  <Card title="Workspace API" icon="building" href="/es/developer-manual/build-with-zylon/workspace-api/overview">
+    Administra cuentas, proyectos, hilos, artefactos e integraciones a escala.
+  </Card>
+</CardGroup>

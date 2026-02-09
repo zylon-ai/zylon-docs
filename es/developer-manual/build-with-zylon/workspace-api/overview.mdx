@@ -1,0 +1,78 @@
+---
+title: "Visión general"
+description: "La Workspace API es el plano de control para organizaciones, usuarios, proyectos, chats, contenido y reportes."
+---
+
+La Workspace API impulsa la administración de tu despliegue de Zylon. Úsala para gestionar organizaciones y usuarios, crear proyectos, ejecutar chats con hilos, ingerir artefactos, configurar integraciones y consultar analíticas o auditorías.
+
+## Base URL
+
+Todos los endpoints de Workspace viven bajo:
+
+```
+https://{base_url}/v1
+```
+
+## Autenticación
+
+La mayoría de endpoints requieren un token de API. Si aún no tienes uno, revisa [Token Management](/es/api-reference/token-management).
+
+## Solicitud básica y respuesta
+
+Usa `GET /v1/app/me` para verificar tu token y contexto de usuario:
+
+```bash
+curl "https://{base_url}/v1/app/me" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+## Secciones de Workspace API
+
+<CardGroup cols={3}>
+  <Card title="Autenticación" icon="key" href="/es/developer-manual/build-with-zylon/workspace-api/authentication/openid">
+    Flujos SSO, autenticación de cuentas y tokens.
+  </Card>
+
+  <Card title="Usuarios" icon="users" href="/es/developer-manual/build-with-zylon/workspace-api/users/user">
+    Crea, actualiza y administra acceso y membresías.
+  </Card>
+
+  <Card title="Proyectos" icon="folder" href="/es/developer-manual/build-with-zylon/workspace-api/projects/project">
+    Aprovisiona proyectos, gestiona miembros y visibilidad.
+  </Card>
+
+  <Card title="Chats" icon="message" href="/es/developer-manual/build-with-zylon/workspace-api/chats/threads">
+    Crea hilos, ejecuta interacciones y transmite respuestas.
+  </Card>
+
+  <Card title="Contenido" icon="file" href="/es/developer-manual/build-with-zylon/workspace-api/content/artifacts">
+    Administra artefactos e integraciones como Confluence, SharePoint, Filesystem y Claromentis.
+  </Card>
+
+  <Card title="General" icon="chart-line" href="/es/developer-manual/build-with-zylon/workspace-api/general/overview">
+    Analíticas, issues, auditoría, búsqueda y estado del sistema.
+  </Card>
+</CardGroup>
+
+## Paginación
+
+Los listados retornan un sobre con cursores:
+
+```json
+{
+  "data": [],
+  "next_cursor": "cursor_next",
+  "previous_cursor": "cursor_prev",
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 0
+}
+```
+
+Usa `page`, `page_size`, `after`, `before`, `first`, `last` y `total_count` cuando estén disponibles.
+
+## Errores y casos límite
+
+- **401/403**: token ausente o permisos insuficientes.
+- **404**: IDs inválidos o eliminados.
+- **Redirecciones**: login/callback devuelven `302` para navegadores.

@@ -1,17 +1,13 @@
 ---
-title: "Herramienta de web fetch"
-description: "Descarga y extrae una URL mencionada en el mensaje."
+title: "Web Fetch tool"
+description: "Extrae contenido de una URL en el mensaje."
 ---
 
-Usa web fetch cuando tu usuario pregunte sobre una página. Incluye la URL en el mensaje, habilita la herramienta y el asistente puede descargar y extraer texto legible.
+Usa Web Fetch cuando necesitas que el asistente recupere contenido de una URL.
 
 ## Requisitos previos
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
 
 ## Requisitos
 
@@ -22,13 +18,13 @@ Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/toke
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
-    "max_tokens": 128,
+    "max_tokens": 64,
     "messages": [
-      { "role": "user", "content": "Summarize: https://example.com/" }
+      { "role": "user", "content": "Summarize https://example.com/" }
     ],
     "tools": [
       { "name": "web_extract", "type": "web_extract_v1" }
@@ -37,15 +33,19 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
   }'
 ```
 
-Respuesta de ejemplo:
+Ejemplo de respuesta:
 
 ```json
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar la request, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo body a `POST /messages`.
 
-## Consejos
+## Tips
 
-- Sé explícito en el mensaje sobre lo que quieres (resumen, hechos clave, etc.).
-- Si tu despliegue restringe salida a internet, esta herramienta puede estar deshabilitada.
+- La URL debe aparecer en el mensaje.
+- Mantén el prompt conciso.
+
+## Próximos pasos
+
+- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)

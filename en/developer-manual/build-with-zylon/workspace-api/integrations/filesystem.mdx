@@ -1,0 +1,129 @@
+---
+title: "Filesystem Integration"
+description: "Sync files from a shared filesystem into your workspace."
+---
+
+The filesystem integration connects a shared directory to your workspace. **Enable the filesystem connector first** in the operator guide: [Filesystem integration setup](/en/operator-manual/knowledge-base/file-system).
+
+## Basic request and response
+
+Create a filesystem integration with `POST /v1/app/integration/filesystem`.
+
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/filesystem" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_filesync",
+    "password": "fs_token_123"
+  }'
+```
+
+Example response (UserIntegrationDTO):
+
+```json
+{
+  "id": "fs_9f8e7d6c5b4a3c2d",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "FileSystem",
+  "created_at": "2026-02-08T14:10:00Z",
+  "updated_at": "2026-02-08T14:10:00Z"
+}
+```
+
+## Update integration credentials
+
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_filesync",
+    "password": "fs_token_456"
+  }'
+```
+
+Example response:
+
+```json
+{
+  "id": "fs_9f8e7d6c5b4a3c2d",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "FileSystem",
+  "created_at": "2026-02-08T14:10:00Z",
+  "updated_at": "2026-02-08T15:02:00Z"
+}
+```
+
+## Get integration config
+
+```bash
+curl "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/config" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+{
+  "path": "/mnt/shared/support"
+}
+```
+
+## Validate credentials
+
+```bash
+curl "https://{base_url}/v1/app/integration/filesystem/validate?username=svc_filesync&password=fs_token_456" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+true
+```
+
+## List files
+
+```bash
+curl "https://{base_url}/v1/app/integration/filesystem/files?integrationId=fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+[
+  {
+    "path": "/mnt/shared/support/weekly-brief.pdf",
+    "name": "weekly-brief.pdf",
+    "size": 287104,
+    "updated_at": "2026-02-07T19:22:10Z"
+  }
+]
+```
+
+## Start an ingest sync
+
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/ingest" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (SyncEvent):
+
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 12,
+  "integration_item_count": 48
+}
+```
+
+## Errors and edge cases
+
+- **403**: connector not enabled or missing permissions.
+- **400**: invalid credentials.
+- **404**: integration ID not found.

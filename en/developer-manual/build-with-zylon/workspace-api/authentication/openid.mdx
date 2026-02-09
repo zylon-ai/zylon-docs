@@ -1,0 +1,175 @@
+---
+title: "OpenID & OAuth"
+description: "Start SSO logins and integration OAuth flows for Confluence and SharePoint."
+---
+
+Use these endpoints to initiate OAuth/OpenID flows. Login endpoints are browser-oriented and return redirects; callback endpoints receive the provider response.
+
+> Integrations must be enabled before you use their OAuth endpoints. See the operator guides for [Confluence](/en/operator-manual/knowledge-base/confluence) and [SharePoint](/en/operator-manual/knowledge-base/sharepoint).
+
+## Basic request and response
+
+Start a login flow by calling a provider login endpoint and following the redirect.
+
+### User SSO login redirects
+
+<Tabs>
+  <Tab title="Google login">
+```bash
+curl -i "https://{base_url}/v1/auth/google/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_uri=...
+```
+  </Tab>
+  <Tab title="Microsoft login">
+```bash
+curl -i "https://{base_url}/v1/auth/microsoft/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
+```
+  </Tab>
+</Tabs>
+
+### Integration OAuth login redirects
+
+<Tabs>
+  <Tab title="Confluence login">
+```bash
+curl -i "https://{base_url}/v1/app/integration/confluence/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
+```
+  </Tab>
+  <Tab title="SharePoint login">
+```bash
+curl -i "https://{base_url}/v1/app/integration/sharepoint/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
+```
+  </Tab>
+</Tabs>
+
+### Login with a specific integration instance
+
+<Tabs>
+  <Tab title="Confluence instance">
+```bash
+curl -i "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d4e3f2a1b
+```
+  </Tab>
+  <Tab title="SharePoint instance">
+```bash
+curl -i "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&state=sp_1c2d3e4f5a6b7c8d
+```
+  </Tab>
+</Tabs>
+
+### Refresh an integration token
+
+<Tabs>
+  <Tab title="Confluence refresh">
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+"ok"
+```
+  </Tab>
+  <Tab title="SharePoint refresh">
+```bash
+curl -X POST "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+"ok"
+```
+  </Tab>
+</Tabs>
+
+### Callback endpoints
+
+<Tabs>
+  <Tab title="Microsoft callback">
+```bash
+curl -i "https://{base_url}/v1/auth/microsoft/callback?code=...&state=..."
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://{base_url}/app/login/success
+```
+  </Tab>
+  <Tab title="Confluence callback">
+```bash
+curl -i "https://{base_url}/v1/app/integration/confluence/callback?code=...&state=..."
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://{base_url}/app/integrations/confluence
+```
+  </Tab>
+  <Tab title="SharePoint callback">
+```bash
+curl -i "https://{base_url}/v1/app/integration/sharepoint/callback?code=...&state=..."
+```
+
+Example response:
+
+```text
+HTTP/1.1 302 Found
+Location: https://{base_url}/app/integrations/sharepoint
+```
+  </Tab>
+</Tabs>
+
+## Errors and edge cases
+
+- **302 redirect**: expected for login and callback routes.
+- **401/403**: token missing for refresh.
+- **404**: integration ID not found.

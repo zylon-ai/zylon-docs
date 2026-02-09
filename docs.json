@@ -171,26 +171,94 @@
                 "icon": "cubes",
                 "pages": [
                   "en/developer-manual/build-with-zylon/overview",
-                  "en/developer-manual/build-with-zylon/working-with-messages",
-                  "en/developer-manual/build-with-zylon/working-with-artifacts",
                   {
-                    "group": "Tools",
+                    "group": "ZylonGPT API",
                     "pages": [
-                      "en/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                      "en/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+                      "en/developer-manual/build-with-zylon/working-with-messages",
+                      "en/developer-manual/build-with-zylon/working-with-artifacts",
                       {
-                        "group": "Built-in",
+                        "group": "Tools",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
-                          "en/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
-                          "en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
-                          "en/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
-                          "en/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                          "en/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                          {
+                            "group": "Built-in",
+                            "pages": [
+                              "en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                              "en/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                              "en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                              "en/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                              "en/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                            ]
+                          },
+                          {
+                            "group": "Custom",
+                            "pages": [
+                              "en/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Workspace API",
+                    "pages": [
+                      "en/developer-manual/build-with-zylon/workspace-api/overview",
+                      {
+                        "group": "Authentication",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+                          "en/developer-manual/build-with-zylon/workspace-api/authentication/auth",
+                          "en/developer-manual/build-with-zylon/workspace-api/authentication/account"
                         ]
                       },
                       {
-                        "group": "Custom",
+                        "group": "Users",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                          "en/developer-manual/build-with-zylon/workspace-api/users/user",
+                          "en/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+                        ]
+                      },
+                      {
+                        "group": "Projects",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/projects/project",
+                          "en/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+                        ]
+                      },
+                      {
+                        "group": "Chats",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/chats/threads",
+                          "en/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                          "en/developer-manual/build-with-zylon/workspace-api/chats/chat"
+                        ]
+                      },
+                      {
+                        "group": "Content",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+                          {
+                            "group": "Integrations",
+                            "pages": [
+                              "en/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+                              "en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+                              "en/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+                              "en/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "General",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/general/overview",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/issues",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/audit",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/search",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/system"
                         ]
                       }
                     ]
@@ -482,26 +550,94 @@
                 "icon": "cubes",
                 "pages": [
                   "es/developer-manual/build-with-zylon/overview",
-                  "es/developer-manual/build-with-zylon/working-with-messages",
-                  "es/developer-manual/build-with-zylon/working-with-artifacts",
                   {
-                    "group": "Herramientas",
+                    "group": "ZylonGPT API",
                     "pages": [
-                      "es/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                      "es/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+                      "es/developer-manual/build-with-zylon/working-with-messages",
+                      "es/developer-manual/build-with-zylon/working-with-artifacts",
                       {
-                        "group": "Integradas",
+                        "group": "Herramientas",
                         "pages": [
-                          "es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
-                          "es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
-                          "es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
-                          "es/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
-                          "es/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                          "es/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                          {
+                            "group": "Integradas",
+                            "pages": [
+                              "es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                              "es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                              "es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                              "es/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                              "es/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                            ]
+                          },
+                          {
+                            "group": "Personalizadas",
+                            "pages": [
+                              "es/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Workspace API",
+                    "pages": [
+                      "es/developer-manual/build-with-zylon/workspace-api/overview",
+                      {
+                        "group": "Autenticación",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+                          "es/developer-manual/build-with-zylon/workspace-api/authentication/auth",
+                          "es/developer-manual/build-with-zylon/workspace-api/authentication/account"
                         ]
                       },
                       {
-                        "group": "Personalizadas",
+                        "group": "Usuarios",
                         "pages": [
-                          "es/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                          "es/developer-manual/build-with-zylon/workspace-api/users/user",
+                          "es/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+                        ]
+                      },
+                      {
+                        "group": "Proyectos",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/projects/project",
+                          "es/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+                        ]
+                      },
+                      {
+                        "group": "Chats",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/chats/threads",
+                          "es/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                          "es/developer-manual/build-with-zylon/workspace-api/chats/chat"
+                        ]
+                      },
+                      {
+                        "group": "Contenido",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+                          {
+                            "group": "Integraciones",
+                            "pages": [
+                              "es/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+                              "es/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+                              "es/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+                              "es/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "General",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/general/overview",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/issues",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/audit",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/search",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/system"
                         ]
                       }
                     ]

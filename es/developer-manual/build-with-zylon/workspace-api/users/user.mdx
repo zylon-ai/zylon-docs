@@ -1,0 +1,266 @@
+---
+title: "Usuarios"
+description: "Crea y administra usuarios, roles y acceso a proyectos."
+---
+
+Usa la API de Usuarios para gestionar personas en tu workspace. Puedes crear usuarios vinculados a cuentas existentes, actualizar perfiles y roles, y ver proyectos o artefactos asociados.
+
+## Solicitud básica y respuesta
+
+Usa `GET /v1/app/me` para verificar tu token y contexto.
+
+```bash
+curl "https://{base_url}/v1/app/me" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta (UserDTO):
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "job_position_name": "Product Ops Lead",
+  "job_position_description": "Owns release coordination and analytics.",
+  "state": "Active",
+  "roles": ["AppAdmin"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+
+## Listar usuarios
+
+```bash
+curl "https://{base_url}/v1/app/user?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "data": [
+    {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Crear un usuario
+
+```bash
+curl -X POST "https://{base_url}/v1/app/user" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "account_id": "acct_6c8a1f3b2d4e5f7a",
+    "role": "AppMember",
+    "user_info": {
+      "email": "sasha@auroralabs.com",
+      "name": "Sasha Patel",
+      "given_name": "Sasha",
+      "family_name": "Patel"
+    }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+
+## Obtener o actualizar un usuario
+
+<Tabs>
+  <Tab title="Obtener usuario">
+```bash
+curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+  </Tab>
+  <Tab title="Actualizar usuario">
+```bash
+curl -X PUT "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sasha Patel",
+    "role": "AppAdmin"
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppAdmin"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+  </Tab>
+</Tabs>
+
+## Activar o desactivar un usuario
+
+<Tabs>
+  <Tab title="Desactivar">
+```bash
+curl -X POST "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/deactivate" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "state": "Inactive"
+}
+```
+  </Tab>
+  <Tab title="Activar">
+```bash
+curl -X POST "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/activate" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "state": "Active"
+}
+```
+  </Tab>
+</Tabs>
+
+## Listar proyectos de un usuario
+
+```bash
+curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/project" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "data": [
+    {
+      "id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Customer Insights",
+      "goal": "Summarize weekly support trends.",
+      "deadline": "2026-03-01T00:00:00Z",
+      "visibility": "Private",
+      "member_count": 4,
+      "default_member_role": "Editor",
+      "default_role_enabled": true,
+      "project_context": "Support analytics for Q1.",
+      "answer_context": "Use approved templates.",
+      "is_pinned": true
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Últimos artefactos de un usuario
+
+```bash
+curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/latest-artifacts" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+[
+  {
+    "id": "artifact_2b4d6f8a1c3e5a7b",
+    "project_id": "proj_7a5c3e1b9d2f4a6c",
+    "name": "Q1 Support Summary",
+    "type": "Document",
+    "source": "User",
+    "state": "Ready",
+    "ingest_status": "Done",
+    "has_content": true,
+    "created_at": "2026-02-08T14:30:12Z"
+  }
+]
+```
+
+## Integraciones del usuario
+
+```bash
+curl "https://{base_url}/v1/app/user/integrations" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Ejemplo de respuesta:
+
+```json
+[
+  {
+    "id": "conf_8a7b6c5d4e3f2a1b",
+    "user_id": "user_4b7c2a1d9e5f3c8b",
+    "org_id": "org_2f3a9d1c7b5e4a8f",
+    "type": "Confluence",
+    "created_at": "2026-02-05T09:10:00Z",
+    "updated_at": "2026-02-08T10:02:11Z"
+  }
+]
+```
+
+## Errores y casos límite
+
+- **409**: email duplicado o cuenta ya vinculada.
+- **400**: rol inválido.
+- **404**: usuario no encontrado.

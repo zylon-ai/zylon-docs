@@ -13,80 +13,109 @@ Artifacts can be:
 
 ## Prerequisites
 
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{base_url}` in the examples).
+
+## Basic request and response (async ingest)
+
+Ingest content into a collection asynchronously.
+
+<Tabs>
+  <Tab title="Text">
 ```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-See [Token Management](/en/api-reference/token-management) if you don’t have an API token yet.
-
-## Basic request and response
-
-Ingest a text artifact into a collection.
-
-```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
-  -H "Authorization: Bearer $API_TOKEN" \
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
-    "collection": "docs_examples",
-    "artifact": "docs_text_artifact",
-    "input": {
-      "type": "text",
-      "value": "Zylon artifacts let you attach knowledge to a collection."
-    },
-    "metadata": {
-      "file_name": "docs_text_artifact.txt",
-      "source": "docs"
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_text_artifact_async_pending",
+      "input": {
+        "type": "text",
+        "value": "Release notes: We shipped a new billing dashboard and fixed three bugs."
+      },
+      "metadata": {
+        "file_name": "release_notes.txt",
+        "source": "docs"
+      }
     }
   }'
 ```
+  </Tab>
 
-Example response (truncated):
+  <Tab title="File">
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_file_artifact_async",
+      "input": {
+        "type": "file",
+        "value": "SGVsbG8gZnJvbSBmaWxlIGFydGlmYWN0Lgo="
+      },
+      "metadata": {
+        "file_name": "onboarding_checklist.txt",
+        "source": "docs"
+      }
+    }
+  }'
+```
+  </Tab>
+
+  <Tab title="URI">
+```bash
+curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_uri_artifact_async",
+      "input": {
+        "type": "uri",
+        "value": "https://example.com/"
+      },
+      "metadata": {
+        "file_name": "example.html",
+        "source": "docs"
+      }
+    }
+  }'
+```
+  </Tab>
+</Tabs>
+
+Example response:
+
+```json
+{ "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7" }
+```
+
+Check task status:
+
+```bash
+curl "https://{base_url}/gpt/v1/artifacts/ingest/async/{task_id}" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
 
 ```json
 {
-  "object": "list",
-  "model": "private-gpt",
-  "data": [
-    {
-      "object": "ingest.document",
-      "artifact": "docs_text_artifact",
-      "doc_metadata": {
-        "file_name": "docs_text_artifact.txt",
-        "artifact_id": "docs_text_artifact",
-        "collection": "docs_examples"
-      }
-    }
-  ]
+  "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7",
+  "task_status": "PENDING",
+  "task_result": null
 }
 ```
 
-## Artifact inputs
-
-### TextArtifact
-
-Use `input.type: "text"` for raw text.
-
-### FileArtifact (base64)
-
-Use `input.type: "file"` and pass base64-encoded bytes in `input.value`:
+## Listing ingested artifacts
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "collection": "docs_examples",
-    "artifact": "docs_file_artifact",
-    "input": {
-      "type": "file",
-      "value": "SGVsbG8gZnJvbSBmaWxlIGFydGlmYWN0Lgo="
-    },
-    "metadata": {
-      "file_name": "docs_file_artifact.txt",
-      "source": "docs"
-    }
-  }'
+curl "https://{base_url}/gpt/v1/artifacts/list?collection=docs_examples" \
+  -H "Authorization: Bearer {api_token}"
 ```
 
 Example response (truncated):
@@ -109,65 +138,6 @@ Example response (truncated):
 }
 ```
 
-### UriArtifact
-
-Use `input.type: "uri"` and pass a URL in `input.value`:
-
-```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "collection": "docs_examples",
-    "artifact": "docs_uri_artifact",
-    "input": {
-      "type": "uri",
-      "value": "https://example.com/"
-    },
-    "metadata": {
-      "file_name": "example.html",
-      "source": "docs"
-    }
-  }'
-```
-
-Example response (truncated):
-
-```json
-{
-  "object": "list",
-  "model": "private-gpt",
-  "data": [
-    {
-      "object": "ingest.document",
-      "artifact": "docs_uri_artifact",
-      "doc_metadata": {
-        "file_name": "example.html",
-        "artifact_id": "docs_uri_artifact",
-        "collection": "docs_examples"
-      }
-    }
-  ]
-}
-```
-
-## Listing ingested artifacts
-
-```bash
-curl "https://{base_url}/gpt/v1/artifacts/list?collection=docs_examples" \
-  -H "Authorization: Bearer $API_TOKEN"
-```
-
-Example response (truncated):
-
-```json
-{
-  "object": "list",
-  "model": "private-gpt",
-  "data": [{ "object": "ingest.document", "artifact": "docs_text_artifact" }]
-}
-```
-
 ## Retrieving content
 
 ### Full content
@@ -176,12 +146,12 @@ Use `POST /artifacts/content` to fetch complete document text:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/artifacts/content" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
       "collection": "docs_examples",
-      "artifacts": ["docs_text_artifact"]
+      "artifacts": ["docs_file_artifact"]
     }
   }'
 ```
@@ -192,8 +162,8 @@ Example response:
 {
   "data": [
     {
-      "artifact_id": "docs_text_artifact",
-      "content": "Zylon artifacts let you attach knowledge to a collection.\n\n"
+      "artifact_id": "docs_file_artifact",
+      "content": "Hello from file artifact.\n\n"
     }
   ]
 }
@@ -205,12 +175,12 @@ Use `POST /artifacts/chunked-content` to retrieve content split into chat-friend
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/artifacts/chunked-content" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
       "collection": "docs_examples",
-      "artifacts": ["docs_text_artifact"]
+      "artifacts": ["docs_file_artifact"]
     },
     "max_tokens": 50
   }'
@@ -222,10 +192,10 @@ Example response (truncated):
 {
   "data": [
     {
-      "artifact_id": "docs_text_artifact",
+      "artifact_id": "docs_file_artifact",
       "content": [
-        { "type": "source", "sources": [{ "object": "context.chunk", "id": "4b79b446-4e86-4204-a795-be3134a3c82d" }] },
-        { "type": "text", "text": "**Context Information**:\n..." }
+        { "type": "source", "sources": [{ "object": "context.chunk", "id": "c5f20f0f-56e6-44e0-99e8-0d4ff4bb87eb" }] },
+        { "type": "text", "text": "**Context Information**:\nBelow is important information..." }
       ]
     }
   ]
@@ -234,15 +204,15 @@ Example response (truncated):
 
 ## Deleting artifacts
 
-### Delete (sync)
+Delete (sync):
 
 ```bash
 curl -i -X POST "https://{base_url}/gpt/v1/artifacts/delete" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "collection": "docs_examples",
-    "artifact": "docs_text_artifact"
+    "artifact": "docs_text_artifact_async_pending"
   }'
 ```
 
@@ -254,16 +224,16 @@ HTTP/2 200
 null
 ```
 
-### Delete (async)
+Delete (async):
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/artifacts/delete/async" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "delete_body": {
       "collection": "docs_examples",
-      "artifact": "docs_uri_artifact"
+      "artifact": "docs_text_artifact_async"
     }
   }'
 ```
@@ -271,25 +241,21 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/delete/async" \
 Example response:
 
 ```json
-{ "task_id": "5bbc0990-56c6-4433-80fc-21b6a5b4a84d" }
+{ "task_id": "2d48e74f-3eff-474e-b338-a931390ac218" }
 ```
 
 Check task status:
 
 ```bash
-TASK_ID="YOUR_TASK_ID"
-```
-
-```bash
-curl "https://{base_url}/gpt/v1/artifacts/delete/async/$TASK_ID" \
-  -H "Authorization: Bearer $API_TOKEN"
+curl "https://{base_url}/gpt/v1/artifacts/delete/async/{task_id}" \
+  -H "Authorization: Bearer {api_token}"
 ```
 
 Example response:
 
 ```json
 {
-  "task_id": "5bbc0990-56c6-4433-80fc-21b6a5b4a84d",
+  "task_id": "2d48e74f-3eff-474e-b338-a931390ac218",
   "task_status": "PENDING",
   "task_result": null
 }
@@ -299,67 +265,3 @@ Example response:
   Keep polling until `task_status` becomes `"SUCCESS"` or `"FAILURE"`.
   If deletion fails while an index is still being populated, retry after a short delay.
 </Tip>
-
-## Async ingestion
-
-For large inputs, use async ingestion and poll for completion:
-
-```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "ingest_body": {
-      "collection": "docs_examples",
-      "artifact": "docs_text_artifact_async",
-      "input": { "type": "text", "value": "This artifact was ingested asynchronously." },
-      "metadata": { "file_name": "docs_text_artifact_async.txt", "source": "docs" }
-    }
-  }'
-```
-
-Example response:
-
-```json
-{ "task_id": "6e5c6e76-8c49-4835-95d6-75b07ee50fa3" }
-```
-
-Poll until `task_status` is `"SUCCESS"`:
-
-```bash
-TASK_ID="YOUR_TASK_ID"
-```
-
-```bash
-curl "https://{base_url}/gpt/v1/artifacts/ingest/async/$TASK_ID" \
-  -H "Authorization: Bearer $API_TOKEN"
-```
-
-Example response (truncated):
-
-```json
-{
-  "task_id": "6e5c6e76-8c49-4835-95d6-75b07ee50fa3",
-  "task_status": "PENDING",
-  "task_result": null
-}
-```
-
-## Common mistakes
-
-- **Missing `file_name` in metadata**: if you include `metadata`, provide a `file_name` with an extension (for example `doc.txt`).
-- **Wrong collection**: `artifact` IDs are scoped to a `collection`. Use the same collection for ingest, list, and retrieval.
-- **Polling too fast**: async tasks can take minutes. If a poll fails, retry after a short delay and add backoff.
-- **Deleting too early**: if you delete immediately after ingest, you may see an `IndexNotReadyException`. Wait a moment and retry.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Messages API" icon="laptop-code" href="/en/developer-manual/build-with-zylon/working-with-messages">
-    Use retrieved context and artifacts inside conversations.
-  </Card>
-
-  <Card title="Tools" icon="toolbox" href="/en/developer-manual/build-with-zylon/tools/introduction-to-tools">
-    Search and analyze your artifacts during a message.
-  </Card>
-</CardGroup>

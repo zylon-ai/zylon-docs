@@ -1,34 +1,31 @@
 ---
-title: "Herramienta de análisis tabular"
-description: "Analiza artefactos tabulares (CSV, spreadsheets o tablas) durante un mensaje."
+title: "Tabular Analysis tool"
+description: "Analiza artefactos tabulares durante un mensaje."
 ---
 
-Usa el análisis tabular cuando quieres que el asistente calcule respuestas a partir de datos estructurados (por ejemplo: “promedio por grupo”, “valor máximo”, “tendencia en el tiempo”).
+Usa Tabular Analysis para cálculos sobre datos tabulares (CSV/TSV o tablas extraídas).
 
 ## Requisitos previos
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-Si aún no tienes un token, consulta [Gestión de tokens](/es/api-reference/token-management).
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Artefactos tabulares ingeridos.
 
 ## Requisitos
 
 - Tool spec: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
-- `tool_context`: al menos un `ingested_artifact` con datos tabulares
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`
 
 ## Solicitud y respuesta básicas
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
     "max_tokens": 128,
     "messages": [
-      { "role": "user", "content": "What is the row with the highest value?" }
+      { "role": "user", "content": "What is the average of the Q1 revenue column?" }
     ],
     "tools": [
       { "name": "tabular_analysis", "type": "tabular_analysis_v1" }
@@ -37,26 +34,29 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
     "tool_context": [
       {
         "type": "ingested_artifact",
-        "context_filter": { "collection": "docs_examples" }
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
       }
     ]
   }'
 ```
 
-Respuesta de ejemplo:
+Ejemplo de respuesta:
 
 ```json
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar la request, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo body a `POST /messages`.
 
-## Consejos
+## Tips
 
-- Ingiere CSVs con buenos headers.
-- Si tu tabla está dentro de un PDF, considera ingerirla como un artefacto separado para mejorar la precisión.
+- Asegura que el contenido sea una tabla limpia.
+- Mantén tablas pequeñas para análisis rápido.
 
-## Siguientes pasos
+## Próximos pasos
 
-- Ingiere datos tabulares: [API de artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
-
+- Ingesta de artefactos: [Artifacts API](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)

@@ -1,0 +1,153 @@
+---
+title: "Threads"
+description: "Create, list, and update threads that hold chat interactions."
+---
+
+Threads group interactions inside a project. Use them to manage ongoing conversations and retrieve interaction history.
+
+## Basic request and response
+
+List threads in a project with `GET /v1/app/project/{projectId}/thread`.
+
+```bash
+curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+{
+  "data": [
+    {
+      "id": "thread_3f2a1c4d5b6e7f8a",
+      "name": "Weekly Support Brief",
+      "visibility": "Private",
+      "created_at": "2026-02-08T14:40:00Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Create a thread
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Example response:
+
+```text
+HTTP/1.1 200 OK
+```
+
+## Create a thread and interaction in one call
+
+```bash
+curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread/interaction" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Example response:
+
+```text
+HTTP/1.1 200 OK
+```
+
+## Get or update a thread
+
+<Tabs>
+  <Tab title="Get thread">
+```bash
+curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+{
+  "id": "thread_3f2a1c4d5b6e7f8a",
+  "name": "Weekly Support Brief",
+  "visibility": "Private"
+}
+```
+  </Tab>
+  <Tab title="Update thread">
+```bash
+curl -X PUT "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Example response:
+
+```text
+HTTP/1.1 200 OK
+```
+  </Tab>
+</Tabs>
+
+## Delete a thread
+
+```bash
+curl -X DELETE "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## List interactions in a thread
+
+```bash
+curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+{
+  "data": [
+    {
+      "id": "inter_5a7b9c1d3e5f7a9b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "thread_id": "thread_3f2a1c4d5b6e7f8a",
+      "state": "Completed",
+      "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+      "all_artifacts": false,
+      "created_at": "2026-02-08T14:41:10Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Errors and edge cases
+
+- **403**: user not a member of the project.
+- **404**: thread not found.

@@ -1,30 +1,16 @@
 ---
 title: "Overview"
-description: "The core building blocks for building with ZylonGPT: messages, artifacts, and tools."
+description: "Pick the right API: ZylonGPT for model interactions, Workspace API for organizations, users, and projects."
 ---
 
-Most ZylonGPT applications follow the same loop:
+Zylon gives you two API surfaces. Use **ZylonGPT** when you want model responses, tool calls, and artifact-aware chat. Use the **Workspace API** when you need to manage organizations, users, projects, threads, and integrations.
 
-1. **Ingest knowledge** you want the assistant to use (Artifacts).
-2. **Generate a response** (Messages).
-3. **Retrieve or analyze** that knowledge (Tools).
+<CardGroup cols={2}>
+  <Card title="ZylonGPT API" icon="sparkles" href="/en/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Build chat experiences with Messages, Artifacts, and Tools.
+  </Card>
 
-This section focuses on the pieces you’ll combine to build real features.
-
-## Messages
-
-The Messages API is how you talk to the model: you send a conversation history, and you receive the next assistant message back as structured content blocks.
-
-Start here: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)
-
-## Artifacts
-
-Artifacts are how you persist context in Zylon (text, files, or URIs) inside a collection, so it can be retrieved and reused across requests.
-
-Start here: [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)
-
-## Tools
-
-Tools let Zylon run targeted operations (like searching artifacts, analyzing tabular data, or extracting a web page) as part of a message response.
-
-Start here: [Tools](/en/developer-manual/build-with-zylon/tools/introduction-to-tools)
+  <Card title="Workspace API" icon="building" href="/en/developer-manual/build-with-zylon/workspace-api/overview">
+    Manage accounts, projects, threads, artifacts, and integrations at scale.
+  </Card>
+</CardGroup>

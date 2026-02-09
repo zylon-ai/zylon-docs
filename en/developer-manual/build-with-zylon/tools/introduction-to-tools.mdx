@@ -13,11 +13,8 @@ You enable tools by adding three fields to a `POST /messages` request:
 
 ## Prerequisites
 
-```bash
-export API_TOKEN="YOUR_API_TOKEN"
-```
-
-If you don’t have a token yet, see [Token Management](/en/api-reference/token-management).
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{base_url}` in the examples).
 
 ## Basic request and response
 
@@ -27,7 +24,7 @@ This example enables the **web fetch** tool:
 
 ```bash
 curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer $API_TOKEN" \
+  -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -80,7 +77,7 @@ See: [Custom tools](/en/developer-manual/build-with-zylon/tools/custom/custom-to
 
 - **Using the wrong field name**: tool schemas use `inputSchema` (not `input_schema`).
 - **Missing tool context**: `semantic_search_v1`, `tabular_analysis_v1`, and `database_query_v1` need `tool_context`.
-- **Forgetting auth**: include `Authorization: Bearer $API_TOKEN` on every request.
+- **Forgetting auth**: include `Authorization: Bearer ...` on every request.
 
 ## Next steps
 

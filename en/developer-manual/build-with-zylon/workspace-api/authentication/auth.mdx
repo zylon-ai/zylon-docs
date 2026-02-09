@@ -1,0 +1,104 @@
+---
+title: "Auth"
+description: "Create accounts, log in, and end sessions for Workspace API access."
+---
+
+Use these endpoints to create credential-based accounts, exchange credentials for a session, and log out. For SSO login redirects (Google/Microsoft) and integration OAuth, see [OpenID & OAuth](/en/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+
+## Basic request and response
+
+Create a credentials-based account with `POST /v1/auth/register`.
+
+```bash
+curl -X POST "https://{base_url}/v1/auth/register" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "sasha@auroralabs.com",
+    "password": "S3cure!Passw0rd",
+    "roles": ["AppAdmin"]
+  }'
+```
+
+Example response:
+
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "given_name": "Sasha",
+  "family_name": "Patel",
+  "provider": "Credentials",
+  "users": [
+    {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "roles": ["AppAdmin"]
+}
+```
+
+## Log in with credentials
+
+```bash
+curl -X POST "https://{base_url}/v1/auth/login" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "sasha@auroralabs.com",
+    "password": "S3cure!Passw0rd"
+  }'
+```
+
+Example response (AccountDTO):
+
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "given_name": "Sasha",
+  "family_name": "Patel",
+  "provider": "Credentials",
+  "users": [
+    {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "roles": ["AppAdmin"]
+}
+```
+
+## Log out
+
+```bash
+curl -X POST "https://{base_url}/v1/auth/logout" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+"ok"
+```
+
+## Errors and edge cases
+
+- **401/403**: missing or invalid API token.
+- **409**: account already exists (register).
+- **429**: too many login attempts.

@@ -1,0 +1,149 @@
+---
+title: "Issues"
+description: "Create and manage user-reported issues."
+---
+
+Issues let users report problems with responses or content. Use these endpoints to list, create, update, and close issues.
+
+## Basic request and response
+
+List issues with `GET /v1/app/issue` before creating or updating.
+
+```bash
+curl "https://{base_url}/v1/app/issue?page=1&page_size=20" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```json
+{
+  "data": [
+    {
+      "id": "issue_5c4b3a2d1e0f9a8b",
+      "issue_number": 1842,
+      "description": "Response missed the attached policy details.",
+      "resource_type": "Thread",
+      "type": "NoContextUsed",
+      "state": "NotReviewed",
+      "is_read": false,
+      "created_at": "2026-02-08T14:55:10Z",
+      "updated_at": "2026-02-08T14:55:10Z",
+      "created_by": {
+        "id": "user_4b7c2a1d9e5f3c8b",
+        "org_id": "org_2f3a9d1c7b5e4a8f",
+        "account_id": "acct_6c8a1f3b2d4e5f7a",
+        "name": "Sasha Patel",
+        "email": "sasha@auroralabs.com",
+        "state": "Active",
+        "roles": ["AppAdmin"],
+        "created_at": "2026-02-08T14:12:45Z"
+      }
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+
+## Create an issue
+
+```bash
+curl -X POST "https://{base_url}/v1/app/issue" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Response missed the attached policy details.",
+    "resource_type": "Thread",
+    "type": "NoContextUsed",
+    "anonymous": false
+  }'
+```
+
+Example response:
+
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "NotReviewed",
+  "is_read": false,
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T14:55:10Z",
+  "created_by": {
+    "id": "user_4b7c2a1d9e5f3c8b",
+    "org_id": "org_2f3a9d1c7b5e4a8f",
+    "account_id": "acct_6c8a1f3b2d4e5f7a",
+    "name": "Sasha Patel",
+    "email": "sasha@auroralabs.com",
+    "state": "Active",
+    "roles": ["AppAdmin"],
+    "created_at": "2026-02-08T14:12:45Z"
+  }
+}
+```
+
+## Get or update an issue
+
+<Tabs>
+  <Tab title="Get issue">
+```bash
+curl "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response (schema not defined in OpenAPI):
+
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "state": "NotReviewed"
+}
+```
+  </Tab>
+  <Tab title="Update issue">
+```bash
+curl -X PUT "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "state": "InReview",
+    "is_read": true
+  }'
+```
+
+Example response:
+
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "state": "InReview",
+  "is_read": true
+}
+```
+  </Tab>
+</Tabs>
+
+## Delete an issue
+
+```bash
+curl -X DELETE "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {api_token}"
+```
+
+Example response:
+
+```text
+HTTP/1.1 204 No Content
+```
+
+## Errors and edge cases
+
+- **404**: issue not found.
+- **400**: invalid issue state.

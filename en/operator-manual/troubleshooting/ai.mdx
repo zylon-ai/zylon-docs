@@ -10,6 +10,10 @@ Use the [VRAM Calculator](https://apxml.com/tools/vram-calculator) to determine 
 
 Zylon provides a benchmarking script that simulates concurrent inference requests to measure Time To First Token (TTFT), latency, and throughput. This can help identify if performance is below expectations and whether it degrades under load.
 
+<Info>
+Zylon allocates compute resources to maintain consistent response times under concurrent load (8-10 simultaneous users). This means single-inference benchmarks may show lower tokens/s than the hardware's theoretical maximum, but real-world performance with multiple users will meet or exceed expectations.
+</Info>
+
 ```python
 import asyncio
 import json

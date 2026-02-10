@@ -10,12 +10,11 @@ Organizations are the top-level container for users and projects. Use these endp
 List organizations visible to your account with `GET /v1/app/organization`.
 
 ```bash
-curl "https://{base_url}/v1/app/organization" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 [
   {
@@ -25,12 +24,13 @@ Example response (schema not defined in OpenAPI):
   }
 ]
 ```
+</Accordion>
 
 ## Update organization settings
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/organization" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Aurora Labs",
@@ -39,11 +39,11 @@ curl -X POST "https://{base_url}/v1/app/organization" \
   }'
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
 
 ## Errors and edge cases
 

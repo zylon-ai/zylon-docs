@@ -10,12 +10,11 @@ Usa estos endpoints para controlar quién puede acceder a un proyecto y qué rol
 Lista miembros actuales con `GET /v1/app/project/{projectId}/member`.
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member?page=1&page_size=50" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member?page=1&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "data": [
@@ -40,12 +39,13 @@ Ejemplo de respuesta:
   "total_count": 1
 }
 ```
+</Accordion>
 
 ## Agregar miembros
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
@@ -54,8 +54,7 @@ curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -75,12 +74,13 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Actualizar roles de miembros
 
 ```bash
-curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
@@ -89,8 +89,7 @@ curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -110,18 +109,18 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Obtener o quitar un miembro
 
 <Tabs>
   <Tab title="Obtener miembro">
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "member_7f6e5d4c3b2a",
@@ -139,15 +138,15 @@ Ejemplo de respuesta:
   "is_project_member": true
 }
 ```
+</Accordion>
   </Tab>
   <Tab title="Eliminar miembro">
 ```bash
-curl -X DELETE "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
-  -H "Authorization: Bearer {api_token}"
+curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "member_7f6e5d4c3b2a",
@@ -163,6 +162,7 @@ Ejemplo de respuesta:
   "is_project_member": false
 }
 ```
+</Accordion>
   </Tab>
 </Tabs>
 

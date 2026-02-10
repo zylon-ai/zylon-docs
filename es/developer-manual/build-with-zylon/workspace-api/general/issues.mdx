@@ -10,12 +10,11 @@ Los issues permiten reportar problemas con respuestas o contenido. Usa estos end
 Lista issues con `GET /v1/app/issue` antes de crear o actualizar.
 
 ```bash
-curl "https://{base_url}/v1/app/issue?page=1&page_size=20" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "data": [
@@ -46,12 +45,13 @@ Ejemplo de respuesta:
   "total_count": 1
 }
 ```
+</Accordion>
 
 ## Crear un issue
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/issue" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/issue" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "description": "Response missed the attached policy details.",
@@ -61,8 +61,7 @@ curl -X POST "https://{base_url}/v1/app/issue" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "issue_5c4b3a2d1e0f9a8b",
@@ -86,18 +85,18 @@ Ejemplo de respuesta:
   }
 }
 ```
+</Accordion>
 
 ## Obtener o actualizar un issue
 
 <Tabs>
   <Tab title="Obtener issue">
 ```bash
-curl "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "issue_5c4b3a2d1e0f9a8b",
@@ -106,11 +105,12 @@ Ejemplo de respuesta (esquema no definido en OpenAPI):
   "state": "NotReviewed"
 }
 ```
+</Accordion>
   </Tab>
   <Tab title="Actualizar issue">
 ```bash
-curl -X PUT "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "state": "InReview",
@@ -118,8 +118,7 @@ curl -X PUT "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "issue_5c4b3a2d1e0f9a8b",
@@ -127,21 +126,22 @@ Ejemplo de respuesta:
   "is_read": true
 }
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
 ## Eliminar un issue
 
 ```bash
-curl -X DELETE "https://{base_url}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {api_token}"
+curl -X DELETE "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 204 No Content
 ```
+</Accordion>
 
 ## Errores y casos límite
 

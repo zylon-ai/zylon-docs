@@ -20,8 +20,8 @@ Use Tabular Analysis when you want the assistant to perform calculations over ta
 This example validates a request that enables tabular analysis over a collection:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -60,5 +60,5 @@ To run the request, send the same body to `POST /messages`.
 
 ## Next steps
 
-- Ingest and manage artifacts: [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)
-- Learn how messages return tool blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)
+- Ingest and manage artifacts: [Artifacts](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)

@@ -1,30 +1,81 @@
 ---
-title: "Artifacts API"
-description: "Ingest text, files, or URIs into a collection so you can retrieve and use them later."
+title: "Artifacts"
+description: "Create and ingest ZylonGPT artifacts for retrieval and context."
 ---
 
-An **artifact** is a piece of content you ingest into Zylon so it can be retrieved later (for example, as grounding context for an application). Artifacts live inside a **collection**, and each artifact has a stable `artifact` ID.
+An **artifact** is a piece of information (or tool-ready resource) you ingest into Zylon so it can be used as context for queries and operations. Artifacts live inside a **collection**, and each artifact has a stable `artifact` ID.
 
-Artifacts can be:
+Artifacts can be created from:
 
-- **Text**: raw strings you provide directly
-- **File**: base64-encoded bytes (for example, a `.txt` or `.pdf`)
-- **URI**: a URL that Zylon fetches and ingests
+{/* <!-- RESTRUCTURED --> */}
+| Type | Input | Notes |
+| --- | --- | --- |
+| **Text** | Raw string | Provide content directly. |
+| **File** | Base64 bytes | For files like `.txt` or `.pdf`. |
+| **URI** | URL | Zylon fetches and ingests the content. |
 
 ## Prerequisites
 
 - An API token. See [Token Management](/en/api-reference/token-management).
-- Your Zylon hostname (replace `{base_url}` in the examples).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
-## Basic request and response (async ingest)
+## Basic request and response
 
-Ingest content into a collection asynchronously.
+Use `POST /artifacts/ingest` when you want the ingest to complete in the same request.
+
+```bash
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples_sync",
+    "artifact": "docs_text_artifact_sync",
+    "input": {
+      "type": "text",
+      "value": "Release notes: Shipped billing dashboard and fixed three bugs."
+    },
+    "metadata": {
+      "file_name": "release_notes.txt",
+      "source": "docs"
+    }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_text_artifact_sync",
+      "doc_metadata": {
+        "file_name": "release_notes.txt",
+        "source": "docs",
+        "headers": [],
+        "artifact_id": "docs_text_artifact_sync",
+        "collection": "docs_examples_sync",
+        "llm_model": "default",
+        "embed_model": "default",
+        "hash": "faf6da679814136cb7cef94532397948cd2cd303b25f91a527af53227e9da99d"
+      }
+    }
+  ]
+}
+```
+</Accordion>
+
+## Async ingest
+
+Use `POST /artifacts/ingest/async` for larger payloads or when ingest may take longer. The payload is the same as sync ingest, wrapped in `ingest_body`, and the response returns a `task_id` you can poll.
 
 <Tabs>
   <Tab title="Text">
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
@@ -45,8 +96,8 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="File">
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
@@ -67,8 +118,8 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="URI">
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
@@ -88,21 +139,22 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/ingest/async" \
   </Tab>
 </Tabs>
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 { "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7" }
 ```
+</Accordion>
 
 Check task status:
 
 ```bash
-curl "https://{base_url}/gpt/v1/artifacts/ingest/async/{task_id}" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/gpt/v1/artifacts/ingest/async/{task_id}" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7",
@@ -110,16 +162,17 @@ Example response:
   "task_result": null
 }
 ```
+</Accordion>
 
 ## Listing ingested artifacts
 
 ```bash
-curl "https://{base_url}/gpt/v1/artifacts/list?collection=docs_examples" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/gpt/v1/artifacts/list?collection=docs_examples" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (truncated):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "object": "list",
@@ -137,6 +190,7 @@ Example response (truncated):
   ]
 }
 ```
+</Accordion>
 
 ## Retrieving content
 
@@ -145,8 +199,8 @@ Example response (truncated):
 Use `POST /artifacts/content` to fetch complete document text:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/content" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/content" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
@@ -156,8 +210,8 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/content" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "data": [
@@ -168,14 +222,15 @@ Example response:
   ]
 }
 ```
+</Accordion>
 
 ### Chunked content (chat-optimized)
 
 Use `POST /artifacts/chunked-content` to retrieve content split into chat-friendly blocks:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/chunked-content" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/chunked-content" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
@@ -186,8 +241,8 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/chunked-content" \
   }'
 ```
 
-Example response (truncated):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "data": [
@@ -201,14 +256,15 @@ Example response (truncated):
   ]
 }
 ```
+</Accordion>
 
 ## Deleting artifacts
 
 Delete (sync):
 
 ```bash
-curl -i -X POST "https://{base_url}/gpt/v1/artifacts/delete" \
-  -H "Authorization: Bearer {api_token}" \
+curl -i -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "collection": "docs_examples",
@@ -216,19 +272,20 @@ curl -i -X POST "https://{base_url}/gpt/v1/artifacts/delete" \
   }'
 ```
 
-Example response (truncated):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```text
 HTTP/2 200
 
 null
 ```
+</Accordion>
 
 Delete (async):
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/artifacts/delete/async" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "delete_body": {
@@ -238,21 +295,22 @@ curl -X POST "https://{base_url}/gpt/v1/artifacts/delete/async" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 { "task_id": "2d48e74f-3eff-474e-b338-a931390ac218" }
 ```
+</Accordion>
 
 Check task status:
 
 ```bash
-curl "https://{base_url}/gpt/v1/artifacts/delete/async/{task_id}" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/gpt/v1/artifacts/delete/async/{task_id}" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "task_id": "2d48e74f-3eff-474e-b338-a931390ac218",
@@ -260,8 +318,18 @@ Example response:
   "task_result": null
 }
 ```
+</Accordion>
 
 <Tip>
   Keep polling until `task_status` becomes `"SUCCESS"` or `"FAILURE"`.
   If deletion fails while an index is still being populated, retry after a short delay.
 </Tip>
+
+## Errors and edge cases
+
+- **401/403**: missing token or insufficient permissions.
+- **404**: collection or artifact not found.
+- **409**: ingest/delete task already in progress.
+- **413**: input too large for a single ingest.
+- **422**: invalid payload shape (use `POST /artifacts/ingest/validate` if you want to pre-validate).
+- **Async failures**: when `task_status` becomes `FAILURE`, check `task_result` (for example `routing_key_error: "ingest.failed"` or `delete.failed`) and retry after fixing the input.

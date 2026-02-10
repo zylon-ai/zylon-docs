@@ -12,28 +12,27 @@ Si se requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual
 Obtén la configuración con `GET /v1/app/integration/sharepoint/{integrationId}/config`.
 
 ```bash
-curl "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "site_url": "https://auroralabs.sharepoint.com/sites/support",
   "library": "Shared Documents"
 }
 ```
+</Accordion>
 
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (SyncEvent):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "type": "sync_started",
@@ -41,6 +40,7 @@ Ejemplo de respuesta (SyncEvent):
   "integration_item_count": 64
 }
 ```
+</Accordion>
 
 ## Errores y casos límite
 

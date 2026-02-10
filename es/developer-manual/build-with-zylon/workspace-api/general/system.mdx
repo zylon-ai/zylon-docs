@@ -10,11 +10,10 @@ Usa estos endpoints para verificar el estado del sistema y ver metadatos de la l
 Usa el health check con `GET /health` para verificar disponibilidad.
 
 ```bash
-curl "https://{base_url}/health"
+curl "https://{BASE_URL}/health"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "status": "ok",
@@ -22,16 +21,16 @@ Ejemplo de respuesta:
   "commit": "9f1c2a3"
 }
 ```
+</Accordion>
 
 ## Detalles de licencia
 
 ```bash
-curl "https://{base_url}/v1/license" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/license" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "lic_6b7c8d9e0f1a",
@@ -45,6 +44,7 @@ Ejemplo de respuesta:
   }
 }
 ```
+</Accordion>
 
 ## Errores y casos límite
 

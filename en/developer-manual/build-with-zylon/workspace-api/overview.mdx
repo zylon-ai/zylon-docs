@@ -1,34 +1,56 @@
 ---
 title: "Overview"
-description: "The Workspace API is the control plane for organizations, users, projects, chats, content, and reporting."
+description: "Control plane for automating Zylon Workspace."
 ---
 
-The Workspace API powers administration and management for your Zylon deployment. Use it to manage orgs and users, create projects, run threaded chats, ingest artifacts, configure integrations, and pull analytics or audit trails.
+The Workspace API is the control plane for **everything that happens in Zylon Workspace**—organizations, users, projects, chats, artifacts, integrations, and reporting. Use it when you need to automate admin workflows or integrate Zylon into your internal systems.
 
 ## Base URL
 
 All Workspace endpoints live under:
 
 ```
-https://{base_url}/v1
+https://{BASE_URL}/v1
 ```
 
-## Authentication
+## Core concepts
 
-Most endpoints require an API token. If you don’t have one yet, see [Token Management](/en/api-reference/token-management).
+{/* <!-- RESTRUCTURED --> */}
+| Concept | Meaning |
+| --- | --- |
+| **Account** | The identity record that authenticates into Zylon. One account can belong to multiple organizations. |
+| **User** | The org-specific representation of an account. An account can have **multiple users**, one per organization. |
+| **Artifact** | A persisted piece of knowledge that can be retrieved in chats and tools. |
 
-## Basic request and response
+This model supports multi‑org setups where the same person can be a member of multiple workspaces with different roles.
 
-Use `GET /v1/app/me` to verify your token and user context:
+## Pagination
 
-```bash
-curl "https://{base_url}/v1/app/me" \
-  -H "Authorization: Bearer {api_token}"
+Pagination is a shared model across the Workspace API. List endpoints return a page envelope with cursors:
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Pagination envelope example">
+```json
+{
+  "data": [],
+  "next_cursor": "cursor_next",
+  "previous_cursor": "cursor_prev",
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 0
+}
 ```
+</Accordion>
+
+Use `page`, `page_size`, `after`, `before`, `first`, `last`, and `total_count` when they’re available on the endpoint.
 
 ## Workspace API sections
 
 <CardGroup cols={3}>
+  <Card title="General" icon="chart-line" href="/en/developer-manual/build-with-zylon/workspace-api/general/overview">
+    Analytics, issues, audits, search, and system status endpoints.
+  </Card>
+
   <Card title="Authentication" icon="key" href="/en/developer-manual/build-with-zylon/workspace-api/authentication/openid">
     SSO login flows, account auth, and API tokens.
   </Card>
@@ -48,28 +70,7 @@ curl "https://{base_url}/v1/app/me" \
   <Card title="Content" icon="file" href="/en/developer-manual/build-with-zylon/workspace-api/content/artifacts">
     Manage artifacts and integrations like Confluence, SharePoint, Filesystem, and Claromentis.
   </Card>
-
-  <Card title="General" icon="chart-line" href="/en/developer-manual/build-with-zylon/workspace-api/general/overview">
-    Analytics, issues, audits, search, and system status endpoints.
-  </Card>
 </CardGroup>
-
-## Pagination
-
-List endpoints return a page envelope with cursors:
-
-```json
-{
-  "data": [],
-  "next_cursor": "cursor_next",
-  "previous_cursor": "cursor_prev",
-  "has_next_page": false,
-  "has_previous_page": false,
-  "total_count": 0
-}
-```
-
-Use `page`, `page_size`, `after`, `before`, `first`, `last`, and `total_count` when they’re available on the endpoint.
 
 ## Errors and edge cases
 

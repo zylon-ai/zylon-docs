@@ -10,12 +10,11 @@ Usa la API de Usuarios para gestionar personas en tu workspace. Puedes crear usu
 Usa `GET /v1/app/me` para verificar tu token y contexto.
 
 ```bash
-curl "https://{base_url}/v1/app/me" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/me" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (UserDTO):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
@@ -30,16 +29,16 @@ Ejemplo de respuesta (UserDTO):
   "created_at": "2026-02-08T14:12:45Z"
 }
 ```
+</Accordion>
 
 ## Listar usuarios
 
 ```bash
-curl "https://{base_url}/v1/app/user?page=1&page_size=20" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/user?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "data": [
@@ -59,12 +58,13 @@ Ejemplo de respuesta:
   "total_count": 1
 }
 ```
+</Accordion>
 
 ## Crear un usuario
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/user" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/user" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "account_id": "acct_6c8a1f3b2d4e5f7a",
@@ -78,8 +78,7 @@ curl -X POST "https://{base_url}/v1/app/user" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
@@ -92,18 +91,18 @@ Ejemplo de respuesta:
   "created_at": "2026-02-08T14:12:45Z"
 }
 ```
+</Accordion>
 
 ## Obtener o actualizar un usuario
 
 <Tabs>
   <Tab title="Obtener usuario">
 ```bash
-curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
@@ -116,11 +115,12 @@ Ejemplo de respuesta:
   "created_at": "2026-02-08T14:12:45Z"
 }
 ```
+</Accordion>
   </Tab>
   <Tab title="Actualizar usuario">
 ```bash
-curl -X PUT "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Sasha Patel",
@@ -128,8 +128,7 @@ curl -X PUT "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
@@ -142,6 +141,7 @@ Ejemplo de respuesta:
   "created_at": "2026-02-08T14:12:45Z"
 }
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -150,45 +150,44 @@ Ejemplo de respuesta:
 <Tabs>
   <Tab title="Desactivar">
 ```bash
-curl -X POST "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/deactivate" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/deactivate" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
   "state": "Inactive"
 }
 ```
+</Accordion>
   </Tab>
   <Tab title="Activar">
 ```bash
-curl -X POST "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/activate" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/activate" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
   "state": "Active"
 }
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
 ## Listar proyectos de un usuario
 
 ```bash
-curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/project" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/project" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "data": [
@@ -211,16 +210,16 @@ Ejemplo de respuesta:
   "total_count": 1
 }
 ```
+</Accordion>
 
 ## Últimos artefactos de un usuario
 
 ```bash
-curl "https://{base_url}/v1/app/user/user_4b7c2a1d9e5f3c8b/latest-artifacts" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/latest-artifacts" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -236,16 +235,16 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Integraciones del usuario
 
 ```bash
-curl "https://{base_url}/v1/app/user/integrations" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/user/integrations" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -258,6 +257,7 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Errores y casos límite
 

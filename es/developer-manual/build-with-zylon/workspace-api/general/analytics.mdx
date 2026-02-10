@@ -10,12 +10,11 @@ Los endpoints de analíticas resumen cómo se usa el workspace en proyectos y us
 Empieza con los totales desde `GET /v1/app/organization/analytics/totals`.
 
 ```bash
-curl "https://{base_url}/v1/app/organization/analytics/totals" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/organization/analytics/totals" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "projects_total": 12,
@@ -25,16 +24,16 @@ Ejemplo de respuesta:
   "uploaded_artifacts_total": 87
 }
 ```
+</Accordion>
 
 ## Ranking de usuarios activos
 
 ```bash
-curl "https://{base_url}/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -53,16 +52,16 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Ranking de proyectos activos
 
 ```bash
-curl "https://{base_url}/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   {
@@ -84,16 +83,16 @@ Ejemplo de respuesta:
   }
 ]
 ```
+</Accordion>
 
 ## Serie de tiempo
 
 ```bash
-curl "https://{base_url}/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 [
   { "date": "2026-02-02", "value": 18 },
@@ -101,6 +100,7 @@ Ejemplo de respuesta:
   { "date": "2026-02-04", "value": 21 }
 ]
 ```
+</Accordion>
 
 ## Errores y casos límite
 

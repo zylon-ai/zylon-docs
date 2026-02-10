@@ -1,91 +1,464 @@
 ---
 title: "Artifacts"
-description: "Ingest, update, and retrieve project artifacts in the Workspace API."
+description: "Workspace artifacts for documents, agent flows, and connectors."
 ---
 
-Artifacts are project-scoped content objects (text, files, or links) that power retrieval and analysis. Use these endpoints to upload or sync content and then read, update, or delete it.
+An artifact is a piece of information **or tool** you provide to Zylon so it can be used as context for queries and operations. The Workspace API groups artifacts into **document artifacts**, **agent flows**, and **other artifacts**.
 
-## Basic request and response
+## Prerequisites
 
-Create a project artifact with `POST /v1/app/project/{projectId}/artifact`.
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
+
+## Artifacts
+
+{/* <!-- ADDED FOR CLARITY --> */}
+| Category | Includes | When to use |
+| --- | --- | --- |
+| **Document artifacts** | Documents, folders, links | Store or organize content inside a project. |
+| **Agent flows** | Summary, composition, extraction flows | Run workflows across artifacts to produce outputs. |
+| **Other artifacts** | MCP servers, SQL databases | Provide external tools or data sources. |
+
+### Document artifacts
+
+Document artifacts hold content, links reference existing artifacts, and folders organize artifacts inside a project.
 
 <Tabs>
-  <Tab title="Text">
+  <Tab title="Document">
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
-  -H "Authorization: Bearer {api_token}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "InlineText",
-    "source": "User",
-    "name": "Q1 Support Summary",
-    "description": "Weekly summary notes.",
-    "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
-  }'
-```
-  </Tab>
-  <Tab title="File">
-```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Document",
     "source": "User",
-    "name": "support-brief-q1.pdf",
-    "description": "Q1 support brief (PDF).",
-    "raw_content": "JVBERi0xLjQKJ..."
+    "name": "Q1 Support Summary",
+    "description": "Weekly summary notes.",
+    "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.",
+    "props": {
+      "file_name": "release_notes.txt",
+      "content_type": "text/plain",
+      "content_length": 128
+    }
   }'
 ```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_doc_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Q1 Support Summary",
+  "type": "Document",
+  "source": "User",
+  "state": "Ready",
+  "ingest_status": "Done",
+  "props": {
+    "file_name": "release_notes.txt",
+    "content_type": "text/plain",
+    "content_length": 128
+  },
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:31:02Z"
+}
+```
+</Accordion>
   </Tab>
-  <Tab title="URI">
+
+  <Tab title="Folder">
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Folder",
+    "source": "User",
+    "name": "Q1 Support",
+    "description": "Artifacts for Q1 support work.",
+    "props": {}
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_folder_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Q1 Support",
+  "type": "Folder",
+  "source": "User",
+  "state": "Ready",
+  "child_count": 0,
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "created_at": "2026-02-08T14:32:10Z",
+  "updated_at": "2026-02-08T14:32:10Z"
+}
+```
+</Accordion>
+  </Tab>
+
+  <Tab title="Link">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Link",
     "source": "User",
-    "name": "Product FAQ",
-    "external_url": "https://docs.auroralabs.com/faq"
+    "name": "Q1 Support Summary (link)",
+    "description": "Reference to the canonical document.",
+    "props": {
+      "source_artifact_id": "artifact_doc_q1",
+      "original_artifact_id": "artifact_doc_q1"
+    }
   }'
 ```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_link_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "name": "Q1 Support Summary (link)",
+  "type": "Link",
+  "source": "User",
+  "state": "Ready",
+  "ingest_status": "NotApplicable",
+  "props": {
+    "source_artifact_id": "artifact_doc_q1",
+    "original_artifact_id": "artifact_doc_q1"
+  },
+  "created_at": "2026-02-08T14:33:22Z",
+  "updated_at": "2026-02-08T14:33:22Z"
+}
+```
+</Accordion>
   </Tab>
 </Tabs>
 
-Example response (ArtifactDTO):
+### Agent flows
 
+Agent flows run a Zylon workflow across one or more artifacts to produce a structured output.
+
+<Tabs>
+  <Tab title="Summary">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Summary",
+    "source": "User",
+    "name": "Q1 Support Summary (auto)",
+    "props": {
+      "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+      "style": "Neutral",
+      "detail": "KeyPoints",
+      "instructions": ["Focus on billing and onboarding trends."]
+    }
+  }'
+```
+
+<Accordion title="Example response">
 ```json
 {
-  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "id": "artifact_summary_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
-  "name": "Q1 Support Summary",
-  "description": "Weekly summary notes.",
-  "type": "InlineText",
-  "source": "User",
-  "state": "Ready",
+  "type": "Summary",
+  "state": "Processing",
   "ingest_status": "Processing",
-  "has_content": true,
-  "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.",
-  "created_at": "2026-02-08T14:30:12Z",
-  "updated_at": "2026-02-08T14:30:12Z"
+  "props": {
+    "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+    "style": "Neutral",
+    "detail": "KeyPoints",
+    "instructions": ["Focus on billing and onboarding trends."]
+  },
+  "created_at": "2026-02-08T15:10:00Z"
 }
 ```
+</Accordion>
+  </Tab>
 
-## List artifacts
-
+  <Tab title="Composition">
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact?page=1&page_size=20" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Composition",
+    "source": "User",
+    "name": "Q1 Support Brief",
+    "props": {
+      "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+      "style": "Expert",
+      "detail": "LongPieces",
+      "instructions": "Draft a one-page summary for leadership."
+    }
+  }'
 ```
 
-Example response:
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_comp_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "Composition",
+  "state": "Processing",
+  "ingest_status": "Processing",
+  "props": {
+    "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+    "style": "Expert",
+    "detail": "LongPieces",
+    "instructions": "Draft a one-page summary for leadership."
+  },
+  "created_at": "2026-02-08T15:12:40Z"
+}
+```
+</Accordion>
+  </Tab>
 
+  <Tab title="BulkQA">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "BulkQA",
+    "source": "User",
+    "name": "Billing FAQ",
+    "props": {
+      "artifact_ids": ["artifact_doc_q1"],
+      "style": "Simple",
+      "detail": "Concise",
+      "instructions": ["Answer using only the artifacts."],
+      "questions": [
+        "What are the top billing issues?",
+        "How quickly were priority bugs resolved?"
+      ]
+    }
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_bulkqa_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "BulkQA",
+  "state": "Processing",
+  "ingest_status": "Processing",
+  "props": {
+    "artifact_ids": ["artifact_doc_q1"],
+    "style": "Simple",
+    "detail": "Concise",
+    "instructions": ["Answer using only the artifacts."],
+    "questions": [
+      "What are the top billing issues?",
+      "How quickly were priority bugs resolved?"
+    ]
+  },
+  "created_at": "2026-02-08T15:14:10Z"
+}
+```
+</Accordion>
+  </Tab>
+
+  <Tab title="ReadAndExtract">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "ReadAndExtract",
+    "source": "User",
+    "name": "Contract extraction",
+    "props": {
+      "artifact_ids": ["artifact_contract_v3"],
+      "sections": [
+        { "title": "Term", "description": "Contract term in months", "id": "term" },
+        { "title": "SLA", "description": "Support response time", "id": "sla" }
+      ]
+    }
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_readextract_v3",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "ReadAndExtract",
+  "state": "Processing",
+  "ingest_status": "Processing",
+  "props": {
+    "artifact_ids": ["artifact_contract_v3"],
+    "sections": [
+      { "title": "Term", "description": "Contract term in months", "id": "term" },
+      { "title": "SLA", "description": "Support response time", "id": "sla" }
+    ]
+  },
+  "created_at": "2026-02-08T15:15:55Z"
+}
+```
+</Accordion>
+  </Tab>
+
+  <Tab title="SmartDoc">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "SmartDoc",
+    "source": "User",
+    "name": "Onboarding SmartDoc",
+    "props": {
+      "artifact_ids": ["artifact_doc_q1"]
+    }
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_smartdoc_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "SmartDoc",
+  "state": "Processing",
+  "ingest_status": "Processing",
+  "props": {
+    "artifact_ids": ["artifact_doc_q1"]
+  },
+  "created_at": "2026-02-08T15:17:20Z"
+}
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+### Other artifacts
+
+Connector artifacts store tool integrations. `private_props` is only used for **MCP** and **SQL database** artifacts.
+
+<Tabs>
+  <Tab title="SqlDatabase">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "SqlDatabase",
+    "source": "User",
+    "name": "Sales database",
+    "description": "Read-only reporting database.",
+    "props": {
+      "schemas": ["public", "analytics"],
+      "tables": ["orders", "customers"],
+      "ssl": true,
+      "enable_tables": true,
+      "enable_views": true,
+      "enable_procedures": false,
+      "enable_functions": false
+    },
+    "private_props": {
+      "connection_string": "postgresql://readonly:***@db.example.com:5432/sales"
+    }
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_db_sales",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "SqlDatabase",
+  "state": "Ready",
+  "ingest_status": "NotApplicable",
+  "props": {
+    "schemas": ["public", "analytics"],
+    "tables": ["orders", "customers"],
+    "ssl": true,
+    "enable_tables": true,
+    "enable_views": true,
+    "enable_procedures": false,
+    "enable_functions": false
+  },
+  "created_at": "2026-02-08T15:20:05Z"
+}
+```
+</Accordion>
+  </Tab>
+
+  <Tab title="McpServer">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "McpServer",
+    "source": "User",
+    "name": "Internal tools",
+    "props": {
+      "name": "internal_mcp",
+      "tool_configuration": {
+        "enabled": true,
+        "allowed_tools": ["crm_lookup", "ticket_search"]
+      }
+    },
+    "private_props": {
+      "url": "https://mcp.internal.zylon",
+      "authorization_token": "***"
+    }
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "artifact_mcp_internal",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "McpServer",
+  "state": "Ready",
+  "ingest_status": "NotApplicable",
+  "props": {
+    "name": "internal_mcp",
+    "tool_configuration": {
+      "enabled": true,
+      "allowed_tools": ["crm_lookup", "ticket_search"]
+    }
+  },
+  "created_at": "2026-02-08T15:22:30Z"
+}
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+To retrieve private details for these artifacts, call:
+
+`GET /v1/app/project/{projectId}/artifact/{artifactId}/private`
+
+Only the creator of the artifact can access the private details.
+
+## Working with artifacts
+
+### List artifacts
+
+```bash
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
 ```json
 {
   "data": [
     {
-      "id": "artifact_2b4d6f8a1c3e5a7b",
+      "id": "artifact_doc_q1",
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
       "type": "Document",
@@ -102,22 +475,22 @@ Example response:
   "total_count": 1
 }
 ```
+</Accordion>
 
-## Get an artifact
+### Get an artifact
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
-  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "id": "artifact_doc_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support Summary",
-  "type": "InlineText",
+  "type": "Document",
   "source": "User",
   "state": "Ready",
   "ingest_status": "Done",
@@ -126,12 +499,13 @@ Example response:
   "updated_at": "2026-02-08T14:31:02Z"
 }
 ```
+</Accordion>
 
-## Update an artifact
+### Update an artifact
 
 ```bash
-curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Q1 Support Summary (final)",
@@ -140,92 +514,115 @@ curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/ar
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
-  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "id": "artifact_doc_q1",
   "name": "Q1 Support Summary (final)",
   "description": "Finalized weekly summary notes.",
-  "type": "InlineText",
+  "type": "Document",
   "source": "User",
   "ingest_status": "Done",
   "updated_at": "2026-02-08T14:45:21Z"
 }
 ```
+</Accordion>
 
-## Delete an artifact
+### Delete an artifact
 
 ```bash
-curl -X DELETE "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b" \
-  -H "Authorization: Bearer {api_token}"
+curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
-  "id": "artifact_2b4d6f8a1c3e5a7b",
+  "id": "artifact_doc_q1",
   "state": "Deleted"
 }
 ```
+</Accordion>
 
-## Private artifact metadata
+### Private artifact metadata
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/private" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/private" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema is an untyped object):
-
+<Accordion title="Example response (private MCP artifact props)">
 ```json
-{}
+{
+  "url": "https://mcp.internal.example",
+  "use_bearer_auth": false,
+  "authorization_token": "***",
+  "bearer_token": null
+}
 ```
+</Accordion>
 
-## Download raw artifact content
+### Download raw artifact content
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/download" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/download" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.
 ```
+</Accordion>
 
-## Get parsed content
+### Get parsed content
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/parsed-content" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/parsed-content" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 Ticket volume rose 12% week-over-week.
 Billing issues drove 38% of cases.
 Priority bugs were resolved within 48 hours.
 ```
+</Accordion>
 
-## Sync an artifact
+### Sync an artifact
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_2b4d6f8a1c3e5a7b/sync" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/sync" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 202 Accepted
 ```
+</Accordion>
 
 ## Errors and edge cases
 
+- **Artifact error codes**: the `error` field maps to ingest failures:
+
+| `error` value | Meaning |
+| --- | --- |
+| `InvalidExtension` | File extension is not supported. |
+| `MismatchedType` | File type does not match the declared artifact type. |
+| `Malformed` | File is corrupt or unreadable. |
+| `Encrypted` | File is password‑protected. |
+| `ParsingFailure` | Extractor failed to parse the file. |
+| `MaxNodes` | Document is too large/complex for parsing. |
+| `NoValidFile` | No valid file was found in the upload. |
+| `NoValidNodes` | No parseable content was extracted. |
+| `InternalError` | Ingest pipeline failed unexpectedly. |
+| `Unknown` | Unclassified ingest failure. |
+
+If `ingest_status` is `Error`, fix the source file (or convert it) and re‑sync.
+- **Warnings**: `ingest_warnings` can include values like `BigSize`, `UnprocessableContent`, or `NoContent` to indicate non‑fatal issues.
+- **401/403**: token missing or insufficient permissions.
+- **404**: artifact or project not found.
 - **409**: artifact already processing.
-- **413**: file or content too large.
-- **404**: artifact not found.
+- **413**: content exceeds the recommended upload size (250 MB).

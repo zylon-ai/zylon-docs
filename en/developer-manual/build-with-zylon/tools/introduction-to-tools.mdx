@@ -1,20 +1,23 @@
 ---
 title: "Overview"
-description: "Let Zylon use tools during a message response."
+description: "Enable built-in and custom tools in Messages."
 ---
 
 Tools let the assistant run targeted operations (like searching artifacts, analyzing tabular data, or extracting a web page) as part of a message response.
 
 You enable tools by adding three fields to a `POST /messages` request:
 
-- `tools`: which tools are allowed
-- `tool_choice`: how the assistant should choose tools (`auto`, force a specific tool, or `none`)
-- `tool_context`: optional context artifacts (documents or database connections)
+{/* <!-- RESTRUCTURED --> */}
+| Field | Purpose |
+| --- | --- |
+| `tools` | Which tools are allowed. |
+| `tool_choice` | How the assistant should choose tools (`auto`, force a specific tool, or `none`). |
+| `tool_context` | Optional context artifacts (documents or database connections). |
 
 ## Prerequisites
 
 - An API token. See [Token Management](/en/api-reference/token-management).
-- Your Zylon hostname (replace `{base_url}` in the examples).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
 ## Basic request and response
 
@@ -23,8 +26,8 @@ When you’re iterating on tool configuration, start with `POST /messages/valida
 This example enables the **web fetch** tool:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -39,11 +42,12 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 { "valid": true, "errors": null }
 ```
+</Accordion>
 
 To actually run the request, send the same body to `POST /messages`.
 
@@ -81,5 +85,5 @@ See: [Custom tools](/en/developer-manual/build-with-zylon/tools/custom/custom-to
 
 ## Next steps
 
-- Learn the Messages request format: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)
-- Ingest content for retrieval and analysis: [Artifacts API](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Learn the Messages request format: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)
+- Ingest content for retrieval and analysis: [Artifacts](/en/developer-manual/build-with-zylon/working-with-artifacts)

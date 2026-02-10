@@ -1,14 +1,14 @@
 ---
-title: "Messages API"
-description: "Learn the Messages request format: roles, content blocks, multi-turn conversations, system prompts, streaming, and structured JSON output."
+title: "Messages"
+description: "Message requests with sync, streaming, and async patterns."
 ---
 
-The Messages API is the core of ZylonGPT. You send a conversation history, and Zylon returns the next assistant message as a **list of content blocks** (text, tool calls, tool results, and more).
+Messages is the core of ZylonGPT. You send a conversation history, and Zylon returns the next assistant message as a **list of content blocks** (text, tool calls, tool results, and more).
 
 ## Prerequisites
 
 - An API token. See [Token Management](/en/api-reference/token-management).
-- Your Zylon hostname (replace `{base_url}` in the examples).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
 ## Basic request and response
 
@@ -17,8 +17,8 @@ Send one user message and get back one assistant message.
 <Tabs>
   <Tab title="Single message">
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -33,8 +33,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
 
   <Tab title="Content blocks">
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -53,8 +53,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
   </Tab>
 </Tabs>
 
-Example response (your `id` and timestamps will differ):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
@@ -77,6 +77,7 @@ Example response (your `id` and timestamps will differ):
   }
 }
 ```
+</Accordion>
 
 To render plain text, concatenate the `text` values from any blocks where `type` is `"text"`.
 
@@ -84,22 +85,28 @@ To render plain text, concatenate the `text` values from any blocks where `type`
 
 At minimum, send:
 
-- `model`: the model name to use (commonly `"default"`)
-- `messages`: the conversation history
-- `max_tokens`: the maximum tokens to generate
+{/* <!-- RESTRUCTURED --> */}
+| Field | Required | Description |
+| --- | --- | --- |
+| `model` | Yes | Model name to use (commonly `"default"`). |
+| `messages` | Yes | Conversation history. |
+| `max_tokens` | Yes | Maximum tokens to generate. |
 
 Each message has:
 
-- `role`: `"user"` or `"assistant"`
-- `content`: either a string, or an array of content blocks
+{/* <!-- RESTRUCTURED --> */}
+| Field | Description |
+| --- | --- |
+| `role` | `"user"` or `"assistant"`. |
+| `content` | A string, or an array of content blocks. |
 
 ## Multi-turn conversations
 
 To continue a conversation, include the prior turns in `messages`:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -113,8 +120,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "id": "msg_9b14c8fd514741d29a0dff8996ca9213",
@@ -134,14 +141,20 @@ Example response:
   "usage": { "input_tokens": 135, "output_tokens": 2 }
 }
 ```
+</Accordion>
 
 ## System prompts
 
 Use the top-level `system` field to control assistant behavior (instead of a `"system"` role message):
 
+{/* <!-- ADDED FOR CLARITY --> */}
+<Callout type="tip">
+  Prefer the top-level <code>system</code> field for system instructions so they are applied consistently across the whole request.
+</Callout>
+
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -154,8 +167,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "id": "msg_4e328dc4baeb42b8a18dc0c4abd89468",
@@ -175,14 +188,15 @@ Example response:
   "usage": { "input_tokens": 100, "output_tokens": 6 }
 }
 ```
+</Accordion>
 
 ## Structured JSON output (json_schema)
 
 If you need machine-readable output, set `response_format.type` to `json_schema` and provide a schema. Zylon returns JSON as text in a `text` content block.
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -206,8 +220,8 @@ curl -X POST "https://{base_url}/gpt/v1/messages" \
   }'
 ```
 
-Example response:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
 ```json
 {
   "id": "msg_eaf35004b4654234be5e767ea09e72e6",
@@ -227,14 +241,15 @@ Example response:
   "usage": { "input_tokens": 98, "output_tokens": 16 }
 }
 ```
+</Accordion>
 
 ## Streaming (SSE)
 
 Set `stream: true` to receive a `text/event-stream` response containing events like `content_block_delta` (token deltas).
 
 ```bash
-curl -N -X POST "https://{base_url}/gpt/v1/messages" \
-  -H "Authorization: Bearer {api_token}" \
+curl -N -X POST "https://{BASE_URL}/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
@@ -247,8 +262,8 @@ curl -N -X POST "https://{base_url}/gpt/v1/messages" \
   }'
 ```
 
-Example streamed events (truncated):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example streamed events">
 ```text
 event: message_start
 data: {"type":"message_start","message":{"id":"msg_b55d29718361410bad4f80f8f67c6b72","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
@@ -271,22 +286,95 @@ data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"input
 event: message_stop
 data: {"type":"message_stop"}
 ```
+</Accordion>
+
+## Async messages
+
+Async messages use the **same request body** as sync messages—you just call a different endpoint. The main difference is the **response shape**: sync returns a full message, async returns a `message_id` you can stream or poll later.
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Sync vs async response shape">
+<Tabs>
+  <Tab title="Sync response">
+```json
+{
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T13:23:16.876744Z",
+      "stop_timestamp": "2026-02-06T13:23:16.975362Z",
+      "text": "Deployed the new billing dashboard and resolved three bugs successfully."
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 95,
+    "output_tokens": 16
+  }
+}
+```
+  </Tab>
+  <Tab title="Async response">
+```json
+{
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
+  "status": "pending",
+  "message": "Request initiated successfully"
+}
+```
+  </Tab>
+</Tabs>
+</Accordion>
+
+### Start an async message
+
+```bash
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Say only: async ok" }
+    ]
+  }'
+```
+
+### Stream or poll status
+
+Stream events:
+
+```bash
+curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Accept: text/event-stream"
+```
+
+Poll status:
+
+```bash
+curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+### Cancel or delete
+
+- Cancel: `POST /messages/async/{message_id}/cancel`
+- Delete: `DELETE /messages/async/{message_id}/delete`
 
 ## Common mistakes
 
 - **Wrong method**: `/messages` is `POST`, not `GET`.
 - **Missing auth header**: include `Authorization: Bearer ...`.
-- **Wrong base URL**: use `https://{base_url}/gpt/v1/`.
+- **Wrong base URL**: use `https://{BASE_URL}/gpt/v1/`.
 - **Invalid request body**: use `POST /messages/validate` to catch schema mistakes early.
-
-## Async chats
-
-For long-running generations (or if you need to start a request and observe it later), you can use the Async Messages API:
-
-- Start: `POST /messages/async`
-- Observe via SSE: `GET /messages/async/{message_id}/stream`
-- Poll status: `GET /messages/async/{message_id}/status`
-- Cancel/delete: `POST /messages/async/{message_id}/cancel`, `DELETE /messages/async/{message_id}/delete`
+- **Unexpected stops or errors**: see [Handling stop reasons](/en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) for causes and fixes.
 
 ## Next steps
 
@@ -295,7 +383,7 @@ For long-running generations (or if you need to start a request and observe it l
     Let Zylon use built-in and custom tools during a message.
   </Card>
 
-  <Card title="Async messages" icon="clock" href="/en/developer-manual/build-with-zylon/async-messages">
-    Start messages asynchronously, then stream events or poll status.
+  <Card title="Artifacts" icon="file" href="/en/developer-manual/build-with-zylon/working-with-artifacts">
+    Ingest text, files, or URIs into collections for retrieval.
   </Card>
 </CardGroup>

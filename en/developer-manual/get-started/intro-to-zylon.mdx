@@ -1,28 +1,29 @@
 ---
 title: "Intro to Zylon"
-description: "What ZylonGPT is, what you can build, and how these docs are organized."
+description: "What Zylon is for developers and how the APIs are organized."
 ---
 
-ZylonGPT gives you a single API surface for building chat experiences that can **use tools** and **work with ingested content**.
+Zylon is built for developers who need to ship AI features inside secure, self‑hosted environments. The platform exposes **two APIs**:
 
-This developer manual is organized around the core building blocks:
+- **ZylonGPT API**: the AI layer for model responses, tools, and content-aware chat.
+- **Workspace API**: the control plane for organizations, users, projects, and integrations.
 
-- **Messages**: send a conversation history, get back an assistant message.
-- **Artifacts**: ingest text/files/URIs into collections so you can retrieve and use them later.
-- **Tools**: run built-in capabilities like semantic search, tabular analysis, and web fetch.
-
-If you’re new, start here:
+Before you begin, generate an API token in [Token Management](/en/api-reference/token-management).
 
 <CardGroup cols={2}>
   <Card title="Token management" icon="key" href="/en/api-reference/token-management">
-    Learn how to create and rotate API tokens.
+    Create and rotate API tokens for access.
   </Card>
 
   <Card title="Quickstart" icon="rocket" href="/en/developer-manual/get-started/quickstart">
-    Make your first API call in under 2 minutes.
+    Make your first API call with a working example.
   </Card>
 
-  <Card title="Build with Zylon" icon="cubes" href="/en/developer-manual/build-with-zylon/overview">
-    Learn messages, artifacts, and tools.
+  <Card title="ZylonGPT API" icon="sparkles" href="/en/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Build AI experiences with the model-facing API.
+  </Card>
+
+  <Card title="Workspace API" icon="building" href="/en/developer-manual/build-with-zylon/workspace-api/overview">
+    Manage orgs, users, projects, and integrations.
   </Card>
 </CardGroup>

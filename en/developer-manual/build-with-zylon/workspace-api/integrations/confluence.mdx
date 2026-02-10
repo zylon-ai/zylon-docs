@@ -12,28 +12,27 @@ If the integration needs OAuth, use the login endpoints in [OpenID & OAuth](/en/
 Fetch integration configuration with `GET /v1/app/integration/confluence/{integrationId}/config`.
 
 ```bash
-curl "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 {
   "space_key": "SUP",
   "base_url": "https://confluence.auroralabs.com"
 }
 ```
+</Accordion>
 
 ## Start an ingest sync
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (SyncEvent):
-
+<Accordion title="Example response">
 ```json
 {
   "type": "sync_started",
@@ -41,6 +40,7 @@ Example response (SyncEvent):
   "integration_item_count": 120
 }
 ```
+</Accordion>
 
 ## Errors and edge cases
 

@@ -20,8 +20,8 @@ Use Database Query when you want the assistant to translate natural language int
 This example validates a request that enables database query. For validation, it sets `tool_choice` to `none` so the validator doesn’t try to connect.
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -59,4 +59,4 @@ To run the request, send the same body to `POST /messages` and set `tool_choice`
 
 ## Next steps
 
-- Learn how messages return tool blocks: [Messages API](/en/developer-manual/build-with-zylon/working-with-messages)
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)

@@ -12,28 +12,27 @@ If OAuth is required, use the login endpoints in [OpenID & OAuth](/en/developer-
 Fetch integration configuration with `GET /v1/app/integration/sharepoint/{integrationId}/config`.
 
 ```bash
-curl "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 {
   "site_url": "https://auroralabs.sharepoint.com/sites/support",
   "library": "Shared Documents"
 }
 ```
+</Accordion>
 
 ## Start an ingest sync
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (SyncEvent):
-
+<Accordion title="Example response">
 ```json
 {
   "type": "sync_started",
@@ -41,6 +40,7 @@ Example response (SyncEvent):
   "integration_item_count": 64
 }
 ```
+</Accordion>
 
 ## Errors and edge cases
 

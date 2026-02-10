@@ -10,8 +10,8 @@ Los endpoints de Chat permiten enviar solicitudes puntuales usando el mismo form
 Envía una solicitud puntual con `POST /v1/app/chat`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/chat" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -27,8 +27,7 @@ curl -X POST "https://{base_url}/v1/app/chat" \
   }'
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "msg_5f2e1d3c4b6a7c8d",
@@ -38,12 +37,13 @@ Ejemplo de respuesta (esquema no definido en OpenAPI):
   ]
 }
 ```
+</Accordion>
 
 ## Validar un chat
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/chat/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -59,11 +59,11 @@ curl -X POST "https://{base_url}/v1/app/chat/validate" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 204 No Content
 ```
+</Accordion>
 
 ## Errores y casos límite
 

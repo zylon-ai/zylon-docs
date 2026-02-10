@@ -8,18 +8,18 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 ## Prerrequisitos
 
 - Un token de API. Ver [Token Management](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{base_url}` en los ejemplos).
+- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
 - Para Workspace API: una cuenta y una organización creadas en el workspace.
 
-## En 2 minutos
+## Mi primera llamada a Zylon
 
 <Tabs>
   <Tab title="ZylonGPT API">
 <Steps>
   <Step title="Envía tu primer mensaje">
     ```bash
-    curl -X POST "https://{base_url}/gpt/v1/messages" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "model": "default",
@@ -60,8 +60,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
     Establece `stream: true` para recibir **Server-Sent Events (SSE)**.
 
     ```bash
-    curl -N -X POST "https://{base_url}/gpt/v1/messages" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -N -X POST "https://{BASE_URL}/gpt/v1/messages" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -H "Accept: text/event-stream" \
       -d '{
@@ -94,8 +94,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 <Steps>
   <Step title="Crea un usuario vinculado a tu cuenta">
     ```bash
-    curl -X POST "https://{base_url}/v1/app/user" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/app/user" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "account_id": "acct_6c8a1f3b2d4e5f7a",
@@ -127,8 +127,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Step title="Autentica">
     ```bash
-    curl -X POST "https://{base_url}/v1/auth/login" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/auth/login" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "email": "sasha@auroralabs.com",
@@ -150,8 +150,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Step title="Crea un proyecto">
     ```bash
-    curl -X POST "https://{base_url}/v1/app/project" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/app/project" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Customer Insights",
@@ -174,8 +174,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Step title="Sube un artefacto">
     ```bash
-    curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "type": "InlineText",
@@ -200,8 +200,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Step title="Crea un hilo y consulta el artefacto">
     ```bash
-    curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Weekly Support Brief",
@@ -210,8 +210,8 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
     ```
 
     ```bash
-    curl -X POST "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
-      -H "Authorization: Bearer {api_token}" \
+    curl -X POST "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
+      -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
         "thread_id": "thread_3f2a1c4d5b6e7f8a",
@@ -259,6 +259,6 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 ## Troubleshooting
 
 - **401/403**: token inválido o expirado. Ver [Token Management](/es/api-reference/token-management).
-- **404**: revisa tu base URL. Para ZylonGPT usa `https://{base_url}/gpt/v1/`.
+- **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/gpt/v1/`.
 - **400 (model not found)**: usa `"model": "default"`.
 - **405**: método incorrecto. `/messages` es `POST`.

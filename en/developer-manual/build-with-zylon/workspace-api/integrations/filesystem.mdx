@@ -10,8 +10,8 @@ The filesystem integration connects a shared directory to your workspace. **Enab
 Create a filesystem integration with `POST /v1/app/integration/filesystem`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/filesystem" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "svc_filesync",
@@ -19,8 +19,7 @@ curl -X POST "https://{base_url}/v1/app/integration/filesystem" \
   }'
 ```
 
-Example response (UserIntegrationDTO):
-
+<Accordion title="Example response">
 ```json
 {
   "id": "fs_9f8e7d6c5b4a3c2d",
@@ -31,12 +30,13 @@ Example response (UserIntegrationDTO):
   "updated_at": "2026-02-08T14:10:00Z"
 }
 ```
+</Accordion>
 
 ## Update integration credentials
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "svc_filesync",
@@ -44,8 +44,7 @@ curl -X POST "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "id": "fs_9f8e7d6c5b4a3c2d",
@@ -56,44 +55,44 @@ Example response:
   "updated_at": "2026-02-08T15:02:00Z"
 }
 ```
+</Accordion>
 
 ## Get integration config
 
 ```bash
-curl "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 {
   "path": "/mnt/shared/support"
 }
 ```
+</Accordion>
 
 ## Validate credentials
 
 ```bash
-curl "https://{base_url}/v1/app/integration/filesystem/validate?username=svc_filesync&password=fs_token_456" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/filesystem/validate?username=svc_filesync&password=fs_token_456" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 true
 ```
+</Accordion>
 
 ## List files
 
 ```bash
-curl "https://{base_url}/v1/app/integration/filesystem/files?integrationId=fs_9f8e7d6c5b4a3c2d" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/filesystem/files?integrationId=fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 [
   {
@@ -104,16 +103,16 @@ Example response:
   }
 ]
 ```
+</Accordion>
 
 ## Start an ingest sync
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (SyncEvent):
-
+<Accordion title="Example response">
 ```json
 {
   "type": "sync_started",
@@ -121,6 +120,7 @@ Example response (SyncEvent):
   "integration_item_count": 48
 }
 ```
+</Accordion>
 
 ## Errors and edge cases
 

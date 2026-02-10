@@ -1,21 +1,101 @@
 ---
-title: "Hilos"
-description: "Crea, lista y actualiza hilos que agrupan interacciones de chat."
+title: "Chats"
+description: "Hilos, interacciones y chat de una sola llamada."
 ---
 
-Los hilos agrupan interacciones dentro de un proyecto. Úsalos para organizar conversaciones y recuperar historial.
+Los chats en la Workspace API se organizan alrededor de **hilos** e **interacciones**:
+
+{/* <!-- RESTRUCTURED --> */}
+| Concepto | Significado |
+| --- | --- |
+| **Thread** | Contenedor de conversación dentro de un proyecto. |
+| **Interaction** | Interacción individual dentro del hilo. |
+| **Chat** | Solicitud de una sola llamada que **no** crea un hilo. |
+
+Usa hilos cuando necesitas historial y seguimiento. Usa interacciones para enviar un nuevo turno a un hilo. Usa el endpoint de chat para solicitudes de una sola vuelta.
 
 ## Solicitud básica y respuesta
 
-Lista hilos del proyecto con `GET /v1/app/project/{projectId}/thread`.
+Crea una interacción en un hilo con `POST /v1/app/thread/{threadId}/interaction`.
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread?page=1&page_size=20" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+    "all_artifacts": false,
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "Summarize the artifact in three bullets." }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
+  }'
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta (InteractionDTO)">
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "thread_id": "thread_3f2a1c4d5b6e7f8a",
+  "state": "Completed",
+  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+  "all_artifacts": false,
+  "user_input": {
+    "role": "user",
+    "content": [
+      { "type": "text", "text": "Summarize the artifact in three bullets." }
+    ]
+  },
+  "assistant_output": {
+    "id": "msg_3d2c1b4a5f6e7d8c",
+    "created": 1739036500,
+    "model": "default",
+    "stop_reason": "end_turn",
+    "content": [
+      { "type": "text", "text": "• Ticket volume rose 12% week-over-week\n• Billing issues drove 38% of cases\n• Priority bugs were resolved within 48 hours" }
+    ],
+    "usage": { "input_tokens": 180, "output_tokens": 52 }
+  },
+  "created_at": "2026-02-08T14:41:10Z"
+}
+```
+</Accordion>
 
+## Crear o listar hilos
+
+Crear un hilo en un proyecto:
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Listar hilos:
+
+```bash
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "data": [
@@ -31,12 +111,13 @@ Ejemplo de respuesta (esquema no definido en OpenAPI):
   "total_count": 1
 }
 ```
+</Accordion>
 
-## Crear un hilo
+## Actualizar o eliminar un hilo
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -44,110 +125,124 @@ curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
   }'
 ```
 
-Ejemplo de respuesta:
-
-```text
-HTTP/1.1 200 OK
-```
-
-## Crear hilo e interacción en una sola llamada
+Eliminar un hilo:
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread/interaction" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X DELETE "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+## Listar u obtener interacciones
+
+Listar interacciones de un hilo:
+
+```bash
+curl "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+Obtener una interacción:
+
+```bash
+curl "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+## Cancelar, eliminar o hacer streaming de una interacción
+
+Cancelar una interacción:
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+Eliminar una interacción:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+Streaming:
+
+```bash
+curl -N "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Accept: text/event-stream"
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_3d2c1b4a5f6e7d8c","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"• Ticket volume rose 12%"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+</Accordion>
+
+## Chat de una sola llamada
+
+Si no necesitas un hilo, usa el endpoint de chat:
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Weekly Support Brief",
-    "visibility": "Private"
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
   }'
 ```
 
-Ejemplo de respuesta:
-
-```text
-HTTP/1.1 200 OK
-```
-
-## Obtener o actualizar un hilo
-
-<Tabs>
-  <Tab title="Obtener hilo">
-```bash
-curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
-  -H "Authorization: Bearer {api_token}"
-```
-
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "thread_3f2a1c4d5b6e7f8a",
-  "name": "Weekly Support Brief",
-  "visibility": "Private"
+  "id": "msg_5f2e1d3c4b6a7c8d",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
+  ]
 }
 ```
-  </Tab>
-  <Tab title="Actualizar hilo">
+</Accordion>
+
+## Validar una solicitud de chat
+
 ```bash
-curl -X PUT "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Weekly Support Brief",
-    "visibility": "Private"
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
   }'
-```
-
-Ejemplo de respuesta:
-
-```text
-HTTP/1.1 200 OK
-```
-  </Tab>
-</Tabs>
-
-## Eliminar un hilo
-
-```bash
-curl -X DELETE "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a" \
-  -H "Authorization: Bearer {api_token}"
-```
-
-Ejemplo de respuesta:
-
-```text
-HTTP/1.1 204 No Content
-```
-
-## Listar interacciones del hilo
-
-```bash
-curl "https://{base_url}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction?page=1&page_size=20" \
-  -H "Authorization: Bearer {api_token}"
-```
-
-Ejemplo de respuesta:
-
-```json
-{
-  "data": [
-    {
-      "id": "inter_5a7b9c1d3e5f7a9b",
-      "project_id": "proj_7a5c3e1b9d2f4a6c",
-      "thread_id": "thread_3f2a1c4d5b6e7f8a",
-      "state": "Completed",
-      "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
-      "all_artifacts": false,
-      "created_at": "2026-02-08T14:41:10Z"
-    }
-  ],
-  "has_next_page": false,
-  "has_previous_page": false,
-  "total_count": 1
-}
 ```
 
 ## Errores y casos límite
 
-- **403**: no eres miembro del proyecto.
-- **404**: hilo no encontrado.
+- **400**: esquema inválido (usa `/chat/validate`).
+- **404**: hilo o interacción no encontrada.
+- **409**: interacción ya completada al cancelar.

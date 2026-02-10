@@ -17,8 +17,8 @@ Usa Web Fetch cuando necesitas que el asistente recupere contenido de una URL.
 ## Solicitud y respuesta básicas
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -48,4 +48,4 @@ Para ejecutar, envía el mismo body a `POST /messages`.
 
 ## Próximos pasos
 
-- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)
+- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)

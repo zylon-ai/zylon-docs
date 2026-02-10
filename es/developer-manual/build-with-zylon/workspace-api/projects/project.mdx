@@ -10,8 +10,8 @@ Los proyectos son la unidad del workspace que contiene hilos, artefactos y conte
 Crea un proyecto con `POST /v1/app/project`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Customer Insights",
@@ -21,8 +21,7 @@ curl -X POST "https://{base_url}/v1/app/project" \
   }'
 ```
 
-Ejemplo de respuesta (ProjectDTO):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "proj_7a5c3e1b9d2f4a6c",
@@ -38,16 +37,16 @@ Ejemplo de respuesta (ProjectDTO):
   "is_pinned": false
 }
 ```
+</Accordion>
 
 ## Obtener un proyecto
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "proj_7a5c3e1b9d2f4a6c",
@@ -56,14 +55,15 @@ Ejemplo de respuesta (esquema no definido en OpenAPI):
   "visibility": "Private"
 }
 ```
+</Accordion>
 
 ## Actualizar un proyecto
 
 <Tabs>
   <Tab title="PUT">
 ```bash
-curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Customer Insights",
@@ -77,8 +77,7 @@ curl -X PUT "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
   }'
 ```
 
-Ejemplo de respuesta (ProjectDTO):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "proj_7a5c3e1b9d2f4a6c",
@@ -94,68 +93,69 @@ Ejemplo de respuesta (ProjectDTO):
   "is_pinned": true
 }
 ```
+</Accordion>
   </Tab>
   <Tab title="PATCH">
 ```bash
-curl -X PATCH "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PATCH "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "project_context": "Support analytics for Q1 with strict PII handling."
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
 ## Eliminar un proyecto
 
 ```bash
-curl -X DELETE "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
-  -H "Authorization: Bearer {api_token}"
+curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 204 No Content
 ```
+</Accordion>
 
 ## Salir o transferir un proyecto
 
 <Tabs>
   <Tab title="Salir del proyecto">
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/leave" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/leave" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
   </Tab>
   <Tab title="Transferir ownership">
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "new_owner_id": "user_9d1c3b5a7f2e4c6d"
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -164,39 +164,39 @@ HTTP/1.1 200 OK
 <Tabs>
   <Tab title="Obtener info">
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info/user_4b7c2a1d9e5f3c8b" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info/user_4b7c2a1d9e5f3c8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
   </Tab>
   <Tab title="Actualizar info">
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "is_pinned": true
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
 ## Chat con alcance de proyecto
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/chat" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "all_artifacts": true,
@@ -215,14 +215,14 @@ curl -X POST "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/chat" \
   }'
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "inter_5a7b9c1d3e5f7a9b",
   "state": "Completed"
 }
 ```
+</Accordion>
 
 ## Errores y casos límite
 

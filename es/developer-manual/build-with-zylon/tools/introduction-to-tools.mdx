@@ -1,20 +1,23 @@
 ---
 title: "Visión general"
-description: "Permite que Zylon use herramientas durante una respuesta."
+description: "Habilita herramientas built-in y custom en Messages."
 ---
 
 Las herramientas permiten que el asistente ejecute operaciones específicas (como buscar artefactos, analizar datos tabulares o extraer una página web) como parte de una respuesta.
 
 Puedes habilitar herramientas añadiendo tres campos a una request `POST /messages`:
 
-- `tools`: qué herramientas están permitidas
-- `tool_choice`: cómo debe elegir herramientas el asistente (`auto`, forzar una herramienta o `none`)
-- `tool_context`: contexto opcional (documentos o conexiones de BD)
+{/* <!-- RESTRUCTURED --> */}
+| Campo | Propósito |
+| --- | --- |
+| `tools` | Qué herramientas están permitidas. |
+| `tool_choice` | Cómo debe elegir herramientas el asistente (`auto`, forzar una herramienta o `none`). |
+| `tool_context` | Contexto opcional (documentos o conexiones de BD). |
 
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{base_url}` en los ejemplos).
+- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
 
 ## Solicitud y respuesta básicas
 
@@ -23,8 +26,8 @@ Empieza con `POST /messages/validate` para validar el body sin ejecutar el model
 Este ejemplo habilita **web fetch**:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -39,11 +42,12 @@ curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
 ```json
 { "valid": true, "errors": null }
 ```
+</Accordion>
 
 Para ejecutar la request, envía el mismo body a `POST /messages`.
 
@@ -81,5 +85,5 @@ Ver: [Custom tools](/es/developer-manual/build-with-zylon/tools/custom/custom-to
 
 ## Próximos pasos
 
-- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)
-- Ingesta de contenido: [Artifacts API](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de contenido: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)

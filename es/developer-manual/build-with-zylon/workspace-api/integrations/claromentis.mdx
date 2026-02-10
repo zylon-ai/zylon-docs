@@ -10,8 +10,8 @@ Las integraciones de Claromentis importan contenido de la base de conocimiento. 
 Crea una integración de Claromentis con `POST /v1/app/integration/claromentis`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/claromentis" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "svc_claro",
@@ -19,8 +19,7 @@ curl -X POST "https://{base_url}/v1/app/integration/claromentis" \
   }'
 ```
 
-Ejemplo de respuesta (UserIntegrationDTO):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "clar_3c2d1b4a5f6e7d8c",
@@ -31,12 +30,13 @@ Ejemplo de respuesta (UserIntegrationDTO):
   "updated_at": "2026-02-08T14:05:00Z"
 }
 ```
+</Accordion>
 
 ## Actualizar credenciales
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "svc_claro",
@@ -44,8 +44,7 @@ curl -X POST "https://{base_url}/v1/app/integration/claromentis/clar_3c2d1b4a5f6
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "clar_3c2d1b4a5f6e7d8c",
@@ -56,32 +55,32 @@ Ejemplo de respuesta:
   "updated_at": "2026-02-08T15:10:00Z"
 }
 ```
+</Accordion>
 
 ## Obtener configuración
 
 ```bash
-curl "https://{base_url}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "base_url": "https://claromentis.auroralabs.com",
   "site": "Knowledge Base"
 }
 ```
+</Accordion>
 
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (SyncEvent):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "type": "sync_started",
@@ -89,6 +88,7 @@ Ejemplo de respuesta (SyncEvent):
   "integration_item_count": 24
 }
 ```
+</Accordion>
 
 ## Errores y casos límite
 

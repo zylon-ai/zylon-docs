@@ -10,28 +10,28 @@ Los endpoints de auditoría permiten revisar acciones con filtros por usuario, a
 Consulta el log del workspace con `GET /v1/app/audit`.
 
 ```bash
-curl "https://{base_url}/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&page=1&page_size=50" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&page=1&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 []
 ```
+</Accordion>
 
 ## Auditoría de un proyecto
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/audit?start_date=1738291200&end_date=1738972800&page=1&page_size=50" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/audit?start_date=1738291200&end_date=1738972800&page=1&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 []
 ```
+</Accordion>
 
 ## Errores y casos límite
 

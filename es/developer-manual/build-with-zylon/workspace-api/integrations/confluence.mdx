@@ -12,28 +12,27 @@ Si la integración requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/dev
 Obtén la configuración con `GET /v1/app/integration/confluence/{integrationId}/config`.
 
 ```bash
-curl "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (esquema no definido en OpenAPI):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "space_key": "SUP",
   "base_url": "https://confluence.auroralabs.com"
 }
 ```
+</Accordion>
 
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta (SyncEvent):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "type": "sync_started",
@@ -41,6 +40,7 @@ Ejemplo de respuesta (SyncEvent):
   "integration_item_count": 120
 }
 ```
+</Accordion>
 
 ## Errores y casos límite
 

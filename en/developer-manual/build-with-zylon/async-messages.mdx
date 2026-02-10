@@ -8,15 +8,15 @@ Async messages let you kick off a generation and then observe it later. This is 
 ## Prerequisites
 
 - An API token. See [Token Management](/en/api-reference/token-management).
-- Your Zylon hostname (replace `{base_url}` in the examples).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
 ## Quickstart
 
 ### 1) Start an async message
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/async" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -42,8 +42,8 @@ Example response:
 Use the `message_id` from the previous step:
 
 ```bash
-curl -N "https://{base_url}/gpt/v1/messages/async/{message_id}/stream" \
-  -H "Authorization: Bearer {api_token}" \
+curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Accept: text/event-stream"
 ```
 
@@ -68,8 +68,8 @@ data: {"type":"message_stop"}
 If you don’t want to consume the stream, you can poll status:
 
 ```bash
-curl "https://{base_url}/gpt/v1/messages/async/{message_id}/status" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
 Example response:

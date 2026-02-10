@@ -16,27 +16,27 @@ Start a login flow by calling a provider login endpoint and following the redire
 <Tabs>
   <Tab title="Google login">
 ```bash
-curl -i "https://{base_url}/v1/auth/google/login"
+curl -i "https://{BASE_URL}/v1/auth/google/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_uri=...
 ```
+</Accordion>
   </Tab>
   <Tab title="Microsoft login">
 ```bash
-curl -i "https://{base_url}/v1/auth/microsoft/login"
+curl -i "https://{BASE_URL}/v1/auth/microsoft/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -45,27 +45,27 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Confluence login">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/confluence/login"
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
 ```
+</Accordion>
   </Tab>
   <Tab title="SharePoint login">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/sharepoint/login"
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -74,27 +74,27 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Confluence instance">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d4e3f2a1b
 ```
+</Accordion>
   </Tab>
   <Tab title="SharePoint instance">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
 Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&state=sp_1c2d3e4f5a6b7c8d
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -103,27 +103,27 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Confluence refresh">
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 "ok"
 ```
+</Accordion>
   </Tab>
   <Tab title="SharePoint refresh">
 ```bash
-curl -X POST "https://{base_url}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 "ok"
 ```
+</Accordion>
   </Tab>
 </Tabs>
 
@@ -132,39 +132,39 @@ Example response:
 <Tabs>
   <Tab title="Microsoft callback">
 ```bash
-curl -i "https://{base_url}/v1/auth/microsoft/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/v1/auth/microsoft/callback?code=...&state=..."
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
-Location: https://{base_url}/app/login/success
+Location: https://{BASE_URL}/app/login/success
 ```
+</Accordion>
   </Tab>
   <Tab title="Confluence callback">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/confluence/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/callback?code=...&state=..."
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
-Location: https://{base_url}/app/integrations/confluence
+Location: https://{BASE_URL}/app/integrations/confluence
 ```
+</Accordion>
   </Tab>
   <Tab title="SharePoint callback">
 ```bash
-curl -i "https://{base_url}/v1/app/integration/sharepoint/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/callback?code=...&state=..."
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 302 Found
-Location: https://{base_url}/app/integrations/sharepoint
+Location: https://{BASE_URL}/app/integrations/sharepoint
 ```
+</Accordion>
   </Tab>
 </Tabs>
 

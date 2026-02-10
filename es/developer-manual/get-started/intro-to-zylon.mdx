@@ -1,28 +1,29 @@
 ---
-title: "Introducción a Zylon"
-description: "Qué es ZylonGPT, qué puedes construir y cómo están organizados estos docs."
+title: "Intro a Zylon"
+description: "Qué es Zylon para desarrolladores y cómo se organizan las APIs."
 ---
 
-ZylonGPT te ofrece una sola superficie de API para crear experiencias de chat que pueden **usar herramientas** y **trabajar con contenido ingerido**.
+Zylon está pensado para desarrolladores que necesitan construir funciones de IA en entornos seguros y auto‑hosteados. La plataforma expone **dos APIs**:
 
-Este manual de desarrollador se organiza alrededor de estos bloques principales:
+- **API de ZylonGPT**: la capa de IA para respuestas del modelo, herramientas y chat con contenido.
+- **Workspace API**: el plano de control para organizaciones, usuarios, proyectos e integraciones.
 
-- **Mensajes**: envía el historial de conversación y recibe el siguiente mensaje del asistente.
-- **Artefactos**: ingiere texto/archivos/URLs en colecciones para reutilizarlos más tarde.
-- **Herramientas**: habilita capacidades integradas como búsqueda semántica, análisis tabular y web search.
-
-Si estás empezando, comienza aquí:
+Antes de comenzar, genera un token de API en [Token Management](/es/api-reference/token-management).
 
 <CardGroup cols={2}>
-  <Card title="Gestión de tokens" icon="key" href="/es/api-reference/token-management">
-    Aprende a crear y rotar tokens de API.
+  <Card title="Token management" icon="key" href="/es/api-reference/token-management">
+    Crea y rota tokens de API para el acceso.
   </Card>
 
-  <Card title="Inicio rápido" icon="rocket" href="/es/developer-manual/get-started/quickstart">
-    Haz tu primera llamada a la API en menos de 2 minutos.
+  <Card title="Quickstart" icon="rocket" href="/es/developer-manual/get-started/quickstart">
+    Haz tu primera llamada con un ejemplo funcional.
   </Card>
 
-  <Card title="Construye con Zylon" icon="cubes" href="/es/developer-manual/build-with-zylon/overview">
-    Aprende mensajes, artefactos y herramientas.
+  <Card title="API de ZylonGPT" icon="sparkles" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Construye experiencias de IA con la API del modelo.
+  </Card>
+
+  <Card title="Workspace API" icon="building" href="/es/developer-manual/build-with-zylon/workspace-api/overview">
+    Administra orgs, usuarios, proyectos e integraciones.
   </Card>
 </CardGroup>

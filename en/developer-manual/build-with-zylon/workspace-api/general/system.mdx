@@ -10,11 +10,10 @@ Use these endpoints to verify system status and inspect license metadata.
 Use the health check to verify availability with `GET /health`.
 
 ```bash
-curl "https://{base_url}/health"
+curl "https://{BASE_URL}/health"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "status": "ok",
@@ -22,16 +21,16 @@ Example response:
   "commit": "9f1c2a3"
 }
 ```
+</Accordion>
 
 ## License details
 
 ```bash
-curl "https://{base_url}/v1/license" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/license" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "id": "lic_6b7c8d9e0f1a",
@@ -45,6 +44,7 @@ Example response:
   }
 }
 ```
+</Accordion>
 
 ## Errors and edge cases
 

@@ -10,8 +10,8 @@ Usa estos endpoints para crear cuentas con credenciales, autenticar usuarios y c
 Crea una cuenta con credenciales usando `POST /v1/auth/register`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/auth/register" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/auth/register" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "sasha@auroralabs.com",
@@ -20,8 +20,7 @@ curl -X POST "https://{base_url}/v1/auth/register" \
   }'
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "acct_6c8a1f3b2d4e5f7a",
@@ -45,12 +44,13 @@ Ejemplo de respuesta:
   "roles": ["AppAdmin"]
 }
 ```
+</Accordion>
 
 ## Iniciar sesión con credenciales
 
 ```bash
-curl -X POST "https://{base_url}/v1/auth/login" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/auth/login" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "sasha@auroralabs.com",
@@ -58,8 +58,7 @@ curl -X POST "https://{base_url}/v1/auth/login" \
   }'
 ```
 
-Ejemplo de respuesta (AccountDTO):
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "acct_6c8a1f3b2d4e5f7a",
@@ -83,19 +82,20 @@ Ejemplo de respuesta (AccountDTO):
   "roles": ["AppAdmin"]
 }
 ```
+</Accordion>
 
 ## Cerrar sesión
 
 ```bash
-curl -X POST "https://{base_url}/v1/auth/logout" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/auth/logout" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Ejemplo de respuesta:
-
+<Accordion title="Ejemplo de respuesta">
 ```json
 "ok"
 ```
+</Accordion>
 
 ## Errores y casos límite
 

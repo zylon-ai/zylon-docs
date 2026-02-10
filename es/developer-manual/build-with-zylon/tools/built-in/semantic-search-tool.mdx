@@ -20,8 +20,8 @@ Usa Semantic Search cuando quieras recuperar información de artefactos ingerido
 Este ejemplo valida una request que habilita semantic search:
 
 ```bash
-curl -X POST "https://{base_url}/gpt/v1/messages/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "default",
@@ -60,5 +60,5 @@ Para ejecutar, envía el mismo body a `POST /messages`.
 
 ## Próximos pasos
 
-- Ingesta de artefactos: [Artifacts API](/es/developer-manual/build-with-zylon/working-with-artifacts)
-- Formato de mensajes: [Messages API](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de artefactos: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)

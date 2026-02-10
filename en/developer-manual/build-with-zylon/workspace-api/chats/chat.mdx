@@ -3,15 +3,15 @@ title: "Chat"
 description: "Run ad-hoc chats without creating a thread."
 ---
 
-The Chat endpoints let you send a one-off request using the same message format as the Messages API, without creating a thread or interaction record.
+The Chat endpoints let you send a one-off request using the same message format as Messages, without creating a thread or interaction record.
 
 ## Basic request and response
 
 Send an ad-hoc request with `POST /v1/app/chat`.
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/chat" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -27,8 +27,7 @@ curl -X POST "https://{base_url}/v1/app/chat" \
   }'
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 {
   "id": "msg_5f2e1d3c4b6a7c8d",
@@ -38,12 +37,13 @@ Example response (schema not defined in OpenAPI):
   ]
 }
 ```
+</Accordion>
 
 ## Validate a chat request
 
 ```bash
-curl -X POST "https://{base_url}/v1/app/chat/validate" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -59,11 +59,11 @@ curl -X POST "https://{base_url}/v1/app/chat/validate" \
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 204 No Content
 ```
+</Accordion>
 
 ## Errors and edge cases
 

@@ -1,63 +1,35 @@
 ---
 title: "Visión general"
-description: "La Workspace API es el plano de control para organizaciones, usuarios, proyectos, chats, contenido y reportes."
+description: "Plano de control para automatizar Zylon Workspace."
 ---
 
-La Workspace API impulsa la administración de tu despliegue de Zylon. Úsala para gestionar organizaciones y usuarios, crear proyectos, ejecutar chats con hilos, ingerir artefactos, configurar integraciones y consultar analíticas o auditorías.
+La Workspace API es el plano de control de **todo lo que sucede en Zylon Workspace**: organizaciones, usuarios, proyectos, chats, artefactos, integraciones y reportes. Úsala para automatizar operaciones o integrar Zylon con tus sistemas internos.
 
 ## Base URL
 
 Todos los endpoints de Workspace viven bajo:
 
 ```
-https://{base_url}/v1
+https://{BASE_URL}/v1
 ```
 
-## Autenticación
+## Conceptos clave
 
-La mayoría de endpoints requieren un token de API. Si aún no tienes uno, revisa [Token Management](/es/api-reference/token-management).
+{/* <!-- RESTRUCTURED --> */}
+| Concepto | Significado |
+| --- | --- |
+| **Account** | Registro de identidad que autentica en Zylon. Una cuenta puede pertenecer a múltiples organizaciones. |
+| **User** | Representación de una cuenta dentro de una organización. Una cuenta puede tener **múltiples users**, uno por organización. |
+| **Artifact** | Contenido persistido que puede reutilizarse en chats y herramientas. |
 
-## Solicitud básica y respuesta
-
-Usa `GET /v1/app/me` para verificar tu token y contexto de usuario:
-
-```bash
-curl "https://{base_url}/v1/app/me" \
-  -H "Authorization: Bearer {api_token}"
-```
-
-## Secciones de Workspace API
-
-<CardGroup cols={3}>
-  <Card title="Autenticación" icon="key" href="/es/developer-manual/build-with-zylon/workspace-api/authentication/openid">
-    Flujos SSO, autenticación de cuentas y tokens.
-  </Card>
-
-  <Card title="Usuarios" icon="users" href="/es/developer-manual/build-with-zylon/workspace-api/users/user">
-    Crea, actualiza y administra acceso y membresías.
-  </Card>
-
-  <Card title="Proyectos" icon="folder" href="/es/developer-manual/build-with-zylon/workspace-api/projects/project">
-    Aprovisiona proyectos, gestiona miembros y visibilidad.
-  </Card>
-
-  <Card title="Chats" icon="message" href="/es/developer-manual/build-with-zylon/workspace-api/chats/threads">
-    Crea hilos, ejecuta interacciones y transmite respuestas.
-  </Card>
-
-  <Card title="Contenido" icon="file" href="/es/developer-manual/build-with-zylon/workspace-api/content/artifacts">
-    Administra artefactos e integraciones como Confluence, SharePoint, Filesystem y Claromentis.
-  </Card>
-
-  <Card title="General" icon="chart-line" href="/es/developer-manual/build-with-zylon/workspace-api/general/overview">
-    Analíticas, issues, auditoría, búsqueda y estado del sistema.
-  </Card>
-</CardGroup>
+Este modelo permite escenarios multi‑org donde la misma persona participa en varios workspaces con roles distintos.
 
 ## Paginación
 
-Los listados retornan un sobre con cursores:
+La paginación es un modelo compartido en la Workspace API. Los listados devuelven un sobre con cursores:
 
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de sobre de paginación">
 ```json
 {
   "data": [],
@@ -68,8 +40,37 @@ Los listados retornan un sobre con cursores:
   "total_count": 0
 }
 ```
+</Accordion>
 
 Usa `page`, `page_size`, `after`, `before`, `first`, `last` y `total_count` cuando estén disponibles.
+
+## Secciones de Workspace API
+
+<CardGroup cols={3}>
+  <Card title="General" icon="chart-line" href="/es/developer-manual/build-with-zylon/workspace-api/general/overview">
+    Analíticas, issues, auditoría, búsqueda y estado del sistema.
+  </Card>
+
+  <Card title="Autenticación" icon="key" href="/es/developer-manual/build-with-zylon/workspace-api/authentication/openid">
+    Flujos SSO, auth de cuentas y tokens.
+  </Card>
+
+  <Card title="Usuarios" icon="users" href="/es/developer-manual/build-with-zylon/workspace-api/users/user">
+    Crea, actualiza y administra usuarios y membresías.
+  </Card>
+
+  <Card title="Proyectos" icon="folder" href="/es/developer-manual/build-with-zylon/workspace-api/projects/project">
+    Aprovisiona proyectos, miembros y visibilidad.
+  </Card>
+
+  <Card title="Chats" icon="message" href="/es/developer-manual/build-with-zylon/workspace-api/chats/threads">
+    Crea hilos, ejecuta interacciones y transmite respuestas.
+  </Card>
+
+  <Card title="Contenido" icon="file" href="/es/developer-manual/build-with-zylon/workspace-api/content/artifacts">
+    Administra artefactos e integraciones como Confluence, SharePoint, Filesystem y Claromentis.
+  </Card>
+</CardGroup>
 
 ## Errores y casos límite
 

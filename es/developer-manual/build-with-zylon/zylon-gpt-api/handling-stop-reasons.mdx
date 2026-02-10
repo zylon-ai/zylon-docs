@@ -1,0 +1,45 @@
+---
+title: "Handling stop reasons"
+description: "Entiende por qué una respuesta terminó y cómo manejar errores de ZylonGPT."
+---
+
+Cuando llamas al endpoint de Messages, cada respuesta incluye un `stop_reason` que explica **por qué el modelo se detuvo**. Manejar este campo correctamente es clave para apps confiables.
+
+Para ver `stop_reason` en el esquema de respuesta, revisa [Messages](/es/developer-manual/build-with-zylon/working-with-messages).
+
+## ¿Qué es `stop_reason`?
+
+`stop_reason` aparece en cada respuesta **exitosa**. No es un error: indica cómo terminó la generación.
+
+Ejemplo de respuesta (truncada):
+
+```json
+{
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Aquí tienes un resumen..." }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null
+}
+```
+
+## Valores de stop reason
+
+Cuando una request falla, el stop reason coincide con uno de los valores de error abajo y la respuesta se entrega como un envelope de error.
+
+| stop_reason | Por qué ocurre | Qué hacer |
+| --- | --- | --- |
+| `end_turn` | El modelo terminó normalmente. A veces llega vacío tras tool results si envías texto extra junto al `tool_result`. | Trátalo como completo. Si viene vacío, envía solo el `tool_result` o agrega un nuevo mensaje como “Continúa”. |
+| `max_tokens` | La respuesta llegó al límite de `max_tokens`. | Aumenta `max_tokens` o pide continuar. |
+| `stop_sequence` | Se generó una secuencia de parada configurada por ti. | Considera la salida completa en ese punto o ajusta la secuencia. |
+| `tool_use` | El modelo necesita que ejecutes una herramienta. | Ejecuta la herramienta y devuelve un bloque `tool_result`. |
+| `pause_turn` | El modelo pausó la conversación. | Continúa cuando estés listo. |
+| `refusal` | El modelo se negó por razones de seguridad o políticas. | Muestra la negativa o re‑formula con contenido permitido. |
+| `invalid_request_error` | Inputs inválidos (artefactos sin ingesta completa, tool config inexistente, IDs incorrectos). | Corrige los inputs y reintenta. |
+| `permission_error` | El token no tiene acceso al recurso referenciado. | Revisa membresía del org/proyecto y visibilidad del artefacto. |
+| `request_too_large` | El input excede límites de tamaño o tokens. | Reduce el input, divide contenido o baja contexto. |
+| `api_error` | Error interno del servidor. | Reintenta con backoff exponencial. |
+| `overloaded_error` | El sistema está temporalmente sobrecargado. | Reintenta con backoff y jitter. |

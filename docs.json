@@ -170,13 +170,13 @@
                 "group": "Build with Zylon",
                 "icon": "cubes",
                 "pages": [
-                  "en/developer-manual/build-with-zylon/overview",
                   {
                     "group": "ZylonGPT API",
                     "pages": [
                       "en/developer-manual/build-with-zylon/zylon-gpt-api/overview",
                       "en/developer-manual/build-with-zylon/working-with-messages",
                       "en/developer-manual/build-with-zylon/working-with-artifacts",
+                      "en/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
                       {
                         "group": "Tools",
                         "pages": [
@@ -198,13 +198,25 @@
                             ]
                           }
                         ]
-                      }
+                      },
+                      "en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
                     ]
                   },
                   {
                     "group": "Workspace API",
                     "pages": [
                       "en/developer-manual/build-with-zylon/workspace-api/overview",
+                      {
+                        "group": "General",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/general/overview",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/issues",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/audit",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/search",
+                          "en/developer-manual/build-with-zylon/workspace-api/general/system"
+                        ]
+                      },
                       {
                         "group": "Authentication",
                         "pages": [
@@ -228,14 +240,6 @@
                         ]
                       },
                       {
-                        "group": "Chats",
-                        "pages": [
-                          "en/developer-manual/build-with-zylon/workspace-api/chats/threads",
-                          "en/developer-manual/build-with-zylon/workspace-api/chats/interactions",
-                          "en/developer-manual/build-with-zylon/workspace-api/chats/chat"
-                        ]
-                      },
-                      {
                         "group": "Content",
                         "pages": [
                           "en/developer-manual/build-with-zylon/workspace-api/content/artifacts",
@@ -251,52 +255,14 @@
                         ]
                       },
                       {
-                        "group": "General",
+                        "group": "Chats",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/workspace-api/general/overview",
-                          "en/developer-manual/build-with-zylon/workspace-api/general/analytics",
-                          "en/developer-manual/build-with-zylon/workspace-api/general/issues",
-                          "en/developer-manual/build-with-zylon/workspace-api/general/audit",
-                          "en/developer-manual/build-with-zylon/workspace-api/general/search",
-                          "en/developer-manual/build-with-zylon/workspace-api/general/system"
+                          "en/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
                       }
                     ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "tab": "API Reference",
-            "icon": "terminal",
-            "groups": [
-              {
-                "group": "Using the API",
-                "icon": "book",
-                "pages": [
-                  "en/api-reference/how-to-use",
-                  "en/api-reference/workspace-api",
-                  "en/api-reference/zylon-gpt-api"
-                ]
-              },
-              {
-                "group": "Examples",
-                "icon": "laptop-code",
-                "pages": [
-                  "en/api-reference/examples/json-output",
-                  "en/api-reference/examples/stock_analysis"
-                ]
-              },
-              {
-                "group": "ZylonGPT API",
-                "icon": "terminal",
-                "openapi": "en/api-reference/pgpt.json"
-              },
-              {
-                "group": "Workspace API",
-                "icon": "terminal",
-                "openapi": "en/api-reference/workspace.json"
               }
             ]
           },
@@ -440,7 +406,7 @@
                 ]
               },
               {
-                "group": "Herramientas de Administración",
+                "group": "Herramientas de Administraci\u00f3n",
                 "pages": [
                   "es/user-manual/workspace-look-and-feel",
                   "es/user-manual/adding-company-context",
@@ -474,7 +440,7 @@
                 ]
               },
               {
-                "group": "Búsqueda",
+                "group": "B\u00fasqueda",
                 "pages": [
                   "es/user-manual/search-workspace-content",
                   "es/user-manual/search-company-documents"
@@ -549,13 +515,13 @@
                 "group": "Construye con Zylon",
                 "icon": "cubes",
                 "pages": [
-                  "es/developer-manual/build-with-zylon/overview",
                   {
                     "group": "ZylonGPT API",
                     "pages": [
                       "es/developer-manual/build-with-zylon/zylon-gpt-api/overview",
                       "es/developer-manual/build-with-zylon/working-with-messages",
                       "es/developer-manual/build-with-zylon/working-with-artifacts",
+                      "es/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
                       {
                         "group": "Herramientas",
                         "pages": [
@@ -577,7 +543,8 @@
                             ]
                           }
                         ]
-                      }
+                      },
+                      "es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
                     ]
                   },
                   {
@@ -585,7 +552,18 @@
                     "pages": [
                       "es/developer-manual/build-with-zylon/workspace-api/overview",
                       {
-                        "group": "Autenticación",
+                        "group": "General",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/general/overview",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/issues",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/audit",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/search",
+                          "es/developer-manual/build-with-zylon/workspace-api/general/system"
+                        ]
+                      },
+                      {
+                        "group": "Autenticaci\u00f3n",
                         "pages": [
                           "es/developer-manual/build-with-zylon/workspace-api/authentication/openid",
                           "es/developer-manual/build-with-zylon/workspace-api/authentication/auth",
@@ -607,14 +585,6 @@
                         ]
                       },
                       {
-                        "group": "Chats",
-                        "pages": [
-                          "es/developer-manual/build-with-zylon/workspace-api/chats/threads",
-                          "es/developer-manual/build-with-zylon/workspace-api/chats/interactions",
-                          "es/developer-manual/build-with-zylon/workspace-api/chats/chat"
-                        ]
-                      },
-                      {
                         "group": "Contenido",
                         "pages": [
                           "es/developer-manual/build-with-zylon/workspace-api/content/artifacts",
@@ -630,52 +600,14 @@
                         ]
                       },
                       {
-                        "group": "General",
+                        "group": "Chats",
                         "pages": [
-                          "es/developer-manual/build-with-zylon/workspace-api/general/overview",
-                          "es/developer-manual/build-with-zylon/workspace-api/general/analytics",
-                          "es/developer-manual/build-with-zylon/workspace-api/general/issues",
-                          "es/developer-manual/build-with-zylon/workspace-api/general/audit",
-                          "es/developer-manual/build-with-zylon/workspace-api/general/search",
-                          "es/developer-manual/build-with-zylon/workspace-api/general/system"
+                          "es/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
                       }
                     ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "tab": "Referencia de la API",
-            "icon": "terminal",
-            "groups": [
-              {
-                "group": "Usar la API",
-                "icon": "book",
-                "pages": [
-                  "es/api-reference/how-to-use",
-                  "es/api-reference/workspace-api",
-                  "es/api-reference/zylon-gpt-api"
-                ]
-              },
-              {
-                "group": "Ejemplos",
-                "icon": "laptop-code",
-                "pages": [
-                  "es/api-reference/examples/json-output",
-                  "es/api-reference/examples/stock_analysis"
-                ]
-              },
-              {
-                "group": "API de ZylonGPT",
-                "icon": "terminal",
-                "openapi": "es/api-reference/pgpt.json"
-              },
-              {
-                "group": "API del Workspace",
-                "icon": "terminal",
-                "openapi": "es/api-reference/workspace.json"
               }
             ]
           },
@@ -690,7 +622,7 @@
                 ]
               },
               {
-                "group": "Instalación",
+                "group": "Instalaci\u00f3n",
                 "pages": [
                   "es/operator-manual/installation/hardware-requirements",
                   "es/operator-manual/installation/install",
@@ -699,7 +631,7 @@
                 ]
               },
               {
-                "group": "Configuración",
+                "group": "Configuraci\u00f3n",
                 "pages": [
                   "es/operator-manual/configuration/index",
                   {
@@ -721,7 +653,7 @@
                     ]
                   },
                   {
-                    "group": "Autenticación",
+                    "group": "Autenticaci\u00f3n",
                     "pages": [
                       "es/operator-manual/openid/google",
                       "es/operator-manual/openid/microsoft"
@@ -750,7 +682,7 @@
                     ]
                   },
                   {
-                    "group": "Configuración Avanzada",
+                    "group": "Configuraci\u00f3n Avanzada",
                     "pages": [
                       "es/operator-manual/configuration/observability",
                       "es/operator-manual/configuration/search",
@@ -770,7 +702,7 @@
                 ]
               },
               {
-                "group": "Solución de Problemas",
+                "group": "Soluci\u00f3n de Problemas",
                 "pages": [
                   "es/operator-manual/troubleshooting/troubleshoot",
                   "es/operator-manual/troubleshooting/ai",
@@ -781,7 +713,7 @@
             ]
           },
           {
-            "tab": "Atención al cliente",
+            "tab": "Atenci\u00f3n al cliente",
             "icon": "headphones",
             "pages": [
               "es/customer-support-manual/zendesk-client-manual"

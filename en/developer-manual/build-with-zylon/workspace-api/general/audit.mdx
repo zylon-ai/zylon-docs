@@ -10,28 +10,28 @@ Audit endpoints let you review actions across the workspace, with optional filte
 Query the workspace audit log with `GET /v1/app/audit`.
 
 ```bash
-curl "https://{base_url}/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&page=1&page_size=50" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&page=1&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (shape not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 []
 ```
+</Accordion>
 
 ## Project audit log
 
 ```bash
-curl "https://{base_url}/v1/app/project/proj_7a5c3e1b9d2f4a6c/audit?start_date=1738291200&end_date=1738972800&page=1&page_size=50" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/audit?start_date=1738291200&end_date=1738972800&page=1&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (shape not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 []
 ```
+</Accordion>
 
 ## Errors and edge cases
 

@@ -10,12 +10,11 @@ Use Account endpoints to list accounts, manage account roles, reset passwords, a
 List the accounts visible to your token with `GET /v1/account`.
 
 ```bash
-curl "https://{base_url}/v1/account" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/account" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 [
   {
@@ -41,16 +40,16 @@ Example response:
   }
 ]
 ```
+</Accordion>
 
 ## Get an account
 
 ```bash
-curl "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (AccountDTO):
-
+<Accordion title="Example response">
 ```json
 {
   "id": "acct_6c8a1f3b2d4e5f7a",
@@ -74,20 +73,20 @@ Example response (AccountDTO):
   "roles": ["AppAdmin"]
 }
 ```
+</Accordion>
 
 ## Update account roles
 
 ```bash
-curl -X POST "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "roles": ["AppAdmin", "Developer"]
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "id": "acct_6c8a1f3b2d4e5f7a",
@@ -100,12 +99,13 @@ Example response:
   "roles": ["AppAdmin", "Developer"]
 }
 ```
+</Accordion>
 
 ## Update your password
 
 ```bash
-curl -X PUT "https://{base_url}/v1/account/me" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X PUT "https://{BASE_URL}/v1/account/me" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "current_password": "S3cure!Passw0rd",
@@ -113,40 +113,39 @@ curl -X PUT "https://{base_url}/v1/account/me" \
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```text
 HTTP/1.1 204 No Content
 ```
+</Accordion>
 
 ## Reset an account password
 
 ```bash
-curl -X POST "https://{base_url}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "new_password": "Temp!Passw0rd2026"
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "new_password": "Temp!Passw0rd2026"
 }
 ```
+</Accordion>
 
 ## List API tokens
 
 ```bash
-curl "https://{base_url}/v1/account/token" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 [
   {
@@ -160,12 +159,13 @@ Example response:
   }
 ]
 ```
+</Accordion>
 
 ## Create an API token
 
 ```bash
-curl -X POST "https://{base_url}/v1/account/token" \
-  -H "Authorization: Bearer {api_token}" \
+curl -X POST "https://{BASE_URL}/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "ci-deploy",
@@ -174,8 +174,7 @@ curl -X POST "https://{base_url}/v1/account/token" \
   }'
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 {
   "name": "ci-deploy",
@@ -187,29 +186,29 @@ Example response:
   "valid_until": "2026-08-01T00:00:00Z"
 }
 ```
+</Accordion>
 
 ## Revoke an API token
 
 ```bash
-curl -X DELETE "https://{base_url}/v1/account/token" \
-  -H "Authorization: Bearer {api_token}"
+curl -X DELETE "https://{BASE_URL}/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response:
-
+<Accordion title="Example response">
 ```json
 "ok"
 ```
+</Accordion>
 
 ## List organizations for an account
 
 ```bash
-curl "https://{base_url}/v1/account/organization" \
-  -H "Authorization: Bearer {api_token}"
+curl "https://{BASE_URL}/v1/account/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (schema not defined in OpenAPI):
-
+<Accordion title="Example response">
 ```json
 [
   {
@@ -219,16 +218,16 @@ Example response (schema not defined in OpenAPI):
   }
 ]
 ```
+</Accordion>
 
 ## Join an organization
 
 ```bash
-curl -X POST "https://{base_url}/v1/account/organization/org_2f3a9d1c7b5e4a8f/join" \
-  -H "Authorization: Bearer {api_token}"
+curl -X POST "https://{BASE_URL}/v1/account/organization/org_2f3a9d1c7b5e4a8f/join" \
+  -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-Example response (UserDTO):
-
+<Accordion title="Example response">
 ```json
 {
   "id": "user_4b7c2a1d9e5f3c8b",
@@ -241,6 +240,7 @@ Example response (UserDTO):
   "created_at": "2026-02-08T14:25:31Z"
 }
 ```
+</Accordion>
 
 ## Errors and edge cases
 

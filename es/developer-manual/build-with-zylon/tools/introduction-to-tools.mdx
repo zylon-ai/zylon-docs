@@ -1,0 +1,89 @@
+---
+title: "Visión general"
+description: "Habilita herramientas built-in y custom en Messages."
+---
+
+Las herramientas permiten que el asistente ejecute operaciones específicas (como buscar artefactos, analizar datos tabulares o extraer una página web) como parte de una respuesta.
+
+Puedes habilitar herramientas añadiendo tres campos a una request `POST /messages`:
+
+{/* <!-- RESTRUCTURED --> */}
+| Campo | Propósito |
+| --- | --- |
+| `tools` | Qué herramientas están permitidas. |
+| `tool_choice` | Cómo debe elegir herramientas el asistente (`auto`, forzar una herramienta o `none`). |
+| `tool_context` | Contexto opcional (documentos o conexiones de BD). |
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+
+## Solicitud y respuesta básicas
+
+Empieza con `POST /messages/validate` para validar el body sin ejecutar el modelo.
+
+Este ejemplo habilita **web fetch**:
+
+```bash
+curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Summarize: https://example.com/" }
+    ],
+    "tools": [
+      { "name": "web_extract", "type": "web_extract_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{ "valid": true, "errors": null }
+```
+</Accordion>
+
+Para ejecutar la request, envía el mismo body a `POST /messages`.
+
+## Herramientas built-in
+
+Zylon incluye herramientas built-in:
+
+| Tool type | Qué hace | Requiere `tool_context` |
+| --- | --- | --- |
+| `semantic_search_v1` | Buscar artefactos ingeridos | Sí (`ingested_artifact`) |
+| `tabular_analysis_v1` | Analizar artefactos tabulares | Sí (`ingested_artifact`) |
+| `web_extract_v1` | Extraer una URL del mensaje | No |
+| `web_search_v1` | Buscar en la web | No |
+| `database_query_v1` | Consultar una BD SQL | Sí (`sql_database`) |
+
+Guías:
+
+- [Semantic Search tool](/es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool)
+- [Tabular Analysis tool](/es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool)
+- [Web Fetch tool](/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
+- [Web Search tool](/es/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
+- [Database Query tool](/es/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
+
+## Herramientas custom
+
+Las herramientas custom te permiten definir una interfaz con JSON Schema.
+
+Ver: [Custom tools](/es/developer-manual/build-with-zylon/tools/custom/custom-tools)
+
+## Errores comunes
+
+- **Nombre de campo**: usa `inputSchema` (no `input_schema`).
+- **Falta de contexto**: algunas herramientas requieren `tool_context`.
+- **Auth**: incluye `Authorization: Bearer ...` en cada request.
+
+## Próximos pasos
+
+- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de contenido: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)

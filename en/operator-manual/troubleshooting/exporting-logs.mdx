@@ -1,0 +1,97 @@
+---
+title: "Exporting Logs"
+---
+
+This guide helps you export accurate logs so customer support can resolve issues faster and with fewer back-and-forths. Because Zylon runs locally on your infrastructure and is often deployed in fully air-gapped environments, these logs are the safest and most reliable way for us to understand what happened without accessing your data directly.
+## Before you start
+
+1. Open the Zylon app in your browser.
+2. Go to the page where the problem happens.
+3. Keep this tab open while you follow the steps below.
+
+## Frontend logs (browser responses)
+
+There are two ways to share frontend logs. You can send a full network HAR file, or you can share a single response from the request list.
+A HAR (HTTP Archive) is a file that contains all network requests and responses for a page. This can speed up troubleshooting. If you want to share only a specific response, follow the single‑log steps below.
+
+### Google Chrome
+
+1. Open Developer Tools.
+2. Press `F12` on Windows or `Cmd + Option + I` on Mac.
+3. Click the `Network` tab.
+4. Check `Preserve log` so requests do not disappear when the page reloads.
+5. Reproduce the problem (click the same buttons or run the same action).
+6. To export a HAR: right‑click anywhere in the request list and choose `Save all as HAR with content`, then share the file with support.
+6. In the list of requests, click the one that matches the action you just did.
+7. In the right panel, open the `Response` tab.
+8. Right-click inside the response and choose `Copy`.
+9. Paste the response into a text file and share it with support.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/LOiqjMdOCNw"
+    title="Zylon Workspace - Exporting web logs on Chrome"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+### Microsoft Edge
+
+1. Open Developer Tools.
+2. Press `F12` on Windows or `Cmd + Option + I` on Mac.
+3. Click the `Network` tab.
+4. Check `Preserve log` so requests do not disappear when the page reloads.
+5. Reproduce the problem (click the same buttons or run the same action).
+6. To export a HAR: right‑click anywhere in the request list and choose `Save all as HAR with content`, then share the file with support.
+6. In the list of requests, click the one that matches the action you just did.
+7. In the right panel, open the `Response` tab.
+8. Right-click inside the response and choose `Copy`.
+9. Paste the response into a text file and share it with support.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/nMErrL50zHQ"
+    title="Zylon Workspace - Exporting web logs on Edge"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+### Mozilla Firefox
+
+1. Open Developer Tools.
+2. Press `F12` on Windows or `Cmd + Option + I` on Mac.
+3. Click the `Network` tab.
+4. Reproduce the problem (click the same buttons or run the same action).
+5. To export a HAR: right‑click anywhere in the request list and choose `Save All As HAR`, then share the file with support.
+5. In the list of requests, click the one that matches the action you just did.
+6. In the right panel, open the `Response` tab.
+7. Right-click inside the response and choose `Copy`.
+8. Paste the response into a text file and share it with support.
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/notcVPpYBpM"
+    title="Zylon Workspace - Exporting web logs on Firefox"
+    style={{ borderRadius: "12px" }}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+></iframe>
+
+If you cannot find the request, try these quick checks.
+
+1. Make sure the `Network` tab is selected.
+2. Reload the page and repeat the action.
+3. Look for filters like `Fetch/XHR` and select them.
+
+## Non-frontend logs (backend, AI, and other services)
+
+Logs for non-frontend issues must be retrieved from the relevant pod instance (backend, AI services, or other components). Check your pods to find the correct service before collecting logs.
+See the [system admin dashboard guide for pod status and service visibility](en/operator-manual/operations/sys-admin-dashboard.mdx)

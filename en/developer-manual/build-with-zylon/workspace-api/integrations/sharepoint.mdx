@@ -1,0 +1,48 @@
+---
+title: "SharePoint Integration"
+description: "Sync SharePoint documents into your workspace."
+---
+
+SharePoint integrations ingest libraries and documents into your workspace. **Enable SharePoint at the instance level first**—see the operator guide: [SharePoint integration setup](/en/operator-manual/knowledge-base/sharepoint).
+
+If OAuth is required, use the login endpoints in [OpenID & OAuth](/en/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+
+## Basic request and response
+
+Fetch integration configuration with `GET /v1/app/integration/sharepoint/{integrationId}/config`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "site_url": "https://auroralabs.sharepoint.com/sites/support",
+  "library": "Shared Documents"
+}
+```
+</Accordion>
+
+## Start an ingest sync
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 18,
+  "integration_item_count": 64
+}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **403**: integration not enabled or missing permissions.
+- **404**: integration ID not found.

@@ -1,0 +1,96 @@
+---
+title: "Claromentis Integration"
+description: "Sync Claromentis content into your workspace."
+---
+
+Claromentis integrations import knowledge base content. **Enable Claromentis at the instance level first**—see the operator guide: [Claromentis integration setup](/en/operator-manual/knowledge-base/claromentis).
+
+## Basic request and response
+
+Create a Claromentis integration with `POST /v1/app/integration/claromentis`.
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_claro",
+    "password": "claro_token_123"
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "clar_3c2d1b4a5f6e7d8c",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "Claromentis",
+  "created_at": "2026-02-08T14:05:00Z",
+  "updated_at": "2026-02-08T14:05:00Z"
+}
+```
+</Accordion>
+
+## Update integration credentials
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_claro",
+    "password": "claro_token_456"
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "clar_3c2d1b4a5f6e7d8c",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "Claromentis",
+  "created_at": "2026-02-08T14:05:00Z",
+  "updated_at": "2026-02-08T15:10:00Z"
+}
+```
+</Accordion>
+
+## Get integration config
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "base_url": "https://claromentis.auroralabs.com",
+  "site": "Knowledge Base"
+}
+```
+</Accordion>
+
+## Start an ingest sync
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 6,
+  "integration_item_count": 24
+}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **403**: connector not enabled or missing permissions.
+- **404**: integration ID not found.

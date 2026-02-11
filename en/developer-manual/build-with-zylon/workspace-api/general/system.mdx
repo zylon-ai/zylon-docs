@@ -1,0 +1,52 @@
+---
+title: "System"
+description: "Health checks and license information for the workspace."
+---
+
+Use these endpoints to verify system status and inspect license metadata.
+
+## Basic request and response
+
+Use the health check to verify availability with `GET /health`.
+
+```bash
+curl "https://{BASE_URL}/health"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "status": "ok",
+  "uptime": "3d 04:12:33",
+  "commit": "9f1c2a3"
+}
+```
+</Accordion>
+
+## License details
+
+```bash
+curl "https://{BASE_URL}/v1/license" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "lic_6b7c8d9e0f1a",
+  "email": "admin@auroralabs.com",
+  "valid_until": "2026-12-31T00:00:00Z",
+  "product": "Zylon Enterprise",
+  "provider": "LicenseServer",
+  "metadata": {
+    "seats": "250",
+    "tier": "Enterprise"
+  }
+}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **401/403**: missing token for license endpoint.
+- **503**: health check unavailable.

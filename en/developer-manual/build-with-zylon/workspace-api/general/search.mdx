@@ -1,0 +1,64 @@
+---
+title: "Search"
+description: "Search across projects, threads, artifacts, and interactions."
+---
+
+Use the Search API to query workspace content with a single text query. Limit search scope with the `type` filter.
+
+## Basic request and response
+
+Search across resources with `GET /v1/app/search`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+[
+  {
+    "id": "artifact_2b4d6f8a1c3e5a7b",
+    "type": "Artifact",
+    "match": "Q1 Support Summary",
+    "rank": 0.91,
+    "metadata": {
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Search only threads
+
+```bash
+curl "https://{BASE_URL}/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+[
+  {
+    "id": "thread_3f2a1c4d5b6e7f8a",
+    "type": "Thread",
+    "match": "Weekly Support Brief",
+    "rank": 0.86,
+    "metadata": {
+      "name": "Weekly Support Brief",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **400**: invalid `type` value.
+- **403**: insufficient permissions.

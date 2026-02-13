@@ -7,10 +7,11 @@ Zylon supports three installation modes. Choose based on your network environmen
 
 ## Quick Comparison
 
-|  | Online | Semi-Airgap | Airgap |
-|---|--------|-------------|--------|
-| **Use Case** | Standard deployments | Restricted networks | Maximum security |
-| **Internet Access** | Full | Limited | None |
+|  | Online | Semi-Airgap | Full-Airgap |
+|---|--------|-------------|-------------|
+| **Installation Type** | Online | Online | Offline |
+| **Operational Connectivity** | Full | Restricted/Zero | Restricted/Zero |
+| **Use Case** | Standard deployments | Controlled network access | Offline installation & Maximum security |
 | **Complexity** | Simple | Moderate | Complex |
 | **Installation Time** | 30-90 min | 1-2 hours | 2-3 hours |
 | **Update Time** | 15-40 min | 30-60 min | 1-2 hours |
@@ -39,30 +40,31 @@ Zylon supports three installation modes. Choose based on your network environmen
   <Tab title="Semi-Airgap">
     ### Semi-Airgap Installation
     
-    **Use when**: Restricted networks with controlled internet via proxy/firewall
+    **Use when**: Networks with controlled internet access via proxy/firewall
     
-    **How it works**: Limited access through whitelisted domains and proxy configuration.
+    **How it works**: Online installation through whitelisted domains and proxy configuration.
     
     **Key characteristics**:
-    - Requires open domains and ports
-    - Requires internet connectivity in install/update phases
-    - In operational mode, functions like airgap (no external connectivity needed)
+    - **Installation**: Online (requires internet connectivity)
+    - **Operation**: Can run with restricted/zero connectivity
+    - Requires open domains and ports during installation/updates
     - Minimal downtime for updates
     - Proxy support
     
     **Installation Guide** → [Semi-Airgap Installation](/en/operator-manual/installation/semi-airgap)
   </Tab>
   
-  <Tab title="Airgap">
-    ### Airgap Installation
+  <Tab title="Full-Airgap">
+    ### Full-Airgap Installation
     
-    **Use when**: Maximum security required, no internet access allowed
+    **Use when**: Offline installation required, no internet access during setup
     
     **How it works**: Transfer 70-100 GB bundles from online machine via offline media to target server.
     
     **Key characteristics**:
+    - **Installation**: Offline (no internet required on target server)
+    - **Operation**: Can run with restricted/zero connectivity
     - Requires two linux machines (online and offline)
-    - All installation process is offline on target
     - Manual update process (download, transfer, apply)
     - Always requires downtime (15-60 min)
     

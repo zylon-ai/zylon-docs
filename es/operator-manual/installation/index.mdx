@@ -7,10 +7,11 @@ Zylon soporta tres modos de instalación. Elige según tu entorno de red y requi
 
 ## Comparación Rápida
 
-|  | Online | Semi-Airgap | Airgap |
-|---|--------|-------------|--------|
-| **Caso de Uso** | Despliegues estándar | Redes restringidas | Máxima seguridad |
-| **Acceso a Internet** | Completo | Limitado | Ninguno |
+|  | Online | Semi-Airgap | Full-Airgap |
+|---|--------|-------------|-------------|
+| **Tipo de Instalación** | Online | Online | Offline |
+| **Conectividad Operacional** | Completa | Restringida/Cero o Completa | Restringida/Cero o Completa |
+| **Caso de Uso** | Despliegues estándar | Acceso de red controlado | Instalación offline |
 | **Complejidad** | Simple | Moderada | Compleja |
 | **Tiempo de Instalación** | 30-90 min | 1-2 horas | 2-3 horas |
 | **Tiempo de Actualización** | 15-40 min | 30-60 min | 1-2 horas |
@@ -39,30 +40,31 @@ Zylon soporta tres modos de instalación. Elige según tu entorno de red y requi
   <Tab title="Semi-Airgap">
     ### Instalación Semi-Airgap
     
-    **Usar cuando**: Redes restringidas con internet controlado vía proxy/firewall
+    **Usar cuando**: Redes con acceso a internet controlado vía proxy/firewall
     
-    **Cómo funciona**: Acceso limitado a través de dominios en lista blanca y configuración de proxy.
+    **Cómo funciona**: Instalación online a través de dominios en lista blanca y configuración de proxy.
     
     **Características clave**:
-    - Requiere dominios y puertos abiertos
-    - Requiere conectividad a internet en fases de instalación/actualización
-    - En modo operacional, funciona como airgap (no se necesita conectividad externa)
+    - **Instalación**: Online (requiere conectividad a internet)
+    - **Operación**: Puede funcionar con conectividad restringida/cero o completa
+    - Requiere dominios y puertos abiertos durante instalación/actualizaciones
     - Tiempo de inactividad mínimo para actualizaciones
     - Soporte de proxy
     
     **Guía de Instalación** → [Instalación Semi-Airgap](/es/operator-manual/installation/semi-airgap)
   </Tab>
   
-  <Tab title="Airgap">
-    ### Instalación Airgap
+  <Tab title="Full-Airgap">
+    ### Instalación Full-Airgap
     
-    **Usar cuando**: Máxima seguridad requerida, no se permite acceso a internet
+    **Usar cuando**: Se requiere instalación offline, sin acceso a internet durante la configuración
     
     **Cómo funciona**: Transferir bundles de 70-100 GB desde máquina online vía medio offline al servidor objetivo.
     
     **Características clave**:
+    - **Instalación**: Offline (no requiere internet en el servidor objetivo)
+    - **Operación**: Puede funcionar con conectividad restringida/cero o completa (proxy/internet opcional)
     - Requiere dos máquinas Linux (online y offline)
-    - Todo el proceso de instalación es offline en el objetivo
     - Proceso de actualización manual (descargar, transferir, aplicar)
     - Siempre requiere tiempo de inactividad (15-60 min)
     

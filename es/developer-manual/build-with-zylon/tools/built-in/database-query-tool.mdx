@@ -20,7 +20,7 @@ Usa Database Query para traducir lenguaje natural a SQL sobre una conexión conf
 Este ejemplo valida el payload y usa `tool_choice: none` para no conectar durante la validación.
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages/validate" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

@@ -24,7 +24,7 @@ Artifacts can be created from:
 Use `POST /artifacts/ingest` when you want the ingest to complete in the same request.
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -74,7 +74,7 @@ Use `POST /artifacts/ingest/async` for larger payloads or when ingest may take l
 <Tabs>
   <Tab title="Text">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -96,7 +96,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="File">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -118,7 +118,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="URI">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -149,7 +149,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 Check task status:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/ingest/async/{task_id}" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async/{task_id}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -167,7 +167,7 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/ingest/async/{task_id}" \
 ## Listing ingested artifacts
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/list?collection=docs_examples" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection=docs_examples" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -199,7 +199,7 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/list?collection=docs_examples" \
 Use `POST /artifacts/content` to fetch complete document text:
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/content" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/content" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -229,7 +229,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/content" \
 Use `POST /artifacts/chunked-content` to retrieve content split into chat-friendly blocks:
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/chunked-content" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -263,7 +263,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/chunked-content" \
 Delete (sync):
 
 ```bash
-curl -i -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete" \
+curl -i -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -284,7 +284,7 @@ null
 Delete (async):
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -305,7 +305,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete/async" \
 Check task status:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/delete/async/{task_id}" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async/{task_id}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -331,5 +331,5 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/delete/async/{task_id}" \
 - **404**: collection or artifact not found.
 - **409**: ingest/delete task already in progress.
 - **413**: input too large for a single ingest.
-- **422**: invalid payload shape (use `POST /artifacts/ingest/validate` if you want to pre-validate).
+- **422**: invalid payload shape.
 - **Async failures**: when `task_status` becomes `FAILURE`, check `task_result` (for example `routing_key_error: "ingest.failed"` or `delete.failed`) and retry after fixing the input.

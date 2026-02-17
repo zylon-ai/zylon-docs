@@ -17,7 +17,7 @@ Envía un mensaje y recibe una respuesta.
 <Tabs>
   <Tab title="Mensaje único">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -33,7 +33,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 
   <Tab title="Bloques de contenido">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -98,12 +98,35 @@ Cada mensaje incluye:
 | `role` | `"user"` o `"assistant"`. |
 | `content` | String o array de bloques. |
 
+## Validar una solicitud
+
+Usa `/messages/validate` para comprobar la forma del payload antes de enviar una solicitud real. Devuelve `valid: true` o una lista de errores de validación.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Validate this payload." }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
 ## Conversaciones multi-turn
 
 Incluye turnos anteriores en `messages`:
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -151,7 +174,7 @@ Usa el campo `system` a nivel superior para controlar el comportamiento:
 </Callout>
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -193,7 +216,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 Si necesitas salida legible por máquina, usa `response_format.type` = `json_schema`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -246,7 +269,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 Configura `stream: true` para recibir eventos `text/event-stream`.
 
 ```bash
-curl -N -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -N -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
@@ -332,7 +355,7 @@ Los mensajes asíncronos usan **el mismo body** que los mensajes síncronos—so
 ### Iniciar un mensaje async
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -349,7 +372,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
 Streaming:
 
 ```bash
-curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
+curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Accept: text/event-stream"
 ```
@@ -357,7 +380,7 @@ curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
 Polling:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
+curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -370,7 +393,7 @@ curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
 
 - **Método incorrecto**: `/messages` es `POST`, no `GET`.
 - **Falta de auth**: incluye `Authorization: Bearer ...`.
-- **Base URL incorrecta**: usa `https://{BASE_URL}/gpt/v1/`.
+- **Base URL incorrecta**: usa `https://{BASE_URL}/api/gpt/v1/`.
 - **Body inválido**: usa `POST /messages/validate` para validar.
 - **Paradas o errores inesperados**: revisa [Handling stop reasons](/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) para causas y soluciones.
 

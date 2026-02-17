@@ -29,7 +29,7 @@ Genera embeddings con `POST /embeddings`. `input` puede ser un string o un arreg
 <Tabs>
   <Tab title="Entrada única">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/embeddings" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/embeddings" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -66,7 +66,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/embeddings" \
 
   <Tab title="Lote">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/embeddings" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/embeddings" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

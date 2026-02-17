@@ -15,7 +15,7 @@ Los mensajes async te permiten iniciar una generación y observarla después (ú
 ### 1) Inicia un mensaje async
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -42,7 +42,7 @@ Ejemplo de respuesta:
 Usa el `message_id` del paso anterior:
 
 ```bash
-curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
+curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Accept: text/event-stream"
 ```
@@ -66,7 +66,7 @@ data: {"type":"message_stop"}
 ## Consultar estado (opcional)
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
+curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

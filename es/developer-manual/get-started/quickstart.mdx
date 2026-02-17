@@ -18,7 +18,7 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 <Steps>
   <Step title="Envía tu primer mensaje">
     ```bash
-    curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+    curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
@@ -60,7 +60,7 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
     Establece `stream: true` para recibir **Server-Sent Events (SSE)**.
 
     ```bash
-    curl -N -X POST "https://{BASE_URL}/gpt/v1/messages" \
+    curl -N -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -H "Accept: text/event-stream" \
@@ -92,39 +92,6 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Tab title="Workspace API">
 <Steps>
-  <Step title="Crea un usuario vinculado a tu cuenta">
-    ```bash
-    curl -X POST "https://{BASE_URL}/v1/app/user" \
-      -H "Authorization: Bearer {API_TOKEN}" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "account_id": "acct_6c8a1f3b2d4e5f7a",
-        "role": "AppAdmin",
-        "user_info": {
-          "email": "sasha@auroralabs.com",
-          "name": "Sasha Patel",
-          "given_name": "Sasha",
-          "family_name": "Patel"
-        }
-      }'
-    ```
-
-    Ejemplo de respuesta:
-
-    ```json
-    {
-      "id": "user_4b7c2a1d9e5f3c8b",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Sasha Patel",
-      "email": "sasha@auroralabs.com",
-      "state": "Active",
-      "roles": ["AppAdmin"],
-      "created_at": "2026-02-08T14:12:45Z"
-    }
-    ```
-  </Step>
-
   <Step title="Autentica">
     ```bash
     curl -X POST "https://{BASE_URL}/v1/auth/login" \
@@ -181,7 +148,9 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
         "type": "InlineText",
         "source": "User",
         "name": "Q1 Support Summary",
-        "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
+        "props": {
+          "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
+        }
       }'
     ```
 
@@ -193,7 +162,7 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
       "type": "InlineText",
-      "ingest_status": "Processing"
+      "ingest_status": "NotApplicable"
     }
     ```
   </Step>
@@ -259,6 +228,6 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 ## Troubleshooting
 
 - **401/403**: token inválido o expirado. Ver [Token Management](/es/api-reference/token-management).
-- **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/gpt/v1/`.
+- **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: usa `"model": "default"`.
 - **405**: método incorrecto. `/messages` es `POST`.

@@ -17,7 +17,7 @@ Send one user message and get back one assistant message.
 <Tabs>
   <Tab title="Single message">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -33,7 +33,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 
   <Tab title="Content blocks">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -100,12 +100,35 @@ Each message has:
 | `role` | `"user"` or `"assistant"`. |
 | `content` | A string, or an array of content blocks. |
 
+## Validate a request
+
+Use `/messages/validate` to check payload shape before sending a real request. It returns `valid: true` or a list of validation errors.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Validate this payload." }
+    ]
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
 ## Multi-turn conversations
 
 To continue a conversation, include the prior turns in `messages`:
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -153,7 +176,7 @@ Use the top-level `system` field to control assistant behavior (instead of a `"s
 </Callout>
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -195,7 +218,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 If you need machine-readable output, set `response_format.type` to `json_schema` and provide a schema. Zylon returns JSON as text in a `text` content block.
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -248,7 +271,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages" \
 Set `stream: true` to receive a `text/event-stream` response containing events like `content_block_delta` (token deltas).
 
 ```bash
-curl -N -X POST "https://{BASE_URL}/gpt/v1/messages" \
+curl -N -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
@@ -334,7 +357,7 @@ Async messages use the **same request body** as sync messages—you just call a 
 ### Start an async message
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -351,7 +374,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/messages/async" \
 Stream events:
 
 ```bash
-curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
+curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Accept: text/event-stream"
 ```
@@ -359,7 +382,7 @@ curl -N "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/stream" \
 Poll status:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
+curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -372,7 +395,7 @@ curl "https://{BASE_URL}/gpt/v1/messages/async/{message_id}/status" \
 
 - **Wrong method**: `/messages` is `POST`, not `GET`.
 - **Missing auth header**: include `Authorization: Bearer ...`.
-- **Wrong base URL**: use `https://{BASE_URL}/gpt/v1/`.
+- **Wrong base URL**: use `https://{BASE_URL}/api/gpt/v1/`.
 - **Invalid request body**: use `POST /messages/validate` to catch schema mistakes early.
 - **Unexpected stops or errors**: see [Handling stop reasons](/en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) for causes and fixes.
 

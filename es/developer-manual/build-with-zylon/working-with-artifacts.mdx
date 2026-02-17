@@ -24,7 +24,7 @@ Se pueden crear a partir de:
 Usa `POST /artifacts/ingest` cuando quieras que la ingesta termine en la misma request.
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -74,7 +74,7 @@ Usa `POST /artifacts/ingest/async` para payloads más grandes o cuando la ingest
 <Tabs>
   <Tab title="Text">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -96,7 +96,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="File">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -118,7 +118,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 
   <Tab title="URI">
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -149,7 +149,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/ingest/async" \
 Consultar estado:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/ingest/async/{task_id}" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async/{task_id}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -167,7 +167,7 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/ingest/async/{task_id}" \
 ## Listar artefactos
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/list?collection=docs_examples" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection=docs_examples" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -197,7 +197,7 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/list?collection=docs_examples" \
 ### Contenido completo
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/content" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/content" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -225,7 +225,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/content" \
 ### Contenido en chunks
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/chunked-content" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -259,7 +259,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/chunked-content" \
 Eliminar (sync):
 
 ```bash
-curl -i -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete" \
+curl -i -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -280,7 +280,7 @@ null
 Eliminar (async):
 
 ```bash
-curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete/async" \
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -301,7 +301,7 @@ curl -X POST "https://{BASE_URL}/gpt/v1/artifacts/delete/async" \
 Consultar estado:
 
 ```bash
-curl "https://{BASE_URL}/gpt/v1/artifacts/delete/async/{task_id}" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async/{task_id}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -327,5 +327,5 @@ curl "https://{BASE_URL}/gpt/v1/artifacts/delete/async/{task_id}" \
 - **404**: colección o artefacto no encontrado.
 - **409**: tarea de ingesta/eliminación ya en progreso.
 - **413**: input demasiado grande para una ingesta.
-- **422**: payload inválido (usa `POST /artifacts/ingest/validate` si quieres pre‑validar).
+- **422**: payload inválido.
 - **Fallos async**: cuando `task_status` es `FAILURE`, revisa `task_result` (por ejemplo `routing_key_error: "ingest.failed"` o `delete.failed`) y reintenta tras corregir el input.

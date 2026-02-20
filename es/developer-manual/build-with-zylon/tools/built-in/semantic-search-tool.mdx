@@ -1,5 +1,5 @@
 ---
-title: "Semantic Search tool"
+title: "Herramienta de búsqueda semántica"
 description: "Busca en artefactos ingeridos durante un mensaje."
 ---
 
@@ -12,12 +12,12 @@ Usa Semantic Search cuando quieras recuperar información de artefactos ingerido
 
 ## Requisitos
 
-- Tool spec: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
-- `tool_context`: al menos un `ingested_artifact` con `context_filter`
+- Especificación de la herramienta: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`.
 
 ## Solicitud y respuesta básicas
 
-Este ejemplo valida una request que habilita semantic search:
+Este ejemplo valida una petición que habilita Semantic Search:
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
@@ -51,14 +51,14 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
 
-## Tips
+## Consejos
 
 - Mantén `tool_context` acotado.
-- Si los resultados no son relevantes, ingesta texto más limpio.
+- Si los resultados no son relevantes, ingesta texto más depurado.
 
 ## Próximos pasos
 
-- Ingesta de artefactos: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)
-- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de artefactos: [Artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

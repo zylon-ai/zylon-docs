@@ -1,9 +1,9 @@
 ---
-title: "Account"
-description: "Gestiona cuentas, membresía de orgs y tokens de API."
+title: "Cuenta"
+description: "Gestiona cuentas, pertenencia a organizaciones y tokens de API."
 ---
 
-Usa los endpoints de Account para listar cuentas, administrar roles, resetear contraseñas y crear o revocar tokens de API. También puedes listar organizaciones vinculadas a una cuenta y unirte a una org por ID.
+Usa los endpoints de cuenta para listar cuentas, administrar roles, restablecer contraseñas y crear o revocar tokens de API. También puedes listar organizaciones vinculadas a una cuenta y unirte a una organización por ID.
 
 ## Solicitud básica y respuesta
 
@@ -119,7 +119,7 @@ HTTP/1.1 204 No Content
 ```
 </Accordion>
 
-## Resetear contraseña de cuenta
+## Restablecer la contraseña de una cuenta
 
 ```bash
 curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password" \
@@ -245,5 +245,5 @@ curl -X POST "https://{BASE_URL}/v1/account/organization/org_2f3a9d1c7b5e4a8f/jo
 ## Errores y casos límite
 
 - **401/403**: token inválido o ausente.
-- **409**: nombre de token ya existe.
+- **409**: el nombre del token ya existe.
 - **404**: cuenta u organización no encontrada.

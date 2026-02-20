@@ -1,14 +1,14 @@
 ---
-title: "Messages"
-description: "Requests de Messages con patrones sync, streaming y async."
+title: "Mensajes"
+description: "Peticiones de Messages con patrones síncronos, streaming y asíncronos."
 ---
 
-Messages es el núcleo de ZylonGPT. Envías un historial de conversación y Zylon devuelve el siguiente mensaje del asistente como **lista de bloques de contenido**.
+Messages es el núcleo de ZylonGPT: envías un historial de conversación y Zylon devuelve el siguiente mensaje del asistente como **lista de bloques de contenido**.
 
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 ## Solicitud y respuesta básica
 
@@ -96,11 +96,11 @@ Cada mensaje incluye:
 | Campo | Descripción |
 | --- | --- |
 | `role` | `"user"` o `"assistant"`. |
-| `content` | String o array de bloques. |
+| `content` | Una cadena o un array de bloques. |
 
 ## Validar una solicitud
 
-Usa `/messages/validate` para comprobar la forma del payload antes de enviar una solicitud real. Devuelve `valid: true` o una lista de errores de validación.
+Usa `/messages/validate` para comprobar la forma del cuerpo de la petición antes de enviar una solicitud real. Devuelve `valid: true` o una lista de errores de validación.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
@@ -121,7 +121,7 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-## Conversaciones multi-turn
+## Conversaciones con varios turnos
 
 Incluye turnos anteriores en `messages`:
 
@@ -164,13 +164,13 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
 ```
 </Accordion>
 
-## System prompts
+## Prompts del sistema
 
 Usa el campo `system` a nivel superior para controlar el comportamiento:
 
 {/* <!-- ADDED FOR CLARITY --> */}
 <Callout type="tip">
-  Prefiere el campo top-level <code>system</code> para que las instrucciones se apliquen de forma consistente.
+  Prefiere el campo <code>system</code> de nivel superior para que las instrucciones se apliquen de forma consistente.
 </Callout>
 
 ```bash
@@ -311,12 +311,12 @@ data: {"type":"message_stop"}
 
 ## Mensajes asíncronos
 
-Los mensajes asíncronos usan **el mismo body** que los mensajes síncronos—solo cambia el endpoint. La diferencia principal está en la **respuesta**: sync devuelve el mensaje completo, async devuelve un `message_id` para stream o polling.
+Los mensajes asíncronos usan **el mismo cuerpo** que los mensajes síncronos: solo cambia el endpoint. La diferencia principal está en la **respuesta**: los mensajes síncronos devuelven el mensaje completo, y los asíncronos devuelven un `message_id` para hacer streaming o consultar el estado.
 
 {/* <!-- RESTRUCTURED --> */}
-<Accordion title="Forma de respuesta: sync vs async">
+<Accordion title="Forma de la respuesta: síncrona vs asíncrona">
 <Tabs>
-  <Tab title="Respuesta sync">
+  <Tab title="Respuesta síncrona">
 ```json
 {
   "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
@@ -340,7 +340,7 @@ Los mensajes asíncronos usan **el mismo body** que los mensajes síncronos—so
 }
 ```
   </Tab>
-  <Tab title="Respuesta async">
+  <Tab title="Respuesta asíncrona">
 ```json
 {
   "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
@@ -352,7 +352,7 @@ Los mensajes asíncronos usan **el mismo body** que los mensajes síncronos—so
 </Tabs>
 </Accordion>
 
-### Iniciar un mensaje async
+### Iniciar un mensaje asíncrono
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
@@ -367,7 +367,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
   }'
 ```
 
-### Streaming o polling
+### Streaming o consulta de estado
 
 Streaming:
 
@@ -377,7 +377,7 @@ curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
   -H "Accept: text/event-stream"
 ```
 
-Polling:
+Consulta de estado:
 
 ```bash
 curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
@@ -392,19 +392,19 @@ curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
 ## Errores comunes
 
 - **Método incorrecto**: `/messages` es `POST`, no `GET`.
-- **Falta de auth**: incluye `Authorization: Bearer ...`.
+- **Falta de autenticación**: incluye `Authorization: Bearer ...`.
 - **Base URL incorrecta**: usa `https://{BASE_URL}/api/gpt/v1/`.
-- **Body inválido**: usa `POST /messages/validate` para validar.
-- **Paradas o errores inesperados**: revisa [Handling stop reasons](/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) para causas y soluciones.
+- **Cuerpo inválido**: usa `POST /messages/validate` para validar.
+- **Paradas o errores inesperados**: revisa [Motivos de parada](/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) para causas y soluciones.
 
 ## Próximos pasos
 
 <CardGroup cols={2}>
-  <Card title="Tools" icon="toolbox" href="/es/developer-manual/build-with-zylon/tools/introduction-to-tools">
-    Deja que Zylon use herramientas built-in y custom durante un mensaje.
+  <Card title="Herramientas" icon="toolbox" href="/es/developer-manual/build-with-zylon/tools/introduction-to-tools">
+    Deja que Zylon use herramientas integradas y personalizadas durante un mensaje.
   </Card>
 
-  <Card title="Artifacts" icon="file" href="/es/developer-manual/build-with-zylon/working-with-artifacts">
-    Ingiera texto, archivos o URIs en colecciones reutilizables.
+  <Card title="Artefactos" icon="file" href="/es/developer-manual/build-with-zylon/working-with-artifacts">
+    Ingiere texto, archivos o URI en colecciones reutilizables.
   </Card>
 </CardGroup>

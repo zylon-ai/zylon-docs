@@ -1,20 +1,20 @@
 ---
 title: "OpenID y OAuth"
-description: "Inicia logins SSO y flujos OAuth para Confluence y SharePoint."
+description: "Inicia sesiones SSO y flujos OAuth para Confluence y SharePoint."
 ---
 
-Usa estos endpoints para iniciar flujos OpenID/OAuth. Los endpoints de login están pensados para navegador y devuelven redirecciones; los callbacks reciben la respuesta del proveedor.
+Usa estos endpoints para iniciar flujos OpenID/OAuth. Los endpoints de inicio de sesión están pensados para el navegador y devuelven redirecciones; los callbacks reciben la respuesta del proveedor.
 
 > Las integraciones deben estar habilitadas antes de usar OAuth. Consulta las guías del operador para [Confluence](/es/operator-manual/knowledge-base/confluence) y [SharePoint](/es/operator-manual/knowledge-base/sharepoint).
 
 ## Solicitud básica y respuesta
 
-Inicia un flujo de login llamando al endpoint del proveedor y siguiendo la redirección.
+Inicia un flujo de inicio de sesión llamando al endpoint del proveedor y siguiendo la redirección.
 
 ### Redirecciones SSO de usuario
 
 <Tabs>
-  <Tab title="Login Google">
+  <Tab title="Inicio de sesión Google">
 ```bash
 curl -i "https://{BASE_URL}/v1/auth/google/login"
 ```
@@ -26,7 +26,7 @@ Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_ur
 ```
 </Accordion>
   </Tab>
-  <Tab title="Login Microsoft">
+  <Tab title="Inicio de sesión Microsoft">
 ```bash
 curl -i "https://{BASE_URL}/v1/auth/microsoft/login"
 ```
@@ -43,7 +43,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 ### Redirecciones OAuth de integraciones
 
 <Tabs>
-  <Tab title="Confluence login">
+  <Tab title="Inicio de sesión Confluence">
 ```bash
 curl -i "https://{BASE_URL}/v1/app/integration/confluence/login"
 ```
@@ -55,7 +55,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint login">
+  <Tab title="Inicio de sesión SharePoint">
 ```bash
 curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/login"
 ```
@@ -69,10 +69,10 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
   </Tab>
 </Tabs>
 
-### Login con una instancia específica
+### Inicio de sesión con una instancia específica
 
 <Tabs>
-  <Tab title="Confluence instance">
+  <Tab title="Instancia Confluence">
 ```bash
 curl -i "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
 ```
@@ -84,7 +84,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint instance">
+  <Tab title="Instancia SharePoint">
 ```bash
 curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
 ```
@@ -98,10 +98,10 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
   </Tab>
 </Tabs>
 
-### Refresh de token de integración
+### Renovación del token de la integración
 
 <Tabs>
-  <Tab title="Confluence refresh">
+  <Tab title="Renovar token Confluence">
 ```bash
 curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -113,7 +113,7 @@ curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint refresh">
+  <Tab title="Renovar token SharePoint">
 ```bash
 curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -170,6 +170,6 @@ Location: https://{BASE_URL}/app/integrations/sharepoint
 
 ## Errores y casos límite
 
-- **302**: esperado en login y callback.
-- **401/403**: token ausente para refresh.
+- **302**: esperado en inicio de sesión y callback.
+- **401/403**: token ausente para la renovación.
 - **404**: integración no encontrada.

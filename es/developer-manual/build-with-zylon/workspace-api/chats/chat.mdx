@@ -1,6 +1,6 @@
 ---
 title: "Chat"
-description: "Ejecuta chats ad-hoc sin crear un hilo."
+description: "Ejecuta chats puntuales sin crear un hilo."
 ---
 
 Los endpoints de Chat permiten enviar solicitudes puntuales usando el mismo formato de mensajes, sin crear un hilo ni un registro de interacción.
@@ -68,4 +68,4 @@ HTTP/1.1 204 No Content
 ## Errores y casos límite
 
 - **400**: esquema inválido (usa `/chat/validate`).
-- **413**: payload demasiado grande.
+- **413**: cuerpo de la petición demasiado grande.

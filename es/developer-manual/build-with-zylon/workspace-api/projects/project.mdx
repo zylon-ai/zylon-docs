@@ -1,9 +1,9 @@
 ---
 title: "Proyectos"
-description: "Crea proyectos, actualiza metadatos y ejecuta chat a nivel proyecto."
+description: "Crea proyectos, actualiza metadatos y ejecuta chats a nivel de proyecto."
 ---
 
-Los proyectos son la unidad del workspace que contiene hilos, artefactos y contexto de equipo. Usa estos endpoints para crear y configurar proyectos, transferir ownership y lanzar chats con alcance de proyecto.
+Los proyectos son la unidad del espacio de trabajo que contiene hilos, artefactos y contexto de equipo. Usa estos endpoints para crear y configurar proyectos, transferir la propiedad e iniciar chats con alcance de proyecto.
 
 ## Solicitud básica y respuesta
 
@@ -141,7 +141,7 @@ HTTP/1.1 200 OK
 ```
 </Accordion>
   </Tab>
-  <Tab title="Transferir ownership">
+  <Tab title="Transferir la propiedad">
 ```bash
 curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -162,7 +162,7 @@ HTTP/1.1 200 OK
 ## Información de usuario en proyecto
 
 <Tabs>
-  <Tab title="Obtener info">
+  <Tab title="Obtener información">
 ```bash
 curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info/user_4b7c2a1d9e5f3c8b" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -174,7 +174,7 @@ HTTP/1.1 200 OK
 ```
 </Accordion>
   </Tab>
-  <Tab title="Actualizar info">
+  <Tab title="Actualizar información">
 ```bash
 curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info" \
   -H "Authorization: Bearer {API_TOKEN}" \

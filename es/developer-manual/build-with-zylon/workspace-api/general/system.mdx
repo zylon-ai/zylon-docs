@@ -1,13 +1,13 @@
 ---
 title: "Sistema"
-description: "Health checks y detalles de licencia del workspace."
+description: "Comprobaciones de salud y detalles de licencia del espacio de trabajo."
 ---
 
 Usa estos endpoints para verificar el estado del sistema y ver metadatos de la licencia.
 
 ## Solicitud básica y respuesta
 
-Usa el health check con `GET /health` para verificar disponibilidad.
+Usa la comprobación de salud con `GET /health` para verificar la disponibilidad.
 
 ```bash
 curl "https://{BASE_URL}/health"
@@ -49,4 +49,4 @@ curl "https://{BASE_URL}/v1/license" \
 ## Errores y casos límite
 
 - **401/403**: token ausente para licencia.
-- **503**: health check no disponible.
+- **503**: comprobación de salud no disponible.

@@ -1,5 +1,5 @@
 ---
-title: "Database Query tool"
+title: "Herramienta de consulta a base de datos"
 description: "Consulta una base SQL desde lenguaje natural."
 ---
 
@@ -12,12 +12,12 @@ Usa Database Query para traducir lenguaje natural a SQL sobre una conexión conf
 
 ## Requisitos
 
-- Tool spec: `{ "name": "database_query", "type": "database_query_v1" }`
+- Especificación de la herramienta: `{ "name": "database_query", "type": "database_query_v1" }`
 - `tool_context`: un contexto `sql_database` con `connection_string`
 
 ## Solicitud y respuesta básicas
 
-Este ejemplo valida el payload y usa `tool_choice: none` para no conectar durante la validación.
+Este ejemplo valida el cuerpo de la petición y usa `tool_choice: none` para no conectar durante la validación.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
@@ -50,13 +50,13 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar, envía el mismo body a `POST /messages` y cambia `tool_choice` a `{ \"type\": \"auto\" }`.
+Para ejecutar, envía el mismo cuerpo a `POST /messages` y cambia `tool_choice` a `{ \"type\": \"auto\" }`.
 
-## Tips
+## Consejos
 
 - Usa un usuario de solo lectura.
-- Limita schemas para acelerar inspección.
+- Limita los esquemas (`schemas`) para acelerar la inspección.
 
 ## Próximos pasos
 
-- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

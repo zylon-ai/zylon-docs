@@ -3,28 +3,28 @@ title: "Embeddings"
 description: "Genera embeddings para búsqueda semántica y similitud."
 ---
 
-Los embeddings convierten texto en vectores de alta dimensión. Úsalos para búsqueda semántica, clustering o comparación de similitud en tus propios datos.
+Los embeddings convierten texto en vectores de alta dimensión. Úsalos para búsqueda semántica, agrupación (clustering) o cálculo de similitud sobre tus propios datos.
 
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 ## Antes de empezar
 
 - **El orden importa**: `data[index]` coincide con el orden de `input`.
 - **Guarda los vectores** en tu base de datos o índice vectorial para búsqueda y similitud.
-- **Usa el mismo preprocesamiento** (mismo formato y casing) para resultados consistentes.
+- **Usa el mismo preprocesamiento** (mismo formato y uso de mayúsculas/minúsculas) para resultados consistentes.
 
 ## Crear embeddings
 
-Genera embeddings con `POST /embeddings`. `input` puede ser un string o un arreglo.
+Genera embeddings con `POST /embeddings`. `input` puede ser una cadena o una lista.
 
 {/* <!-- ADDED FOR CLARITY --> */}
 | Forma de `input` | Cuándo usar |
 | --- | --- |
-| String único | Un texto a la vez. |
-| Array de strings | Entradas en lote manteniendo el orden. |
+| Una sola cadena | Un texto a la vez. |
+| Lista de cadenas | Entradas en lote manteniendo el orden. |
 
 <Tabs>
   <Tab title="Entrada única">

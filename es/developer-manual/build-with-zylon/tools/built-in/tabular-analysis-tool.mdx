@@ -1,5 +1,5 @@
 ---
-title: "Tabular Analysis tool"
+title: "Herramienta de análisis tabular"
 description: "Analiza artefactos tabulares durante un mensaje."
 ---
 
@@ -12,8 +12,8 @@ Usa Tabular Analysis para cálculos sobre datos tabulares (CSV/TSV o tablas extr
 
 ## Requisitos
 
-- Tool spec: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
-- `tool_context`: al menos un `ingested_artifact` con `context_filter`
+- Especificación de la herramienta: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`.
 
 ## Solicitud y respuesta básicas
 
@@ -49,14 +49,14 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
 
-## Tips
+## Consejos
 
 - Asegura que el contenido sea una tabla limpia.
 - Mantén tablas pequeñas para análisis rápido.
 
 ## Próximos pasos
 
-- Ingesta de artefactos: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)
-- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de artefactos: [Artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

@@ -1,27 +1,27 @@
 ---
-title: "Artifacts"
+title: "Artefactos"
 description: "Crea e ingesta artefactos de ZylonGPT para recuperación y contexto."
 ---
 
-Un **artefacto** es información (o un recurso listo para herramientas) que ingestas en Zylon para usarla como contexto en consultas y operaciones. Los artefactos viven dentro de una **colección** y cada uno tiene un ID estable.
+Un **artefacto** es una pieza de información (o un recurso listo para herramientas) que incorporas a Zylon para poder usarla como contexto en consultas y operaciones. Los artefactos viven dentro de una **colección** y cada uno tiene un ID `artifact` estable.
 
 Se pueden crear a partir de:
 
 {/* <!-- RESTRUCTURED --> */}
-| Tipo | Input | Notas |
+| Tipo | Entrada | Notas |
 | --- | --- | --- |
-| **Text** | String | Contenido directo. |
-| **File** | Bytes base64 | Para archivos como `.txt` o `.pdf`. |
+| **Text** | Cadena | Contenido directo. |
+| **File** | Bytes en base64 | Para archivos como `.txt` o `.pdf`. |
 | **URI** | URL | Zylon obtiene e ingesta el contenido. |
 
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 ## Solicitud y respuesta básica
 
-Usa `POST /artifacts/ingest` cuando quieras que la ingesta termine en la misma request.
+Usa `POST /artifacts/ingest` cuando quieras que la ingesta termine en la misma petición.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
@@ -67,9 +67,9 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
 ```
 </Accordion>
 
-## Ingesta async
+## Ingesta asíncrona
 
-Usa `POST /artifacts/ingest/async` para payloads más grandes o cuando la ingesta pueda tardar. El payload es el mismo que la ingesta síncrona, envuelto en `ingest_body`, y la respuesta devuelve un `task_id` que puedes consultar.
+Usa `POST /artifacts/ingest/async` para cuerpos de petición más grandes o cuando la ingesta pueda tardar. El cuerpo es el mismo que en la ingesta síncrona, envuelto en `ingest_body`, y la respuesta devuelve un `task_id` que puedes consultar.
 
 <Tabs>
   <Tab title="Text">
@@ -222,7 +222,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/content" \
 ```
 </Accordion>
 
-### Contenido en chunks
+### Contenido en fragmentos
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
@@ -256,7 +256,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
 
 ## Eliminar artefactos
 
-Eliminar (sync):
+Eliminar (síncrono):
 
 ```bash
 curl -i -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete" \
@@ -277,7 +277,7 @@ null
 ```
 </Accordion>
 
-Eliminar (async):
+Eliminar (asíncrono):
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async" \
@@ -326,6 +326,6 @@ curl "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async/{task_id}" \
 - **401/403**: token ausente o permisos insuficientes.
 - **404**: colección o artefacto no encontrado.
 - **409**: tarea de ingesta/eliminación ya en progreso.
-- **413**: input demasiado grande para una ingesta.
-- **422**: payload inválido.
-- **Fallos async**: cuando `task_status` es `FAILURE`, revisa `task_result` (por ejemplo `routing_key_error: "ingest.failed"` o `delete.failed`) y reintenta tras corregir el input.
+- **413**: entrada demasiado grande para una ingesta.
+- **422**: cuerpo de la petición inválido.
+- **Fallos asíncronos**: cuando `task_status` es `FAILURE`, revisa `task_result` (por ejemplo `routing_key_error: "ingest.failed"` o `delete.failed`) y reintenta tras corregir la entrada.

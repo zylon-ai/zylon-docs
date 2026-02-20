@@ -1,9 +1,9 @@
 ---
-title: "Custom tools"
+title: "Herramientas personalizadas"
 description: "Define tus propias herramientas usando JSON Schema."
 ---
 
-Las herramientas custom permiten definir una interfaz (nombre + JSON schema) y dejar que el asistente decida cuándo usarla. Cuando se usa, devuelve un bloque `tool_use` con `input` estructurado.
+Las herramientas personalizadas permiten definir una interfaz (nombre + JSON Schema) y dejar que el asistente decida cuándo usarla. Cuando se usa, devuelve un bloque `tool_use` con `input` estructurado.
 
 ## Requisitos previos
 
@@ -11,15 +11,15 @@ Las herramientas custom permiten definir una interfaz (nombre + JSON schema) y d
 
 ## Requisitos
 
-En el array `tools`, incluye:
+En la lista `tools`, incluye:
 
 - `name`: nombre único
 - `description`: qué hace la herramienta
-- `inputSchema`: JSON Schema del input
+- `inputSchema`: JSON Schema de la entrada
 
 ## Solicitud y respuesta básicas
 
-Este ejemplo valida un tool de calculadora y fuerza su uso.
+Este ejemplo valida una herramienta de calculadora y fuerza su uso.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
@@ -56,4 +56,4 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar, envía el mismo body a `POST /messages`. Cuando el asistente devuelva un `tool_use`, ejecuta la herramienta y responde con un bloque `tool_result`.
+Para ejecutar, envía el mismo cuerpo a `POST /messages`. Cuando el asistente devuelva un `tool_use`, ejecuta la herramienta y responde con un bloque `tool_result`.

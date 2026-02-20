@@ -3,7 +3,7 @@ title: "Interacciones"
 description: "Ejecuta y administra interacciones dentro de un hilo."
 ---
 
-Las interacciones son intercambios individuales dentro de un hilo. Puedes crearlas, consultar detalles, cancelar trabajos en curso o hacer streaming del output.
+Las interacciones son intercambios individuales dentro de un hilo. Puedes crearlas, consultar detalles, cancelar trabajos en curso o ver el streaming de la salida.
 
 ## Solicitud básica y respuesta
 
@@ -149,5 +149,5 @@ data: {"type":"message_stop"}
 
 ## Errores y casos límite
 
-- **409**: ya completada al cancelar.
+- **409**: la interacción ya está completada al cancelar.
 - **404**: interacción no encontrada.

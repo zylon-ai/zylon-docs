@@ -1,0 +1,56 @@
+---
+title: Platform Backoffice
+description: Operator controls for accounts, roles, gateways, and service status.
+icon: wrench
+---
+
+## Overview
+The Platform Backoffice allows Operators to:
+
+- Create and manage accounts
+- Assign roles
+- Manage gateways
+- Monitor platform service status
+
+Only users with **Operator** permissions can access this section. Permissions and visibility depend on the current license.
+
+## Accounts
+In the **Accounts** section, Operators can:
+
+- Create new accounts
+- Assign roles and permissions
+- Associate accounts with specific workspaces or gateways
+- Modify existing accounts
+
+![](/images/user-manual/backoffice-accounts.png)
+
+### Roles and permissions
+Account access is defined by role. The roles available in the account modal are:
+
+- **Workspace** — Can access the Workspace.
+- **Developer** — Can create and manage API tokens for development and integrations.
+- **Operator** — Can manage user accounts and settings in the Backoffice.
+
+The number of accounts is limited by the client's license. Account capabilities depend on assigned roles.
+
+### Create an account
+You can create a new user in two ways:
+
+1. **From the modal:** Click **Add account**, enter the user details, assign roles, and save.
+![](/images/user-manual/backoffice-create-account.png)
+
+2. **From a CSV upload:** Download the template from the Accounts page, fill it with user data, and upload the CSV to create accounts in bulk.
+
+To edit an account, select it from the list and update its roles or permissions.
+
+## Gateways
+A **Gateway** represents an isolated developer environment within Zylon. It is a software node (not a hardware device) used to audit API token usage and account activity across the Workspace.
+
+Operators can:
+
+- Create a new Gateway (only requires a name)
+- Manage existing Gateways
+
+The number of Gateways is limited by the active license.
+
+![](/images/user-manual/backoffice-gateways.png)

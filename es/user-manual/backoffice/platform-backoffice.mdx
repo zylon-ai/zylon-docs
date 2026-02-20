@@ -1,0 +1,56 @@
+---
+title: Backoffice de Plataforma
+description: Controles de operador para cuentas, roles, gateways y estado del servicio.
+icon: wrench
+---
+
+## Resumen
+El Backoffice de Plataforma permite a los Operadores:
+
+- Crear y gestionar cuentas
+- Asignar roles
+- Gestionar gateways
+- Supervisar el estado de los servicios de la plataforma
+
+Solo los usuarios con permisos **Operator** pueden acceder a esta sección. Los permisos y la visibilidad dependen de la licencia actual.
+
+## Cuentas
+En la sección **Cuentas**, los Operadores pueden:
+
+- Crear cuentas nuevas
+- Asignar roles y permisos
+- Asociar cuentas a Workspaces o Gateways específicos
+- Modificar cuentas existentes
+
+![](/images/user-manual/backoffice-accounts.png)
+
+### Roles y permisos
+El acceso se define por rol. Los roles disponibles en el modal de cuenta son:
+
+- **Workspace** — Puede acceder al Workspace.
+- **Developer** — Puede crear y gestionar tokens de API para desarrollo e integraciones.
+- **Operator** — Puede gestionar cuentas y ajustes en el Backoffice.
+
+El número de cuentas está limitado por la licencia del cliente. Las capacidades de la cuenta dependen de los roles asignados.
+
+### Crear una cuenta
+Puedes crear un usuario de dos formas:
+
+1. **Desde el modal:** Haz clic en **Add account**, introduce los datos del usuario, asigna roles y guarda.
+![](/images/user-manual/backoffice-create-account.png)
+
+2. **Desde una carga CSV:** Descarga la plantilla disponible en la página de Cuentas, complétala con los datos y sube el CSV para crear cuentas en bloque.
+
+Para editar una cuenta, selecciónala en la lista y actualiza sus roles o permisos.
+
+## Gateways
+Un **Gateway** representa un entorno de desarrollo aislado dentro de Zylon. Es un nodo de software (no un dispositivo físico) usado para auditar el uso de tokens de API y la actividad de cuentas en el Workspace.
+
+Los Operadores pueden:
+
+- Crear un nuevo Gateway (solo requiere un nombre)
+- Gestionar Gateways existentes
+
+El número de Gateways está limitado por la licencia activa.
+
+![](/images/user-manual/backoffice-gateways.png)

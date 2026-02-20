@@ -1,11 +1,11 @@
 ---
 title: "Visión general"
-description: "Habilita herramientas built-in y custom en Messages."
+description: "Habilita herramientas integradas y personalizadas en la API de mensajes."
 ---
 
 Las herramientas permiten que el asistente ejecute operaciones específicas (como buscar artefactos, analizar datos tabulares o extraer una página web) como parte de una respuesta.
 
-Puedes habilitar herramientas añadiendo tres campos a una request `POST /messages`:
+Puedes habilitar herramientas añadiendo tres campos a una petición `POST /messages`:
 
 {/* <!-- RESTRUCTURED --> */}
 | Campo | Propósito |
@@ -17,13 +17,13 @@ Puedes habilitar herramientas añadiendo tres campos a una request `POST /messag
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 ## Solicitud y respuesta básicas
 
-Empieza con `POST /messages/validate` para validar el body sin ejecutar el modelo.
+Empieza con `POST /messages/validate` para validar el cuerpo de la petición sin ejecutar el modelo.
 
-Este ejemplo habilita **web fetch**:
+Este ejemplo habilita **Web Fetch**:
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
@@ -49,13 +49,13 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
 ```
 </Accordion>
 
-Para ejecutar la request, envía el mismo body a `POST /messages`.
+Para ejecutar la petición, envía el mismo cuerpo a `POST /messages`.
 
-## Herramientas built-in
+## Herramientas integradas
 
-Zylon incluye herramientas built-in:
+Zylon incluye herramientas integradas:
 
-| Tool type | Qué hace | Requiere `tool_context` |
+| Tipo de herramienta | Qué hace | Requiere `tool_context` |
 | --- | --- | --- |
 | `semantic_search_v1` | Buscar artefactos ingeridos | Sí (`ingested_artifact`) |
 | `tabular_analysis_v1` | Analizar artefactos tabulares | Sí (`ingested_artifact`) |
@@ -65,25 +65,25 @@ Zylon incluye herramientas built-in:
 
 Guías:
 
-- [Semantic Search tool](/es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool)
-- [Tabular Analysis tool](/es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool)
-- [Web Fetch tool](/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
-- [Web Search tool](/es/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
-- [Database Query tool](/es/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
+- [Herramienta de búsqueda semántica](/es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool)
+- [Herramienta de análisis tabular](/es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool)
+- [Herramienta Web Fetch](/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
+- [Herramienta Web Search](/es/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
+- [Herramienta de consulta a base de datos](/es/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
 
-## Herramientas custom
+## Herramientas personalizadas
 
-Las herramientas custom te permiten definir una interfaz con JSON Schema.
+Las herramientas personalizadas te permiten definir una interfaz mediante JSON Schema.
 
-Ver: [Custom tools](/es/developer-manual/build-with-zylon/tools/custom/custom-tools)
+Ver: [Herramientas personalizadas](/es/developer-manual/build-with-zylon/tools/custom/custom-tools)
 
 ## Errores comunes
 
 - **Nombre de campo**: usa `inputSchema` (no `input_schema`).
 - **Falta de contexto**: algunas herramientas requieren `tool_context`.
-- **Auth**: incluye `Authorization: Bearer ...` en cada request.
+- **Autenticación**: incluye `Authorization: Bearer ...` en cada petición.
 
 ## Próximos pasos
 
-- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
-- Ingesta de contenido: [Artifacts](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de contenido: [Artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)

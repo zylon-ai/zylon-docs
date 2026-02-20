@@ -1,6 +1,6 @@
 ---
 title: "Artefactos"
-description: "Artefactos de Workspace para documentos, agent flows y conectores."
+description: "Artefactos de Workspace para documentos, flujos y conectores."
 ---
 
 Un artefacto es una pieza de información **o herramienta** que le entregas a Zylon para usarla como contexto en consultas y operaciones. La Workspace API agrupa los artefactos en **documentos**, **agent flows** y **otros artefactos**.
@@ -8,20 +8,20 @@ Un artefacto es una pieza de información **o herramienta** que le entregas a Zy
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 ## Artefactos
 
 {/* <!-- ADDED FOR CLARITY --> */}
 | Categoría | Incluye | Cuándo usar |
 | --- | --- | --- |
-| **Artefactos de documento** | Documentos, carpetas, links | Guardar u organizar contenido en un proyecto. |
-| **Agent flows** | Summary, composition, extracción | Ejecutar flujos sobre artefactos para producir resultados. |
-| **Otros artefactos** | MCP servers, SQL databases | Conectar herramientas o fuentes externas. |
+| **Artefactos de documento** | Documentos, carpetas, enlaces | Guardar u organizar contenido en un proyecto. |
+| **Agent flows** | `Summary`, composición, extracción | Ejecutar flujos sobre artefactos para producir resultados. |
+| **Otros artefactos** | Servidores MCP, bases de datos SQL | Conectar herramientas o fuentes externas. |
 
 ### Artefactos de documento
 
-Los documentos contienen contenido, los links referencian artefactos existentes y las carpetas organizan artefactos dentro de un proyecto.
+Los documentos contienen contenido, los enlaces referencian artefactos existentes y las carpetas organizan artefactos dentro de un proyecto.
 
 <Tabs>
   <Tab title="Document">
@@ -142,7 +142,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
 ### Agent flows
 
-Los agent flows ejecutan un workflow de Zylon sobre uno o más artefactos para producir un output estructurado.
+Los agent flows ejecutan un flujo de trabajo de Zylon sobre uno o más artefactos para producir un resultado estructurado.
 
 <Tabs>
   <Tab title="Summary">
@@ -342,7 +342,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
 ### Otros artefactos
 
-Los artefactos conector almacenan integraciones para herramientas. `private_props` solo se usa en artefactos **MCP** y **SQL database**.
+Los artefactos de conector almacenan integraciones para herramientas. `private_props` solo se usa en artefactos **MCP** y **SqlDatabase**.
 
 <Tabs>
   <Tab title="SqlDatabase">
@@ -544,7 +544,7 @@ curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact
 ```
 </Accordion>
 
-### Metadata privada de artefacto
+### Metadatos privados del artefacto
 
 ```bash
 curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/private" \
@@ -562,7 +562,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_
 ```
 </Accordion>
 
-### Descargar contenido raw
+### Descargar contenido sin procesar
 
 ```bash
 curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/download" \
@@ -609,19 +609,19 @@ HTTP/1.1 202 Accepted
 
 | valor `error` | Significado |
 | --- | --- |
-| `InvalidExtension` | Extensión de archivo no soportada. |
+| `InvalidExtension` | Extensión de archivo no admitida. |
 | `MismatchedType` | El tipo de archivo no coincide con el tipo declarado. |
 | `Malformed` | Archivo corrupto o ilegible. |
 | `Encrypted` | Archivo protegido con contraseña. |
-| `ParsingFailure` | El extractor no pudo parsear el archivo. |
-| `MaxNodes` | Documento demasiado grande/complejo para parseo. |
+| `ParsingFailure` | El extractor no pudo analizar el archivo. |
+| `MaxNodes` | Documento demasiado grande o complejo para el análisis. |
 | `NoValidFile` | No se encontró un archivo válido. |
-| `NoValidNodes` | No se pudo extraer contenido parseable. |
+| `NoValidNodes` | No se pudo extraer contenido analizable. |
 | `InternalError` | Fallo inesperado en la ingesta. |
-| `Unknown` | Falla no clasificada. |
+| `Unknown` | Fallo no clasificado. |
 
 Si `ingest_status` es `Error`, corrige el archivo (o conviértelo) y re‑sincroniza.
-- **Warnings**: `ingest_warnings` puede incluir valores como `BigSize`, `UnprocessableContent` o `NoContent` para indicar problemas no fatales.
+- **Advertencias**: `ingest_warnings` puede incluir valores como `BigSize`, `UnprocessableContent` o `NoContent` para indicar problemas no fatales.
 - **401/403**: token ausente o permisos insuficientes.
 - **404**: artefacto o proyecto no encontrado.
 - **409**: artefacto ya en proceso.

@@ -1,5 +1,5 @@
 ---
-title: "Web Fetch tool"
+title: "Herramienta Web Fetch"
 description: "Extrae contenido de una URL en el mensaje."
 ---
 
@@ -11,7 +11,7 @@ Usa Web Fetch cuando necesitas que el asistente recupere contenido de una URL.
 
 ## Requisitos
 
-- Tool spec: `{ "name": "web_extract", "type": "web_extract_v1" }`
+- Especificación de la herramienta: `{ "name": "web_extract", "type": "web_extract_v1" }`
 - No requiere `tool_context`
 
 ## Solicitud y respuesta básicas
@@ -39,13 +39,13 @@ Ejemplo de respuesta:
 { "valid": true, "errors": null }
 ```
 
-Para ejecutar, envía el mismo body a `POST /messages`.
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
 
-## Tips
+## Consejos
 
 - La URL debe aparecer en el mensaje.
 - Mantén el prompt conciso.
 
 ## Próximos pasos
 
-- Formato de mensajes: [Messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

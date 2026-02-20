@@ -1,13 +1,13 @@
 ---
-title: "Issues"
-description: "Crea y gestiona issues reportados por usuarios."
+title: "Incidencias"
+description: "Crea y gestiona incidencias comunicadas por usuarios."
 ---
 
-Los issues permiten reportar problemas con respuestas o contenido. Usa estos endpoints para listar, crear, actualizar y cerrar issues.
+Las incidencias (`issues`) permiten comunicar problemas con respuestas o contenido. Usa estos endpoints para listar, crear, actualizar y cerrar incidencias.
 
 ## Solicitud básica y respuesta
 
-Lista issues con `GET /v1/app/issue` antes de crear o actualizar.
+Lista incidencias con `GET /v1/app/issue` antes de crear o actualizar.
 
 ```bash
 curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
@@ -47,7 +47,7 @@ curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
 ```
 </Accordion>
 
-## Crear un issue
+## Crear una incidencia
 
 ```bash
 curl -X POST "https://{BASE_URL}/v1/app/issue" \
@@ -87,10 +87,10 @@ curl -X POST "https://{BASE_URL}/v1/app/issue" \
 ```
 </Accordion>
 
-## Obtener o actualizar un issue
+## Obtener o actualizar una incidencia
 
 <Tabs>
-  <Tab title="Obtener issue">
+  <Tab title="Obtener incidencia">
 ```bash
 curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -107,7 +107,7 @@ curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ```
 </Accordion>
   </Tab>
-  <Tab title="Actualizar issue">
+  <Tab title="Actualizar incidencia">
 ```bash
 curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -130,7 +130,7 @@ curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   </Tab>
 </Tabs>
 
-## Eliminar un issue
+## Eliminar una incidencia
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
@@ -145,5 +145,5 @@ HTTP/1.1 204 No Content
 
 ## Errores y casos límite
 
-- **404**: issue no encontrado.
+- **404**: incidencia no encontrada.
 - **400**: estado inválido.

@@ -1,15 +1,15 @@
 ---
-title: "Quickstart"
+title: "Guía rápida"
 description: "Haz tu primera llamada a la API de Zylon en menos de 2 minutos."
 ---
 
-Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatizar org y proyectos.
+Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatizar organizaciones y proyectos.
 
-## Prerrequisitos
+## Requisitos previos
 
-- Un token de API. Ver [Token Management](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
-- Para Workspace API: una cuenta y una organización creadas en el workspace.
+- Un token de API. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+- Para la Workspace API: una cuenta y una organización creadas en el Workspace.
 
 ## Mi primera llamada a Zylon
 
@@ -92,7 +92,7 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 
   <Tab title="Workspace API">
 <Steps>
-  <Step title="Autentica">
+  <Step title="Inicia sesión">
     ```bash
     curl -X POST "https://{BASE_URL}/v1/auth/login" \
       -H "Authorization: Bearer {API_TOKEN}" \
@@ -216,18 +216,18 @@ Empieza con ZylonGPT para enviar mensajes, o usa la Workspace API para automatiz
 ## Próximos pasos
 
 <CardGroup cols={2}>
-  <Card title="Visión general ZylonGPT API" icon="sparkles" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/overview">
-    Aprende Mensajes, Artefactos y Herramientas.
+  <Card title="Visión general de ZylonGPT API" icon="sparkles" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Aprende sobre Mensajes, Artefactos y Herramientas.
   </Card>
 
-  <Card title="Visión general Workspace API" icon="building" href="/es/developer-manual/build-with-zylon/workspace-api/overview">
-    Administra orgs, usuarios, proyectos e integraciones.
+  <Card title="Visión general de Workspace API" icon="building" href="/es/developer-manual/build-with-zylon/workspace-api/overview">
+    Gestiona organizaciones, usuarios, proyectos e integraciones.
   </Card>
 </CardGroup>
 
-## Troubleshooting
+## Solución de problemas
 
-- **401/403**: token inválido o expirado. Ver [Token Management](/es/api-reference/token-management).
+- **401/403**: token inválido o caducado. Consulta [Gestión de tokens](/es/api-reference/token-management).
 - **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: usa `"model": "default"`.
 - **405**: método incorrecto. `/messages` es `POST`.

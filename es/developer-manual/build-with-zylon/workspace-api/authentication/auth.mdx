@@ -1,9 +1,9 @@
 ---
-title: "Auth"
-description: "Crea cuentas, inicia sesión y cierra sesiones para la Workspace API."
+title: "Autenticación"
+description: "Crea cuentas, inicia sesión y cierra sesión en la Workspace API."
 ---
 
-Usa estos endpoints para crear cuentas con credenciales, autenticar usuarios y cerrar sesión. Para los redireccionamientos SSO (Google/Microsoft) y OAuth de integraciones, consulta [OpenID & OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+Usa estos endpoints para crear cuentas con credenciales, autenticar usuarios y cerrar sesión. Para los redireccionamientos SSO (Google/Microsoft) y OAuth de integraciones, consulta [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
 
 ## Solicitud básica y respuesta
 
@@ -100,5 +100,5 @@ curl -X POST "https://{BASE_URL}/v1/auth/logout" \
 ## Errores y casos límite
 
 - **401/403**: token inválido o ausente.
-- **409**: la cuenta ya existe (register).
-- **429**: demasiados intentos de login.
+- **409**: la cuenta ya existe (registro).
+- **429**: demasiados intentos de inicio de sesión.

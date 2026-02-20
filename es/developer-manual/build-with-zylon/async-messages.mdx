@@ -1,18 +1,18 @@
 ---
-title: "Async messages"
-description: "Inicia un mensaje async y luego streamea o consulta el estado."
+title: "Mensajes asíncronos"
+description: "Inicia un mensaje asíncrono y luego recibe el streaming o consulta el estado."
 ---
 
-Los mensajes async te permiten iniciar una generación y observarla después (útil para jobs en background o conexiones inestables).
+Los mensajes asíncronos te permiten iniciar una generación y revisarla después (útil para trabajos en segundo plano o conexiones inestables).
 
 ## Requisitos previos
 
 - Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
-- Tu hostname de Zylon (reemplaza `{BASE_URL}` en los ejemplos).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
-## Quickstart
+## Guía rápida
 
-### 1) Inicia un mensaje async
+### 1) Inicia un mensaje asíncrono
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
@@ -37,7 +37,7 @@ Ejemplo de respuesta:
 }
 ```
 
-### 2) Stream de eventos (SSE)
+### 2) Streaming de eventos (SSE)
 
 Usa el `message_id` del paso anterior:
 
@@ -92,7 +92,7 @@ Ejemplo de respuesta:
 
 ## Cancelar y eliminar
 
-Endpoints disponibles (sin body):
+Endpoints disponibles (sin cuerpo de la petición):
 
 - `POST /messages/async/{message_id}/cancel`
 - `DELETE /messages/async/{message_id}/delete`
@@ -100,9 +100,9 @@ Endpoints disponibles (sin body):
 ## Errores comunes
 
 - **ID incorrecto**: el evento `message_start` incluye el `id` del mensaje, pero los endpoints async usan `message_id`.
-- **Header SSE**: usa `Accept: text/event-stream`.
+- **Cabecera SSE**: usa `Accept: text/event-stream`.
 - **Eliminar demasiado pronto**: una vez eliminado, `status/stream` devuelve `404`.
 
 ## Próximos pasos
 
-- Formato de mensajes: [Working with messages](/es/developer-manual/build-with-zylon/working-with-messages)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

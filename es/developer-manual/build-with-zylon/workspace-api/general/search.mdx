@@ -1,0 +1,64 @@
+---
+title: "Búsqueda"
+description: "Busca en proyectos, hilos, artefactos e interacciones."
+---
+
+Usa el endpoint de búsqueda para consultar contenido del espacio de trabajo mediante texto. Limita el alcance con el filtro `type`.
+
+## Solicitud básica y respuesta
+
+Busca en todos los recursos con `GET /v1/app/search`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "artifact_2b4d6f8a1c3e5a7b",
+    "type": "Artifact",
+    "match": "Q1 Support Summary",
+    "rank": 0.91,
+    "metadata": {
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Buscar solo hilos
+
+```bash
+curl "https://{BASE_URL}/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "thread_3f2a1c4d5b6e7f8a",
+    "type": "Thread",
+    "match": "Weekly Support Brief",
+    "rank": 0.86,
+    "metadata": {
+      "name": "Weekly Support Brief",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **400**: valor inválido en `type`.
+- **403**: permisos insuficientes.

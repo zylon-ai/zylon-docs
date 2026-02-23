@@ -1,0 +1,175 @@
+---
+title: "OpenID y OAuth"
+description: "Inicia sesiones SSO y flujos OAuth para Confluence y SharePoint."
+---
+
+Usa estos endpoints para iniciar flujos OpenID/OAuth. Los endpoints de inicio de sesión están pensados para el navegador y devuelven redirecciones; los callbacks reciben la respuesta del proveedor.
+
+> Las integraciones deben estar habilitadas antes de usar OAuth. Consulta las guías del operador para [Confluence](/es/operator-manual/knowledge-base/confluence) y [SharePoint](/es/operator-manual/knowledge-base/sharepoint).
+
+## Solicitud básica y respuesta
+
+Inicia un flujo de inicio de sesión llamando al endpoint del proveedor y siguiendo la redirección.
+
+### Redirecciones SSO de usuario
+
+<Tabs>
+  <Tab title="Inicio de sesión Google">
+```bash
+curl -i "https://{BASE_URL}/v1/auth/google/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_uri=...
+```
+</Accordion>
+  </Tab>
+  <Tab title="Inicio de sesión Microsoft">
+```bash
+curl -i "https://{BASE_URL}/v1/auth/microsoft/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+### Redirecciones OAuth de integraciones
+
+<Tabs>
+  <Tab title="Inicio de sesión Confluence">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
+```
+</Accordion>
+  </Tab>
+  <Tab title="Inicio de sesión SharePoint">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&redirect_uri=...
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+### Inicio de sesión con una instancia específica
+
+<Tabs>
+  <Tab title="Instancia Confluence">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d4e3f2a1b
+```
+</Accordion>
+  </Tab>
+  <Tab title="Instancia SharePoint">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=...&state=sp_1c2d3e4f5a6b7c8d
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+### Renovación del token de la integración
+
+<Tabs>
+  <Tab title="Renovar token Confluence">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+"ok"
+```
+</Accordion>
+  </Tab>
+  <Tab title="Renovar token SharePoint">
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+"ok"
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+### Callbacks
+
+<Tabs>
+  <Tab title="Microsoft callback">
+```bash
+curl -i "https://{BASE_URL}/v1/auth/microsoft/callback?code=...&state=..."
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://{BASE_URL}/app/login/success
+```
+</Accordion>
+  </Tab>
+  <Tab title="Confluence callback">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/confluence/callback?code=...&state=..."
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://{BASE_URL}/app/integrations/confluence
+```
+</Accordion>
+  </Tab>
+  <Tab title="SharePoint callback">
+```bash
+curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/callback?code=...&state=..."
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 302 Found
+Location: https://{BASE_URL}/app/integrations/sharepoint
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+## Errores y casos límite
+
+- **302**: esperado en inicio de sesión y callback.
+- **401/403**: token ausente para la renovación.
+- **404**: integración no encontrada.

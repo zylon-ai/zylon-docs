@@ -1,0 +1,331 @@
+---
+title: "Artefactos"
+description: "Crea e ingesta artefactos de ZylonGPT para recuperación y contexto."
+---
+
+Un **artefacto** es una pieza de información (o un recurso listo para herramientas) que incorporas a Zylon para poder usarla como contexto en consultas y operaciones. Los artefactos viven dentro de una **colección** y cada uno tiene un ID `artifact` estable.
+
+Se pueden crear a partir de:
+
+{/* <!-- RESTRUCTURED --> */}
+| Tipo | Entrada | Notas |
+| --- | --- | --- |
+| **Text** | Cadena | Contenido directo. |
+| **File** | Bytes en base64 | Para archivos como `.txt` o `.pdf`. |
+| **URI** | URL | Zylon obtiene e ingesta el contenido. |
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+## Solicitud y respuesta básica
+
+Usa `POST /artifacts/ingest` cuando quieras que la ingesta termine en la misma petición.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples_sync",
+    "artifact": "docs_text_artifact_sync",
+    "input": {
+      "type": "text",
+      "value": "Release notes: Shipped billing dashboard and fixed three bugs."
+    },
+    "metadata": {
+      "file_name": "release_notes.txt",
+      "source": "docs"
+    }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_text_artifact_sync",
+      "doc_metadata": {
+        "file_name": "release_notes.txt",
+        "source": "docs",
+        "headers": [],
+        "artifact_id": "docs_text_artifact_sync",
+        "collection": "docs_examples_sync",
+        "llm_model": "default",
+        "embed_model": "default",
+        "hash": "faf6da679814136cb7cef94532397948cd2cd303b25f91a527af53227e9da99d"
+      }
+    }
+  ]
+}
+```
+</Accordion>
+
+## Ingesta asíncrona
+
+Usa `POST /artifacts/ingest/async` para cuerpos de petición más grandes o cuando la ingesta pueda tardar. El cuerpo es el mismo que en la ingesta síncrona, envuelto en `ingest_body`, y la respuesta devuelve un `task_id` que puedes consultar.
+
+<Tabs>
+  <Tab title="Text">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_text_artifact_async_pending",
+      "input": {
+        "type": "text",
+        "value": "Release notes: We shipped a new billing dashboard and fixed three bugs."
+      },
+      "metadata": {
+        "file_name": "release_notes.txt",
+        "source": "docs"
+      }
+    }
+  }'
+```
+  </Tab>
+
+  <Tab title="File">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_file_artifact_async",
+      "input": {
+        "type": "file",
+        "value": "SGVsbG8gZnJvbSBmaWxlIGFydGlmYWN0Lgo="
+      },
+      "metadata": {
+        "file_name": "onboarding_checklist.txt",
+        "source": "docs"
+      }
+    }
+  }'
+```
+  </Tab>
+
+  <Tab title="URI">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ingest_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_uri_artifact_async",
+      "input": {
+        "type": "uri",
+        "value": "https://example.com/"
+      },
+      "metadata": {
+        "file_name": "example.html",
+        "source": "docs"
+      }
+    }
+  }'
+```
+  </Tab>
+</Tabs>
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{ "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7" }
+```
+</Accordion>
+
+Consultar estado:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async/{task_id}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "task_id": "f04e0709-131a-4a9d-b884-78872a4e63d7",
+  "task_status": "PENDING",
+  "task_result": null
+}
+```
+</Accordion>
+
+## Listar artefactos
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection=docs_examples" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "object": "ingest.document",
+      "artifact": "docs_file_artifact",
+      "doc_metadata": {
+        "file_name": "docs_file_artifact.txt",
+        "artifact_id": "docs_file_artifact",
+        "collection": "docs_examples"
+      }
+    }
+  ]
+}
+```
+</Accordion>
+
+## Recuperar contenido
+
+### Contenido completo
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/content" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context_filter": {
+      "collection": "docs_examples",
+      "artifacts": ["docs_file_artifact"]
+    }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "artifact_id": "docs_file_artifact",
+      "content": "Hello from file artifact.\n\n"
+    }
+  ]
+}
+```
+</Accordion>
+
+### Contenido en fragmentos
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context_filter": {
+      "collection": "docs_examples",
+      "artifacts": ["docs_file_artifact"]
+    },
+    "max_tokens": 50
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "artifact_id": "docs_file_artifact",
+      "content": [
+        { "type": "source", "sources": [{ "object": "context.chunk", "id": "c5f20f0f-56e6-44e0-99e8-0d4ff4bb87eb" }] },
+        { "type": "text", "text": "**Context Information**:\nBelow is important information..." }
+      ]
+    }
+  ]
+}
+```
+</Accordion>
+
+## Eliminar artefactos
+
+Eliminar (síncrono):
+
+```bash
+curl -i -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "docs_examples",
+    "artifact": "docs_text_artifact_async_pending"
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/2 200
+
+null
+```
+</Accordion>
+
+Eliminar (asíncrono):
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "delete_body": {
+      "collection": "docs_examples",
+      "artifact": "docs_text_artifact_async"
+    }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{ "task_id": "2d48e74f-3eff-474e-b338-a931390ac218" }
+```
+</Accordion>
+
+Consultar estado:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async/{task_id}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "task_id": "2d48e74f-3eff-474e-b338-a931390ac218",
+  "task_status": "PENDING",
+  "task_result": null
+}
+```
+</Accordion>
+
+<Tip>
+  Sigue consultando hasta que `task_status` sea `"SUCCESS"` o `"FAILURE"`.
+  Si falla mientras el índice se completa, reintenta luego.
+</Tip>
+
+## Errores y casos límite
+
+- **401/403**: token ausente o permisos insuficientes.
+- **404**: colección o artefacto no encontrado.
+- **409**: tarea de ingesta/eliminación ya en progreso.
+- **413**: entrada demasiado grande para una ingesta.
+- **422**: cuerpo de la petición inválido.
+- **Fallos asíncronos**: cuando `task_status` es `FAILURE`, revisa `task_result` (por ejemplo `routing_key_error: "ingest.failed"` o `delete.failed`) y reintenta tras corregir la entrada.

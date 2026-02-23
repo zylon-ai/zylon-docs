@@ -1,0 +1,62 @@
+---
+title: "Database Query tool"
+description: "Query a SQL database from natural language."
+---
+
+Use Database Query when you want the assistant to translate natural language into SQL over a configured database connection.
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+- A database connection string you can share with Zylon.
+
+## Requirements
+
+- Tool spec: `{ "name": "database_query", "type": "database_query_v1" }`
+- `tool_context`: one `sql_database` context with `connection_string`
+
+## Basic request and response
+
+This example validates a request that enables database query. For validation, it sets `tool_choice` to `none` so the validator doesn’t try to connect.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What were total Q1 subscriptions by plan?" }
+    ],
+    "tools": [
+      { "name": "database_query", "type": "database_query_v1" }
+    ],
+    "tool_choice": { "type": "none" },
+    "tool_context": [
+      {
+        "type": "sql_database",
+        "connection_string": "postgresql://readonly:password@db.example.com:5432/analytics",
+        "schemas": ["public"],
+        "ssl": true
+      }
+    ]
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages` and set `tool_choice` to `{ \"type\": \"auto\" }`.
+
+## Tips
+
+- Use a read-only database user.
+- Limit schemas to reduce inspection time.
+
+## Next steps
+
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)

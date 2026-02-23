@@ -1,0 +1,48 @@
+---
+title: "Confluence Integration"
+description: "Read and sync Confluence content into projects."
+---
+
+Confluence integrations pull pages and spaces into your workspace so they can be used as artifacts. **You must enable Confluence at the instance level first**—see the operator guide: [Confluence integration setup](/en/operator-manual/knowledge-base/confluence).
+
+If the integration needs OAuth, use the login endpoints in [OpenID & OAuth](/en/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+
+## Basic request and response
+
+Fetch integration configuration with `GET /v1/app/integration/confluence/{integrationId}/config`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "space_key": "SUP",
+  "base_url": "https://confluence.auroralabs.com"
+}
+```
+</Accordion>
+
+## Start an ingest sync
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 42,
+  "integration_item_count": 120
+}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **403**: integration not enabled or missing permissions.
+- **404**: integration ID not found.

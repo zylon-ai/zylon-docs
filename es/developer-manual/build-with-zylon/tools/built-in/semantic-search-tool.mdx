@@ -1,0 +1,64 @@
+---
+title: "Herramienta de búsqueda semántica"
+description: "Busca en artefactos ingeridos durante un mensaje."
+---
+
+Usa Semantic Search cuando quieras recuperar información de artefactos ingeridos (documentos, notas, PDFs, HTML, etc.).
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Artefactos ingeridos para buscar.
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`.
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida una petición que habilita Semantic Search:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What shipped in the latest billing dashboard release?" }
+    ],
+    "tools": [
+      { "name": "semantic_search", "type": "semantic_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
+      }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
+
+## Consejos
+
+- Mantén `tool_context` acotado.
+- Si los resultados no son relevantes, ingesta texto más depurado.
+
+## Próximos pasos
+
+- Ingesta de artefactos: [Artefactos](/es/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

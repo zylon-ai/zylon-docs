@@ -1,0 +1,122 @@
+---
+title: "Embeddings"
+description: "Generate embeddings for semantic search and similarity."
+---
+
+Embeddings turn text into high‑dimensional vectors. Use them for semantic search, clustering, or similarity scoring across your own data.
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
+
+## Before you start
+
+- **Order matters**: `data[index]` aligns with your input order.
+- **Store the vectors** in your database or vector index to power search and similarity.
+- **Use consistent preprocessing** (same casing and formatting) for better similarity results.
+
+## Create embeddings
+
+Generate embeddings with `POST /embeddings`. The `input` can be a single string or an array.
+
+{/* <!-- ADDED FOR CLARITY --> */}
+| `input` shape | When to use |
+| --- | --- |
+| Single string | One text at a time. |
+| Array of strings | Batch inputs and keep output order. |
+
+<Tabs>
+  <Tab title="Single input">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/embeddings" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": "Summarize Q1 support trends in one vector."
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "index": 0,
+      "object": "embedding",
+      "embedding": [
+        0.697265625,
+        0.5078125,
+        0.01129150390625,
+        0.244873046875,
+        -0.285888671875,
+        0.058135986328125,
+        0.01922607421875,
+        -0.11431884765625
+      ]
+    }
+  ]
+}
+```
+</Accordion>
+  </Tab>
+
+  <Tab title="Batch input">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/embeddings" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": [
+      "Billing issues drove 38% of cases.",
+      "Priority bugs were resolved within 48 hours."
+    ]
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Example response">
+```json
+{
+  "object": "list",
+  "model": "private-gpt",
+  "data": [
+    {
+      "index": 0,
+      "object": "embedding",
+      "embedding": [
+        -0.435546875,
+        -0.49169921875,
+        -0.48876953125,
+        1.41015625,
+        0.11114501953125,
+        -1.2626953125
+      ]
+    },
+    {
+      "index": 1,
+      "object": "embedding",
+      "embedding": [
+        -0.6748046875,
+        0.242431640625,
+        -0.31396484375,
+        0.53955078125,
+        -0.84716796875,
+        -0.006961822509765625
+      ]
+    }
+  ]
+}
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+## Errors and edge cases
+
+- **401/403**: token missing or invalid.
+- **413**: input too large.
+- **400**: invalid JSON or input type.

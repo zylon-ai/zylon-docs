@@ -1,0 +1,129 @@
+---
+title: "Integración Filesystem"
+description: "Sincroniza archivos desde un sistema de archivos compartido al espacio de trabajo."
+---
+
+La integración de Filesystem conecta un directorio compartido con el espacio de trabajo. **Habilita el conector primero** en la guía del operador: [Configuración de Filesystem](/es/operator-manual/knowledge-base/file-system).
+
+## Solicitud básica y respuesta
+
+Crea una integración de Filesystem con `POST /v1/app/integration/filesystem`.
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_filesync",
+    "password": "fs_token_123"
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "fs_9f8e7d6c5b4a3c2d",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "FileSystem",
+  "created_at": "2026-02-08T14:10:00Z",
+  "updated_at": "2026-02-08T14:10:00Z"
+}
+```
+</Accordion>
+
+## Actualizar credenciales
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "svc_filesync",
+    "password": "fs_token_456"
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "fs_9f8e7d6c5b4a3c2d",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "FileSystem",
+  "created_at": "2026-02-08T14:10:00Z",
+  "updated_at": "2026-02-08T15:02:00Z"
+}
+```
+</Accordion>
+
+## Obtener configuración
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "path": "/mnt/shared/support"
+}
+```
+</Accordion>
+
+## Validar credenciales
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/filesystem/validate?username=svc_filesync&password=fs_token_456" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+true
+```
+</Accordion>
+
+## Listar archivos
+
+```bash
+curl "https://{BASE_URL}/v1/app/integration/filesystem/files?integrationId=fs_9f8e7d6c5b4a3c2d" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "path": "/mnt/shared/support/weekly-brief.pdf",
+    "name": "weekly-brief.pdf",
+    "size": 287104,
+    "updated_at": "2026-02-07T19:22:10Z"
+  }
+]
+```
+</Accordion>
+
+## Iniciar sincronización
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "type": "sync_started",
+  "current_artifact_count": 12,
+  "integration_item_count": 48
+}
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **403**: conector no habilitado o sin permisos.
+- **400**: credenciales inválidas.
+- **404**: integración no encontrada.

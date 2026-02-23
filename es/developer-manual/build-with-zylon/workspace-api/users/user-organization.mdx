@@ -1,0 +1,51 @@
+---
+title: "Organizaciones"
+description: "Lista y actualiza organizaciones dentro del espacio de trabajo."
+---
+
+Las organizaciones son el contenedor principal de usuarios y proyectos. Usa estos endpoints para listar organizaciones visibles y actualizar la configuración a nivel de organización.
+
+## Solicitud básica y respuesta
+
+Lista organizaciones visibles con `GET /v1/app/organization`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "name": "Aurora Labs",
+    "context": "Enterprise R&D and analytics.",
+    "email_regex": ".*@auroralabs.com"
+  }
+]
+```
+</Accordion>
+
+## Actualizar configuración de organización
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Aurora Labs",
+    "context": "Private AI platform for product and support teams.",
+    "email_regex": ".*@auroralabs.com"
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 200 OK
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **401/403**: token inválido o ausente.
+- **400**: regex o cuerpo de la petición inválido.

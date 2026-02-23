@@ -1,0 +1,62 @@
+---
+title: "Herramienta de consulta a base de datos"
+description: "Consulta una base SQL desde lenguaje natural."
+---
+
+Usa Database Query para traducir lenguaje natural a SQL sobre una conexión configurada.
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- Una cadena de conexión a la base de datos.
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "database_query", "type": "database_query_v1" }`
+- `tool_context`: un contexto `sql_database` con `connection_string`
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida el cuerpo de la petición y usa `tool_choice: none` para no conectar durante la validación.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What were total Q1 subscriptions by plan?" }
+    ],
+    "tools": [
+      { "name": "database_query", "type": "database_query_v1" }
+    ],
+    "tool_choice": { "type": "none" },
+    "tool_context": [
+      {
+        "type": "sql_database",
+        "connection_string": "postgresql://readonly:password@db.example.com:5432/analytics",
+        "schemas": ["public"],
+        "ssl": true
+      }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages` y cambia `tool_choice` a `{ \"type\": \"auto\" }`.
+
+## Consejos
+
+- Usa un usuario de solo lectura.
+- Limita los esquemas (`schemas`) para acelerar la inspección.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

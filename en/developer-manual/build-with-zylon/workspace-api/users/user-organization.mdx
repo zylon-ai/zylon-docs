@@ -1,0 +1,51 @@
+---
+title: "Organizations"
+description: "List and update organizations within your workspace."
+---
+
+Organizations are the top-level container for users and projects. Use these endpoints to list orgs visible to your account and update org-level settings.
+
+## Basic request and response
+
+List organizations visible to your account with `GET /v1/app/organization`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+[
+  {
+    "name": "Aurora Labs",
+    "context": "Enterprise R&D and analytics.",
+    "email_regex": ".*@auroralabs.com"
+  }
+]
+```
+</Accordion>
+
+## Update organization settings
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Aurora Labs",
+    "context": "Private AI platform for product and support teams.",
+    "email_regex": ".*@auroralabs.com"
+  }'
+```
+
+<Accordion title="Example response">
+```text
+HTTP/1.1 200 OK
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **401/403**: missing or invalid API token.
+- **400**: invalid regex or payload shape.

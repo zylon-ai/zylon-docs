@@ -1,0 +1,149 @@
+---
+title: "Incidencias"
+description: "Crea y gestiona incidencias comunicadas por usuarios."
+---
+
+Las incidencias (`issues`) permiten comunicar problemas con respuestas o contenido. Usa estos endpoints para listar, crear, actualizar y cerrar incidencias.
+
+## Solicitud básica y respuesta
+
+Lista incidencias con `GET /v1/app/issue` antes de crear o actualizar.
+
+```bash
+curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "id": "issue_5c4b3a2d1e0f9a8b",
+      "issue_number": 1842,
+      "description": "Response missed the attached policy details.",
+      "resource_type": "Thread",
+      "type": "NoContextUsed",
+      "state": "NotReviewed",
+      "is_read": false,
+      "created_at": "2026-02-08T14:55:10Z",
+      "updated_at": "2026-02-08T14:55:10Z",
+      "created_by": {
+        "id": "user_4b7c2a1d9e5f3c8b",
+        "org_id": "org_2f3a9d1c7b5e4a8f",
+        "account_id": "acct_6c8a1f3b2d4e5f7a",
+        "name": "Sasha Patel",
+        "email": "sasha@auroralabs.com",
+        "state": "Active",
+        "roles": ["AppAdmin"],
+        "created_at": "2026-02-08T14:12:45Z"
+      }
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+## Crear una incidencia
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/issue" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Response missed the attached policy details.",
+    "resource_type": "Thread",
+    "type": "NoContextUsed",
+    "anonymous": false
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "NotReviewed",
+  "is_read": false,
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T14:55:10Z",
+  "created_by": {
+    "id": "user_4b7c2a1d9e5f3c8b",
+    "org_id": "org_2f3a9d1c7b5e4a8f",
+    "account_id": "acct_6c8a1f3b2d4e5f7a",
+    "name": "Sasha Patel",
+    "email": "sasha@auroralabs.com",
+    "state": "Active",
+    "roles": ["AppAdmin"],
+    "created_at": "2026-02-08T14:12:45Z"
+  }
+}
+```
+</Accordion>
+
+## Obtener o actualizar una incidencia
+
+<Tabs>
+  <Tab title="Obtener incidencia">
+```bash
+curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "state": "NotReviewed"
+}
+```
+</Accordion>
+  </Tab>
+  <Tab title="Actualizar incidencia">
+```bash
+curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "state": "InReview",
+    "is_read": true
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "state": "InReview",
+  "is_read": true
+}
+```
+</Accordion>
+  </Tab>
+</Tabs>
+
+## Eliminar una incidencia
+
+```bash
+curl -X DELETE "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 204 No Content
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **404**: incidencia no encontrada.
+- **400**: estado inválido.

@@ -1,0 +1,59 @@
+---
+title: "Custom tools"
+description: "Define your own tools using JSON Schema."
+---
+
+Custom tools let you define a tool interface (name + JSON schema) and let the assistant choose when to call it. When it calls your tool, it returns a `tool_use` content block with structured `input`.
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+
+## Requirements
+
+In the `tools` array, provide:
+
+- `name`: unique tool name
+- `description`: what the tool does
+- `inputSchema`: JSON Schema describing the tool input
+
+## Basic request and response
+
+This example validates a request that defines a tiny calculator tool and forces its use.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Add 5 and 7." }
+    ],
+    "tools": [
+      {
+        "name": "simple_calculator",
+        "description": "Add two numbers.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "a": { "type": "number" },
+            "b": { "type": "number" }
+          },
+          "required": ["a", "b"]
+        }
+      }
+    ],
+    "tool_choice": { "type": "tool", "name": "simple_calculator" }
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`. When the assistant returns a `tool_use` block, execute your tool and include a `tool_result` block in the next message.

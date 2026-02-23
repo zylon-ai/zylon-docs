@@ -1,0 +1,79 @@
+---
+title: "Overview"
+description: "API for automating and managing Zylon Workspace."
+---
+
+The Workspace API lets you programmatically manage **everything in Zylon Workspace**—organizations, users, projects, chats, artifacts, integrations, and reporting. Use it to automate admin workflows or integrate Zylon into your internal systems.
+
+## Base URL
+
+All Workspace endpoints live under:
+
+```
+https://{BASE_URL}/v1
+```
+
+## Core concepts
+
+{/* <!-- RESTRUCTURED --> */}
+| Concept | Meaning |
+| --- | --- |
+| **Account** | The identity record that authenticates into Zylon. One account can belong to multiple organizations. |
+| **User** | The org-specific representation of an account. An account can have **multiple users**, one per organization. |
+| **Artifact** | A persisted piece of knowledge that can be retrieved in chats and tools. |
+
+This model supports multi‑org setups where the same person can be a member of multiple workspaces with different roles.
+
+## Pagination
+
+Pagination is a shared model across the Workspace API. List endpoints return a page envelope with cursors:
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Pagination envelope example">
+```json
+{
+  "data": [],
+  "next_cursor": "cursor_next",
+  "previous_cursor": "cursor_prev",
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 0
+}
+```
+</Accordion>
+
+Use `page`, `page_size`, `after`, `before`, `first`, `last`, and `total_count` when they’re available on the endpoint.
+
+## Workspace API sections
+
+<CardGroup cols={3}>
+  <Card title="General" icon="chart-line" href="/en/developer-manual/build-with-zylon/workspace-api/general/overview">
+    Analytics, issues, audits, search, and system status endpoints.
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/en/developer-manual/build-with-zylon/workspace-api/authentication/openid">
+    SSO login flows, account auth, and API tokens.
+  </Card>
+
+  <Card title="Users" icon="users" href="/en/developer-manual/build-with-zylon/workspace-api/users/user">
+    Create, update, and manage user access and org membership.
+  </Card>
+
+  <Card title="Projects" icon="folder" href="/en/developer-manual/build-with-zylon/workspace-api/projects/project">
+    Provision projects, manage membership, and control visibility.
+  </Card>
+
+  <Card title="Chats" icon="message" href="/en/developer-manual/build-with-zylon/workspace-api/chats/threads">
+    Create threads, run interactions, and stream responses.
+  </Card>
+
+  <Card title="Content" icon="file" href="/en/developer-manual/build-with-zylon/workspace-api/content/artifacts">
+    Manage artifacts and integrations like Confluence, SharePoint, Filesystem, and Claromentis.
+  </Card>
+</CardGroup>
+
+## Errors and edge cases
+
+- **401/403**: token missing or insufficient permissions.
+- **404**: resource IDs are invalid or deleted.
+- **Redirect endpoints**: login/callback routes return `302` responses intended for browsers.

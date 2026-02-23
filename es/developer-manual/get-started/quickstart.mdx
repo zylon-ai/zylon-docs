@@ -1,0 +1,233 @@
+---
+title: "Guía rápida"
+description: "Haz tu primera llamada a la API de Zylon en menos de 2 minutos."
+---
+
+Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatizar organizaciones y proyectos.
+
+## Requisitos previos
+
+- Un token de API. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+- Para la Workspace API: una cuenta y una organización creadas en el Workspace.
+
+## Mi primera llamada a Zylon
+
+<Tabs>
+  <Tab title="ZylonGPT API">
+<Steps>
+  <Step title="Envía tu primer mensaje">
+    ```bash
+    curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "default",
+        "max_tokens": 64,
+        "messages": [
+          { "role": "user", "content": "Write a one-sentence product description for Zylon." }
+        ]
+      }'
+    ```
+
+    Ejemplo de respuesta (tu `id` y timestamps variarán):
+
+    ```json
+    {
+      "id": "msg_d88cec8ffdf344dcafddb72026ead6be",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "start_timestamp": "2026-02-06T13:16:10.412540Z",
+          "stop_timestamp": "2026-02-06T13:16:10.543884Z",
+          "text": "Zylon is a private AI platform for building secure, tool-using assistants and workflows."
+        }
+      ],
+      "model": "private-gpt",
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 93,
+        "output_tokens": 18
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Streaming (opcional)">
+    Establece `stream: true` para recibir **Server-Sent Events (SSE)**.
+
+    ```bash
+    curl -N -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -H "Accept: text/event-stream" \
+      -d '{
+        "model": "default",
+        "stream": true,
+        "max_tokens": 32,
+        "messages": [
+          { "role": "user", "content": "Give a three-word tagline for a productivity app." }
+        ]
+      }'
+    ```
+
+    Ejemplo de eventos (recortado):
+
+    ```text
+    event: message_start
+    data: {"type":"message_start","message":{"id":"msg_b55d29718361410bad4f80f8f67c6b72","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+    event: content_block_delta
+    data: {"type":"content_block_delta","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","delta":{"type":"text_delta","text":"Focus"}}
+
+    event: message_stop
+    data: {"type":"message_stop"}
+    ```
+  </Step>
+</Steps>
+  </Tab>
+
+  <Tab title="Workspace API">
+<Steps>
+  <Step title="Inicia sesión">
+    ```bash
+    curl -X POST "https://{BASE_URL}/v1/auth/login" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "email": "sasha@auroralabs.com",
+        "password": "S3cure!Passw0rd"
+      }'
+    ```
+
+    Ejemplo de respuesta:
+
+    ```json
+    {
+      "id": "acct_6c8a1f3b2d4e5f7a",
+      "email": "sasha@auroralabs.com",
+      "provider": "Credentials",
+      "roles": ["AppAdmin"]
+    }
+    ```
+  </Step>
+
+  <Step title="Crea un proyecto">
+    ```bash
+    curl -X POST "https://{BASE_URL}/v1/app/project" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Customer Insights",
+        "goal": "Summarize weekly support trends.",
+        "deadline": 1709337600,
+        "visibility": "Private"
+      }'
+    ```
+
+    Ejemplo de respuesta:
+
+    ```json
+    {
+      "id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Customer Insights",
+      "visibility": "Private"
+    }
+    ```
+  </Step>
+
+  <Step title="Sube un artefacto">
+    ```bash
+    curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "type": "InlineText",
+        "source": "User",
+        "name": "Q1 Support Summary",
+        "props": {
+          "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
+        }
+      }'
+    ```
+
+    Ejemplo de respuesta:
+
+    ```json
+    {
+      "id": "artifact_2b4d6f8a1c3e5a7b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Q1 Support Summary",
+      "type": "InlineText",
+      "ingest_status": "NotApplicable"
+    }
+    ```
+  </Step>
+
+  <Step title="Crea un hilo y consulta el artefacto">
+    ```bash
+    curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/thread" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Weekly Support Brief",
+        "visibility": "Private"
+      }'
+    ```
+
+    ```bash
+    curl -X POST "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "thread_id": "thread_3f2a1c4d5b6e7f8a",
+        "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+        "pgpt": {
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                { "type": "text", "text": "Summarize the artifact in three bullets." }
+              ]
+            }
+          ],
+          "max_tokens": 96,
+          "temperature": 0.2
+        }
+      }'
+    ```
+
+    Ejemplo de respuesta:
+
+    ```json
+    {
+      "id": "inter_5a7b9c1d3e5f7a9b",
+      "state": "Completed"
+    }
+    ```
+  </Step>
+</Steps>
+  </Tab>
+</Tabs>
+
+## Próximos pasos
+
+<CardGroup cols={2}>
+  <Card title="Visión general de ZylonGPT API" icon="sparkles" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/overview">
+    Aprende sobre Mensajes, Artefactos y Herramientas.
+  </Card>
+
+  <Card title="Visión general de Workspace API" icon="building" href="/es/developer-manual/build-with-zylon/workspace-api/overview">
+    Gestiona organizaciones, usuarios, proyectos e integraciones.
+  </Card>
+</CardGroup>
+
+## Solución de problemas
+
+- **401/403**: token inválido o caducado. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/api/gpt/v1/`.
+- **400 (model not found)**: usa `"model": "default"`.
+- **405**: método incorrecto. `/messages` es `POST`.

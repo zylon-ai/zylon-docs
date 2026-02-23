@@ -1,0 +1,71 @@
+---
+title: "Chat"
+description: "Ejecuta chats puntuales sin crear un hilo."
+---
+
+Los endpoints de Chat permiten enviar solicitudes puntuales usando el mismo formato de mensajes, sin crear un hilo ni un registro de interacción.
+
+## Solicitud básica y respuesta
+
+Envía una solicitud puntual con `POST /v1/app/chat`.
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_5f2e1d3c4b6a7c8d",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
+  ]
+}
+```
+</Accordion>
+
+## Validar un chat
+
+```bash
+curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 204 No Content
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **400**: esquema inválido (usa `/chat/validate`).
+- **413**: cuerpo de la petición demasiado grande.

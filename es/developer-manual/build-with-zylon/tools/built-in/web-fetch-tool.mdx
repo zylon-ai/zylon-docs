@@ -1,0 +1,51 @@
+---
+title: "Herramienta Web Fetch"
+description: "Extrae contenido de una URL en el mensaje."
+---
+
+Usa Web Fetch cuando necesitas que el asistente recupere contenido de una URL.
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "web_extract", "type": "web_extract_v1" }`
+- No requiere `tool_context`
+
+## Solicitud y respuesta básicas
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Summarize https://example.com/" }
+    ],
+    "tools": [
+      { "name": "web_extract", "type": "web_extract_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
+
+## Consejos
+
+- La URL debe aparecer en el mensaje.
+- Mantén el prompt conciso.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

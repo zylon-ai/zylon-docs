@@ -1,0 +1,64 @@
+---
+title: "Semantic Search tool"
+description: "Search your ingested artifacts for relevant chunks during a message."
+---
+
+Use Semantic Search when you want the assistant to retrieve information from previously ingested artifacts (documents, notes, PDFs, HTML, and more).
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Ingested artifacts to search (see [Artifacts](/en/developer-manual/build-with-zylon/working-with-artifacts)).
+
+## Requirements
+
+- Tool spec: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
+- `tool_context`: at least one `ingested_artifact` with a `context_filter`
+
+## Basic request and response
+
+This example validates a request that enables semantic search over a collection:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What shipped in the latest billing dashboard release?" }
+    ],
+    "tools": [
+      { "name": "semantic_search", "type": "semantic_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
+      }
+    ]
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`.
+
+## Tips
+
+- Keep `tool_context` narrow (use a single collection and the smallest set of artifacts you need).
+- If you’re not getting relevant results, ingest cleaner source text (or split large documents into smaller artifacts).
+
+## Next steps
+
+- Ingest and manage artifacts: [Artifacts](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)

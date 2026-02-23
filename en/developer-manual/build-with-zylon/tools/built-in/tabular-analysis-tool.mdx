@@ -1,0 +1,64 @@
+---
+title: "Tabular Analysis tool"
+description: "Analyze ingested tabular artifacts during a message."
+---
+
+Use Tabular Analysis when you want the assistant to perform calculations over tabular data (CSV, TSV, or tables extracted from documents).
+
+## Prerequisites
+
+- An API token. See [Token Management](/en/api-reference/token-management).
+- Ingested tabular artifacts to analyze.
+
+## Requirements
+
+- Tool spec: `{ "name": "tabular_analysis", "type": "tabular_analysis_v1" }`
+- `tool_context`: at least one `ingested_artifact` with a `context_filter`
+
+## Basic request and response
+
+This example validates a request that enables tabular analysis over a collection:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What is the average of the Q1 revenue column?" }
+    ],
+    "tools": [
+      { "name": "tabular_analysis", "type": "tabular_analysis_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": {
+          "collection": "docs_examples",
+          "artifacts": ["docs_file_artifact"]
+        }
+      }
+    ]
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`.
+
+## Tips
+
+- Ensure the artifact content is a clean table (CSV/TSV is best).
+- Keep the table small enough for quick analysis.
+
+## Next steps
+
+- Ingest and manage artifacts: [Artifacts](/en/developer-manual/build-with-zylon/working-with-artifacts)
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)

@@ -1,0 +1,108 @@
+---
+title: "Analíticas"
+description: "Mide totales, rankings y series temporales."
+---
+
+Los endpoints de analíticas resumen cómo se usa el espacio de trabajo en proyectos y usuarios.
+
+## Solicitud básica y respuesta
+
+Empieza con los totales desde `GET /v1/app/organization/analytics/totals`.
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization/analytics/totals" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "projects_total": 12,
+  "threads_total": 184,
+  "interactions_total": 1420,
+  "agent_flows_total": 36,
+  "uploaded_artifacts_total": 87
+}
+```
+</Accordion>
+
+## Ranking de usuarios activos
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "user": {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    },
+    "interactions_created": 46,
+    "agent_flows_created": 4
+  }
+]
+```
+</Accordion>
+
+## Ranking de proyectos activos
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "project": {
+      "id": "proj_7a5c3e1b9d2f4a6c",
+      "name": "Customer Insights",
+      "goal": "Summarize weekly support trends.",
+      "deadline": "2026-03-01T00:00:00Z",
+      "visibility": "Private",
+      "member_count": 4,
+      "default_member_role": "Editor",
+      "default_role_enabled": true,
+      "project_context": "Support analytics for Q1.",
+      "answer_context": "Use approved templates.",
+      "is_pinned": true
+    },
+    "interactions_created": 112,
+    "agent_flows_created": 12
+  }
+]
+```
+</Accordion>
+
+## Serie de tiempo
+
+```bash
+curl "https://{BASE_URL}/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  { "date": "2026-02-02", "value": 18 },
+  { "date": "2026-02-03", "value": 25 },
+  { "date": "2026-02-04", "value": 21 }
+]
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **400**: rango de fechas o tipo inválido.
+- **403**: permisos insuficientes.

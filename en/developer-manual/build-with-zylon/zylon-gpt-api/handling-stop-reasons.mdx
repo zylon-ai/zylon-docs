@@ -1,0 +1,45 @@
+---
+title: "Handling stop reasons"
+description: "Know why a response stopped and how to handle ZylonGPT errors."
+---
+
+When you call the Messages endpoint, each response includes a `stop_reason` that explains **why the model stopped**. Handling this field correctly is key to building reliable apps.
+
+For details about `stop_reason` in the response schema, see [Messages](/en/developer-manual/build-with-zylon/working-with-messages).
+
+## What is `stop_reason`?
+
+`stop_reason` is present on every **successful** response. It doesn’t mean there was an error—it tells you how the model completed its response.
+
+Example response (truncated):
+
+```json
+{
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Here’s a concise update..." }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null
+}
+```
+
+## Stop reason values
+
+When a request fails, the stop reason matches one of the error values below and the response is returned as an error envelope.
+
+| stop_reason | Why it happens | What to do |
+| --- | --- | --- |
+| `end_turn` | The model completed its response normally. Sometimes you’ll see an empty response after tool execution if you send extra user text with a `tool_result`. | Treat as complete. If empty, send only the `tool_result` block, or add a new user message like “Please continue.” |
+| `max_tokens` | The response hit your `max_tokens` limit. | Increase `max_tokens` or ask the model to continue. |
+| `stop_sequence` | The model generated one of your custom stop sequences. | Treat output as complete at the boundary or adjust/remove the sequence. |
+| `tool_use` | The model wants you to run a tool. | Execute the tool and return a `tool_result` block. |
+| `pause_turn` | The model intentionally paused. | Resume the conversation when ready. |
+| `refusal` | The model refused for safety or policy reasons. | Surface the refusal or re‑prompt with allowed content. |
+| `invalid_request_error` | The request inputs are invalid (e.g., artifacts not fully ingested, missing tool config, invalid IDs). | Fix inputs and retry. |
+| `permission_error` | The token lacks access to the referenced resource. | Check org/project membership and artifact visibility. |
+| `request_too_large` | Input size or token count exceeds model limits. | Reduce input, chunk content, or lower context size. |
+| `api_error` | An internal server error occurred. | Retry with exponential backoff. |
+| `overloaded_error` | The system is temporarily overloaded. | Retry with backoff and jitter. |

@@ -227,6 +227,7 @@
                   "en/operator-manual/installation/online",
                   "en/operator-manual/installation/semi-airgap",
                   "en/operator-manual/installation/airgap",
+                  "en/operator-manual/installation/legacy",
                   "en/operator-manual/installation/uninstall"
                 ]
               },
@@ -513,6 +514,7 @@
                   "es/operator-manual/installation/online",
                   "es/operator-manual/installation/semi-airgap",
                   "es/operator-manual/installation/airgap",
+                  "es/operator-manual/installation/legacy",
                   "es/operator-manual/installation/uninstall"
                 ]
               },

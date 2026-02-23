@@ -1,57 +1,57 @@
 ---
-title: "Migration Guide: 1.53.0"
-description: "Breaking changes and migration steps for upgrading to newer versions of Zylon starting with 1.53.0"
+title: "Guía de Migración: 1.53.0"
+description: "Cambios importantes y pasos de migración para actualizar a versiones más recientes de Zylon comenzando con 1.53.0"
 ---
 
 <Warning>
-  This guide is **required** before upgrading to Zylon 1.53.0 or any later version. Skipping these steps will cause Triton to fail to boot.
+  Esta guía es **obligatoria** antes de actualizar a Zylon 1.53.0 o cualquier versión posterior. Omitir estos pasos causará que Triton falle al arrancar.
 </Warning>
 
-## What changed
+## Qué cambió
 
-Zylon 1.53.0 introduces two major platform changes that affect how you install and update your instance:
+Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cómo instalas y actualizas tu instancia:
 
-**All dependencies are bundled as part of the version**: Starting with 1.53.0, each Zylon version includes its own bundled dependencies, including the Apt packages, binaries, and drivers required to run that version. This means that when you install a specific Zylon version, you get the exact dependencies needed for that version without relying on the system's global state.
+**Todas las dependencias están incluidas como parte de la versión**: A partir de 1.53.0, cada versión de Zylon incluye sus propias dependencias empaquetadas, incluyendo los paquetes Apt, binarios y controladores necesarios para ejecutar esa versión. Esto significa que cuando instalas una versión específica de Zylon, obtienes las dependencias exactas necesarias para esa versión sin depender del estado global del sistema.
 
-**New version, new requirements**: Zylon 1.53.0 requires CUDA 13.0, which is a significant change from previous versions. During the upgrade process, the CLI will automatically handle the CUDA update. This will be required to newer versions, so we decided to make this breaking change now to avoid a more disruptive upgrade later on.
-
----
-
-## Before you begin
-
-- Take a [backup of your instance](/en/operator-manual/operations/backup) before starting.
-- Plan for approximately **45–60 minutes** of total upgrade time.
-- Expect **~35 minutes of GPU downtime** during which inference will not be available.
-- Notify your users before starting — the system will be partially unavailable.
+**Nueva versión, nuevos requisitos**: Zylon 1.53.0 requiere CUDA 13.0, que es un cambio significativo respecto a versiones anteriores. Durante el proceso de actualización, el CLI manejará automáticamente la actualización de CUDA. Esto será requerido para versiones más recientes, por lo que decidimos hacer este cambio importante ahora para evitar una actualización más disruptiva más adelante.
 
 ---
 
-## Frequently asked questions
+## Antes de comenzar
+
+- Realiza una [copia de seguridad de tu instancia](/es/operator-manual/operations/backup) antes de comenzar.
+- Planifica aproximadamente **45–60 minutos** de tiempo total de actualización.
+- Espera **~35 minutos de tiempo de inactividad de GPU** durante el cual la inferencia no estará disponible.
+- Notifica a tus usuarios antes de comenzar — el sistema estará parcialmente no disponible.
+
+---
+
+## Preguntas frecuentes
 
 <AccordionGroup>
-  <Accordion title="Can I still use 'sudo zylon-cli update'?">
-    The command still exists but no longer manages version upgrades as of 1.53.0. Always use `sudo zylon-cli install <version>` to install or upgrade Zylon going forward.
-    Now, this will act as `sudo zylon-cli sync`.
+  <Accordion title="¿Puedo seguir usando 'sudo zylon-cli update'?">
+    El comando sigue existiendo pero ya no gestiona las actualizaciones de versión a partir de 1.53.0. Siempre usa `sudo zylon-cli install <version>` para instalar o actualizar Zylon en adelante.
+    Ahora, esto actuará como `sudo zylon-cli sync`.
   </Accordion>
 
-  <Accordion title="Will my data be affected?">
-    No. The upgrade only affects the platform layer and drivers. Your knowledge base, chats, agent flows, and configuration are not touched. We still recommend taking a [backup](/en/operator-manual/operations/backup) as a precaution.
+  <Accordion title="¿Se verán afectados mis datos?">
+    No. La actualización solo afecta la capa de plataforma y los controladores. Tu base de conocimiento, chats, agent flows y configuración no se tocan. Aún así recomendamos realizar una [copia de seguridad](/es/operator-manual/operations/backup) como precaución.
   </Accordion>
 
-  <Accordion title="What happens if I skip the CLI self-update?">
-    **If Triton fails to boot after updating**, the most likely cause is that the CLI was not updated before running the install. You can confirm this by checking the CLI version:
+  <Accordion title="¿Qué sucede si omito la auto-actualización del CLI?">
+    **Si Triton falla al arrancar después de actualizar**, la causa más probable es que el CLI no se actualizó antes de ejecutar la instalación. Puedes confirmarlo verificando la versión del CLI:
 
     ```bash
     sudo zylon-cli version
     ```
 
-    And verifying if Triton is running:
+    Y verificando si Triton está ejecutándose:
 
     ```bash
     sudo kubectl get pods -A | grep triton
     ```
 
-    If the CLI is older than 2.0.0 and Triton is not showing 1/1 READY, then you likely ran into this issue. To recover your installation, simply run the CLI self-update followed by the install again:
+    Si el CLI es anterior a 2.0.0 y Triton no muestra 1/1 READY, entonces probablemente te encontraste con este problema. Para recuperar tu instalación, simplemente ejecuta la auto-actualización del CLI seguida de la instalación nuevamente:
 
     ```bash
     sudo zylon-cli self-update
@@ -62,35 +62,35 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
 
 ---
 
-## Migration steps
+## Pasos de migración
 
 <Steps>
-  <Step title="Upgrade the CLI">
-    Run the CLI self-update to get Zylon CLI 2.0.0:
+  <Step title="Actualizar el CLI">
+    Ejecuta la auto-actualización del CLI para obtener Zylon CLI 2.0.0:
 
     ```bash
     sudo zylon-cli self-update
     ```
 
-    Verify the version before continuing:
+    Verifica la versión antes de continuar:
 
     ```bash
     sudo zylon-cli version
-    # Expected: 2.0.0 or higher
+    # Esperado: 2.0.0 o superior
     ```
 
     <Warning>
-      Do not proceed to the next step until the CLI is on version 2.0.0. Installing 1.53.0 with an older CLI will result in a broken installation.
+      No procedas al siguiente paso hasta que el CLI esté en la versión 2.0.0. Instalar 1.53.0 con un CLI anterior resultará en una instalación defectuosa.
     </Warning>
   </Step>
 
-  <Step title="Install the new version">
-    Use the new `install` command to upgrade Zylon:
+  <Step title="Instalar la nueva versión">
+    Usa el nuevo comando `install` para actualizar Zylon:
 
     ```bash
     sudo zylon-cli install 1.5X.0
     ```
 
-    This will automatically handle the CUDA 13.0 driver upgrade as part of the installation.
+    Esto manejará automáticamente la actualización del controlador CUDA 13.0 como parte de la instalación.
   </Step>
 </Steps>

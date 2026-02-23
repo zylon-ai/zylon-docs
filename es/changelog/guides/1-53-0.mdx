@@ -91,6 +91,38 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
     sudo zylon-cli install 1.5X.0
     ```
 
-    Esto manejará automáticamente la actualización del controlador CUDA 13.0 como parte de la instalación.
+    Esto instalará automáticamente toda la plataforma Zylon, incluyendo las dependencias, y la nueva versión.
+    En versiones futuras, el CLI también manejará sus propias actualizaciones, por lo que ya no tendrás que ejecutar `self-update` por separado.
+    
+    <Warning>
+      La instalación se detendrá con un mensaje de error después de desinstalar los controladores NVIDIA existentes:
+      
+      ```
+      The current drivers were uninstalled successfully, please REBOOT the system 
+      and re-run the installation to complete the NVIDIA driver installation
+      ```
+      
+      **Este es un comportamiento esperado.** Procede al siguiente paso para reiniciar tu sistema, luego vuelve a ejecutar el comando de instalación.
+    </Warning>
+  </Step>
+
+  <Step title="Reiniciar el sistema">
+    Después de ver el mensaje de desinstalación, reinicia tu sistema:
+
+    ```bash
+    sudo reboot
+    ```
+
+    Esto es necesario antes de que los nuevos controladores CUDA 13.0 puedan ser instalados.
+  </Step>
+
+  <Step title="Completar la instalación">
+    Después de que el sistema se reinicie, ejecuta el comando de instalación nuevamente:
+
+    ```bash
+    sudo zylon-cli install 1.5X.0
+    ```
+
+    Esta vez, la instalación se completará exitosamente con los nuevos controladores CUDA 13.0.
   </Step>
 </Steps>

@@ -1,10 +1,11 @@
 ---
 title: "Primeros pasos en n8n"
 ---
-
 n8n es una herramienta de automatización de flujo de trabajo de código abierto que permite a los usuarios conectar diversas aplicaciones y servicios para automatizar tareas repetitivas.
 Por ello Zylon incluye una instancia de n8n preconfigurada y lista para usar, facilitando a los usuarios la creación y gestión de flujos de trabajo automatizados directamente desde la
 plataforma Zylon.
+
+![Integración de n8n MCP con Zylon](/images/user-manual/n8n-zylon.png)
 
 <Info>
 Si aún no has configurado n8n en tu instancia de Zylon, puedes consultar el manual de configuración de n8n [aquí](/es/operator-manual/configuration/n8n).
@@ -94,12 +95,19 @@ Para ello, en primer lugar se debe crear un flujo de trabajo en n8n que esté di
 
 ## Crear un flujo de trabajo en n8n para MCP
 
+<Warning>
+Por seguridad, configura todos los nodos MCP Server Trigger con autenticación **Bearer** y usa credenciales dedicadas con tokens robustos.
+</Warning>
+
 1. Nos dirigimos a la sección de Flujos de trabajo (Workflows) en n8n
 2. Creamos un nuevo flujo de trabajo
 3. Añadimos un nodo de tipo "MCP Server Trigger" al flujo de trabajo
-4. Copiamos la "Production URL" que se genera en el nodo MCP Server Trigger y configuramos el resto de opciones según nuestras necesidades
-5. Añadimos tools al nodo MCP Server Trigger para definir las acciones que queremos que el flujo de trabajo realice cuando sea llamado desde Zylon chat
-6. Vuelve a la página principal del workflow y activa el workflow haciendo clic en el botón de alternancia en la esquina superior derecha
+4. En **Authentication** seleccionamos **Bearer** y creamos o elegimos una credencial de tipo Bearer
+   - **Name**: Usa un nombre descriptivo (ej. Zylon MCP)
+   - **Bearer Token**: Genera un token largo y seguro y guárdalo; lo necesitarás luego para la conexión desde Zylon
+5. Copiamos la "Production URL" que se genera en el nodo MCP Server Trigger y configuramos el resto de opciones según nuestras necesidades
+6. Añadimos tools al nodo MCP Server Trigger para definir las acciones que queremos que el flujo de trabajo realice cuando sea llamado desde Zylon chat
+7. Vuelve a la página principal del workflow y activa el workflow haciendo clic en el botón de alternancia en la esquina superior derecha
 
 <Info>
 Más información sobre el nodo MCP Server Trigger en n8n se puede encontrar [aquí](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/).
@@ -115,6 +123,8 @@ Una vez que el flujo de trabajo esté configurado y probado en n8n, podemos llam
 4. Configuramos las siguientes opciones:
    - **Name**: Nombre descriptivo para el conector (ej. n8n MCP)
    - **MCP Server URL**: Pegamos la "Test URL" que copiamos del nodo MCP Server Trigger en n8n
+   - **Authentication**: Seleccionamos **Bearer**
+   - **Bearer Token**: Pegamos el token seguro que creamos en n8n para este conector
 5. Pulsamos en "Connect" (si da error, asegurarse de que el flujo de trabajo en n8n está activo)
 6. Nos dirigimos a la sección de chat y seleccionamos el conector MCP que acabamos de crear
 7. Ahora podemos enviar mensajes en el chat que llamarán al flujo de trabajo en n8n a través de MCP

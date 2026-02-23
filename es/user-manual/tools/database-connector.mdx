@@ -194,3 +194,45 @@ Los proyectos privados permiten experimentación o integraciones personales sin 
 - Las credenciales se almacenan de forma segura
 - El LLM solo puede acceder a datos permitidos por la configuración del conector
 - Las restricciones de esquema y tabla se aplican en el momento de la consulta
+
+---
+
+## Solución de problemas de conectividad con bases de datos
+
+Si tu conector de base de datos se queda cargando indefinidamente o da timeout, verifica la conectividad de red desde la máquina donde está instalado Zylon.
+
+### Probar la conexión
+
+Ejecuta este comando desde la máquina donde está instalado Zylon:
+
+```bash
+curl -v telnet://tu-servidor-db:puerto
+```
+
+### Interpretar resultados
+
+**Conexión exitosa:**
+```
+* Connected to tu-servidor-db (xxx.xxx.xxx.xxx) port xxxx
+```
+La conectividad de red funciona correctamente. Si los problemas persisten, contacta a soporte.
+
+**Timeout de conexión:**
+```
+* Failed to connect to tu-servidor-db port xxxx: Operation timed out
+```
+Problema de red detectado. Revisa reglas de firewall, security groups y listas de permitidos de IP.
+
+**Conexión rechazada:**
+```
+* Connection refused
+```
+El servidor de base de datos no está escuchando en ese puerto. Verifica que la base de datos esté en ejecución y configurada para aceptar conexiones externas.
+
+### Causas comunes
+
+- Firewall bloqueando tráfico saliente desde el host de Zylon
+- Security groups/ACLs bloqueando el puerto de la base de datos
+- Hostname o puerto incorrecto
+- Base de datos no aceptando conexiones desde la IP de Zylon
+---

@@ -1,0 +1,91 @@
+---
+title: "Primeros Pasos"
+description: "Elige tu modo de instalación según tus necesidades de seguridad y conectividad"
+---
+
+Zylon soporta tres modos de instalación. Elige según tu entorno de red y requisitos de seguridad.
+
+## Comparación Rápida
+
+|  | Online | Semi-Airgap | Full-Airgap |
+|---|--------|-------------|-------------|
+| **Tipo de Instalación** | Online | Online | Offline |
+| **Conectividad Operacional** | Completa | Restringida/Cero o Completa | Restringida/Cero o Completa |
+| **Caso de Uso** | Despliegues estándar | Acceso de red controlado | Instalación offline |
+| **Complejidad** | Simple | Moderada | Compleja |
+| **Tiempo de Instalación** | 30-90 min | 1-2 horas | 2-3 horas |
+| **Tiempo de Actualización** | 15-40 min | 30-60 min | 1-2 horas |
+| **Tiempo de Inactividad en Actualización** | Raro | Raro | Siempre (15-60 min) |
+
+---
+
+## Modos de Instalación
+
+<Tabs>
+  <Tab title="Online">
+    ### Instalación Online
+    
+    **Usar cuando**: Despliegues estándar con acceso completo a internet
+    
+    **Cómo funciona**: El servidor descarga paquetes e imágenes directamente desde repositorios oficiales.
+    
+    **Características clave**:
+    - Configuración y actualizaciones automatizadas
+    - Tiempo de inactividad mínimo para actualizaciones
+    - Postura de seguridad estándar
+    
+    **Guía de Instalación** → [Instalación Online](/es/operator-manual/installation/online)
+  </Tab>
+  
+  <Tab title="Semi-Airgap">
+    ### Instalación Semi-Airgap
+    
+    **Usar cuando**: Redes con acceso a internet controlado vía proxy/firewall
+    
+    **Cómo funciona**: Instalación online a través de dominios en lista blanca y configuración de proxy.
+    
+    **Características clave**:
+    - **Instalación**: Online (requiere conectividad a internet)
+    - **Operación**: Puede funcionar con conectividad restringida/cero o completa
+    - Requiere dominios y puertos abiertos durante instalación/actualizaciones
+    - Tiempo de inactividad mínimo para actualizaciones
+    - Soporte de proxy
+    
+    **Guía de Instalación** → [Instalación Semi-Airgap](/es/operator-manual/installation/semi-airgap)
+  </Tab>
+  
+  <Tab title="Full-Airgap">
+    ### Instalación Full-Airgap
+    
+    **Usar cuando**: Se requiere instalación offline, sin acceso a internet durante la configuración
+    
+    **Cómo funciona**: Transferir bundles de 70-100 GB desde máquina online vía medio offline al servidor objetivo.
+    
+    **Características clave**:
+    - **Instalación**: Offline (no requiere internet en el servidor objetivo)
+    - **Operación**: Puede funcionar con conectividad restringida/cero o completa (proxy/internet opcional)
+    - Requiere dos máquinas Linux (online y offline)
+    - Proceso de actualización manual (descargar, transferir, aplicar)
+    - Siempre requiere tiempo de inactividad (15-60 min)
+    
+    **Guía de Instalación** → [Instalación Airgap](/es/operator-manual/installation/airgap)
+  </Tab>
+</Tabs>
+
+---
+
+## Pasos de Instalación
+
+<Steps>
+  <Step title="Elige Tu Modo">
+    Selecciona el modo que coincida con tu política de seguridad y entorno de red.
+  </Step>
+  
+  <Step title="Ejecutar Instalación">
+    Sigue la guía para tu modo elegido. Todos los modos usan el instalador CLI de Zylon.
+  </Step>
+  
+  <Step title="Post-Instalación">
+    Configura [Presets de IA](/es/operator-manual/ai-presets), configura [copias de seguridad](/es/operator-manual/operations/backup), y revisa el [Manual de Usuario](/es/user-manual/quick-start-guide).
+  </Step>
+</Steps>

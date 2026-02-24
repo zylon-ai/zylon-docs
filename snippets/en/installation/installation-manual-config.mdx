@@ -1,0 +1,113 @@
+Edit `/etc/zylon/zylon-conf.yaml` to adjust settings as needed.
+
+**Define your OS distribution**
+
+Set `node.distro` to match your Ubuntu version:
+
+```yaml
+node:
+  distro: "ubuntu22"  # for Ubuntu 22.04
+  # distro: "ubuntu24"  # for Ubuntu 24.04
+```
+
+**Define your CPU architecture**
+
+Set `node.arch` to match your hardware:
+
+```yaml
+node:
+  arch: "amd64"  # for Intel/AMD processors
+```
+
+**Set your hardware drivers (if applicable)**
+
+Set `node.drivers` to `generic` (this is the only supported option):
+
+```yaml
+node:
+  drivers: "generic"
+```
+
+**Configure cluster type**
+
+Set `cluster.type` to `k0s` (this is the only supported option for single instance installations):
+
+```yaml
+cluster:
+  type: "k0s"
+```
+
+**Select your release channel**
+
+Set `channel` to `stable` (recommended for production and normal use) or `unstable` (available under request for testing):
+
+```yaml
+channel: "stable"
+```
+
+**Add your license information**
+
+Set `license.email` to the email address assigned to your license (provided during registration).
+
+Set `license.id` to the license ID shared with you by the Zylon team via email:
+
+```yaml
+license:
+  email: "champion@company.com"
+  id: "2oq..."
+```
+
+**Choose your AI preset**
+
+Set `ai.preset` based on your available GPU memory. See [AI Presets](/en/operator-manual/ai-presets/getting-started) for details.
+
+```yaml
+ai:
+  preset: "baseline-24g"
+```
+
+**Set your company identifier**
+
+Set `companyIdentifier` to any identifier for anonymous metrics tracking (e.g., `acme-corp`). If you have multiple installations, use different identifiers (e.g., `company` and `company-test`):
+
+```yaml
+companyIdentifier: "your-company"
+```
+
+**Disable telemetry & crash reporting**
+
+To disable telemetry and crash reporting, add the following section:
+
+```yaml
+observability:
+    crashReporting: false
+    usageMetrics: false
+```
+
+**Configure network ingress**
+
+Set `ingress.host` to the domain you've prepared for Zylon. This should be a fully qualified domain name (FQDN) that points to your server's IP address.
+
+Examples:
+- `zylon.company.com`
+- `ai.acme-corp.com`
+- `zylon-prod.yourcompany.io`
+
+```yaml
+ingress:
+  host: "zylon.your-company.com"
+  enabled: true
+  tlsEnabled: true
+```
+
+**Configure SSL certificate generation**
+
+If your server is accessible from the internet, Let's Encrypt will automatically generate and renew SSL certificates. Keep the default `certManagerAnnotations`:
+
+```yaml
+ingress:
+  certManagerAnnotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+If you're in a private network or need to use a custom certificate, see [Disable Let's Encrypt](#disable-lets-encrypt) below.

@@ -2,7 +2,51 @@
 title: "Registro de cambios"
 ---
 
-<Update label="1.51" description="December 16, 2025">
+<Update label="1.53.0" description="February 23, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión ≥ 1.53.0**
+
+    Esta versión requiere migrar a la nueva versión del CLI antes de actualizar. Omitir este paso causará un fallo crítico y Zylon no podrá iniciar.
+    Esta actualización requiere 45–60 minutos de tiempo de inactividad planificado. Planifica en consecuencia y notifica a tus usuarios antes de comenzar.
+
+    Sigue la [guía de migración completa de 1.53.0](/es/changelog/guides/1-53-0) para obtener todos los detalles.
+  </Danger>
+
+  ## 🛠️ Plataforma
+  ### ✨ Funcionalidades
+
+  - **Instalación Airgap Completa**: Zylon ahora puede operar en entornos completamente aislados de extremo a extremo — incluyendo actualizaciones — no solo en tiempo de ejecución. Para entornos con aislamiento de red estricto, esto desbloquea la gestión completa del ciclo de vida sin acceso a internet.
+    - Consulta la nueva [guía de instalación airgap](/es/operator-manual/installation/airgap) para comenzar o migrar tu instancia existente.
+
+  - **Zylon CLI 2.0.0**: Una renovación importante de la interfaz de línea de comandos que simplifica todo el proceso de instalación a un solo comando — `sudo zylon-cli install <version>`. No más secuencias de configuración de múltiples pasos.
+    - **Asistente de Configuración**: Configura cada aspecto de tu instancia de Zylon de forma interactiva, sin editar manualmente archivos YAML. El asistente te guía a través de todas las opciones de configuración paso a paso.
+
+    ![](/images/changelog/1.53.0/image1.png)
+    ![](/images/changelog/1.53.0/image2.png)
+
+</Update>
+
+<Update label="1.52.0" description="January 28, 2026">
+
+  ## 💼 Workspace
+  - **Soporte para DB2**: Ahora puedes conectar tus bases de datos DB2 directamente a Zylon, permitiendo que la IA razone sobre tus datos empresariales mientras mantienes control total y seguridad.
+  - **Mejoras en integraciones MCP**: Ahora se admite autenticación con token Bearer para integraciones MCP, proporcionando opciones de seguridad más flexibles. También puedes activar o desactivar todas las herramientas MCP a la vez, facilitando la configuración de tu workspace.
+  - **Selección de Carpeta de SharePoint**: Al usar el selector de SharePoint, ahora puedes establecer una carpeta de inicio predeterminada para toda la organización, ahorrando tiempo al navegar a ubicaciones frecuentemente utilizadas.
+  - **Ventana de Analíticas Extendida**: Los datos de analíticas ahora están disponibles durante los últimos 12 meses, proporcionándote una vista más amplia del uso del workspace y las tendencias.
+  - **Visibilidad del Conector**: Ahora puedes ver quién creó cada conector, mejorando la transparencia y facilitando la gestión de integraciones en tu equipo.
+  - **Columna de Proyecto en Reporte de Problemas**: El rastreador de problemas ahora muestra una columna de proyecto con nombres de proyectos, facilitando la organización y el filtrado de problemas reportados.
+
+  ## 🛠️ Plataforma
+  - **Despliegues Privados de N8N**: Ahora puedes desplegar tu propio clúster privado de N8N dentro de tu infraestructura. Úsalo de forma independiente para construir flujos de trabajo personalizados, o crea tus propios servidores MCP para capacidades de IA extendidas. N8N maneja tu automatización personalizada mientras Zylon proporciona la capa de IA, asegurando que todos los datos permanezcan seguros dentro de tu entorno.
+
+  ## 🐛 Correcciones de Errores
+  - **Mejoras en redirección** en toda la plataforma.
+  - **Estabilidad en Creación y Edición de Conectores**: Se corrigieron múltiples casos donde las operaciones de creación y edición de conectores fallaban inesperadamente.
+
+</Update>
+
+
+<Update label="1.51.0" description="December 16, 2025">
 
     ## 💼 Workspace
     ### ✨ Funcionalidades
@@ -17,9 +61,14 @@ title: "Registro de cambios"
     - **Corrección de duplicación de preguntas y respuestas masivas**: Se resolvió un problema donde la duplicación de preguntas y respuestas masivas fallaba bajo ciertas condiciones.
     - **Bloqueo de chat cuando se selecciona herramienta MCP**: Se corrigió un error donde seleccionar una herramienta rota impedía a los usuarios continuar las interacciones de chat mientras MCP estaba activo.
 
+    ## Tiempo de inactividad esperado
+    Alrededor de 1 hora porque hay cambios en la capa de IA de bajo nivel que requieren que se descargue contenido grande.
+
+    ## Recomendaciones sobre cuándo actualizar
+    Actualice fuera del horario comercial para evitar impactar a los usuarios durante un período prolongado.
 </Update>
 
-<Update label="1.50" description="December 9, 2025">
+<Update label="1.50.0" description="December 9, 2025">
 
 ## 💼 Workspace
 ### ✨ Funcionalidades

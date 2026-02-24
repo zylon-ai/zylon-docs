@@ -1,0 +1,128 @@
+---
+title: "Migration Guide: 1.53.0"
+description: "Breaking changes and migration steps for upgrading to newer versions of Zylon starting with 1.53.0"
+---
+
+<Warning>
+  This guide is **required** before upgrading to Zylon 1.53.0 or any later version. Skipping these steps will cause Triton to fail to boot.
+</Warning>
+
+## What changed
+
+Zylon 1.53.0 introduces two major platform changes that affect how you install and update your instance:
+
+**All dependencies are bundled as part of the version**: Starting with 1.53.0, each Zylon version includes its own bundled dependencies, including the Apt packages, binaries, and drivers required to run that version. This means that when you install a specific Zylon version, you get the exact dependencies needed for that version without relying on the system's global state.
+
+**New version, new requirements**: Zylon 1.53.0 requires CUDA 13.0, which is a significant change from previous versions. During the upgrade process, the CLI will automatically handle the CUDA update. This will be required to newer versions, so we decided to make this breaking change now to avoid a more disruptive upgrade later on.
+
+---
+
+## Before you begin
+
+- Take a [backup of your instance](/en/operator-manual/operations/backup) before starting.
+- Plan for approximately **45–60 minutes** of total upgrade time.
+- Expect **~35 minutes of GPU downtime** during which inference will not be available.
+- Notify your users before starting — the system will be partially unavailable.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Can I still use 'sudo zylon-cli update'?">
+    The command still exists but no longer manages version upgrades as of 1.53.0. Always use `sudo zylon-cli install <version>` to install or upgrade Zylon going forward.
+    Now, this will act as `sudo zylon-cli sync`.
+  </Accordion>
+
+  <Accordion title="Will my data be affected?">
+    No. The upgrade only affects the platform layer and drivers. Your knowledge base, chats, agent flows, and configuration are not touched. We still recommend taking a [backup](/en/operator-manual/operations/backup) as a precaution.
+  </Accordion>
+
+  <Accordion title="What happens if I skip the CLI self-update?">
+    **If Triton fails to boot after updating**, the most likely cause is that the CLI was not updated before running the install. You can confirm this by checking the CLI version:
+
+    ```bash
+    sudo zylon-cli version
+    ```
+
+    And verifying if Triton is running:
+
+    ```bash
+    sudo kubectl get pods -A | grep triton
+    ```
+
+    If the CLI is older than 2.0.0 and Triton is not showing 1/1 READY, then you likely ran into this issue. To recover your installation, simply run the CLI self-update followed by the install again:
+
+    ```bash
+    sudo zylon-cli self-update
+    sudo zylon-cli install 1.53.0
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Migration steps
+
+<Steps>
+  <Step title="Upgrade the CLI">
+    Run the CLI self-update to get Zylon CLI 2.0.0:
+
+    ```bash
+    sudo zylon-cli self-update
+    ```
+
+    Verify the version before continuing:
+
+    ```bash
+    sudo zylon-cli version
+    # Expected: 2.0.0 or higher
+    ```
+
+    <Warning>
+      Do not proceed to the next step until the CLI is on version 2.0.0. Installing 1.53.0 with an older CLI will result in a broken installation.
+    </Warning>
+  </Step>
+
+  <Step title="Install the new version">
+    Use the new `install` command to upgrade Zylon:
+
+    ```bash
+    sudo zylon-cli install 1.5X.0
+    ```
+
+    This will automatically install the whole Zylon platform, including dependencies, and the new version.
+    In future versions, the CLI will also handle its own updates, so you won't have to run `self-update` separately anymore.
+    
+    <Warning>
+      The installation will stop with an error message after uninstalling the existing NVIDIA drivers:
+      
+      ```
+      The current drivers were uninstalled successfully, please REBOOT the system 
+      and re-run the installation to complete the NVIDIA driver installation
+      ```
+      
+      **This is expected behavior.** Proceed to the next step to reboot your system, then re-run the installation command.
+    </Warning>
+  </Step>
+
+  <Step title="Reboot the system">
+    After seeing the uninstall message, reboot your system:
+
+    ```bash
+    sudo reboot
+    ```
+
+    This is necessary before the new CUDA 13.0 drivers can be installed.
+  </Step>
+
+  <Step title="Complete the installation">
+    After the system reboots, run the install command again:
+
+    ```bash
+    sudo zylon-cli install 1.5X.0
+    ```
+
+    This time, the installation will complete successfully with the new CUDA 13.0 drivers.
+  </Step>
+</Steps>

@@ -9,12 +9,12 @@ Establece el preset de IA en tu archivo de configuración de Zylon usando la pro
 
 Los presets base proporcionan configuraciones estándar optimizadas para cargas de trabajo de IA de propósito general.
 
-| Preset         | Memoria GPU Requerida | Ejemplos de Hardware Compatible  |
-|----------------|---------------------|-------------------------------|
-| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     |
-| `baseline-32g` | 32GB                | RTX 5090                      |
-| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     |
-| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) |
+| Preset         | Memoria GPU Requerida | Ejemplos de Hardware Compatible  | Modelos                                                      |
+|----------------|---------------------|-------------------------------|--------------------------------------------------------------|
+| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
 
 ### Ejemplo de Configuración
 
@@ -35,10 +35,10 @@ Zylon proporciona presets alternativos que ofrecen configuraciones especializada
 
 Estos presets incluyen capacidades especializadas de visión por computadora en el pipeline de ingesta, permitiendo al sistema procesar y entender imágenes, documentos y contenido visual.
 
-| Preset                             | Memoria GPU Requerida | Compensación                  |
-|------------------------------------|---------------------|----------------------------|
-| `alternatives.baseline-48g-vision` | 48GB                | Modelo más pequeño (Qwen 3 14B) |
-| `alternatives.baseline-96g-vision` | 96GB                | Modelo más pequeño (Qwen 3 14B) |
+| Preset                             | Memoria GPU Requerida | Compensación                  | Modelos                                                                                  |
+|------------------------------------|---------------------|----------------------------|-----------------------------------------------------------------------------------------|
+| `alternatives.baseline-48g-vision` | 48GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `alternatives.baseline-96g-vision` | 96GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
 
 **Cuándo usar presets habilitados para visión:**
 
@@ -61,10 +61,10 @@ El uso de estos presets probablemente requiere modificar la memoria compartida d
 
 Estos presets usan modelos de IA más pequeños para proporcionar ventanas de contexto significativamente más grandes, permitiendo sesiones de conversación extendidas y tareas de análisis complejas.
 
-| Preset                              | Memoria GPU Requerida | Compensación                  |
-|-------------------------------------|---------------------|----------------------------|
-| `alternatives.baseline-48g-context` | 48GB                | Modelo más pequeño (Qwen 3 14B) |
-| `alternatives.baseline-96g-context` | 96GB                | Modelo más pequeño (Qwen 3 14B) |
+| Preset                              | Memoria GPU Requerida | Compensación                  | Modelos                                                      |
+|-------------------------------------|---------------------|----------------------------|--------------------------------------------------------------|
+| `alternatives.baseline-48g-context` | 48GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `alternatives.baseline-96g-context` | 96GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
 
 **Cuándo usar presets optimizados para contexto:**
 
@@ -91,13 +91,13 @@ Los presets experimentales están en desarrollo activo y pueden no ser estables.
 
 Los presets experimentales proporcionan acceso a modelos y configuraciones de vanguardia que están siendo evaluados para futuras versiones. Estos presets pueden tener características de rendimiento o estabilidad diferentes comparados con los presets base.
 
-| Preset                     | Memoria GPU Requerida | Familia de Modelo | Estado |
-|----------------------------|---------------------|--------------|--------|
-| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   |
-| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   |
-| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   |
-| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   |
-| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  |
+| Preset                     | Memoria GPU Requerida | Familia de Modelo | Estado | Modelos                                                                            |
+|----------------------------|---------------------|--------------|--------|------------------------------------------------------------------------------------|
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  | google/gemma-3n-e4b-it, mixedbread-ai/mxbai-embed-large-v1                        |
 
 **Ejemplo de Configuración:**
 

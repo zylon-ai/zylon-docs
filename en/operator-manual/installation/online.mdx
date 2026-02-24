@@ -1,0 +1,188 @@
+---
+title: "Online Installation"
+description: "Install Zylon with full internet access"
+---
+
+import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
+import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/en/installation/installation-prerequisites.mdx";
+
+This guide covers the standard Zylon installation for environments with full internet access. The system will automatically download all required dependencies, container images, and AI models.
+
+
+**Prerequisites Checklist**:
+
+<InstallationPrerequisites />
+- [ ] Full, unrestricted internet access on the target machine
+- [ ] Firewall allows outbound connections to Docker registries and package repositories
+- [ ] Either:
+  - [ ] Port 80 and 443 open for Let's Encrypt automatic SSL certificate generation, OR
+  - [ ] Valid SSL certificate ready for manual configuration
+
+---
+
+## Installing Zylon
+
+<Steps>
+  <Step title="Install Zylon CLI">
+    _Estimated time: 2 min_
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Verify Zylon minimum requirements">
+    Ensure your machine meets the [hardware requirements](/en/operator-manual/installation/hardware-requirements) for Zylon.
+
+    To validate automatically if your installation meets the minimum requirements, run:
+
+    ```bash
+    sudo zylon-cli preflight --network --fresh-system -v
+    ```
+
+    Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+    <Info>
+      Are you having issues with network connectivity? Consider moving to a [Semi-Airgap Installation](/en/operator-manual/installation/semi-airgap) or [Airgap Installation](/en/operator-manual/installation/airgap).
+    </Info>
+
+    <Note>
+      Zylon requires all checks to pass before providing installation support.
+    </Note>
+
+  </Step>
+
+  <Step title="Configure Zylon">
+    _Estimated time: 10min_
+
+    <InstallationConfig />
+
+    <Tabs>
+      <Tab title="Auto Configuration">
+        If you executed `sudo zylon-cli config init`, all configuration is set.
+        Review `/etc/zylon/zylon-conf.yaml` to confirm settings. You can know more information about which settings are required in [Manual Configuration](#manual-configuration) section.
+
+        <Info>
+          If you need to re-run the configuration wizard, execute:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
+
+        You can 
+
+      </Tab>
+      <Tab title="Manual Configuration">
+        <InstallationManualConfig />
+      </Tab>
+    </Tabs>
+
+
+    **View Current Configuration**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    You can edit the configuration file directly using your preferred text editor (e.g., `nano`, `vim`):
+
+    ```bash
+    # Choose one of the following commands:
+    sudo nano /etc/zylon/zylon-conf.yaml
+    sudo vim /etc/zylon/zylon-conf.yaml
+    ```
+
+    For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).
+
+  </Step>
+
+  <Step title="Install Zylon">
+    _Estimated time: 15min to 1hour, depending on system performance and network speed._
+
+    Run the installation command with your desired version:
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Choose your desired version from the list
+    sudo zylon-cli install <version>
+    ```
+
+    Replace `<version>` with your target version (e.g., `1.50.0`).
+
+    **What Gets Installed**
+
+    The installation process handles:
+
+    - System dependencies (gcc, git, etc.)
+    - Kubernetes distribution ([k0s](https://k0sproject.io/))
+    - NVIDIA drivers and CUDA (if applicable)
+    - Container runtime and tools (kubectl, helm)
+    - Zylon container images
+    - AI models from your configuration
+    - SSL certificate generation (if using Let's Encrypt)
+
+    <InstallationMonitor />
+  </Step>
+
+  <Step title="Create Organization">
+    _Estimated time: 5 min_
+
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configure SSL (Optional)">
+    _Estimated time: 10 min_
+
+    <Info>
+      **Skip this step** if using Let's Encrypt automatic certificates (default for public-facing instances).
+    </Info>
+
+    For VPN or private cloud deployments, you need to manually install SSL certificates.
+
+    <InstallationSsl />
+  </Step>
+</Steps>
+
+---
+
+## Updating Zylon
+
+Updates follow the same process as installation:
+
+```bash
+sudo zylon-cli list-versions
+# Choose your desired version from the list
+sudo zylon-cli install <new-version>
+```
+
+Alternatively, you can upgrade directly to the latest version using the upgrade command:
+
+```bash
+sudo zylon-cli upgrade
+```
+
+---
+
+## Migrating to Online
+
+If you have an existing Zylon installation (semi-airgap or airgap) and want to migrate it to a fully online environment, 
+follow this guide. This process preserves your data, and configuration, while transitioning to online operation.
+
+<Info>
+  **Migration differs from fresh installation:**
+  - Your existing configuration and data will be preserved
+  - Organization and users already exist
+</Info>
+
+To migrate an existing Zylon installation (Semi-Airgap, or Airgap) to an Online installation, follow these steps:
+
+1. **Ensure connectivity**: Verify that the target machine has full internet access.
+2. **Update configuration**: Run `sudo zylon-cli config init --force` to update the configuration for online operation.
+3. **Refresh configuration**: Execute `sudo zylon-cli sync` to apply the new configuration settings.
+4. **Verify operation**: Confirm that all services are functioning correctly with internet access.
+
+---
+
+<InstallationNextSteps />

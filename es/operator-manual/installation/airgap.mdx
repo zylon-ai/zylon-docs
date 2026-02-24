@@ -1,0 +1,807 @@
+---
+title: "Instalación Full-Airgap"
+description: "Instala Zylon en entornos completamente offline"
+---
+
+import InstallationCli from "/snippets/es/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/es/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/es/installation/installation-manual-config.mdx";
+import InstallationSeed from "/snippets/es/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/es/installation/installation-ssl.mdx";
+import InstallationNextSteps from "/snippets/es/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/es/installation/installation-prerequisites.mdx";
+
+La instalación airgap permite el despliegue de Zylon en entornos con acceso cero a internet. Este proceso requiere **dos máquinas Linux separadas**: una con conectividad a internet para descargar bundles, y una máquina offline para ejecutar Zylon.
+
+**Lista de Prerrequisitos**:
+
+<InstallationPrerequisites />
+- [ ] Máquina online con acceso a internet para descargar bundles de instalación
+- [ ] Método para transferir archivos (70-100 GB) a la máquina objetivo aislada (unidad USB, red interna, etc.)
+- [ ] La máquina objetivo NO tiene conexión a internet
+- [ ] Certificado SSL válido para tu dominio
+- [ ] Almacenamiento suficiente en la máquina online y medio de transferencia para bundles grandes
+---
+
+## Acceso de Red Requerido
+
+En tu máquina online, asegura acceso de firewall a estos dominios:
+
+**Servicios Esenciales (Obligatorios):**
+- `get.zylon.ai` - Instalación de CLI
+- `zylon-cli.s3.us-east-1.amazonaws.com` - Binarios de CLI y dependencias
+- `zylon-artifacts.s3.us-east-1.amazonaws.com` - Archivos de instalación y actualizaciones de Zylon
+
+<Warning>
+  Estos dominios deben ser accesibles desde la máquina en línea para descargar bundles y actualizaciones de Zylon.
+  Si no hay acceso directo a internet, puede configurar un servidor proxy.
+
+  <Accordion title="Configuración de Ajustes de Proxy">
+
+    Configure las siguientes variables de entorno antes de ejecutar cualquier comando de Zylon CLI:
+
+    ```bash
+    export HTTP_PROXY="http://proxy.company.com:8080"
+    export HTTPS_PROXY="http://proxy.company.com:8080"
+    ```
+
+    **Uso de Certificados Autofirmados**
+
+    Si su proxy usa un certificado autofirmado, también debe configurar el certificado CA:
+
+    ```bash
+    export SSL_CERT_FILE="/path/to/your/ca-cert.pem"
+    export REQUESTS_CA_BUNDLE="/path/to/your/ca-cert.pem"
+    ```
+
+    **Verificar Configuración de Proxy**
+
+    Pruebe la conectividad a través del proxy antes de continuar:
+
+    ```bash
+    # Probar conectividad HTTP
+    curl -v -x $HTTP_PROXY http://get.zylon.ai
+
+    # Probar conectividad HTTPS (si usa certificado autofirmado)
+    curl -v -x $HTTPS_PROXY --cacert $SSL_CERT_FILE https://get.zylon.ai
+    ```
+
+    **Ejecutar Comandos con sudo**
+
+    ⚠️ **Importante:** El comando `sudo` no preserva las variables de entorno por defecto. Debe usar la bandera `-E` para pasar la configuración del proxy a comandos que requieren privilegios elevados:
+
+    ```bash
+    # Incorrecto
+    sudo zylon-cli download <version> --airgap
+
+    # Correcto
+    sudo -E zylon-cli download <version> --airgap
+    ```
+  </Accordion>
+</Warning>
+
+---
+
+## Instalando Zylon
+
+<Steps>
+  <Step title="Máquina Online">
+    Descarga bundles de Zylon y modelos de IA con acceso a internet
+  </Step>
+  <Step title="Transferir">
+    Mueve archivos bundle a la máquina offline vía método de transferencia seguro
+  </Step>
+  <Step title="Máquina Offline">
+    Importa e instala Zylon sin ninguna conectividad a internet
+  </Step>
+</Steps>
+
+---
+
+### Parte A: Configuración de Máquina Online
+
+<Steps>
+  <Step title="Instalar CLI">
+    _Tiempo estimado: 2 min_
+
+    <Warning>
+      Antes de comenzar la instalación, valida que tu máquina puede alcanzar `get.zylon.ai`:
+      ```bash
+      curl -sLv get.zylon.ai -m 3 | exit 1
+      ```
+
+      Si la conexión está dando errores, trabaja con tu equipo de red para resolverlos. Una vez que la conectividad esté verificada, puedes proceder.
+    </Warning>
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Configurar Zylon">
+    _Tiempo estimado: 10min_
+
+    <InstallationConfig />
+
+    <Tabs>
+      <Tab title="Configuración Automática">
+        Si ejecutaste `sudo zylon-cli config init`, toda la configuración está establecida.
+        Revisa `/etc/zylon/zylon-conf.yaml` para confirmar la configuración. Puedes obtener más información sobre qué configuraciones son requeridas en la sección [Configuración Manual](#manual-configuration).
+
+        <Info>
+          Si necesitas volver a ejecutar el asistente de configuración, ejecuta:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
+
+      </Tab>
+      <Tab title="Configuración Manual">
+        <InstallationManualConfig />
+
+        **Ajustes Airgap**
+
+        Asegúrate de que estos ajustes estén incluidos para indicar instalación y operación airgap:
+
+        ```yaml
+        airgap:
+          offline_install: true
+          offline_operation: true
+        ```
+
+        **Licencia Local**
+
+        Dado que la máquina offline no puede alcanzar `api.replicated.com`, necesitas una licencia local. Contacta con el soporte de Zylon para obtenerla, luego añade:
+
+        ```yaml
+        license:
+          email: "champion@company.com"
+          id: "2xo..."
+          type: "Zylon"
+          data: |-
+            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+        ```
+
+        <Warning>
+          Reemplaza el campo `data` con los datos reales de licencia proporcionados por el equipo de Zylon. Por favor, ten cuidado con el formato y la indentación.
+          Solo copia el token que comienza con `eyJ...` y termina con `...`.
+        </Warning>
+
+      </Tab>
+    </Tabs>
+
+    **Ver Configuración Actual**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Puedes editar el archivo de configuración directamente usando tu editor de texto preferido (por ejemplo, `nano`, `vim`):
+
+    ```bash
+    # Elige uno de los siguientes comandos:
+    sudo nano /etc/zylon/zylon-conf.yaml
+    sudo vim /etc/zylon/zylon-conf.yaml
+    ```
+
+    Para información detallada sobre todas las opciones de configuración disponibles, consulta la [Guía de Configuración](/es/operator-manual/configuration/index).
+
+  </Step>
+
+  <Step title="Descargar Bundle de Zylon">
+    _Tiempo estimado: 15min a 2h, dependiendo de la velocidad de red._
+
+    <Warning>
+      **¡La primera instalación o modelos adicionales requieren modelos de IA!** Usa la bandera `--models` para especificar qué modelos incluir.
+      
+      Verifica modelos disponibles:
+      ```bash
+      sudo zylon-cli forge list
+      ```
+      Compara con tu definición de preset de IA para determinar los modelos requeridos. Más detalles de preset [aquí](/es/operator-manual/ai-presets/presets.mdx).
+
+      Por ejemplo, si tu preset es `baseline-24g`, incluye:
+      ```bash
+      --models=qwen/qwen3-14b-awq,mixedbread-ai/mxbai-embed-large-v1
+      ```
+
+      Si estás usando capacidades extra como `multilingual`, incluye:
+      ```bash
+      --models=qwen/qwen3-14b-awq,intfloat/multilingual-e5-large
+      ```
+    </Warning>
+
+    Descarga la versión específica de Zylon que quieres instalar:
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Elige tu versión deseada de la lista
+    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
+    ```
+
+    Reemplaza `<version>` con tu versión objetivo (por ejemplo, `1.50.0`).
+    La bandera `--models` se usa para especificar qué modelos de IA incluir en la descarga. Puedes listar múltiples modelos separados por comas.
+  </Step>
+
+  <Step title="Exportar Bundle">
+    _Tiempo estimado: 15 a 120 min, dependiendo de los modelos seleccionados y versión._
+
+    Exporta la versión descargada en un bundle airgap. Si incluiste modelos durante la descarga, asegúrate de incluirlos aquí también:
+
+    ```bash
+    # Misma versión y modelos que el paso de descarga
+    sudo zylon-cli export <version> [--models=model-a,model-b,model-c]
+    ```
+
+    Esto crea `zylon-<version>-<os>-<arch>.tar` en tu directorio actual. Adicionalmente, generará
+    los comandos para ejecutar en la máquina offline para la instalación para importar e instalar Zylon. Almacena estos comandos de forma segura.
+
+    <Note>
+      La exportación puede tomar tiempo significativo. El archivo tar resultante puede exceder 80GB.
+    </Note>
+  </Step>
+
+  <Step title="Preparar Transferencia Inicial (Solo Primera Instalación)">
+    <Warning>
+      **¡Solo primera instalación!** Después de la configuración inicial, la CLI se auto-actualiza desde bundles airgap.
+    </Warning>
+
+    Crea un bundle con herramientas CLI y configuración:
+
+    ```bash
+    sudo tar -czf zylon-initial.tar.gz \
+      /usr/local/bin/zylon-cli \
+      /usr/local/bin/zylon-forge-cli \
+      /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Preparar Certificados (Opcional)">
+    _Tiempo estimado: 5 min_
+
+    Si tu instancia de Zylon está en una red privada o VPN, necesitas proporcionar manualmente certificados SSL.
+    Prepáralos para transferencia:
+
+    Reúne tus archivos de certificado SSL:
+    - `crt.pem` (Certificado + Intermedio)
+    - `key.pem` (Clave Privada)
+
+    Crea un tarball para transferencia:
+
+    ```bash
+    sudo tar -czf zylon-ssl-certs.tar.gz crt.pem key.pem
+    ```
+  </Step>
+
+  <Step title="Transferir Archivos">
+    Transfiere archivos a la máquina offline usando tu método preferido (SCP, USB, unidad externa):
+
+    **Primera instalación:**
+    - `zylon-<version>-<os>-<arch>.tar` (bundle principal)
+    - `zylon-initial.tar.gz` (CLI y config)
+    - `zylon-ssl-certs.tar.gz` (certificados SSL, si aplica)
+
+    **Actualizaciones subsecuentes:**
+    - `zylon-<version>-<os>-<arch>.tar` (solo bundle principal)
+
+    **Ejemplo SCP**
+
+    ```bash
+    scp zylon-<version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-initial.tar.gz user@offline-machine:/tmp/
+    scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
+    ```
+  </Step>
+</Steps>
+
+---
+
+### Parte B: Instalación de Máquina Offline
+
+<Steps>
+  <Step title="Instalar CLI (Solo Primera Vez)">
+    _Tiempo estimado: 2 min_
+
+    <Warning>
+      **Omite si estás actualizando una instalación existente.** Esto es solo para instalaciones por primera vez.
+    </Warning>
+
+    Extrae herramientas CLI y configuración:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-initial.tar.gz -C /
+    sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+    ```
+
+    Verifica la instalación:
+
+    ```bash
+    sudo zylon-cli version
+    cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    <Note>
+      Las actualizaciones futuras actualizan automáticamente la CLI desde bundles airgap—no se necesita transferencia manual.
+    </Note>
+  </Step>
+
+  <Step title="Verificar requisitos mínimos de Zylon">
+    Asegúrate de que tu máquina cumple con los [requisitos de hardware](/es/operator-manual/installation/hardware-requirements) para Zylon.
+
+    Para validar automáticamente si tu instalación cumple con los requisitos mínimos, ejecuta:
+
+    ```bash
+    sudo zylon-cli preflight --fresh-system -v
+    ```
+
+    Resuelve cualquier problema reportado antes de proceder con la instalación. No podrás continuar hasta que todas las comprobaciones previas pasen.
+
+  </Step>
+
+  <Step title="Importar Bundle Airgap">
+    _Tiempo estimado: 10 a 60 min, dependiendo del tamaño del bundle y rendimiento del sistema._
+
+    Importa el bundle de Zylon:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli import zylon-<version>-<os>-<arch>.tar
+    ```
+
+    Este proceso:
+    - Extrae todas las imágenes de contenedores
+    - Instala dependencias offline
+    - Prepara el sistema para la instalación
+
+    <Warning>
+      La importación puede tomar 30+ minutos dependiendo del tamaño del bundle y rendimiento del sistema. No interrumpas.
+    </Warning>
+
+    Verifica que la importación se completó exitosamente comprobando las versiones instaladas:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+
+  </Step>
+
+  <Step title="Instalar Zylon">
+    _Tiempo estimado: 15min a 1hora, dependiendo del rendimiento del sistema._
+
+    Instala Zylon usando el bundle importado, incluyendo bandera airgap y modelos:
+
+    ```bash
+    sudo zylon-cli install <version> --airgap [--models=model-a,model-b,model-c]
+    ```
+  </Step>
+
+  <Step title="Crear Organización">
+    _Tiempo estimado: 5 min_
+
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configurar Certificados SSL (Si aplica)">
+    _Tiempo estimado: 10 min_
+
+    Si preparaste certificados SSL en la máquina online, extráelos ahora:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-ssl-certs.tar.gz -C /tmp/
+    ls /tmp/crt.pem /tmp/key.pem
+    ```
+    Si ves ambos archivos, procede a instalarlos como sigue:
+
+    <InstallationSsl />
+  </Step>
+  
+</Steps>
+
+---
+
+## Actualizando Zylon
+
+Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos máquinas. El proceso es más rápido que la instalación inicial ya que solo estás transfiriendo cambios, no toda la plataforma.
+
+<Note>
+  **Tiempo Estimado**: 45-60 minutos total (15-20 min máquina online, 25-40 min máquina offline)
+</Note>
+
+<Steps>
+  <Step title="En Máquina Online: Descargar Actualización">
+    Descarga el bundle de la nueva versión de Zylon:
+
+    ```bash
+    sudo zylon-cli download <new-version> --airgap
+    ```
+
+    **Añadiendo Nuevos Modelos de IA**
+    
+    Si necesitas añadir modelos no previamente instalados, inclúyelos:
+    
+    ```bash
+    sudo zylon-cli download <new-version> --airgap --models=new-model-a,new-model-b
+    ```
+
+    <Info>
+      Verifica tus modelos actuales y los disponibles:
+      ```bash
+      sudo zylon-cli forge list
+      ```
+      Compara con los requisitos de tu preset de IA para determinar si se necesitan modelos adicionales.
+    </Info>
+  </Step>
+
+  <Step title="En Máquina Online: Crear Bundle de Actualización">
+    Exporta un bundle de actualización incremental:
+
+    ```bash
+    sudo zylon-cli export <new-version> --from <current-version>
+    ```
+
+    La bandera `--from` crea un bundle diferencial que contiene solo cambios entre versiones, reduciendo significativamente el tamaño del bundle y tiempo de transferencia.
+
+    **Incluir modelos (si aplica):**
+
+    Si cambias el preset, los requisitos de GPU, o necesitas nuevos modelos, inclúyelos:
+    
+    ```bash
+    sudo zylon-cli export <new-version> --from <current-version> --models=new-model-a,new-model-b
+    ```
+
+    Esto genera `zylon-<new-version>-to-<old-version>-<os>-<arch>.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
+
+    <Note>
+      Los bundles diferenciales típicamente son 5-20 GB vs. 80+ GB para bundles completos.
+    </Note>
+  </Step>
+
+  <Step title="Transferir Bundle a Máquina Offline">
+    Transfiere el archivo bundle usando tu método seguro:
+
+    **Ejemplo SCP:**
+    ```bash
+    scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    ```
+
+    **Métodos alternativos:**
+    - Unidad USB
+    - Sistema de transferencia de archivos interno
+    - Compartido de red (si está disponible)
+  </Step>
+
+  <Step title="En Máquina Offline: Importar Actualización">
+    Importa el bundle de actualización:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli import zylon-<new-version>-to-<old-version>-<os>-<arch>.tar
+    ```
+
+    El proceso de importación:
+    - Extrae imágenes de contenedores para la nueva versión
+    - Actualiza dependencias del sistema
+    - Prepara artefactos de actualización
+
+    <Warning>
+      Esto puede tomar 10-30 minutos. No interrumpas el proceso.
+    </Warning>
+
+    Verifica que la importación se completó exitosamente comprobando las versiones instaladas:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+
+  </Step>
+
+  <Step title="En Máquina Offline: Aplicar Actualización">
+    Aplica la actualización a tu instancia de Zylon en ejecución:
+
+    ```bash
+    sudo zylon-cli install <new-version> --airgap
+    ```
+
+    **Si incluiste nuevos modelos:**
+    
+    ```bash
+    sudo zylon-cli install <new-version> --airgap --models=new-model-a,new-model-b
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Migrando a Airgap
+
+Si tienes una instalación existente de Zylon (online o semi-airgap) y quieres migrarla a un entorno completamente airgap, sigue esta guía. Este proceso preserva tus datos, configuración y certificados SSL mientras realiza la transición a operación offline.
+
+<Info>
+  **La migración difiere de la instalación nueva:**
+  - Tu configuración y datos existentes serán preservados
+  - Los certificados SSL serán migrados
+  - La organización y usuarios ya existen
+</Info>
+
+**Prerrequisitos de Migración:**
+- [ ] Instalación existente de Zylon (online o semi-airgap) con acceso
+- [ ] Máquina online con acceso a internet para descargar bundles de migración
+- [ ] Método para transferir archivos (70-100 GB) entre máquinas
+- [ ] Máquina airgap objetivo sin conexión a internet
+- [ ] Acceso root y SSH a todas las máquinas involucradas
+
+---
+
+### Parte A: Extraer de la Máquina Zylon Existente
+
+<Steps>
+  <Step title="Extraer Configuración Actual">
+    _Tiempo estimado: 5 min_
+
+    Copia el archivo de configuración actual de Zylon:
+
+    ```bash
+    # En la máquina Zylon existente
+    sudo cp /etc/zylon/zylon-conf.yaml /tmp/zylon-conf-backup.yaml
+    ```
+  </Step>
+
+  <Step title="Extraer Certificados SSL">
+    _Tiempo estimado: 5 min_
+
+    Extrae los certificados SSL actuales de Kubernetes para evitar regeneración:
+
+    ```bash
+    # Extraer certificado del secreto de Kubernetes
+    sudo k0s kubectl get secret zylon-tls -n zylon -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/tls.crt
+    sudo k0s kubectl get secret zylon-tls -n zylon -o jsonpath='{.data.tls\.key}' | base64 -d > /tmp/tls.key
+
+    # Verificar que los archivos fueron creados
+    ls -lh /tmp/tls.crt /tmp/tls.key
+    ```
+
+    <Note>
+      Si la extracción del certificado falla, significa que estás usando la generación automática de Let's Encrypt. En este caso, necesitarás proporcionar tus propios certificados o continuar usando Let's Encrypt en la máquina airgap (no recomendado para entornos airgap).
+    </Note>
+  </Step>
+
+  <Step title="Transferir Archivos a Máquina Online">
+    Transfiere la configuración y certificados a tu máquina online:
+
+    **Ejemplo SCP:**
+
+    ```bash
+    # Desde la máquina Zylon existente a la máquina online
+    scp /tmp/zylon-conf-backup.yaml user@online-machine:/tmp/
+    scp /tmp/tls.crt user@online-machine:/tmp/
+    scp /tmp/tls.key user@online-machine:/tmp/
+    ```
+
+    **Métodos alternativos:**
+    - Unidad USB
+    - Transferencia de archivos interna segura
+    - Compartido de red
+  </Step>
+</Steps>
+
+---
+
+### Parte B: Preparar bundle en Máquina Online
+
+<Steps>
+  <Step title="Instalar Zylon CLI">
+    _Tiempo estimado: 2 min_
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Transferir Archivo de Configuración">
+    _Tiempo estimado: 2 min_
+
+    Coloca la configuración respaldada en la ubicación correcta:
+
+    ```bash
+    sudo mkdir -p /etc/zylon
+    sudo cp /tmp/zylon-conf-backup.yaml /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Reconfigurar para Airgap">
+    _Tiempo estimado: 10 min_
+
+    Ejecuta el asistente de configuración para actualizar los ajustes para despliegue airgap:
+
+    ```bash
+    sudo zylon-cli config init --force
+    ```
+
+    El asistente te guiará a través de la actualización de los siguientes ajustes:
+
+    **Cambios Potencialmente Requeridos:**
+
+    1. **Tipo de Instalación**: Cambia desde tu tipo actual (online/semi-airgap) a **Airgap**
+
+    2. **Certificados SSL**: El asistente solicitará certificados en formato de texto:
+      - Pega el contenido de `/tmp/tls.crt` cuando se solicite el certificado
+      - Pega el contenido de `/tmp/tls.key` cuando se solicite la clave privada
+
+      <Accordion title="Cómo ver el Contenido del Certificado:">
+        ```bash
+        # Mostrar certificado (copia esta salida)
+        cat /tmp/tls.crt
+
+        # Mostrar clave privada (copia esta salida)
+        cat /tmp/tls.key
+        ```
+      </Accordion>
+
+      <Warning>
+        Al pegar certificados en el asistente:
+        - Incluye el contenido completo incluyendo los encabezados `-----BEGIN CERTIFICATE-----` y `-----END CERTIFICATE-----`
+        - Mantén los saltos de línea y formato adecuados
+        - No agregues espacios o caracteres extra
+      </Warning>
+
+    3. **Información de Licencia** (si cambias de canal):
+       - Email de Licencia: Proporcionado por el equipo de Zylon
+       - ID de Licencia: Proporcionado por el equipo de Zylon
+       - Datos de Licencia: Token de licencia completo proporcionado por el equipo de Zylon
+
+       <Warning>
+          Asegúrate de que los datos de licencia se copien exactamente como se proporcionan, preservando el formato y los saltos de línea.
+        </Warning>
+
+    4. **Canal** (si aplica):
+       - Cambia de `stable` a `X` (o según las instrucciones de Zylon)
+
+    6. **Revisar Todos los Otros Ajustes**: El asistente mostrará los valores actuales—confirma o actualiza según sea necesario
+
+    **Verificar Configuración Actualizada:**
+
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Confirma que todo esté configurado correctamente para operación AirGap.
+  </Step>
+
+  <Step title="Descargar Bundle de Migración">
+    _Tiempo estimado: 15 min a 1 hora_
+
+    Descarga el bundle de versión de Zylon (sin modelos de IA, ya que ya existen):
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Elige tu versión objetivo
+    sudo zylon-cli download <version> --airgap
+    ```
+
+    <Note>
+      **No** estamos incluyendo la bandera `--models` porque:
+      - Los modelos de IA existentes de tu instalación actual serán preservados
+      - Si necesitas agregar nuevos modelos, inclúyelos con `--models=model-a,model-b`. Más información en la guía de instalación nueva arriba.
+    </Note>
+  </Step>
+
+  <Step title="Exportar Bundle de Migración">
+    _Tiempo estimado: 15 a 60 min_
+
+    Exporta el bundle de migración:
+
+    ```bash
+    sudo zylon-cli export <version>
+    ```
+
+    Esto crea `zylon-<version>-<os>-<arch>.tar` en tu directorio actual.
+  </Step>
+
+  <Step title="Preparar Paquete de Migración">
+    _Tiempo estimado: 5 min_
+
+    Crea un paquete de migración completo con herramientas CLI y configuración:
+
+    ```bash
+    sudo tar -czf zylon-migration.tar.gz \
+      /usr/local/bin/zylon-cli \
+      /usr/local/bin/zylon-forge-cli \
+      /etc/zylon/zylon-conf.yaml
+    ```
+  </Step>
+
+  <Step title="Transferir Archivos a Máquina Airgap">
+    Transfiere el paquete de migración a tu máquina airgap:
+
+    **Archivos a transferir:**
+    - `zylon-<version>-<os>-<arch>.tar` (bundle principal)
+    - `zylon-migration.tar.gz` (CLI y configuración actualizada)
+
+    **Ejemplo SCP:**
+
+    ```bash
+    scp zylon-<version>-<os>-<arch>.tar user@airgap-machine:/tmp/
+    scp zylon-migration.tar.gz user@airgap-machine:/tmp/
+    ```
+  </Step>
+</Steps>
+
+---
+
+### Parte C: Migrar a Airgap en Máquina Offline
+
+<Steps>
+  <Step title="Extraer Paquete de Migración">
+    _Tiempo estimado: 2 min_
+
+    Extrae las herramientas CLI y configuración:
+
+    ```bash
+    cd /tmp
+    sudo tar -xzf zylon-migration.tar.gz -C /
+    sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+    ```
+
+    Verificar extracción:
+
+    ```bash
+    sudo zylon-cli version
+    cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    Debería mostrar:
+
+    ```yaml
+    airgap:
+      offline_install: true
+      offline_operation: true
+    ```
+  </Step>
+
+  <Step title="Verificar Requisitos del Sistema">
+    Asegúrate de que la máquina airgap cumple con todos los requisitos:
+
+    ```bash
+    sudo zylon-cli preflight -v
+    ```
+
+    Resuelve cualquier problema antes de proceder.
+  </Step>
+
+  <Step title="Importar Bundle de Migración">
+    _Tiempo estimado: 10 a 60 min_
+
+    Importa el bundle de Zylon:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli import zylon-<version>-<os>-<arch>.tar
+    ```
+
+    Este proceso:
+    - Extrae todas las imágenes de contenedores
+    - Instala dependencias offline
+    - Prepara el sistema para la instalación
+
+    <Warning>
+      La importación puede tomar 30+ minutos. No interrumpas el proceso.
+    </Warning>
+
+    Verificar finalización de importación:
+
+    ```bash
+    sudo zylon-cli list-versions --offline
+    ```
+  </Step>
+
+  <Step title="Instalar Zylon en Modo Airgap">
+    _Tiempo estimado: 15 min a 1 hora_
+
+    Instala Zylon usando el bundle importado:
+
+    ```bash
+    sudo zylon-cli install <version> --airgap
+    ```
+  </Step>
+</Steps>
+
+---
+
+<InstallationNextSteps />

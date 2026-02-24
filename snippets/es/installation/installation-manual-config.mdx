@@ -1,0 +1,113 @@
+Edita `/etc/zylon/zylon-conf.yaml` para ajustar la configuración según sea necesario.
+
+**Define tu distribución del sistema operativo**
+
+Establece `node.distro` para que coincida con tu versión de Ubuntu:
+
+```yaml
+node:
+  distro: "ubuntu22"  # para Ubuntu 22.04
+  # distro: "ubuntu24"  # para Ubuntu 24.04
+```
+
+**Define tu arquitectura de CPU**
+
+Establece `node.arch` para que coincida con tu hardware:
+
+```yaml
+node:
+  arch: "amd64"  # para procesadores Intel/AMD
+```
+
+**Establece tus controladores de hardware (si aplica)**
+
+Establece `node.drivers` a `generic` (esta es la única opción soportada):
+
+```yaml
+node:
+  drivers: "generic"
+```
+
+**Configura el tipo de clúster**
+
+Establece `cluster.type` a `k0s` (esta es la única opción soportada para instalaciones de instancia única):
+
+```yaml
+cluster:
+  type: "k0s"
+```
+
+**Selecciona tu canal de lanzamiento**
+
+Establece `channel` a `stable` (recomendado para producción y uso normal) o `unstable` (disponible bajo solicitud para pruebas):
+
+```yaml
+channel: "stable"
+```
+
+**Añade tu información de licencia**
+
+Establece `license.email` a la dirección de correo electrónico asignada a tu licencia (proporcionada durante el registro).
+
+Establece `license.id` al ID de licencia compartido contigo por el equipo de Zylon por correo electrónico:
+
+```yaml
+license:
+  email: "champion@company.com"
+  id: "2oq..."
+```
+
+**Elige tu preset de IA**
+
+Establece `ai.preset` basándote en tu memoria GPU disponible. Consulta [Presets de IA](/es/operator-manual/ai-presets/getting-started) para más detalles.
+
+```yaml
+ai:
+  preset: "baseline-24g"
+```
+
+**Establece tu identificador de empresa**
+
+Establece `companyIdentifier` a cualquier identificador para el seguimiento anónimo de métricas (por ejemplo, `acme-corp`). Si tienes múltiples instalaciones, usa identificadores diferentes (por ejemplo, `company` y `company-test`):
+
+```yaml
+companyIdentifier: "tu-empresa"
+```
+
+**Desactiva telemetría e informes de errores**
+
+Para desactivar la telemetría y los informes de errores, añade la siguiente sección:
+
+```yaml
+observability:
+    crashReporting: false
+    usageMetrics: false
+```
+
+**Configura el ingress de red**
+
+Establece `ingress.host` al dominio que has preparado para Zylon. Debe ser un nombre de dominio completamente cualificado (FQDN) que apunte a la dirección IP de tu servidor.
+
+Ejemplos:
+- `zylon.company.com`
+- `ai.acme-corp.com`
+- `zylon-prod.yourcompany.io`
+
+```yaml
+ingress:
+  host: "zylon.tu-empresa.com"
+  enabled: true
+  tlsEnabled: true
+```
+
+**Configura la generación de certificado SSL**
+
+Si tu servidor es accesible desde internet, Let's Encrypt generará y renovará automáticamente los certificados SSL. Mantén el `certManagerAnnotations` por defecto:
+
+```yaml
+ingress:
+  certManagerAnnotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```
+
+Si estás en una red privada o necesitas usar un certificado personalizado, consulta [Desactivar Let's Encrypt](#disable-lets-encrypt) a continuación.

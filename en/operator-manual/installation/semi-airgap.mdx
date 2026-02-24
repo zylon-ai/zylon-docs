@@ -1,0 +1,301 @@
+---
+title: "Semi-Airgap Installation"
+description: "Install Zylon in environments with restricted internet access"
+---
+
+import InstallationCli from "/snippets/en/installation/installation-cli.mdx";
+import InstallationConfig from "/snippets/en/installation/installation-config.mdx";
+import InstallationManualConfig from "/snippets/en/installation/installation-manual-config.mdx";
+import InstallationSeed from "/snippets/en/installation/installation-seed.mdx";
+import InstallationSsl from "/snippets/en/installation/installation-ssl.mdx";
+import InstallationMonitor from "/snippets/en/installation/installation-monitor.mdx";
+import InstallationNextSteps from "/snippets/en/installation/installation-next-steps.mdx";
+import InstallationPrerequisites from "/snippets/en/installation/installation-prerequisites.mdx";
+
+This guide covers Zylon installation for environments with limited internet access due to firewall restrictions or proxy requirements. The system requires one-time internet connectivity during installation and updates.
+
+**Prerequisites Checklist**:
+
+<InstallationPrerequisites />
+- [ ] Proxy server configured with credentials (if required)
+- [ ] Network team has whitelisted required domains and ports (see [Required Network Access](/en/operator-manual/installation/semi-airgap#required-network-access))
+- [ ] Firewall rules allow connections through the proxy
+- [ ] Valid SSL certificate for your domain (Let's Encrypt typically won't work in restricted networks)
+
+---
+
+## Required Network Access
+
+Your firewall must allow access to these domains:
+
+**Essential Services (Mandatory):**
+- `get.zylon.ai` - CLI installation
+- `zylon-cli.s3.us-east-1.amazonaws.com` - CLI binaries and dependencies
+- `zylon-artifacts.s3.us-east-1.amazonaws.com` - Zylon installation files and updates
+
+**Public Container Registries:**
+- `quay.io` - Third-party container images
+- `ghcr.io` - GitHub container registry
+- `docker.io` - Docker Hub images
+- `registry.k8s.io` - Kubernetes images
+- `reg.kyverno.io` - Kyverno policy engine
+- `nvcr.io` - NVIDIA Container Registry
+
+<Info>
+  Since Zylon required public open-source images, network access to original registries is required during installation and updates.
+  If your security policies restrict access to public container registries, consider moving to an airgap installation using [Zylon Airgap Installation Guide](/en/operator-manual/installation/airgap).
+</Info>
+
+**AI Models & Dependencies (Only applicable if you need custom AI models):**
+- `huggingface.co` - AI model repository
+- `xet.huggingface.co` - Hugging Face XET protocol
+
+**License Validation (Only applicable if Replicated license is used):**
+- `replicated.app` - Zylon distribution platform
+- `api.replicated.com` - License validation
+- `proxy.replicated.com` - Zylon container images
+
+---
+
+## Installing Zylon
+
+<Steps>
+  <Step title="Install Zylon CLI">
+    _Estimated time: 2 min_
+
+    <Warning>
+      Before starting the installation, validate that your machine can reach `get.zylon.ai`:
+      ```bash
+      curl -sLv get.zylon.ai -m 3 | exit 1
+      ```
+
+      If the connection is giving errors, work with your network team to resolve them. Once connectivity is verified, you can proceed.
+    </Warning>
+
+    <InstallationCli />
+  </Step>
+
+  <Step title="Verify Zylon minimum requirements">
+    Ensure your machine meets the [hardware requirements](/en/operator-manual/installation/hardware-requirements) for Zylon.
+
+    To validate automatically if your installation meets the minimum requirements, run:
+
+    ```bash
+    sudo zylon-cli preflight --network --fresh-system -v
+    ```
+
+    Address any issues reported before proceeding with the installation. You will not be able to continue until all preflight checks pass.
+
+    <Info>
+      Are you having issues with network connectivity? Consider moving to an [Airgap Installation](/en/operator-manual/installation/airgap).
+    </Info>
+
+    <Note>
+      Zylon requires all checks to pass before providing installation support.
+    </Note>
+
+  </Step>
+
+  <Step title="Configure Zylon">
+    _Estimated time: 10min_
+
+    <InstallationConfig />
+
+    <Tabs>
+      <Tab title="Auto Configuration">
+        If you executed `sudo zylon-cli config init`, all configuration is set.
+        Review `/etc/zylon/zylon-conf.yaml` to confirm settings. You can know more information about which settings are required in [Manual Configuration](#manual-configuration) section.
+
+        <Info>
+          If you need to re-run the configuration wizard, execute:
+          ```bash
+          sudo zylon-cli config init --force
+          ```
+        </Info>
+
+        You can 
+
+      </Tab>
+      <Tab title="Manual Configuration">
+        <InstallationManualConfig />
+
+        **Local License (If Needed)**
+
+        If `api.replicated.com` is blocked during operation, you need a local license. Contact Zylon support to obtain it, then add:
+
+        ```yaml
+        license:
+          email: "champion@company.com"
+          id: "2xo..."
+          type: "Zylon"
+          data: |-
+            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+        ```
+
+        <Warning>
+          Replace the `data` field with the actual license data provided by Zylon team. Please be careful with formatting and indentation.
+          Just copy the token that starts with `eyJ...`.
+        </Warning>
+
+        **Proxy configuration (If Needed)**
+        
+        Refer to the [Proxy Configuration Guide](/en/operator-manual/configuration/network/proxy) to set up proxy settings in your configuration.
+
+        **Disable Let's Encrypt**
+
+        Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
+
+        ```yaml
+        certManagerAnnotations:
+          cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        ```
+      </Tab>
+    </Tabs>
+
+    **View Current Configuration**
+    ```bash
+    sudo cat /etc/zylon/zylon-conf.yaml
+    ```
+
+    You can edit the configuration file directly using your preferred text editor (e.g., `nano`, `vim`):
+
+    ```bash
+    # Choose one of the following commands:
+    sudo nano /etc/zylon/zylon-conf.yaml
+    sudo vim /etc/zylon/zylon-conf.yaml
+    ```
+
+    For detailed information about all available configuration options, see the [Configuration Guide](/en/operator-manual/configuration/index).
+
+  </Step>
+
+  <Step title="Install Zylon">
+    _Estimated time: 15min to 1hour, depending on system performance and network speed._
+
+    Run the installation with your desired version:
+
+    ```bash
+    sudo zylon-cli list-versions
+    # Choose your desired version from the list
+    sudo zylon-cli install <version>
+    ```
+    The installation process handles:
+
+    - System dependencies (gcc, git, etc.)
+    - Kubernetes distribution ([k0s](https://k0sproject.io/))
+    - NVIDIA drivers and CUDA (if applicable)
+    - Container runtime and tools (kubectl, helm)
+    - Zylon container images
+    - AI models from your configuration
+    - SSL certificate generation (if using Let's Encrypt)
+
+    <InstallationMonitor />
+
+    Installation may take 15-60 minutes depending on network speed and firewall restrictions.
+  </Step>
+
+  <Step title="Create Organization">
+    _Estimated time: 5 min_
+
+    <InstallationSeed />
+  </Step>
+
+  <Step title="Configure Offline Operation">
+    _Estimated time: 5 min_
+
+    After validate that Zylon is running correctly, you can enable offline operation. This will configure Zylon to work without internet access.
+    Edit `/etc/zylon/zylon-conf.yaml` and add:
+    ```yaml
+    airgap:
+      offline_operation: true
+    ```
+
+    And sync the configuration:
+    ```bash
+    sudo zylon-cli sync
+    ```
+
+    This will disable connectivity in AI, K8s and other subsystems.
+  </Step>
+
+  <Step title="Configure SSL (Optional)">
+    _Estimated time: 10 min_
+
+    For VPN or private network deployments, you need to manually install SSL certificates.
+
+    <InstallationSsl />
+  </Step>
+</Steps>
+
+---
+
+## Updating Zylon
+
+To update the instance, we will need to remove network restrictions temporarily on a connected machine to download update packages. Contact your network security team to whitelist the required domains during this process.
+After downloading, you can reapply the restrictions.
+
+Before you update, be sure to disable offline mode by editing `/etc/zylon/zylon-conf.yaml` and setting:
+
+```yaml
+airgap:
+  offline_operation: false
+```
+
+Validate if Zylon has connectivity again by running:
+
+```bash
+sudo zylon-cli preflight --network -v
+```
+
+If all checks pass, proceed to download and install the update:
+
+```bash
+sudo zylon-cli list-versions
+# Choose your desired version from the list
+sudo zylon-cli install <new-version>
+```
+
+Alternatively, you can upgrade directly to the latest version using the upgrade command:
+
+```bash
+sudo zylon-cli upgrade
+```
+
+When the process is complete, re-enable offline mode by setting:
+
+```yaml
+airgap:
+  offline_operation: true
+```
+
+---
+
+## Migrating to Semi-Airgap
+
+If you have an existing Zylon installation (online or full-airgap) and want to migrate it to a semi airgapped environment, follow this guide. 
+This process preserves your data, and configuration, while transitioning to offline operation.
+
+<Info>
+  **Migration differs from fresh installation:**
+  - Your existing configuration and data will be preserved
+  - SSL certificates will be migrated
+  - Organization and users already exist
+</Info>
+
+To migrate an existing Zylon installation (Online, or Airgap) to an Online installation, follow these steps:
+
+1. **Ensure connectivity**: Verify that the target machine has connectivity with below domains.
+2. **Update configuration**: Run `sudo zylon-cli config init --force` to update the configuration for online operation. Be sure to configure as [Configure Zylon](#configure-zylon) step describes.
+  * Be sure to select Semi-Airgap when you run the configuration wizard.
+  * If you don't have connectivity with replicated domains, be sure to request a local license to Zylon support team.
+4. **Disable offline mode**: Edit `/etc/zylon/zylon-conf.yaml` and set:
+    ```yaml
+    airgap:
+      offline_operation: false
+    ```
+5. **Refresh configuration**: Execute `sudo zylon-cli sync` to apply the new configuration settings.
+6. **Verify operation**: Confirm that all services are functioning correctly.
+
+---
+
+<InstallationNextSteps />

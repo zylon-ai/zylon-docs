@@ -9,7 +9,7 @@
   },
   "servers": [
     {
-      "url": "https://{base_url}",
+      "url": "https://{base_url}/api",
       "description": "Your Zylon instance (replace {base_url} with your actual hostname)"
     }
   ],
@@ -3987,6 +3987,19 @@
             "explode": false,
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "projects",
+            "in": "query",
+            "required": false,
+            "deprecated": false,
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -8304,6 +8317,9 @@
       },
       "ai.zylon.backend.server.app.issuetracker.CreateIssueDTO": {
         "properties": {
+          "project_id": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -8339,6 +8355,7 @@
         "required": [
           "anonymous",
           "config",
+          "project_id",
           "resource_type",
           "type"
         ]
@@ -8407,6 +8424,9 @@
           },
           "created_by": {
             "$ref": "#/components/schemas/ai.zylon.backend.server.app.user.UserDTO"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ai.zylon.backend.server.app.project.ProjectDTO"
           }
         },
         "required": [
@@ -8431,7 +8451,8 @@
       },
       "ai.zylon.backend.server.app.issuetracker.IssueQueryIncludeFields": {
         "enum": [
-          "User"
+          "User",
+          "Project"
         ]
       },
       "page_array_ai.zylon.backend.server.app.issuetracker.IssueDTO__": {

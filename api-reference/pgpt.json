@@ -3,11 +3,11 @@
   "info": {
     "title": "Zylon-GPT API",
     "description": "\nThis API describes Zylon's AI layer's API. The API exposes low-level\nprimitives that allow developers to build AI apps\nand worflows on top of Zylon's Private AI platform.\n",
-    "version": "0.73.2\n"
+    "version": "0.75.1\n"
   },
   "servers": [
     {
-      "url": "https://{base_url}/gpt",
+      "url": "https://{base_url}/api/gpt",
       "description": "Your Zylon instance (replace {base_url} with your actual hostname)"
     }
   ],
@@ -2550,14 +2550,14 @@
           "Tools"
         ],
         "summary": "Web Search",
-        "description": "Search the web for information related to a natural language query.",
+        "description": "Search the web for information related to a natural language query and return aggregated results from multiple sources.",
         "operationId": "web_search_v1_tools_web_search_post",
         "requestBody": {
-          "description": "Request body for fetching web content. The last user message must contain a valid URL.",
+          "description": "Request body for web search. Includes the natural language query to search the web.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WebFetchBody"
+                "$ref": "#/components/schemas/WebSearchQueryBody"
               }
             }
           },
@@ -2572,13 +2572,28 @@
                   "$ref": "#/components/schemas/ToolResponse"
                 },
                 "examples": {
-                  "successful_fetch": {
-                    "summary": "Fetched text content from a web page",
+                  "successful_search": {
+                    "summary": "Web search results with sources and text content",
                     "value": {
                       "content": [
                         {
+                          "type": "source",
+                          "sources": [
+                            {
+                              "id": "website_a1f2ae32-e661-4f61-ad94-7f26163b51da",
+                              "object": "context.website",
+                              "url": "https://example.com/page",
+                              "favicon_url": "https://example.com/favicon.png",
+                              "title": "Example Page Title",
+                              "description": "Brief description of the page content",
+                              "content_type": "text/markdown",
+                              "content": "Full markdown content from the source..."
+                            }
+                          ]
+                        },
+                        {
                           "type": "text",
-                          "text": "This is the main content extracted from the web page..."
+                          "text": "1. Example Page Title\nDescription: Brief description...\nURL: https://example.com/page\nAge: Unknown\nContent: Full content preview..."
                         }
                       ],
                       "is_error": false
@@ -2596,17 +2611,18 @@
             "content": {
               "application/json": {
                 "examples": {
-                  "missing_url": {
-                    "summary": "Missing URL in the last user message",
+                  "missing_query": {
+                    "summary": "Missing required query field",
                     "value": {
                       "detail": [
                         {
+                          "type": "missing",
                           "loc": [
                             "body",
-                            "context_filter"
+                            "query"
                           ],
-                          "msg": "No URL found in the last user message.",
-                          "type": "value_error"
+                          "msg": "Field required",
+                          "input": {}
                         }
                       ]
                     }

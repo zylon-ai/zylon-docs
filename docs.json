@@ -489,12 +489,12 @@
               {
                 "group": "API de ZylonGPT",
                 "icon": "terminal",
-                "openapi": "es/api-reference/pgpt.json"
+                "openapi": "/api-reference/pgpt.json"
               },
               {
                 "group": "API del Workspace",
                 "icon": "terminal",
-                "openapi": "es/api-reference/workspace.json"
+                "openapi": "/api-reference/workspace.json"
               }
             ]
           },

@@ -9,7 +9,7 @@
   },
   "servers": [
     {
-      "url": "https://{base_url}",
+      "url": "https://{base_url}/",
       "description": "Your Zylon instance (replace {base_url} with your actual hostname)"
     }
   ],

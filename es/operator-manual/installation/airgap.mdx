@@ -71,10 +71,6 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     ⚠️ **Importante:** El comando `sudo` no preserva las variables de entorno por defecto. Debe usar la bandera `-E` para pasar la configuración del proxy a comandos que requieren privilegios elevados:
 
     ```bash
-    # Incorrecto
-    sudo zylon-cli download <version> --airgap
-
-    # Correcto
     sudo -E zylon-cli download <version> --airgap
     ```
   </Accordion>
@@ -157,7 +153,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
           id: "2xo..."
           type: "Zylon"
           data: |-
-            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         ```
 
         <Warning>

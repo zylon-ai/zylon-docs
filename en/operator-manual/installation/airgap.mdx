@@ -71,10 +71,6 @@ In your online machine, ensure firewall access to these domains:
     ⚠️ **Important:** The `sudo` command does not preserve environment variables by default. You must use the `-E` flag to pass proxy settings to commands requiring elevated privileges:
 
     ```bash
-    # Wrong
-    sudo zylon-cli download <version> --airgap
-
-    # Correct
     sudo -E zylon-cli download <version> --airgap
     ```
   </Accordion>
@@ -157,7 +153,7 @@ In your online machine, ensure firewall access to these domains:
           id: "2xo..."
           type: "Zylon"
           data: |-
-            [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         ```
 
         <Warning>

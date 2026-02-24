@@ -3,14 +3,15 @@
 set -e
 
 PLACEHOLDER_HOST="{base_url}"
+API_PREFIX="/api"
 
 if ! command -v jq &> /dev/null; then
-    echo "Error: jq is required but not installed."
+    echo "Error: jq is required but not installed." >&2
     exit 1
 fi
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <input_spec_file> [output_spec_file]"
+    echo "Usage: $0 <input_spec_file> [output_spec_file]" >&2
     exit 1
 fi
 
@@ -18,40 +19,38 @@ INPUT_FILE="$1"
 OUTPUT_FILE="${2:-${INPUT_FILE}}"
 
 if [ ! -f "$INPUT_FILE" ]; then
-    echo "Error: Input file '$INPUT_FILE' not found"
+    echo "Error: Input file '$INPUT_FILE' not found" >&2
     exit 1
 fi
 
 TEMP_FILE="${INPUT_FILE}.tmp.$$"
 
-ORIGINAL_PATH=$(jq -r 'if .servers and (.servers | length) > 0 then .servers[0].url else "" end' "$INPUT_FILE")
+ORIGINAL_URL=$(jq -r 'if .servers and (.servers | length) > 0 then .servers[0].url else "" end' "$INPUT_FILE")
 
-if [ -z "$ORIGINAL_PATH" ] || [ "$ORIGINAL_PATH" = "null" ]; then
-    ORIGINAL_PATH=""
-fi
-
-if [ "$ORIGINAL_PATH" = "/" ] || [ "$ORIGINAL_PATH" = "" ]; then
-    NEW_URL="https://${PLACEHOLDER_HOST}"
+if [ -z "$ORIGINAL_URL" ] || [ "$ORIGINAL_URL" = "null" ]; then
+    NEW_URL="https://${PLACEHOLDER_HOST}${API_PREFIX}"
 else
-    CLEAN_PATH="${ORIGINAL_PATH#/}"
-    NEW_URL="https://${PLACEHOLDER_HOST}/${CLEAN_PATH}"
+    PATH_PART=$(echo "$ORIGINAL_URL" | sed 's|https\?://[^/]*||; s|/$||')
+    PATH_PART=$(echo "$PATH_PART" | sed 's|^/api/|/|; s|^/api$||')
+    NEW_URL="https://${PLACEHOLDER_HOST}${API_PREFIX}${PATH_PART}"
 fi
 
-jq --arg new_url "$NEW_URL" '
+DESCRIPTION="Your Zylon instance (replace ${PLACEHOLDER_HOST} with your actual hostname)"
+
+jq --arg new_url "$NEW_URL" --arg desc "$DESCRIPTION" '
   if .servers then
     .servers[0].url = $new_url |
-    .servers[0].description = "Your Zylon instance (replace '$PLACEHOLDER_HOST' with your actual hostname)"
+    .servers[0].description = $desc
   else
-    .servers = [{
-      "url": $new_url,
-      "description": "Your Zylon instance (replace '$PLACEHOLDER_HOST' with your actual hostname)"
-    }]
+    .servers = [{"url": $new_url, "description": $desc}]
   end
 ' "$INPUT_FILE" > "$TEMP_FILE"
 
 if ! jq empty "$TEMP_FILE" 2>/dev/null; then
+    echo "Error: Failed to produce valid JSON" >&2
     rm -f "$TEMP_FILE"
     exit 1
 fi
 
 mv "$TEMP_FILE" "$OUTPUT_FILE"
+echo "Updated servers[0].url to: $NEW_URL"

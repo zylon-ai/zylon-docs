@@ -7,7 +7,7 @@
     "light": "#796ABF",
     "dark": "#E8C468"
   },
-  "description": "The truly Private AI platform for the Enterprise\nThe only self-contained and ready-to-go AI platform that runs in your own servers, allowing you to maintain data sovereignty",
+  "description": "Zylon is an enterprise AI platform delivering private generative AI and on-premise AI software for regulated industries, enabling secure deployment inside enterprise infrastructure without external cloud dependencies.",
   "favicon": "/favicon.png",
   "styling": {
     "eyebrows": "breadcrumbs"

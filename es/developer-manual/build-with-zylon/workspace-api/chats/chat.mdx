@@ -7,10 +7,10 @@ Los endpoints de Chat permiten enviar solicitudes puntuales usando el mismo form
 
 ## Solicitud básica y respuesta
 
-Envía una solicitud puntual con `POST /v1/app/chat`.
+Envía una solicitud puntual con `POST /api/v1/app/chat`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/chat" \
+curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -42,7 +42,7 @@ curl -X POST "https://{BASE_URL}/v1/app/chat" \
 ## Validar un chat
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

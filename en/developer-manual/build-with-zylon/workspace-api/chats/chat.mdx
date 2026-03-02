@@ -7,10 +7,10 @@ The Chat endpoints let you send a one-off request using the same message format 
 
 ## Basic request and response
 
-Send an ad-hoc request with `POST /v1/app/chat`.
+Send an ad-hoc request with `POST /api/v1/app/chat`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/chat" \
+curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -42,7 +42,7 @@ curl -X POST "https://{BASE_URL}/v1/app/chat" \
 ## Validate a chat request
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/chat/validate" \
+curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

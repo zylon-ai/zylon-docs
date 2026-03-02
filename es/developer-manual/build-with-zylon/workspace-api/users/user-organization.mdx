@@ -7,10 +7,10 @@ Las organizaciones son el contenedor principal de usuarios y proyectos. Usa esto
 
 ## Solicitud básica y respuesta
 
-Lista organizaciones visibles con `GET /v1/app/organization`.
+Lista organizaciones visibles con `GET /api/v1/app/organization`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization" \
+curl "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -29,7 +29,7 @@ curl "https://{BASE_URL}/v1/app/organization" \
 ## Actualizar configuración de organización
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/organization" \
+curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

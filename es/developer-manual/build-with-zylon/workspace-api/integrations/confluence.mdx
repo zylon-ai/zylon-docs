@@ -9,10 +9,10 @@ Si la integración requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/dev
 
 ## Solicitud básica y respuesta
 
-Obtén la configuración con `GET /v1/app/integration/confluence/{integrationId}/config`.
+Obtén la configuración con `GET /api/v1/app/integration/confluence/{integrationId}/config`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
+curl "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/config" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -28,7 +28,7 @@ curl "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/con
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/ingest" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

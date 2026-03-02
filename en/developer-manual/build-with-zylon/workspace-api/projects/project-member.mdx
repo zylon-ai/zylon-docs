@@ -7,10 +7,10 @@ Use project member endpoints to control who can access a project and what role t
 
 ## Basic request and response
 
-List current members with `GET /v1/app/project/{projectId}/member`.
+List current members with `GET /api/v1/app/project/{projectId}/member`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member?page=1&page_size=50" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -44,12 +44,12 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member?page=1&page
 ## Add members
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
-      { "user_id": "user_9d1c3b5a7f2e4c6d", "role": "Editor" }
+      { "user_id": "{userID}", "role": "Editor" }
     ]
   }'
 ```
@@ -79,12 +79,12 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
 ## Update member roles
 
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
-      { "user_id": "user_9d1c3b5a7f2e4c6d", "role": "Admin", "is_pinned": true }
+      { "user_id": "{userID}", "role": "Admin", "is_pinned": true }
     ]
   }'
 ```
@@ -116,7 +116,7 @@ curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member" \
 <Tabs>
   <Tab title="Get member">
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -142,7 +142,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b
   </Tab>
   <Tab title="Remove member">
 ```bash
-curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/member/user_9d1c3b5a7f2e4c6d" \
+curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

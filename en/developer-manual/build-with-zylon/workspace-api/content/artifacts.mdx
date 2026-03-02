@@ -26,19 +26,16 @@ Document artifacts hold content, links reference existing artifacts, and folders
 <Tabs>
   <Tab title="Document">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "type": "Document",
+    "type": "InlineText",
     "source": "User",
     "name": "Q1 Support Summary",
     "description": "Weekly summary notes.",
-    "raw_content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.",
     "props": {
-      "file_name": "release_notes.txt",
-      "content_type": "text/plain",
-      "content_length": 128
+      "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
     }
   }'
 ```
@@ -50,14 +47,12 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
   "id": "artifact_doc_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support Summary",
-  "type": "Document",
+  "type": "InlineText",
   "source": "User",
-  "state": "Ready",
-  "ingest_status": "Done",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
   "props": {
-    "file_name": "release_notes.txt",
-    "content_type": "text/plain",
-    "content_length": 128
+    "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
   },
   "created_at": "2026-02-08T14:30:12Z",
   "updated_at": "2026-02-08T14:31:02Z"
@@ -68,7 +63,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="Folder">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -102,7 +97,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="Link">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -111,8 +106,8 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "name": "Q1 Support Summary (link)",
     "description": "Reference to the canonical document.",
     "props": {
-      "source_artifact_id": "artifact_doc_q1",
-      "original_artifact_id": "artifact_doc_q1"
+      "source_artifact_id": "{artifactID}",
+      "original_artifact_id": "{artifactID}"
     }
   }'
 ```
@@ -147,7 +142,7 @@ Agent flows run a Zylon workflow across one or more artifacts to produce a struc
 <Tabs>
   <Tab title="Summary">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -155,7 +150,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "source": "User",
     "name": "Q1 Support Summary (auto)",
     "props": {
-      "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+      "artifact_ids": ["{artifactID}"],
       "style": "Neutral",
       "detail": "KeyPoints",
       "instructions": ["Focus on billing and onboarding trends."]
@@ -172,7 +167,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
   "state": "Processing",
   "ingest_status": "Processing",
   "props": {
-    "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+    "artifact_ids": ["artifact_doc_q1"],
     "style": "Neutral",
     "detail": "KeyPoints",
     "instructions": ["Focus on billing and onboarding trends."]
@@ -185,7 +180,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="Composition">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -193,7 +188,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "source": "User",
     "name": "Q1 Support Brief",
     "props": {
-      "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+      "artifact_ids": ["{artifactID}"],
       "style": "Expert",
       "detail": "LongPieces",
       "instructions": "Draft a one-page summary for leadership."
@@ -210,7 +205,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
   "state": "Processing",
   "ingest_status": "Processing",
   "props": {
-    "artifact_ids": ["artifact_doc_q1", "artifact_doc_q2"],
+    "artifact_ids": ["artifact_doc_q1"],
     "style": "Expert",
     "detail": "LongPieces",
     "instructions": "Draft a one-page summary for leadership."
@@ -223,7 +218,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="BulkQA">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -231,7 +226,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "source": "User",
     "name": "Billing FAQ",
     "props": {
-      "artifact_ids": ["artifact_doc_q1"],
+      "artifact_ids": ["{artifactID}"],
       "style": "Simple",
       "detail": "Concise",
       "instructions": ["Answer using only the artifacts."],
@@ -269,7 +264,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="ReadAndExtract">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -277,7 +272,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "source": "User",
     "name": "Contract extraction",
     "props": {
-      "artifact_ids": ["artifact_contract_v3"],
+      "artifact_ids": ["{artifactID}"],
       "sections": [
         { "title": "Term", "description": "Contract term in months", "id": "term" },
         { "title": "SLA", "description": "Support response time", "id": "sla" }
@@ -295,7 +290,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
   "state": "Processing",
   "ingest_status": "Processing",
   "props": {
-    "artifact_ids": ["artifact_contract_v3"],
+    "artifact_ids": ["artifact_doc_q1"],
     "sections": [
       { "title": "Term", "description": "Contract term in months", "id": "term" },
       { "title": "SLA", "description": "Support response time", "id": "sla" }
@@ -309,7 +304,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="SmartDoc">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -317,7 +312,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
     "source": "User",
     "name": "Onboarding SmartDoc",
     "props": {
-      "artifact_ids": ["artifact_doc_q1"]
+      "artifact_ids": ["{artifactID}"]
     }
   }'
 ```
@@ -347,7 +342,7 @@ Connector artifacts store tool integrations. `private_props` is only used for **
 <Tabs>
   <Tab title="SqlDatabase">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -395,7 +390,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
   <Tab title="McpServer">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -440,7 +435,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact" 
 
 To retrieve private details for these artifacts, call:
 
-`GET /v1/app/project/{projectId}/artifact/{artifactId}/private`
+`GET /api/v1/app/project/{projectId}/artifact/{artifactId}/private`
 
 Only the creator of the artifact can access the private details.
 
@@ -449,7 +444,7 @@ Only the creator of the artifact can access the private details.
 ### List artifacts
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -480,7 +475,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact?page=1&pa
 ### Get an artifact
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -504,7 +499,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_
 ### Update an artifact
 
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -531,7 +526,7 @@ curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/ar
 ### Delete an artifact
 
 ```bash
-curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1" \
+curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -547,17 +542,14 @@ curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact
 ### Private artifact metadata
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/private" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/private" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
 <Accordion title="Example response (private MCP artifact props)">
 ```json
 {
-  "url": "https://mcp.internal.example",
-  "use_bearer_auth": false,
-  "authorization_token": "***",
-  "bearer_token": null
+  "connection_string": "postgresql://readonly:***@db.example.com:5432/sales"
 }
 ```
 </Accordion>
@@ -565,7 +557,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_
 ### Download raw artifact content
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/download" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/download" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -577,31 +569,12 @@ Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.
 
 ### Get parsed content
 
-```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/parsed-content" \
-  -H "Authorization: Bearer {API_TOKEN}"
-```
-
-<Accordion title="Example response">
-```text
-Ticket volume rose 12% week-over-week.
-Billing issues drove 38% of cases.
-Priority bugs were resolved within 48 hours.
-```
-</Accordion>
+This endpoint is only available when the artifact has an initialized vector index.
+In practice, this usually means connector-backed documents or artifacts that have completed indexing.
 
 ### Sync an artifact
 
-```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/artifact/artifact_doc_q1/sync" \
-  -H "Authorization: Bearer {API_TOKEN}"
-```
-
-<Accordion title="Example response">
-```text
-HTTP/1.1 202 Accepted
-```
-</Accordion>
+This endpoint is primarily used for integration artifacts (SharePoint, Confluence, Claromentis, or FileSystem).
 
 ## Errors and edge cases
 

@@ -5,12 +5,14 @@ description: "Busca en proyectos, hilos, artefactos e interacciones."
 
 Usa el endpoint de búsqueda para consultar contenido del espacio de trabajo mediante texto. Limita el alcance con el filtro `type`.
 
+Las consultas de Search requieren un token con acceso a Workspace y un gateway de PrivateGPT vinculado a la colección de tu organización.
+
 ## Solicitud básica y respuesta
 
-Busca en todos los recursos con `GET /v1/app/search`.
+Busca en todos los recursos con `GET /api/v1/app/search`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -36,7 +38,7 @@ curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
 ## Buscar solo hilos
 
 ```bash
-curl "https://{BASE_URL}/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

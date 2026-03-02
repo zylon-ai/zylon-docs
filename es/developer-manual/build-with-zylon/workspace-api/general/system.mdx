@@ -7,10 +7,10 @@ Usa estos endpoints para verificar el estado del sistema y ver metadatos de la l
 
 ## Solicitud básica y respuesta
 
-Usa la comprobación de salud con `GET /health` para verificar la disponibilidad.
+Usa la comprobación de salud con `GET /api/health` para verificar la disponibilidad.
 
 ```bash
-curl "https://{BASE_URL}/health"
+curl "https://{BASE_URL}/api/health"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -26,7 +26,7 @@ curl "https://{BASE_URL}/health"
 ## Detalles de licencia
 
 ```bash
-curl "https://{BASE_URL}/v1/license" \
+curl "https://{BASE_URL}/api/v1/license" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

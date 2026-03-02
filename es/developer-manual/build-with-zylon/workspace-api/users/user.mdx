@@ -7,10 +7,10 @@ Usa la API de usuarios para gestionar personas en tu espacio de trabajo. Puedes 
 
 ## Solicitud básica y respuesta
 
-Usa `GET /v1/app/me` para verificar tu token y contexto.
+Usa `GET /api/v1/app/me` para verificar tu token y contexto.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/me" \
+curl "https://{BASE_URL}/api/v1/app/me" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -34,7 +34,7 @@ curl "https://{BASE_URL}/v1/app/me" \
 ## Listar usuarios
 
 ```bash
-curl "https://{BASE_URL}/v1/app/user?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -63,11 +63,11 @@ curl "https://{BASE_URL}/v1/app/user?page=1&page_size=20" \
 ## Crear un usuario
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/user" \
+curl -X POST "https://{BASE_URL}/api/v1/app/user" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "account_id": "acct_6c8a1f3b2d4e5f7a",
+    "account_id": "{accountID}",
     "role": "AppMember",
     "user_info": {
       "email": "sasha@auroralabs.com",
@@ -98,7 +98,7 @@ curl -X POST "https://{BASE_URL}/v1/app/user" \
 <Tabs>
   <Tab title="Obtener usuario">
 ```bash
-curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+curl "https://{BASE_URL}/api/v1/app/user/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -119,7 +119,7 @@ curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
   </Tab>
   <Tab title="Actualizar usuario">
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -150,14 +150,14 @@ curl -X PUT "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b" \
 <Tabs>
   <Tab title="Desactivar">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/deactivate" \
+curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/deactivate" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
+  "id": "user_9d1c3b5a7f2e4c6d",
   "state": "Inactive"
 }
 ```
@@ -165,14 +165,14 @@ curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/deactivate" \
   </Tab>
   <Tab title="Activar">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/activate" \
+curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/activate" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
+  "id": "user_9d1c3b5a7f2e4c6d",
   "state": "Active"
 }
 ```
@@ -183,7 +183,7 @@ curl -X POST "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/activate" \
 ## Listar proyectos de un usuario
 
 ```bash
-curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/project" \
+curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -215,7 +215,7 @@ curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/project" \
 ## Últimos artefactos de un usuario
 
 ```bash
-curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/latest-artifacts" \
+curl "https://{BASE_URL}/api/v1/app/user/{userID}/latest-artifacts" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -240,7 +240,7 @@ curl "https://{BASE_URL}/v1/app/user/user_4b7c2a1d9e5f3c8b/latest-artifacts" \
 ## Integraciones del usuario
 
 ```bash
-curl "https://{BASE_URL}/v1/app/user/integrations" \
+curl "https://{BASE_URL}/api/v1/app/user/integrations" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

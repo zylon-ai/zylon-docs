@@ -7,10 +7,10 @@ Organizations are the top-level container for users and projects. Use these endp
 
 ## Basic request and response
 
-List organizations visible to your account with `GET /v1/app/organization`.
+List organizations visible to your account with `GET /api/v1/app/organization`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization" \
+curl "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -29,7 +29,7 @@ curl "https://{BASE_URL}/v1/app/organization" \
 ## Update organization settings
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/organization" \
+curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

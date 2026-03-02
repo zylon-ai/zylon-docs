@@ -7,15 +7,15 @@ Interactions are individual message exchanges within a thread. You can create th
 
 ## Basic request and response
 
-Create a thread interaction with `POST /v1/app/thread/{threadId}/interaction`.
+Create a thread interaction with `POST /api/v1/app/thread/{threadId}/interaction`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interaction" \
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "thread_id": "thread_3f2a1c4d5b6e7f8a",
-    "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+    "thread_id": "{threadID}",
+    "artifact_ids": ["{artifactID}"],
     "all_artifacts": false,
     "agent": "Default",
     "pgpt": {
@@ -76,7 +76,7 @@ curl -X POST "https://{BASE_URL}/v1/app/thread/thread_3f2a1c4d5b6e7f8a/interacti
 ## Get an interaction
 
 ```bash
-curl "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -94,24 +94,10 @@ curl "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
 ```
 </Accordion>
 
-## Cancel or delete an interaction
+## Delete an interaction
 
-<Tabs>
-  <Tab title="Cancel">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/cancel" \
-  -H "Authorization: Bearer {API_TOKEN}"
-```
-
-<Accordion title="Example response">
-```text
-HTTP/1.1 200 OK
-```
-</Accordion>
-  </Tab>
-  <Tab title="Delete">
-```bash
-curl -X DELETE "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
+curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -123,13 +109,11 @@ curl -X DELETE "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b" \
 }
 ```
 </Accordion>
-  </Tab>
-</Tabs>
 
 ## Stream interaction output
 
 ```bash
-curl -N "https://{BASE_URL}/v1/app/interaction/inter_5a7b9c1d3e5f7a9b/stream" \
+curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Accept: text/event-stream"
 ```

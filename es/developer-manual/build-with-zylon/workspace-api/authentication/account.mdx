@@ -7,10 +7,10 @@ Usa los endpoints de cuenta para listar cuentas, administrar roles, restablecer 
 
 ## Solicitud básica y respuesta
 
-Lista las cuentas visibles para tu token con `GET /v1/account`.
+Lista las cuentas visibles para tu token con `GET /api/v1/account`.
 
 ```bash
-curl "https://{BASE_URL}/v1/account" \
+curl "https://{BASE_URL}/api/v1/account" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -45,7 +45,7 @@ curl "https://{BASE_URL}/v1/account" \
 ## Obtener una cuenta
 
 ```bash
-curl "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+curl "https://{BASE_URL}/api/v1/account/{accountID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -75,28 +75,25 @@ curl "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
 ```
 </Accordion>
 
-## Actualizar roles de cuenta
+## Actualizar una cuenta
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "roles": ["AppAdmin", "Developer"]
-  }'
+  -d '{}'
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "acct_6c8a1f3b2d4e5f7a",
+  "state": "Active",
   "email": "sasha@auroralabs.com",
   "name": "Sasha Patel",
-  "given_name": "Sasha",
-  "family_name": "Patel",
+  "profile_picture": "https://{BASE_URL}/s3/public/{ACCOUNT_ID}/media/account_picture.png",
   "provider": "Credentials",
-  "users": [],
-  "roles": ["AppAdmin", "Developer"]
+  "roles": ["AppAdmin"]
 }
 ```
 </Accordion>
@@ -104,7 +101,7 @@ curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a" \
 ## Actualizar tu contraseña
 
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/account/me" \
+curl -X PUT "https://{BASE_URL}/api/v1/account/me" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -122,7 +119,7 @@ HTTP/1.1 204 No Content
 ## Restablecer la contraseña de una cuenta
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password" \
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountID}/reset-password" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -141,7 +138,7 @@ curl -X POST "https://{BASE_URL}/v1/account/acct_6c8a1f3b2d4e5f7a/reset-password
 ## Listar tokens de API
 
 ```bash
-curl "https://{BASE_URL}/v1/account/token" \
+curl "https://{BASE_URL}/api/v1/account/token" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -164,7 +161,7 @@ curl "https://{BASE_URL}/v1/account/token" \
 ## Crear un token de API
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/account/token" \
+curl -X POST "https://{BASE_URL}/api/v1/account/token" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -191,7 +188,7 @@ curl -X POST "https://{BASE_URL}/v1/account/token" \
 ## Revocar un token de API
 
 ```bash
-curl -X DELETE "https://{BASE_URL}/v1/account/token" \
+curl -X DELETE "https://{BASE_URL}/api/v1/account/token?token={tokenHash}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -204,7 +201,7 @@ curl -X DELETE "https://{BASE_URL}/v1/account/token" \
 ## Listar organizaciones de una cuenta
 
 ```bash
-curl "https://{BASE_URL}/v1/account/organization" \
+curl "https://{BASE_URL}/api/v1/account/organization" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -223,7 +220,7 @@ curl "https://{BASE_URL}/v1/account/organization" \
 ## Unirse a una organización
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/account/organization/org_2f3a9d1c7b5e4a8f/join" \
+curl -X POST "https://{BASE_URL}/api/v1/account/organization/{orgID}/join" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

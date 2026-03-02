@@ -7,10 +7,10 @@ Las incidencias (`issues`) permiten comunicar problemas con respuestas o conteni
 
 ## Solicitud básica y respuesta
 
-Lista incidencias con `GET /v1/app/issue` antes de crear o actualizar.
+Lista incidencias con `GET /api/v1/app/issue` antes de crear o actualizar.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -50,7 +50,7 @@ curl "https://{BASE_URL}/v1/app/issue?page=1&page_size=20" \
 ## Crear una incidencia
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/issue" \
+curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -92,7 +92,7 @@ curl -X POST "https://{BASE_URL}/v1/app/issue" \
 <Tabs>
   <Tab title="Obtener incidencia">
 ```bash
-curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+curl "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -109,7 +109,7 @@ curl "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   </Tab>
   <Tab title="Actualizar incidencia">
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -133,7 +133,7 @@ curl -X PUT "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ## Eliminar una incidencia
 
 ```bash
-curl -X DELETE "https://{BASE_URL}/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

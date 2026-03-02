@@ -5,12 +5,14 @@ description: "Search across projects, threads, artifacts, and interactions."
 
 Use the Search API to query workspace content with a single text query. Limit search scope with the `type` filter.
 
+Search requests require a token with workspace access and a PrivateGPT gateway linked to your organization collection.
+
 ## Basic request and response
 
-Search across resources with `GET /v1/app/search`.
+Search across resources with `GET /api/v1/app/search`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -36,7 +38,7 @@ curl "https://{BASE_URL}/v1/app/search?q=support%20summary&limit=5" \
 ## Search only threads
 
 ```bash
-curl "https://{BASE_URL}/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

@@ -16,7 +16,7 @@ Inicia un flujo de inicio de sesión llamando al endpoint del proveedor y siguie
 <Tabs>
   <Tab title="Inicio de sesión Google">
 ```bash
-curl -i "https://{BASE_URL}/v1/auth/google/login"
+curl -i "https://{BASE_URL}/api/v1/auth/google/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -28,7 +28,7 @@ Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_ur
   </Tab>
   <Tab title="Inicio de sesión Microsoft">
 ```bash
-curl -i "https://{BASE_URL}/v1/auth/microsoft/login"
+curl -i "https://{BASE_URL}/api/v1/auth/microsoft/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -45,7 +45,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Inicio de sesión Confluence">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/confluence/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -57,7 +57,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
   </Tab>
   <Tab title="Inicio de sesión SharePoint">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -74,7 +74,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Instancia Confluence">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -86,7 +86,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
   </Tab>
   <Tab title="Instancia SharePoint">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -103,7 +103,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Renovar token Confluence">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -115,7 +115,7 @@ curl -X POST "https://{BASE_URL}/v1/app/integration/confluence/conf_8a7b6c5d4e3f
   </Tab>
   <Tab title="Renovar token SharePoint">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -132,7 +132,7 @@ curl -X POST "https://{BASE_URL}/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c
 <Tabs>
   <Tab title="Microsoft callback">
 ```bash
-curl -i "https://{BASE_URL}/v1/auth/microsoft/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/api/v1/auth/microsoft/callback?code=...&state=..."
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -144,7 +144,7 @@ Location: https://{BASE_URL}/app/login/success
   </Tab>
   <Tab title="Confluence callback">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/confluence/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/callback?code=...&state=..."
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -156,7 +156,7 @@ Location: https://{BASE_URL}/app/integrations/confluence
   </Tab>
   <Tab title="SharePoint callback">
 ```bash
-curl -i "https://{BASE_URL}/v1/app/integration/sharepoint/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/callback?code=...&state=..."
 ```
 
 <Accordion title="Ejemplo de respuesta">

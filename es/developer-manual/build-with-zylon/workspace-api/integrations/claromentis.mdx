@@ -7,10 +7,10 @@ Las integraciones de Claromentis importan contenido de la base de conocimiento. 
 
 ## Solicitud básica y respuesta
 
-Crea una integración de Claromentis con `POST /v1/app/integration/claromentis`.
+Crea una integración de Claromentis con `POST /api/v1/app/integration/claromentis`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -35,7 +35,7 @@ curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis" \
 ## Actualizar credenciales
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -60,7 +60,7 @@ curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6
 ## Obtener configuración
 
 ```bash
-curl "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/config" \
+curl "https://{BASE_URL}/api/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/config" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -76,7 +76,7 @@ curl "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/co
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/ingest" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/clar_3c2d1b4a5f6e7d8c/ingest" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

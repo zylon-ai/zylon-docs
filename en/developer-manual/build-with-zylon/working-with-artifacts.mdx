@@ -28,8 +28,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "collection": "docs_examples_sync",
-    "artifact": "docs_text_artifact_sync",
+    "collection": "{collectionID}",
+    "artifact": "{artifactID}",
     "input": {
       "type": "text",
       "value": "Release notes: Shipped billing dashboard and fixed three bugs."
@@ -56,7 +56,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
         "source": "docs",
         "headers": [],
         "artifact_id": "docs_text_artifact_sync",
-        "collection": "docs_examples_sync",
+        "collection": "019c7569-f1f3-74da-8017-35d4a11f93ca",
         "llm_model": "default",
         "embed_model": "default",
         "hash": "faf6da679814136cb7cef94532397948cd2cd303b25f91a527af53227e9da99d"
@@ -79,8 +79,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
-      "collection": "docs_examples",
-      "artifact": "docs_text_artifact_async_pending",
+      "collection": "{collectionID}",
+      "artifact": "{artifactID}",
       "input": {
         "type": "text",
         "value": "Release notes: We shipped a new billing dashboard and fixed three bugs."
@@ -101,8 +101,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
-      "collection": "docs_examples",
-      "artifact": "docs_file_artifact_async",
+      "collection": "{collectionID}",
+      "artifact": "{artifactID}",
       "input": {
         "type": "file",
         "value": "SGVsbG8gZnJvbSBmaWxlIGFydGlmYWN0Lgo="
@@ -123,8 +123,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
   -H "Content-Type: application/json" \
   -d '{
     "ingest_body": {
-      "collection": "docs_examples",
-      "artifact": "docs_uri_artifact_async",
+      "collection": "{collectionID}",
+      "artifact": "{artifactID}",
       "input": {
         "type": "uri",
         "value": "https://example.com/"
@@ -167,7 +167,7 @@ curl "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async/{task_id}" \
 ## Listing ingested artifacts
 
 ```bash
-curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection=docs_examples" \
+curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection={collectionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -184,7 +184,7 @@ curl "https://{BASE_URL}/api/gpt/v1/artifacts/list?collection=docs_examples" \
       "doc_metadata": {
         "file_name": "docs_file_artifact.txt",
         "artifact_id": "docs_file_artifact",
-        "collection": "docs_examples"
+        "collection": "019c7569-f1f3-74da-8017-35d4a11f93ca"
       }
     }
   ]
@@ -204,8 +204,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/content" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
-      "collection": "docs_examples",
-      "artifacts": ["docs_file_artifact"]
+      "collection": "{collectionID}"
     }
   }'
 ```
@@ -234,8 +233,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/chunked-content" \
   -H "Content-Type: application/json" \
   -d '{
     "context_filter": {
-      "collection": "docs_examples",
-      "artifacts": ["docs_file_artifact"]
+      "collection": "{collectionID}"
     },
     "max_tokens": 50
   }'
@@ -267,8 +265,8 @@ curl -i -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "collection": "docs_examples",
-    "artifact": "docs_text_artifact_async_pending"
+    "collection": "{collectionID}",
+    "artifact": "{artifactID}"
   }'
 ```
 
@@ -289,8 +287,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/delete/async" \
   -H "Content-Type: application/json" \
   -d '{
     "delete_body": {
-      "collection": "docs_examples",
-      "artifact": "docs_text_artifact_async"
+      "collection": "{collectionID}",
+      "artifact": "{artifactID}"
     }
   }'
 ```

@@ -7,10 +7,10 @@ Usa estos endpoints para crear cuentas con credenciales, autenticar usuarios y c
 
 ## Solicitud básica y respuesta
 
-Crea una cuenta con credenciales usando `POST /v1/auth/register`.
+Crea una cuenta con credenciales usando `POST /api/v1/auth/register`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/auth/register" \
+curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -49,7 +49,7 @@ curl -X POST "https://{BASE_URL}/v1/auth/register" \
 ## Iniciar sesión con credenciales
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/auth/login" \
+curl -X POST "https://{BASE_URL}/api/v1/auth/login" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -87,7 +87,7 @@ curl -X POST "https://{BASE_URL}/v1/auth/login" \
 ## Cerrar sesión
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/auth/logout" \
+curl -X POST "https://{BASE_URL}/api/v1/auth/logout" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

@@ -37,8 +37,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
       {
         "type": "ingested_artifact",
         "context_filter": {
-          "collection": "docs_examples",
-          "artifacts": ["docs_file_artifact"]
+          "collection": "{collectionID}"
         }
       }
     ]

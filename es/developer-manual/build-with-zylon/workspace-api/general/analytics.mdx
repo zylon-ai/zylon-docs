@@ -7,10 +7,10 @@ Los endpoints de analíticas resumen cómo se usa el espacio de trabajo en proye
 
 ## Solicitud básica y respuesta
 
-Empieza con los totales desde `GET /v1/app/organization/analytics/totals`.
+Empieza con los totales desde `GET /api/v1/app/organization/analytics/totals`.
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization/analytics/totals" \
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -29,7 +29,7 @@ curl "https://{BASE_URL}/v1/app/organization/analytics/totals" \
 ## Ranking de usuarios activos
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -57,7 +57,7 @@ curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-users?star
 ## Ranking de proyectos activos
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -88,7 +88,7 @@ curl "https://{BASE_URL}/v1/app/organization/analytics/ranking/active-projects?s
 ## Serie de tiempo
 
 ```bash
-curl "https://{BASE_URL}/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

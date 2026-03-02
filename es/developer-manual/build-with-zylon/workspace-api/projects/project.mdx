@@ -7,10 +7,10 @@ Los proyectos son la unidad del espacio de trabajo que contiene hilos, artefacto
 
 ## Solicitud básica y respuesta
 
-Crea un proyecto con `POST /v1/app/project`.
+Crea un proyecto con `POST /api/v1/app/project`.
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -42,7 +42,7 @@ curl -X POST "https://{BASE_URL}/v1/app/project" \
 ## Obtener un proyecto
 
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -62,7 +62,7 @@ curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
 <Tabs>
   <Tab title="PUT">
 ```bash
-curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -97,7 +97,7 @@ curl -X PUT "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
   </Tab>
   <Tab title="PATCH">
 ```bash
-curl -X PATCH "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+curl -X PATCH "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -116,7 +116,7 @@ HTTP/1.1 200 OK
 ## Eliminar un proyecto
 
 ```bash
-curl -X DELETE "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c" \
+curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -126,28 +126,15 @@ HTTP/1.1 204 No Content
 ```
 </Accordion>
 
-## Salir o transferir un proyecto
+## Transferir la propiedad de un proyecto
 
-<Tabs>
-  <Tab title="Salir del proyecto">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/leave" \
-  -H "Authorization: Bearer {API_TOKEN}"
-```
-
-<Accordion title="Ejemplo de respuesta">
-```text
-HTTP/1.1 200 OK
-```
-</Accordion>
-  </Tab>
-  <Tab title="Transferir la propiedad">
-```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/transfer" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "new_owner_id": "user_9d1c3b5a7f2e4c6d"
+    "old_owner_id": "{userID}",
+    "new_owner_id": "{userID}"
   }'
 ```
 
@@ -156,15 +143,13 @@ curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/transfer" 
 HTTP/1.1 200 OK
 ```
 </Accordion>
-  </Tab>
-</Tabs>
 
 ## Información de usuario en proyecto
 
 <Tabs>
   <Tab title="Obtener información">
 ```bash
-curl "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info/user_4b7c2a1d9e5f3c8b" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/info/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -176,7 +161,7 @@ HTTP/1.1 200 OK
   </Tab>
   <Tab title="Actualizar información">
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/info" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/info" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -195,7 +180,7 @@ HTTP/1.1 200 OK
 ## Chat con alcance de proyecto
 
 ```bash
-curl -X POST "https://{BASE_URL}/v1/app/project/proj_7a5c3e1b9d2f4a6c/chat" \
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{

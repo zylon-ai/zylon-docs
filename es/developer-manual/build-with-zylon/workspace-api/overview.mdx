@@ -13,6 +13,21 @@ Todos los endpoints de Workspace viven bajo:
 https://{BASE_URL}/api/v1
 ```
 
+## Cabecera de organización (`x-org`)
+
+Los endpoints de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` para que Zylon sepa a qué organización del workspace apuntar.
+
+Puedes enviar `x-org` como:
+
+- el slug de la organización (recomendado), por ejemplo `default`
+- el ID de la organización (UUID)
+
+Úsalo así en tus solicitudes:
+
+```bash
+-H "x-org: {org_slug}"
+```
+
 ## Conceptos clave
 
 {/* <!-- RESTRUCTURED --> */}

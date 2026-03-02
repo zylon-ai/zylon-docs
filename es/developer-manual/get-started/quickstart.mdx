@@ -91,6 +91,8 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
   </Tab>
 
   <Tab title="Workspace API">
+Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` para apuntar a la organización correcta. Puedes enviar el slug de la organización (recomendado) o el ID de la organización. En los ejemplos siguientes, usa `x-org: {org_slug}`.
+
 <Steps>
   <Step title="Inicia sesión">
     ```bash
@@ -98,8 +100,8 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
-        "email": "sasha@auroralabs.com",
-        "password": "S3cure!Passw0rd"
+        "email": "{username}",
+        "password": "{password}"
       }'
     ```
 
@@ -119,7 +121,7 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Customer Insights",
@@ -144,7 +146,7 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "type": "InlineText",
@@ -173,7 +175,7 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Weekly Support Brief",
@@ -184,7 +186,7 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "thread_id": "{threadID}",

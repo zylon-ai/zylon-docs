@@ -91,6 +91,8 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
   </Tab>
 
   <Tab title="Workspace API">
+Workspace requests under `/api/v1/app/*` require the `x-org` header to target the correct organization. You can send either the organization slug (recommended) or the organization ID. In the examples below, use `x-org: {org_slug}`.
+
 <Steps>
   <Step title="Authenticate">
     ```bash
@@ -98,8 +100,8 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "Content-Type: application/json" \
       -d '{
-        "email": "sasha@auroralabs.com",
-        "password": "S3cure!Passw0rd"
+        "email": "{username}",
+        "password": "{password}"
       }'
     ```
 
@@ -119,7 +121,7 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Customer Insights",
@@ -144,7 +146,7 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "type": "InlineText",
@@ -173,7 +175,7 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "name": "Weekly Support Brief",
@@ -184,7 +186,7 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
     ```bash
     curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
       -H "Authorization: Bearer {API_TOKEN}" \
-      -H "x-org: default" \
+      -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
         "thread_id": "{threadID}",

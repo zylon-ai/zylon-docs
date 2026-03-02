@@ -13,6 +13,21 @@ All Workspace endpoints live under:
 https://{BASE_URL}/api/v1
 ```
 
+## Organization header (`x-org`)
+
+Workspace endpoints under `/api/v1/app/*` require the `x-org` header so Zylon knows which workspace organization to target.
+
+You can set `x-org` to either:
+
+- the organization slug (recommended), for example `default`
+- the organization ID (UUID)
+
+Use this in requests:
+
+```bash
+-H "x-org: {org_slug}"
+```
+
 ## Core concepts
 
 {/* <!-- RESTRUCTURED --> */}

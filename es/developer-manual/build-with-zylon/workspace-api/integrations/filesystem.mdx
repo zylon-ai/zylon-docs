@@ -14,8 +14,8 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "svc_filesync",
-    "password": "fs_token_123"
+    "username": "{file_system_username}",
+    "password": "{file_system_password}"
   }'
 ```
 
@@ -35,12 +35,12 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
 ## Actualizar credenciales
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "svc_filesync",
-    "password": "fs_token_456"
+    "username": "{file_system_username}",
+    "password": "{file_system_password}"
   }'
 ```
 
@@ -60,7 +60,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/fs_9f8e7d6c5b
 ## Obtener configuración
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/config" \
+curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -75,7 +75,7 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/c
 ## Validar credenciales
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username=svc_filesync&password=fs_token_456" \
+curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username={file_system_username}&password={file_system_password}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -88,7 +88,7 @@ true
 ## Listar archivos
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId=fs_9f8e7d6c5b4a3c2d" \
+curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -108,7 +108,7 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId=f
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/fs_9f8e7d6c5b4a3c2d/ingest" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

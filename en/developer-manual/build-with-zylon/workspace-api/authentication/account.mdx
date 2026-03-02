@@ -105,8 +105,8 @@ curl -X PUT "https://{BASE_URL}/api/v1/account/me" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "current_password": "S3cure!Passw0rd",
-    "new_password": "N3w!Passw0rd2026"
+    "current_password": "{password}",
+    "new_password": "{password}"
   }'
 ```
 
@@ -123,7 +123,7 @@ curl -X POST "https://{BASE_URL}/api/v1/account/{accountID}/reset-password" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "new_password": "Temp!Passw0rd2026"
+    "new_password": "{password}"
   }'
 ```
 

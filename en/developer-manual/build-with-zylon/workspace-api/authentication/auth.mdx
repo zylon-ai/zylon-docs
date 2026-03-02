@@ -14,8 +14,8 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "sasha@auroralabs.com",
-    "password": "S3cure!Passw0rd",
+    "email": "{username}",
+    "password": "{password}",
     "roles": ["AppAdmin"]
   }'
 ```
@@ -53,8 +53,8 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/login" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "sasha@auroralabs.com",
-    "password": "S3cure!Passw0rd"
+    "email": "{username}",
+    "password": "{password}"
   }'
 ```
 

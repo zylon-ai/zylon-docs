@@ -36,7 +36,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
     "tool_context": [
       {
         "type": "sql_database",
-        "connection_string": "postgresql://readonly:password@db.example.com:5432/analytics",
+        "connection_string": "postgresql://{username}:{password}@db.example.com:5432/analytics",
         "schemas": ["public"],
         "ssl": true
       }

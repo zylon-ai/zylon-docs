@@ -12,7 +12,7 @@ Si se requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual
 Obtén la configuración con `GET /api/v1/app/integration/sharepoint/{integrationId}/config`.
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/config" \
+curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -28,7 +28,7 @@ curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/c
 ## Iniciar sincronización
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/ingest" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

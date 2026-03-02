@@ -74,7 +74,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Confluence instance">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/login"
 ```
 
 <Accordion title="Example response">
@@ -86,7 +86,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
   </Tab>
   <Tab title="SharePoint instance">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/login"
+curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/login"
 ```
 
 <Accordion title="Example response">
@@ -103,7 +103,7 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 <Tabs>
   <Tab title="Confluence refresh">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d4e3f2a1b/refresh_token" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
@@ -115,7 +115,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/conf_8a7b6c5d
   </Tab>
   <Tab title="SharePoint refresh">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/sp_1c2d3e4f5a6b7c8d/refresh_token" \
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 

@@ -19,24 +19,14 @@ Only users with **Operator** permissions can access this section. Permissions, v
 ## Accounts
 An **Account** represents one person on the Zylon platform. Accounts define platform access and determine which Backoffice sections are available.
 
-### Account roles
-| Role | Primary use | Backoffice access |
-| --- | --- | --- |
-| **Super Admin** | Initial administrative account | Same platform access as Operator |
-| **Operator** | Platform administration | Full access to Platform Backoffice |
-| **Developer** | API development workflows | Access to Developer Tools |
-| **Workspace** | Workspace collaboration | No Platform Backoffice access |
-
-A single account can include more than one role.
-
 ### Roles and permissions
-In Zylon, access control follows this model:
+Account roles define platform-level access:
 
-1. **Account role** grants platform-level access (for example, Operator or Developer).
-2. **Context role** grants permissions inside a specific Workspace or Gateway.
-3. Effective permissions are the combination of both.
+- **Super Admin** and **Operator** roles can access platform administration features.
+- **Developer** role can access Developer Tools.
+- **Workspace** role does not grant Platform Backoffice access.
 
-For example, an account can be an **Operator** at platform level and also be a **Gateway Member** in a specific Gateway.
+For the full role matrix and permission model, see [Roles and Permissions](/en/user-manual/backoffice/roles-and-permissions).
 
 ### Create an account
 You can create users in two ways.
@@ -73,13 +63,9 @@ Gateways are used to:
 - Log account usage and token usage for that gateway
 
 ### Gateway user roles
-Accounts with the **Developer** role (and Operators who are added to a gateway) can be assigned a gateway-specific role:
+Accounts with the **Developer** role (and Operators added to a gateway) can be assigned a gateway role: **Owner**, **Admin**, or **Member**.
 
-| Gateway role | Capabilities |
-| --- | --- |
-| **Owner** | Manage gateway users and roles, create and manage tokens |
-| **Admin** | Manage gateway users, create and manage tokens |
-| **Member** | Create and manage own tokens |
+For gateway-role capabilities, see [Roles and Permissions](/en/user-manual/backoffice/roles-and-permissions).
 
 ### Create a gateway
 To create a gateway:

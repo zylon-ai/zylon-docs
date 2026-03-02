@@ -19,24 +19,14 @@ Solo los usuarios con permisos **Operator** pueden acceder a esta sección. Los 
 ## Cuentas
 Una **Cuenta** representa a una persona en la plataforma Zylon. Las cuentas definen el acceso a la plataforma y determinan qué secciones del Backoffice están disponibles.
 
-### Tipos de cuenta y niveles de acceso
-| Rol de cuenta | Uso principal | Acceso en Backoffice |
-| --- | --- | --- |
-| **Super Admin** | Cuenta administrativa inicial | Mismo acceso de plataforma que Operator |
-| **Operator** | Administración de plataforma | Acceso completo a Platform Backoffice |
-| **Developer** | Flujos de desarrollo con API | Acceso a Developer Tools |
-| **Workspace** | Colaboración en Workspace | Sin acceso a Platform Backoffice |
-
-Una misma cuenta puede tener más de un rol.
-
 ### Roles y permisos
-En Zylon, el control de acceso funciona así:
+Los roles de cuenta definen el acceso a nivel de plataforma:
 
-1. El **rol de cuenta** define el acceso a nivel de plataforma.
-2. El **rol de Workspace o Gateway** define permisos dentro de ese Workspace o Gateway.
-3. Los permisos efectivos resultan de la combinación de ambos niveles.
+- Los roles **Super Admin** y **Operator** pueden acceder a funciones de administración de plataforma.
+- El rol **Developer** puede acceder a Developer Tools.
+- El rol **Workspace** no concede acceso a Platform Backoffice.
 
-Ejemplo: una cuenta puede ser **Operator** a nivel de plataforma y **Member** dentro de un gateway concreto.
+Para la matriz completa de roles y el modelo de permisos, consulta [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
 
 ### Crear una cuenta
 Puedes crear usuarios de dos formas.
@@ -73,13 +63,9 @@ Los gateways se usan para:
 - Registrar el uso de cuentas y tokens en cada gateway
 
 ### Roles de usuario en Gateway
-Las cuentas con rol **Developer** (y los Operadores añadidos a un gateway) pueden tener un rol específico dentro de cada gateway:
+Las cuentas con rol **Developer** (y los Operadores añadidos a un gateway) pueden tener un rol específico en gateway: **Owner**, **Admin** o **Member**.
 
-| Rol en gateway | Capacidades |
-| --- | --- |
-| **Owner** | Gestionar usuarios y roles del gateway, crear y gestionar tokens |
-| **Admin** | Gestionar usuarios del gateway, crear y gestionar tokens |
-| **Member** | Crear y gestionar sus propios tokens |
+Para ver las capacidades de cada rol, consulta [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
 
 ### Crear un gateway
 Para crear un gateway:

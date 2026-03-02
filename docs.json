@@ -155,6 +155,7 @@
                 "group": "Backoffice",
                 "pages": [
                   "en/user-manual/backoffice/introduction",
+                  "en/user-manual/backoffice/roles-and-permissions",
                   "en/user-manual/backoffice/accessing-the-backoffice",
                   "en/user-manual/backoffice/platform-backoffice",
                   "en/user-manual/backoffice/developer-tools"
@@ -510,6 +511,7 @@
                 "group": "Backoffice",
                 "pages": [
                   "es/user-manual/backoffice/introduction",
+                  "es/user-manual/backoffice/roles-and-permissions",
                   "es/user-manual/backoffice/accessing-the-backoffice",
                   "es/user-manual/backoffice/platform-backoffice",
                   "es/user-manual/backoffice/developer-tools"

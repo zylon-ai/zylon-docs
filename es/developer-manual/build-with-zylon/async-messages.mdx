@@ -1,0 +1,108 @@
+---
+title: "Mensajes asíncronos"
+description: "Inicia un mensaje asíncrono y luego recibe el streaming o consulta el estado."
+---
+
+Los mensajes asíncronos te permiten iniciar una generación y revisarla después (útil para trabajos en segundo plano o conexiones inestables).
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+## Guía rápida
+
+### 1) Inicia un mensaje asíncrono
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Say only: async ok" }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
+  "status": "pending",
+  "message": "Request initiated successfully"
+}
+```
+
+### 2) Streaming de eventos (SSE)
+
+Usa el `message_id` del paso anterior:
+
+```bash
+curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Accept: text/event-stream"
+```
+
+Ejemplo de eventos (truncado):
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_4b5a3cd9158b41278e0cc5f8263ece39","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+event: ping
+data: {"type":"ping"}
+
+event: error
+data: {"type": "error", "error": {"type": "api_error", "message": "Api Error"}, "exception": {"type": "RuntimeError", "message": "<AioRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:107.22.191.42:443: Failed to connect to remote host: Timeout occurred: FD Shutdown\"\n\tdebug_error_string = \"UNKNOWN:Error received from peer  {grpc_message:\"failed to connect to all addresses; last error: UNKNOWN: ipv4:107.22.191.42:443: Failed to connect to remote host: Timeout occurred: FD Shutdown\", grpc_status:14, created_time:\"2026-02-08T13:35:09.534948595+00:00\"}\"\n>"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+## Consultar estado (opcional)
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
+  "status": "completed",
+  "created_at": "2026-02-08T13:31:55.692228Z",
+  "updated_at": "2026-02-08T13:32:16.267793Z",
+  "completed_at": "2026-02-08T13:32:16.267793Z",
+  "error_message": "",
+  "stream_type": "chat_completion",
+  "metadata": {
+    "message_count": 1,
+    "tools_enabled": false,
+    "thinking_enabled": false,
+    "citations_enabled": false
+  }
+}
+```
+
+## Cancelar y eliminar
+
+Endpoints disponibles (sin cuerpo de la petición):
+
+- `POST /messages/async/{message_id}/cancel`
+- `DELETE /messages/async/{message_id}/delete`
+
+## Errores comunes
+
+- **ID incorrecto**: el evento `message_start` incluye el `id` del mensaje, pero los endpoints async usan `message_id`.
+- **Cabecera SSE**: usa `Accept: text/event-stream`.
+- **Eliminar demasiado pronto**: una vez eliminado, `status/stream` devuelve `404`.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

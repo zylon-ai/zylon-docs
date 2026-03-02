@@ -1,0 +1,59 @@
+---
+title: "Herramientas personalizadas"
+description: "Define tus propias herramientas usando JSON Schema."
+---
+
+Las herramientas personalizadas permiten definir una interfaz (nombre + JSON Schema) y dejar que el asistente decida cuándo usarla. Cuando se usa, devuelve un bloque `tool_use` con `input` estructurado.
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+En la lista `tools`, incluye:
+
+- `name`: nombre único
+- `description`: qué hace la herramienta
+- `inputSchema`: JSON Schema de la entrada
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida una herramienta de calculadora y fuerza su uso.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Add 5 and 7." }
+    ],
+    "tools": [
+      {
+        "name": "simple_calculator",
+        "description": "Add two numbers.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "a": { "type": "number" },
+            "b": { "type": "number" }
+          },
+          "required": ["a", "b"]
+        }
+      }
+    ],
+    "tool_choice": { "type": "tool", "name": "simple_calculator" }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`. Cuando el asistente devuelva un `tool_use`, ejecuta la herramienta y responde con un bloque `tool_result`.

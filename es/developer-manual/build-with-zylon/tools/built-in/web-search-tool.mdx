@@ -1,0 +1,50 @@
+---
+title: "Herramienta Web Search"
+description: "Busca en la web desde una consulta natural."
+---
+
+Usa Web Search para ejecutar búsquedas rápidas.
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens](/es/api-reference/token-management).
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "web_search", "type": "web_search_v1" }`
+- No requiere `tool_context`
+
+## Solicitud y respuesta básicas
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Find recent updates about the EU AI Act." }
+    ],
+    "tools": [
+      { "name": "web_search", "type": "web_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
+
+## Consejos
+
+- Usa consultas precisas para reducir ruido.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)

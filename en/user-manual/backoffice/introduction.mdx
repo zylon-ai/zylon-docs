@@ -4,20 +4,22 @@ description: Overview of the Zylon Backoffice.
 icon: building
 ---
 
-The Zylon Backoffice is the centralized administration environment for managing the Zylon platform. It operates outside of Workspaces and is used to manage:
+The Zylon Backoffice is the centralized administration environment for managing the Zylon platform. It is separate from Workspace and is used for platform administration and API development operations.
 
-- Accounts
-- Roles and permissions
-- Gateways
-- API Tokens
-- Platform service status
+Backoffice capabilities include:
 
-It is intended for users with:
+- Account management
+- Role and permission management
+- Gateway management
+- API token management
+- Platform service status monitoring
 
-- **Developer** permissions
-- **Operator** permissions
+Backoffice access requires a valid account with the appropriate role:
 
-Access requires a valid account with the appropriate role. The Backoffice is separate from the Workspace environment.
+- **Operator** role for platform administration
+- **Developer** role for API token workflows
+
+Some users can hold multiple roles on the same account. Available sections are shown based on the roles assigned to that account.
 
 <CardGroup cols={2}>
   <Card title="Platform Backoffice" icon="wrench" href="/en/user-manual/backoffice/platform-backoffice">
@@ -27,12 +29,12 @@ Access requires a valid account with the appropriate role. The Backoffice is sep
     Create accounts, assign roles, and manage access.
   </Card>
   <Card title="Gateways" icon="server" href="/en/user-manual/backoffice/platform-backoffice#gateways">
-    Manage isolated developer environments.
+    Manage isolated software nodes for API development.
   </Card>
   <Card title="Developer Tools" icon="code" href="/en/user-manual/backoffice/developer-tools">
-    Developer portal for API token management.
+    Create and manage API tokens by gateway.
   </Card>
   <Card title="Create API Token" icon="key" href="/en/user-manual/backoffice/developer-tools#create-api-token">
-    Generate and copy a one-time token hash.
+    Generate and securely store a one-time token secret.
   </Card>
 </CardGroup>

@@ -5,52 +5,91 @@ icon: wrench
 ---
 
 ## Overview
-The Platform Backoffice allows Operators to:
+The Platform Backoffice is used by Operators to manage platform-level access and developer environments.
+
+From this section, Operators can:
 
 - Create and manage accounts
-- Assign roles
-- Manage gateways
+- Assign and update account roles
+- Create and manage gateways
 - Monitor platform service status
 
-Only users with **Operator** permissions can access this section. Permissions and visibility depend on the current license.
+Only users with **Operator** permissions can access this section. Permissions, visibility, and limits depend on the active license.
 
 ## Accounts
-In the **Accounts** section, Operators can:
+An **Account** represents one person on the Zylon platform. Accounts define platform access and determine which Backoffice sections are available.
 
-- Create new accounts
-- Assign roles and permissions
-- Associate accounts with specific workspaces or gateways
-- Modify existing accounts
+### Account roles
+| Role | Primary use | Backoffice access |
+| --- | --- | --- |
+| **Super Admin** | Initial administrative account | Same platform access as Operator |
+| **Operator** | Platform administration | Full access to Platform Backoffice |
+| **Developer** | API development workflows | Access to Developer Tools |
+| **Workspace** | Workspace collaboration | No Platform Backoffice access |
 
-![](/images/user-manual/backoffice-accounts.png)
+A single account can include more than one role.
 
 ### Roles and permissions
-Account access is defined by role. The roles available in the account modal are:
+In Zylon, access control follows this model:
 
-- **Workspace** — Can access the Workspace.
-- **Developer** — Can create and manage API tokens for development and integrations.
-- **Operator** — Can manage user accounts and settings in the Backoffice.
+1. **Account role** grants platform-level access (for example, Operator or Developer).
+2. **Context role** grants permissions inside a specific Workspace or Gateway.
+3. Effective permissions are the combination of both.
 
-The number of accounts is limited by the client's license. Account capabilities depend on assigned roles.
+For example, an account can be an **Operator** at platform level and also be a **Gateway Member** in a specific Gateway.
 
 ### Create an account
-You can create a new user in two ways:
+You can create users in two ways.
 
-1. **From the modal:** Click **Add account**, enter the user details, assign roles, and save.
-![](/images/user-manual/backoffice-create-account.png)
+1. **Create from the modal UI**
+- Click **Add account**.
+- Enter name (optional), email, and password.
+- Assign one or more account roles.
+- Save the account.
 
-2. **From a CSV upload:** Download the template from the Accounts page, fill it with user data, and upload the CSV to create accounts in bulk.
+2. **Create in bulk from CSV**
+- Download the CSV template available on the Accounts page.
+- Fill the template with user details and role assignments.
+- Upload the CSV to create multiple accounts.
 
-To edit an account, select it from the list and update its roles or permissions.
+### Edit accounts and role assignments
+To update an account, open the account from the list and modify its role assignments or details.
+
+Use role assignment to control whether a user can:
+
+- access Workspace,
+- access Developer Tools,
+- administer the platform.
+
+The number of accounts and role-enabled accounts is controlled by the active license.
 
 ## Gateways
-A **Gateway** represents an isolated developer environment within Zylon. It is a software node (not a hardware device) used to audit API token usage and account activity across the Workspace.
+A **Gateway** is an isolated software node used for API development in Zylon. It is not a hardware device.
 
-Operators can:
+Gateways are used to:
 
-- Create a new Gateway (only requires a name)
-- Manage existing Gateways
+- Group API development activity in separate environments
+- Control who can work with tokens in each environment
+- Log account usage and token usage for that gateway
 
-The number of Gateways is limited by the active license.
+### Gateway user roles
+Accounts with the **Developer** role (and Operators who are added to a gateway) can be assigned a gateway-specific role:
 
-![](/images/user-manual/backoffice-gateways.png)
+| Gateway role | Capabilities |
+| --- | --- |
+| **Owner** | Manage gateway users and roles, create and manage tokens |
+| **Admin** | Manage gateway users, create and manage tokens |
+| **Member** | Create and manage own tokens |
+
+### Create a gateway
+To create a gateway:
+
+1. Open **Gateways**.
+2. Click **New gateway**.
+3. Enter a gateway name.
+4. Click **Create**.
+
+### Manage gateways
+From the gateway list, Operators can open existing gateways to manage users and maintain the gateway configuration used by development teams.
+
+The total number of gateways is limited by the active license.

@@ -5,18 +5,30 @@ icon: code
 ---
 
 ## Overview
-Developer Tools is the portal for developers using Zylon. Currently, it allows creating and managing API tokens.
+Developer Tools is the Backoffice area used for API token workflows.
 
-This section is available to users with **Developer** permissions.
+It is available to:
+
+- Accounts with **Developer** permissions
+- Accounts with **Operator** permissions when they also participate in a gateway
+
+API tokens are created within gateways and are tied to both the gateway and the account that created them.
 
 ## Create API Token
 To create an API token:
 
-1. Click **Create API Token**.
-2. Enter a name.
-3. Generate the token.
-4. Copy the provided token hash.
+1. Open **Developer Tools**.
+2. Select the target gateway.
+3. Click **Create API Token**.
+4. Enter a token name.
+5. Generate the token.
+6. Copy the token secret shown in the modal.
 
 <Warning>
-The token hash is only visible once. After closing the modal, it cannot be retrieved. Store the token securely.
+The token secret is shown only once. After closing the modal, it cannot be retrieved. Store it in a secure secret manager immediately.
 </Warning>
+
+## Token usage and ownership
+- A token inherits the rules and configuration of its gateway.
+- Token activity is linked to the account that created it.
+- If a token is lost, revoke it and create a new one.

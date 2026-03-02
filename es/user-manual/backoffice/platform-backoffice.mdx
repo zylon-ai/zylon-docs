@@ -5,52 +5,91 @@ icon: wrench
 ---
 
 ## Resumen
-El Backoffice de Plataforma permite a los Operadores:
+El Backoffice de Plataforma lo usan los Operadores para gestionar el acceso a nivel de plataforma y los entornos de desarrollo.
+
+Desde esta sección, los Operadores pueden:
 
 - Crear y gestionar cuentas
-- Asignar roles
-- Gestionar gateways
+- Asignar y actualizar roles de cuenta
+- Crear y gestionar gateways
 - Supervisar el estado de los servicios de la plataforma
 
-Solo los usuarios con permisos **Operator** pueden acceder a esta sección. Los permisos y la visibilidad dependen de la licencia actual.
+Solo los usuarios con permisos **Operator** pueden acceder a esta sección. Los permisos, la visibilidad y los límites dependen de la licencia activa.
 
 ## Cuentas
-En la sección **Cuentas**, los Operadores pueden:
+Una **Cuenta** representa a una persona en la plataforma Zylon. Las cuentas definen el acceso a la plataforma y determinan qué secciones del Backoffice están disponibles.
 
-- Crear cuentas nuevas
-- Asignar roles y permisos
-- Asociar cuentas a Workspaces o Gateways específicos
-- Modificar cuentas existentes
+### Tipos de cuenta y niveles de acceso
+| Rol de cuenta | Uso principal | Acceso en Backoffice |
+| --- | --- | --- |
+| **Super Admin** | Cuenta administrativa inicial | Mismo acceso de plataforma que Operator |
+| **Operator** | Administración de plataforma | Acceso completo a Platform Backoffice |
+| **Developer** | Flujos de desarrollo con API | Acceso a Developer Tools |
+| **Workspace** | Colaboración en Workspace | Sin acceso a Platform Backoffice |
 
-![](/images/user-manual/backoffice-accounts.png)
+Una misma cuenta puede tener más de un rol.
 
 ### Roles y permisos
-El acceso se define por rol. Los roles disponibles en el modal de cuenta son:
+En Zylon, el control de acceso funciona así:
 
-- **Workspace** — Puede acceder al Workspace.
-- **Developer** — Puede crear y gestionar tokens de API para desarrollo e integraciones.
-- **Operator** — Puede gestionar cuentas y ajustes en el Backoffice.
+1. El **rol de cuenta** define el acceso a nivel de plataforma.
+2. El **rol de Workspace o Gateway** define permisos dentro de ese Workspace o Gateway.
+3. Los permisos efectivos resultan de la combinación de ambos niveles.
 
-El número de cuentas está limitado por la licencia del cliente. Las capacidades de la cuenta dependen de los roles asignados.
+Ejemplo: una cuenta puede ser **Operator** a nivel de plataforma y **Member** dentro de un gateway concreto.
 
 ### Crear una cuenta
-Puedes crear un usuario de dos formas:
+Puedes crear usuarios de dos formas.
 
-1. **Desde el modal:** Haz clic en **Add account**, introduce los datos del usuario, asigna roles y guarda.
-![](/images/user-manual/backoffice-create-account.png)
+1. **Crear desde el modal**
+- Haz clic en **Add account**.
+- Introduce nombre (opcional), email y contraseña.
+- Asigna uno o varios roles de cuenta.
+- Guarda la cuenta.
 
-2. **Desde una carga CSV:** Descarga la plantilla disponible en la página de Cuentas, complétala con los datos y sube el CSV para crear cuentas en bloque.
+2. **Crear en bloque por CSV**
+- Descarga la plantilla CSV disponible en la página de Cuentas.
+- Rellena la plantilla con los datos de usuarios y sus roles.
+- Sube el CSV para crear múltiples cuentas.
 
-Para editar una cuenta, selecciónala en la lista y actualiza sus roles o permisos.
+### Editar cuentas y asignaciones de rol
+Para actualizar una cuenta, ábrela desde la lista y modifica sus datos o asignaciones de rol.
+
+La asignación de roles controla si un usuario puede:
+
+- acceder a Workspace,
+- acceder a Developer Tools,
+- administrar la plataforma.
+
+El número de cuentas y de cuentas habilitadas por rol está determinado por la licencia activa.
 
 ## Gateways
-Un **Gateway** representa un entorno de desarrollo aislado dentro de Zylon. Es un nodo de software (no un dispositivo físico) usado para auditar el uso de tokens de API y la actividad de cuentas en el Workspace.
+Un **Gateway** es un nodo de software aislado para desarrollo con API en Zylon. No es un dispositivo físico.
 
-Los Operadores pueden:
+Los gateways se usan para:
 
-- Crear un nuevo Gateway (solo requiere un nombre)
-- Gestionar Gateways existentes
+- Separar la actividad de desarrollo en entornos independientes
+- Controlar qué usuarios pueden trabajar con tokens en cada entorno
+- Registrar el uso de cuentas y tokens en cada gateway
 
-El número de Gateways está limitado por la licencia activa.
+### Roles de usuario en Gateway
+Las cuentas con rol **Developer** (y los Operadores añadidos a un gateway) pueden tener un rol específico dentro de cada gateway:
 
-![](/images/user-manual/backoffice-gateways.png)
+| Rol en gateway | Capacidades |
+| --- | --- |
+| **Owner** | Gestionar usuarios y roles del gateway, crear y gestionar tokens |
+| **Admin** | Gestionar usuarios del gateway, crear y gestionar tokens |
+| **Member** | Crear y gestionar sus propios tokens |
+
+### Crear un gateway
+Para crear un gateway:
+
+1. Abre **Gateways**.
+2. Haz clic en **New gateway**.
+3. Introduce el nombre del gateway.
+4. Haz clic en **Create**.
+
+### Gestionar gateways
+Desde la lista de gateways, los Operadores pueden abrir gateways existentes para gestionar usuarios y mantener la configuración que usan los equipos de desarrollo.
+
+El número total de gateways está limitado por la licencia activa.

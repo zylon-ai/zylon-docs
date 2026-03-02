@@ -4,35 +4,37 @@ description: Visión general del Backoffice de Zylon.
 icon: building
 ---
 
-El Backoffice de Zylon es el entorno de administración centralizado para gestionar la plataforma Zylon. Opera fuera de los Workspaces y se utiliza para gestionar:
+El Backoffice de Zylon es el entorno de administración centralizado para gestionar la plataforma Zylon. Es independiente del Workspace y se usa para tareas de administración de plataforma y operaciones de desarrollo con API.
 
-- Cuentas
-- Roles y permisos
-- Gateways
-- Tokens de API
-- Estado de los servicios de la plataforma
+Las capacidades principales del Backoffice incluyen:
 
-Está pensado para usuarios con:
+- Gestión de cuentas
+- Gestión de roles y permisos
+- Gestión de gateways
+- Gestión de tokens de API
+- Supervisión del estado de los servicios de la plataforma
 
-- Permisos **Developer**
-- Permisos **Operator**
+El acceso al Backoffice requiere una cuenta válida con el rol adecuado:
 
-El acceso requiere una cuenta válida con el rol correspondiente. El Backoffice es independiente del entorno de Workspace.
+- Rol **Operator** para administración de plataforma
+- Rol **Developer** para flujos de tokens de API
+
+Una misma cuenta puede tener varios roles. Las secciones visibles dependen de los roles asignados a esa cuenta.
 
 <CardGroup cols={2}>
   <Card title="Backoffice de Plataforma" icon="wrench" href="/es/user-manual/backoffice/platform-backoffice">
     Controles de operador para cuentas, roles, gateways y estado del servicio.
   </Card>
   <Card title="Cuentas" icon="users" href="/es/user-manual/backoffice/platform-backoffice#accounts">
-    Crea cuentas, asigna roles y gestiona el acceso.
+    Crea cuentas, asigna roles y gestiona accesos.
   </Card>
   <Card title="Gateways" icon="server" href="/es/user-manual/backoffice/platform-backoffice#gateways">
-    Gestiona entornos de desarrollo aislados.
+    Gestiona nodos de software aislados para desarrollo con API.
   </Card>
   <Card title="Developer Tools" icon="code" href="/es/user-manual/backoffice/developer-tools">
-    Portal para la gestión de tokens de API.
+    Crea y gestiona tokens de API por gateway.
   </Card>
   <Card title="Crear token de API" icon="key" href="/es/user-manual/backoffice/developer-tools#create-api-token">
-    Genera y copia un hash de token de una sola vez.
+    Genera y almacena de forma segura un secreto de token de un solo uso.
   </Card>
 </CardGroup>

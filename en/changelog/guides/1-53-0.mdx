@@ -55,7 +55,8 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
 
     ```bash
     sudo zylon-cli self-update
-    sudo zylon-cli install 1.53.0
+    sudo zylon-cli install list-versions
+    sudo zylon-cli install <version>
     ```
   </Accordion>
 </AccordionGroup>
@@ -80,7 +81,7 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     ```
 
     <Warning>
-      Do not proceed to the next step until the CLI is on version 2.0.0. Installing 1.53.0 with an older CLI will result in a broken installation.
+      Do not proceed to the next step until the CLI is on version 2.0.0. Installing >=1.53.0 with an older CLI will result in a broken installation.
     </Warning>
   </Step>
 
@@ -88,7 +89,8 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     Use the new `install` command to upgrade Zylon:
 
     ```bash
-    sudo zylon-cli install 1.5X.0
+    sudo zylon-cli list-versions
+    sudo zylon-cli install <version>
     ```
 
     This will automatically install the whole Zylon platform, including dependencies, and the new version.
@@ -120,7 +122,8 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     After the system reboots, run the install command again:
 
     ```bash
-    sudo zylon-cli install 1.5X.0
+    sudo zylon-cli list-versions
+    sudo zylon-cli install <version>
     ```
 
     This time, the installation will complete successfully with the new CUDA 13.0 drivers.

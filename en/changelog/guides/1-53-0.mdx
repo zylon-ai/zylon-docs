@@ -1,5 +1,5 @@
 ---
-title: "Migration Guide: 1.53.0"
+title: "Updating guide for installation before to 1.53"
 description: "Breaking changes and migration steps for upgrading to newer versions of Zylon starting with 1.53.0"
 ---
 
@@ -30,14 +30,11 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
 
 <AccordionGroup>
   <Accordion title="Can I still use 'sudo zylon-cli update'?">
-    The command still exists but no longer manages version upgrades as of 1.53.0. Always use `sudo zylon-cli install <version>` to install or upgrade Zylon going forward.
-    Now, this will act as `sudo zylon-cli sync`.
+    The command still exists but no longer manages version upgrades as of 1.53.0. Always use `sudo zylon-cli install <version>` to install or upgrade Zylon going forward. Now, this will act as `sudo zylon-cli sync`.
   </Accordion>
-
   <Accordion title="Will my data be affected?">
     No. The upgrade only affects the platform layer and drivers. Your knowledge base, chats, agent flows, and configuration are not touched. We still recommend taking a [backup](/en/operator-manual/operations/backup) as a precaution.
   </Accordion>
-
   <Accordion title="What happens if I skip the CLI self-update?">
     **If Triton fails to boot after updating**, the most likely cause is that the CLI was not updated before running the install. You can confirm this by checking the CLI version:
 
@@ -57,6 +54,26 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     sudo zylon-cli self-update
     sudo zylon-cli install list-versions
     sudo zylon-cli install <version>
+    ```
+  </Accordion>
+  <Accordion title="My install is stuck">
+    Installation can get stuck in a few scenarios:
+
+    **`1. Stuck on an apt library (e.g. libc-bin)`**
+
+    Stop the current install command, manually reinstall the problematic package, then retry:
+
+    ```bash
+    sudo apt-get install --reinstall libc-bin
+    sudo zylon-cli install <version>
+    ```
+
+    **`2. Stuck uninstalling NVIDIA drivers (e.g. nvidia-container-toolkit)`**
+
+    Reboot the machine and retry. If the issue persists, please contact with Zylon. You can run the following command to do a faster check:
+
+    ```bash
+    sudo zylon-cli install <version> --no-packages --no-binaries
     ```
   </Accordion>
 </AccordionGroup>
@@ -81,10 +98,9 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     ```
 
     <Warning>
-      Do not proceed to the next step until the CLI is on version 2.0.0. Installing >=1.53.0 with an older CLI will result in a broken installation.
+      Do not proceed to the next step until the CLI is on version 2.0.0. Installing \>=1.53.0 with an older CLI will result in a broken installation.
     </Warning>
   </Step>
-
   <Step title="Install the new version">
     Use the new `install` command to upgrade Zylon:
 
@@ -93,21 +109,19 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     sudo zylon-cli install <version>
     ```
 
-    This will automatically install the whole Zylon platform, including dependencies, and the new version.
-    In future versions, the CLI will also handle its own updates, so you won't have to run `self-update` separately anymore.
-    
+    This will automatically install the whole Zylon platform, including dependencies, and the new version. In future versions, the CLI will also handle its own updates, so you won't have to run `self-update` separately anymore.
+
     <Warning>
       The installation will stop with an error message after uninstalling the existing NVIDIA drivers:
-      
+
       ```
       The current drivers were uninstalled successfully, please REBOOT the system 
       and re-run the installation to complete the NVIDIA driver installation
       ```
-      
+
       **This is expected behavior.** Proceed to the next step to reboot your system, then re-run the installation command.
     </Warning>
   </Step>
-
   <Step title="Reboot the system">
     After seeing the uninstall message, reboot your system:
 
@@ -117,7 +131,6 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
 
     This is necessary before the new CUDA 13.0 drivers can be installed.
   </Step>
-
   <Step title="Complete the installation">
     After the system reboots, run the install command again:
 

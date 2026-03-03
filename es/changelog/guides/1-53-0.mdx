@@ -1,6 +1,6 @@
 ---
-title: "Guía de Migración: 1.53.0"
-description: "Cambios importantes y pasos de migración para actualizar a versiones más recientes de Zylon comenzando con 1.53.0"
+title: "Guía de actualización desde versiones anteriores a 1.53.0"
+description: "Cambios importantes y pasos de migración para actualizar a versiones más recientes de Zylon comenzando con 1.53.0."
 ---
 
 <Warning>
@@ -30,14 +30,11 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
 
 <AccordionGroup>
   <Accordion title="¿Puedo seguir usando 'sudo zylon-cli update'?">
-    El comando sigue existiendo pero ya no gestiona las actualizaciones de versión a partir de 1.53.0. Siempre usa `sudo zylon-cli install <version>` para instalar o actualizar Zylon en adelante.
-    Ahora, esto actuará como `sudo zylon-cli sync`.
+    El comando sigue existiendo pero ya no gestiona las actualizaciones de versión a partir de 1.53.0. Siempre usa `sudo zylon-cli install <version>` para instalar o actualizar Zylon en adelante. Ahora, esto actuará como `sudo zylon-cli sync`.
   </Accordion>
-
   <Accordion title="¿Se verán afectados mis datos?">
     No. La actualización solo afecta la capa de plataforma y los controladores. Tu base de conocimiento, chats, agent flows y configuración no se tocan. Aún así recomendamos realizar una [copia de seguridad](/es/operator-manual/operations/backup) como precaución.
   </Accordion>
-
   <Accordion title="¿Qué sucede si omito la auto-actualización del CLI?">
     **Si Triton falla al arrancar después de actualizar**, la causa más probable es que el CLI no se actualizó antes de ejecutar la instalación. Puedes confirmarlo verificando la versión del CLI:
 
@@ -57,6 +54,26 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
     sudo zylon-cli self-update
     sudo zylon-cli list-versions
     sudo zylon-cli install <version>
+    ```
+  </Accordion>
+  <Accordion title="Mi instalación se ha quedado bloqueada">
+    La instalación puede bloquearse en los siguientes escenarios:
+
+    **`1. Bloqueado en una librería de apt (p. ej. libc-bin)`**
+
+    Detén el comando de instalación, reinstala manualmente el paquete problemático y vuelve a intentarlo:
+
+    ```bash
+    sudo apt-get install --reinstall libc-bin
+    sudo zylon-cli install <version>
+    ```
+
+    **`2. Bloqueado desinstalando drivers de NVIDIA (p. ej. nvidia-container-toolkit)`**
+
+    Reinicia la máquina y vuelve a intentarlo. Si el problema persiste, contacta con Zylon. Puedes ejecutar el siguiente comando para hacer una comprobación más rápida:
+
+    ```bash
+    sudo zylon-cli install <version> --no-packages --no-binaries
     ```
   </Accordion>
 </AccordionGroup>
@@ -81,10 +98,9 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
     ```
 
     <Warning>
-      No procedas al siguiente paso hasta que el CLI esté en la versión 2.0.0. Instalar >=1.53.0 con un CLI anterior resultará en una instalación defectuosa.
+      No procedas al siguiente paso hasta que el CLI esté en la versión 2.0.0. Instalar \>=1.53.0 con un CLI anterior resultará en una instalación defectuosa.
     </Warning>
   </Step>
-
   <Step title="Instalar la nueva versión">
     Usa el nuevo comando `install` para actualizar Zylon:
 
@@ -93,21 +109,19 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
     sudo zylon-cli install <version>
     ```
 
-    Esto instalará automáticamente toda la plataforma Zylon, incluyendo las dependencias, y la nueva versión.
-    En versiones futuras, el CLI también manejará sus propias actualizaciones, por lo que ya no tendrás que ejecutar `self-update` por separado.
-    
+    Esto instalará automáticamente toda la plataforma Zylon, incluyendo las dependencias, y la nueva versión. En versiones futuras, el CLI también manejará sus propias actualizaciones, por lo que ya no tendrás que ejecutar `self-update` por separado.
+
     <Warning>
       La instalación se detendrá con un mensaje de error después de desinstalar los controladores NVIDIA existentes:
-      
+
       ```
       The current drivers were uninstalled successfully, please REBOOT the system 
       and re-run the installation to complete the NVIDIA driver installation
       ```
-      
+
       **Este es un comportamiento esperado.** Procede al siguiente paso para reiniciar tu sistema, luego vuelve a ejecutar el comando de instalación.
     </Warning>
   </Step>
-
   <Step title="Reiniciar el sistema">
     Después de ver el mensaje de desinstalación, reinicia tu sistema:
 
@@ -117,7 +131,6 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
 
     Esto es necesario antes de que los nuevos controladores CUDA 13.0 puedan ser instalados.
   </Step>
-
   <Step title="Completar la instalación">
     Después de que el sistema se reinicie, ejecuta el comando de instalación nuevamente:
 

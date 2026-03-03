@@ -14,6 +14,7 @@ Fetch integration configuration with `GET /api/v1/app/integration/sharepoint/{in
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -29,7 +30,9 @@ curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/confi
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json"
 ```
 
 <Accordion title="Example response">

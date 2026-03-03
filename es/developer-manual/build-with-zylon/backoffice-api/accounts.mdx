@@ -1,0 +1,317 @@
+---
+title: "Cuentas"
+description: "Gestiona cuentas de plataforma, membresía de organizaciones y tokens API de cuenta."
+---
+
+Usa los endpoints de cuentas de Backoffice para gestionar identidades de plataforma y tokens de API asociados a cuenta.
+
+## Requisitos previos
+
+- Token con permisos de backoffice en `Authorization: Bearer {API_TOKEN}`
+- URL base objetivo (`https://{BASE_URL}`)
+
+Antes de asignar o actualizar roles, revisa [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
+
+## Cuentas
+
+### Roles de cuenta disponibles
+
+Los roles de cuenta controlan el acceso a nivel de plataforma:
+
+- `Workspace`: Usa Workspace para proyectos y colaboración. No tiene acceso a Platform Backoffice.
+- `Developer`: Trabaja con gateways y tokens API para desarrollo. Acceso a Developer Tools.
+- `Operator`: Gestiona cuentas, roles, gateways y operaciones de plataforma. Acceso completo a Platform Backoffice.
+- `SuperAdmin`: Cuenta administrativa inicial para configuración y gobierno de plataforma. Mismo acceso de plataforma que `Operator`.
+
+### Crear una cuenta
+
+Usa `POST /api/v1/auth/register` para crear una cuenta con credenciales.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "{username}",
+    "password": "{password}",
+    "roles": ["Workspace"]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "state": "Active",
+  "email": "docs.account.final.1772554276@example.com",
+  "name": "docs.account.final.1772554276@example.com",
+  "provider": "Credentials",
+  "roles": ["Workspace"],
+  "created_at": "2026-03-03T16:11:17.746142801Z",
+  "updated_at": "2026-03-03T16:11:17.746144281Z"
+}
+```
+</Accordion>
+
+### Listar cuentas
+
+`GET /api/v1/account` soporta paginación (`page`, `page_size`, `page_order`, `after`, `before`, `first`, `last`, `total_count`).
+
+```bash
+curl "https://{BASE_URL}/api/v1/account?page_size=1&page=1" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "id": "00000000-0000-7000-8003-deb600000006",
+      "state": "Active",
+      "email": "test+t6@zylon.ai",
+      "name": "test+t6@zylon.ai",
+      "provider": "Credentials",
+      "roles": ["Workspace"],
+      "created_at": "2026-02-02T17:10:06.125214Z",
+      "updated_at": "2026-02-26T17:40:14.858555Z"
+    }
+  ],
+  "next_cursor": "00000000-0000-7000-8003-deb600000006",
+  "previous_cursor": "00000000-0000-7000-8003-deb600000006",
+  "has_next_page": true,
+  "has_previous_page": true
+}
+```
+</Accordion>
+
+### Obtener una cuenta por ID
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/{accountId}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "state": "Active",
+  "email": "docs.account.final.1772554276@example.com",
+  "name": "docs.account.final.1772554276@example.com",
+  "provider": "Credentials",
+  "users": [],
+  "roles": ["Workspace"],
+  "created_at": "2026-03-03T16:11:17.746143Z",
+  "updated_at": "2026-03-03T16:11:17.746144Z"
+}
+```
+</Accordion>
+
+### Actualizar estado o roles de una cuenta
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "state": "Active",
+    "roles": ["Workspace", "Developer"]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "state": "Active",
+  "email": "docs.account.final.1772554276@example.com",
+  "name": "docs.account.final.1772554276@example.com",
+  "provider": "Credentials",
+  "roles": ["Workspace", "Developer"],
+  "created_at": "2026-03-03T16:11:17.746143Z",
+  "updated_at": "2026-03-03T16:11:18.931291608Z"
+}
+```
+</Accordion>
+
+### Actualizar contraseña de la cuenta actual
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/account/me" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "current_password": "{current_password}",
+    "new_password": "{new_password}"
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta (400 si la contraseña actual es inválida)">
+```json
+{
+  "type": "InvalidPassword",
+  "status": 400,
+  "message": "Invalid current password"
+}
+```
+</Accordion>
+
+### Resetear contraseña de cuenta
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountId}/reset-password" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "new_password": "5xrWyOx1a5VqVlgOPe7H"
+}
+```
+</Accordion>
+
+## Organizaciones
+
+### Unirse a una organización
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/organization/{orgId}/join" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "01973b24-5edf-742a-8000-5faffd42cb92",
+  "org_id": "0195d2e3-f748-71e7-8001-43d7adc21957",
+  "account_id": "00000000-0000-7000-8003-000000000001",
+  "profile_picture": "https://demo.zylon.ai/s3/public/01973b24-5edf-742a-8000-5faffd42cb92/media/profile_picture_1749043993929.png",
+  "name": "Ivan",
+  "email": "admin@zylon.ai",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2025-06-04T13:32:08.799Z"
+}
+```
+</Accordion>
+
+### Listar organizaciones de la cuenta actual
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "0195d2e3-f748-71e7-8001-43d7adc21957",
+    "name": "Demos Documentation",
+    "slug": "demos-documentation",
+    "state": "Active",
+    "display_name": "Demos Documentation",
+    "default_role": "AppMember",
+    "gateway_id": "019c9b09-77aa-7713-8017-6eae29d3a279"
+  }
+]
+```
+</Accordion>
+
+## Tokens
+
+Los tokens de cuenta están pensados para acceso a PrivateGPT API y Workspace API.
+
+- `gateway_id` es obligatorio al crear tokens de cuenta.
+- Para crear tokens de uso exclusivo en Workspace, usa [Gateways - Crear un token de gateway](/es/developer-manual/build-with-zylon/backoffice-api/gateways#crear-un-token-de-gateway).
+
+### Crear token API de cuenta
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "docs-account-final-1772554276",
+    "gateway_id": "{gatewayId}",
+    "scopes": ["Workspace.ReadWrite.All"],
+    "valid_until": "2027-12-31T00:00:00Z",
+    "revoke_existing": false
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta (201)">
+```json
+{
+  "name": "docs-account-final-1772554276",
+  "token": "v1--m32xxU3p3LuYhQ3GPxmcRH-Mhq-M8MGC",
+  "scopes": ["Workspace.ReadWrite.All"],
+  "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "hashed_token": "hn46JM-ZY3fJMfPs0Mmh0ACUQKuK6trK6AOipMESBTY=",
+  "token_email": "admin@zylon.ai",
+  "created_at": "2026-03-03T16:11:20.686125295Z",
+  "valid_until": "2027-12-31T00:00:00Z"
+}
+```
+</Accordion>
+
+### Listar tokens API de cuenta
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/token?page_size=2" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta (resumido)">
+```json
+{
+  "data": [
+    {
+      "name": "Ivan token",
+      "scopes": ["Workspace.ReadWrite.All"],
+      "hashed_token": "rBzK0LE5PhbWJmjQrcesax-54vl0D_kf0_hL4pfmHQw=",
+      "token_email": "admin@zylon.ai",
+      "last_used_at": "2026-01-27T16:48:03.289598Z",
+      "created_at": "2026-01-04T17:11:34.341816Z"
+    },
+    {
+      "name": "Test oken",
+      "scopes": ["Workspace.ReadWrite.All"],
+      "hashed_token": "8AeUf-YSvX4cTLL2taGFYHwGM--iSQXyY00Ej0hWqhA=",
+      "token_email": "admin@zylon.ai",
+      "last_used_at": "2026-03-03T10:58:03.144938Z",
+      "created_at": "2026-01-08T16:44:51.456860Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false
+}
+```
+</Accordion>
+
+### Eliminar token API de cuenta
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/account/token/{token_hash}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+Token deleted
+```
+</Accordion>
+
+## Errores comunes
+
+- Mezclar token en query y token en path al trabajar con `/api/v1/account/token/{token_hash}`.
+- Intentar actualizar roles de cuenta con tokens sin permisos de backoffice.
+- Omitir `Content-Type: application/json` en endpoints con body.
+
+## Errores y casos límite
+
+- **401/403**: token ausente o permisos de backoffice insuficientes.
+- **404**: cuenta, organización o token no encontrado.
+- Algunas operaciones de update/delete pueden devolver body vacío.

@@ -7,7 +7,7 @@ An artifact is a piece of information **or tool** you provide to Zylon so it can
 
 ## Prerequisites
 
-- An API token. See [Token Management](/en/api-reference/token-management).
+- An API token. See [Workspace Token Management](/en/developer-manual/get-started/token-management).
 - Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
 ## Artifacts
@@ -28,6 +28,7 @@ Document artifacts hold content, links reference existing artifacts, and folders
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "InlineText",
@@ -65,6 +66,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Folder",
@@ -99,6 +101,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Link",
@@ -144,6 +147,7 @@ Agent flows run a Zylon workflow across one or more artifacts to produce a struc
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Summary",
@@ -182,6 +186,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "Composition",
@@ -220,6 +225,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "BulkQA",
@@ -266,6 +272,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "ReadAndExtract",
@@ -306,6 +313,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "SmartDoc",
@@ -344,6 +352,7 @@ Connector artifacts store tool integrations. `private_props` is only used for **
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "SqlDatabase",
@@ -392,6 +401,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "McpServer",
@@ -446,6 +456,7 @@ Only the creator of the artifact can access the private details.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -477,6 +488,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_siz
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -501,6 +513,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Q1 Support Summary (final)",
@@ -528,6 +541,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifac
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -544,6 +558,7 @@ curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{arti
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/private" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response (private MCP artifact props)">
@@ -559,6 +574,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/pr
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/download" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">

@@ -1,0 +1,377 @@
+---
+title: "Gateways"
+description: "Create and manage gateways, gateway users, and gateway API tokens."
+---
+
+A **Gateway** is an isolated runtime boundary for API traffic in Zylon. It is not a hardware device.
+
+Gateways are used to:
+
+- isolate API environments by team or use case
+- control who can issue and use tokens in each environment
+- scope data access and activity through gateway-level policies
+
+## Prerequisites
+
+- Backoffice-capable token in `Authorization: Bearer {API_TOKEN}`
+- Target base URL (`https://{BASE_URL}`)
+
+## Gateways
+
+### Create a gateway
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/platform/gateway" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "docs-gw-final",
+    "description": "Docs final examples",
+    "interceptors": []
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "name": "docs-gw-final",
+  "description": "Docs final examples",
+  "interceptors": [
+    {
+      "id": "019cb477-d1a7-7d79-8018-114ce8df6b2c",
+      "type": "VectorCollection",
+      "props": {
+        "collection_ids": ["019cb477-d1a7-7989-8017-3456f0914147"]
+      }
+    }
+  ],
+  "gateway_users": [],
+  "type": "Custom"
+}
+```
+</Accordion>
+
+### Update a gateway
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "docs-gw-final-updated",
+    "description": "Docs final examples updated",
+    "interceptors": []
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "name": "docs-gw-final-updated",
+  "description": "Docs final examples updated",
+  "gateway_users": [],
+  "type": "Custom"
+}
+```
+</Accordion>
+
+### List gateways
+
+`GET /api/v1/platform/gateway` supports pagination (`page`, `page_size`, `page_order`, `after`, `before`, `first`, `last`, `total_count`).
+
+```bash
+curl "https://{BASE_URL}/api/v1/platform/gateway?page_size=1&page=1" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "data": [
+    {
+      "id": "019c9b09-77aa-707b-8017-1b8fd9f898a7",
+      "name": "eca Gateway",
+      "description": "Default gateway for organization eca",
+      "gateway_users": [],
+      "type": "Default"
+    }
+  ],
+  "next_cursor": "019c9b09-77aa-707b-8017-1b8fd9f898a7",
+  "previous_cursor": "019c9b09-77aa-707b-8017-1b8fd9f898a7",
+  "has_next_page": true,
+  "has_previous_page": true
+}
+```
+</Accordion>
+
+### Get a gateway by ID
+
+```bash
+curl "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "name": "docs-gw-final",
+  "description": "Docs final examples",
+  "interceptors": [
+    {
+      "id": "019cb477-d1a7-7d79-8018-114ce8df6b2c",
+      "type": "VectorCollection",
+      "props": {
+        "collection_ids": ["019cb477-d1a7-7989-8017-3456f0914147"]
+      }
+    }
+  ],
+  "gateway_users": [],
+  "type": "Custom"
+}
+```
+</Accordion>
+
+### Delete a gateway
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response (204)">
+```text
+No response body.
+```
+</Accordion>
+
+## Gateway tokens
+
+Gateway tokens are intended for Workspace API access.
+
+### Create a gateway token
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "docs-gw-token-final",
+    "scopes": ["Workspace.ReadWrite.All"],
+    "valid_until": "2027-12-31T00:00:00Z",
+    "revoke_existing": false
+  }'
+```
+
+<Accordion title="Example response on demo (400)">
+```json
+{
+  "type": "BadRequest",
+  "status": 400,
+  "message": "At least one valid scope must be specified for the API token"
+}
+```
+</Accordion>
+
+### List gateway tokens
+
+```bash
+curl "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/token?page_size=2" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "data": [],
+  "has_next_page": false,
+  "has_previous_page": false
+}
+```
+</Accordion>
+
+### Update a gateway token
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/token/{token_hash}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "docs-gw-token-final-rotated"}'
+```
+
+<Accordion title="Example response">
+```text
+No response body is currently documented for this endpoint.
+Use HTTP 2xx as success signal.
+```
+</Accordion>
+
+### Delete a gateway token
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/token/{token_hash}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response (204)">
+```text
+No response body.
+```
+</Accordion>
+
+## Gateway users
+
+### Add user to gateway
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "account_id": "{accountId}",
+    "role": "GatewayAdmin"
+  }'
+```
+
+<Accordion title="Example response (201)">
+```json
+{
+  "id": "019cb477-ea99-70cb-801a-9ffa409f939a",
+  "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "account_id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "role": "GatewayAdmin",
+  "state": "Active",
+  "created_at": "2026-03-03T16:11:23.673Z"
+}
+```
+</Accordion>
+
+### List gateway users
+
+```bash
+curl "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user?page_size=2" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response (trimmed)">
+```json
+{
+  "data": [
+    {
+      "id": "019cb477-d1ad-77ac-801a-5e1424c8f69a",
+      "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+      "account_id": "00000000-0000-7000-8003-000000000001",
+      "role": "GatewayOwner",
+      "state": "Active",
+      "created_at": "2026-03-03T16:11:17.293Z"
+    },
+    {
+      "id": "019cb477-ea99-70cb-801a-9ffa409f939a",
+      "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+      "account_id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+      "role": "GatewayAdmin",
+      "state": "Active",
+      "created_at": "2026-03-03T16:11:23.673Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false
+}
+```
+</Accordion>
+
+### Get current gateway user
+
+```bash
+curl "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user/me" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb31d-bad8-79cb-801a-5134487e277b",
+  "gateway_id": "019cb31d-bac4-71ba-8017-d2dd051c9f35",
+  "account_id": "00000000-0000-7000-8003-000000000001",
+  "role": "GatewayOwner",
+  "state": "Active",
+  "created_at": "2026-03-03T09:53:15.992Z"
+}
+```
+</Accordion>
+
+### Update gateway user role
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user/{userId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "GatewayMember"}'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-ea99-70cb-801a-9ffa409f939a",
+  "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "account_id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "role": "GatewayMember",
+  "state": "Active",
+  "created_at": "2026-03-03T16:11:23.673Z"
+}
+```
+</Accordion>
+
+### Deactivate a gateway user
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user/{userId}/deactivate" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-ea99-70cb-801a-9ffa409f939a",
+  "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "account_id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "role": "GatewayMember",
+  "state": "Inactive",
+  "created_at": "2026-03-03T16:11:23.673Z"
+}
+```
+</Accordion>
+
+### Reactivate a gateway user
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/platform/gateway/{gatewayId}/user/{userId}/activate" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "019cb477-ea99-70cb-801a-9ffa409f939a",
+  "gateway_id": "019cb477-d1a7-7989-8017-3456f0914147",
+  "account_id": "019cb477-d371-7185-8003-2c2e8e3ac099",
+  "role": "GatewayMember",
+  "state": "Active",
+  "created_at": "2026-03-03T16:11:23.673Z"
+}
+```
+</Accordion>
+
+## Common mistakes
+
+- Omitting `interceptors` in create/update gateway payloads.
+- Assuming every scope string is valid for gateway token creation.
+- Mixing account IDs and user IDs in gateway user operations.
+
+## Errors and edge cases
+
+- **400**: invalid request body or unsupported token scope.
+- **404**: gateway or gateway user not found.
+- **204**: successful token or gateway deletes can return no body.

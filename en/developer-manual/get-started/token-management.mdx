@@ -1,0 +1,74 @@
+---
+title: "Token Management"
+description: "Choose the right token flow: Backoffice cross-API token or Workspace-only token."
+---
+
+Use this page to pick the right token flow for your integration.
+
+## Backoffice Token
+
+If you need one token that works across:
+
+- Workspace API
+- ZylonGPT API
+- Backoffice API
+
+Use Backoffice Developer Tools:
+
+- [Backoffice Developer Tools](/en/user-manual/backoffice/developer-tools)
+
+## Workspace Token
+
+This flow is for **Workspace API** access under `/api/v1/*` (especially `/api/v1/app/*`).
+
+<Warning>
+Workspace token flow does **not** issue tokens for direct ZylonGPT API calls under `/api/gpt/v1/*`.
+</Warning>
+
+### Create a Workspace API token
+
+1. Sign in to Workspace as an account that can manage API tokens.
+2. Click the organization logo and open **API Tokens**.
+3. Click **Create API Token**, provide a name, and save.
+4. Copy and store the token value immediately. It is shown once.
+
+![](/images/api-reference/images/token.png)
+![](/images/api-reference/images/create-token.png)
+
+### Verify token access for Workspace API
+
+Workspace endpoints under `/api/v1/app/*` require the `x-org` header.
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/me" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppAdmin"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+</Accordion>
+
+### Revoke a Workspace token
+
+Open **API Tokens** and click the trash icon on the token row.
+
+![](/images/api-reference/images/revoke-token.png)
+
+## Compatibility matrix
+
+| Token origin | Workspace API (`/api/*`) | ZylonGPT API (`/api/gpt/*`) | Backoffice API |
+| --- | --- | --- | --- |
+| Workspace token flow (this page) | Yes | No | No |
+| Backoffice Developer Tools token | Yes (with role + `x-org` when required) | Yes | Yes |

@@ -1,0 +1,38 @@
+---
+title: Roles and Permissions
+description: Backoffice roles, access levels, and responsibilities.
+icon: unlock-keyhole
+---
+
+## Overview
+Backoffice access is role-based. What a user can see and do depends on:
+
+1. The **account role** assigned in Backoffice.
+2. The **gateway role** assigned inside each gateway.
+
+A single account can have more than one role.
+
+## Account roles
+Account roles define platform-level access.
+
+| Account role | What this role does | Backoffice access |
+| --- | --- | --- |
+| **Super Admin** | Initial administrative account for platform setup and governance | Same platform access as **Operator** |
+| **Operator** | Manages accounts, roles, gateways, and platform operations | Full **Platform Backoffice** access |
+| **Developer** | Works with gateways and API tokens for development | Access to **Developer Tools** |
+| **Workspace** | Uses Workspace for projects and collaboration | No Platform Backoffice access |
+
+## Gateway roles
+Gateway roles define what a user can do inside a specific gateway.
+
+| Gateway role | What this role does |
+| --- | --- |
+| **Owner** | Manages gateway users and roles, creates and manages tokens |
+| **Admin** | Manages gateway users, creates and manages tokens |
+| **Member** | Creates and manages own tokens |
+
+## How access works in practice
+- **Account role** controls which Backoffice sections are available.
+- **Gateway role** controls actions inside each gateway.
+- An **Operator** who enters gateway workflows uses the same gateway-role permissions as any other gateway user.
+- Permissions are always scoped to the current role and context.

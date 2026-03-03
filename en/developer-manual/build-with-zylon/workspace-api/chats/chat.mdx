@@ -12,6 +12,7 @@ Send an ad-hoc request with `POST /api/v1/app/chat`.
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -44,6 +45,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [

@@ -1,0 +1,85 @@
+---
+title: "Visión general"
+description: "API para administración de Backoffice a nivel de plataforma en Zylon."
+---
+
+La Backoffice API se usa para tareas de administración de plataforma: uso de licencias, ciclo de vida de gateways, usuarios de gateway y tokens de gateway.
+
+## Base URL
+
+Todos los endpoints de Backoffice viven bajo:
+
+```bash
+https://{BASE_URL}/api/v1
+```
+
+## Autenticación
+
+Las solicitudes de Backoffice requieren un token con permisos de administración.
+
+```bash
+-H "Authorization: Bearer {API_TOKEN}"
+```
+
+A diferencia de los endpoints de Workspace `/api/v1/app/*`, los endpoints de Backoffice no requieren la cabecera `x-org`.
+
+## Dominios clave
+
+| Dominio | Propósito |
+| --- | --- |
+| Uso de licencias | Seguir límites de asientos y consumo real. |
+| Cuentas | Gestionar CRUD de cuentas y tokens de cuenta para operaciones de backoffice. |
+| Gateways | Crear y gestionar gateways, usuarios de gateway y tokens asociados. |
+
+## Secciones de Backoffice API
+
+<CardGroup cols={3}>
+  <Card title="Visión general" icon="server" href="/es/developer-manual/build-with-zylon/backoffice-api/overview">
+    Contexto de plataforma, modelo de autenticación y guía de ciclo de vida.
+  </Card>
+  <Card title="Cuentas" icon="users" href="/es/developer-manual/build-with-zylon/backoffice-api/accounts">
+    CRUD de cuentas, unión a organizaciones y gestión de tokens de cuenta.
+  </Card>
+  <Card title="Gateways" icon="network-wired" href="/es/developer-manual/build-with-zylon/backoffice-api/gateways">
+    CRUD de gateways, más operaciones de usuarios y tokens por gateway.
+  </Card>
+</CardGroup>
+
+## Verifica las limitaciones de tu instancia
+
+Usa `GET /api/v1/license/usage` para consultar el uso de licencias:
+
+```bash
+curl "https://{BASE_URL}/api/v1/license/usage" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "workspace_seats": 10000,
+  "used_workspace_seats": 141,
+  "operator_seats": 30,
+  "used_operator_seats": 2,
+  "developer_seats": 100,
+  "used_developer_seats": 7
+}
+```
+</Accordion>
+
+## Errores comunes
+
+- Usar un token de workspace sin permisos de backoffice.
+- Enviar `x-org` asumiendo que altera el comportamiento de backoffice.
+- Tratar los contadores de licencias como valores editables.
+
+## Errores y casos límite
+
+- **401/403**: token ausente o sin permisos de backoffice.
+- **404**: gateway/usuario/token inexistente.
+- Algunas operaciones heredadas devuelven payloads de error mínimos; usa el código HTTP y el contexto del endpoint.
+
+## Siguientes pasos
+
+1. Gestiona ciclo de vida de gateways en [Gateways](/es/developer-manual/build-with-zylon/backoffice-api/gateways).
+2. Gestiona operaciones de cuentas en [Cuentas](/es/developer-manual/build-with-zylon/backoffice-api/accounts).

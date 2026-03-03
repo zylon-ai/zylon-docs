@@ -12,6 +12,7 @@ Create a filesystem integration with `POST /api/v1/app/integration/filesystem`.
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "{file_system_username}",
@@ -37,6 +38,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "{file_system_username}",
@@ -62,6 +64,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationI
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -77,6 +80,7 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/confi
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username={file_system_username}&password={file_system_password}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -90,6 +94,7 @@ true
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -109,7 +114,10 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 <Accordion title="Example response">

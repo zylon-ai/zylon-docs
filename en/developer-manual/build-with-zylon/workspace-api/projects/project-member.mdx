@@ -12,6 +12,7 @@ List current members with `GET /api/v1/app/project/{projectId}/member`.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -46,6 +47,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
@@ -81,6 +83,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
@@ -118,6 +121,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -144,6 +148,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">

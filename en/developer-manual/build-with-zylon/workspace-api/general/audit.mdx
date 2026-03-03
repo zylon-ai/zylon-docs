@@ -3,15 +3,16 @@ title: "Audit"
 description: "Query audit trails across the workspace or a single project."
 ---
 
-Audit endpoints let you review actions across the workspace, with optional filters for users, actions, and time ranges.
+Audit endpoints let you review actions across the workspace, with optional filters for users, actions, artifact types, and time ranges.
 
 ## Basic request and response
 
 Query the workspace audit log with `GET /api/v1/app/audit`.
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&page=1&page_size=50" \
+curl "https://{BASE_URL}/api/v1/app/audit?start_date=1738291200&end_date=1738972800&include=User&artifact_types=File,URL&page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -23,8 +24,9 @@ curl "https://{BASE_URL}/api/v1/app/audit?start_date=1738291200&end_date=1738972
 ## Project audit log
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/audit?start_date=1738291200&end_date=1738972800&page=1&page_size=50" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/audit?start_date=1738291200&end_date=1738972800&artifact_types=File,URL&page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -32,6 +34,13 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/audit?start_date=1738291
 []
 ```
 </Accordion>
+
+## Query parameters
+
+- `start_date`, `end_date`: Unix timestamps for the time window.
+- `include`: Optional entity filter (for example `User`).
+- `artifact_types`: Optional comma-separated artifact type filter.
+- `page`, `page_size`: Pagination controls.
 
 ## Errors and edge cases
 

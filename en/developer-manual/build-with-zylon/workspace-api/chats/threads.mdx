@@ -21,6 +21,7 @@ Create a thread interaction with `POST /api/v1/app/thread/{threadId}/interaction
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "thread_id": "{threadID}",
@@ -80,6 +81,7 @@ Create a new thread in a project:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -92,6 +94,7 @@ List threads in a project:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 {/* <!-- RESTRUCTURED --> */}
@@ -118,6 +121,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -130,6 +134,7 @@ Delete a thread:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## List or fetch interactions
@@ -139,6 +144,7 @@ List interactions for a thread:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Fetch a specific interaction:
@@ -146,6 +152,7 @@ Fetch a specific interaction:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## Delete or stream an interaction
@@ -155,6 +162,7 @@ Delete an interaction:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Stream interaction output:
@@ -162,6 +170,7 @@ Stream interaction output:
 ```bash
 curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Accept: text/event-stream"
 ```
 
@@ -186,6 +195,7 @@ If you don’t need a thread, call the chat endpoint directly:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -219,6 +229,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [

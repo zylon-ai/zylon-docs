@@ -12,6 +12,7 @@ Crea una interacción con `POST /api/v1/app/thread/{threadId}/interaction`.
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "thread_id": "{threadID}",
@@ -78,6 +79,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -99,6 +101,7 @@ curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -115,6 +118,7 @@ curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
 ```bash
 curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Accept: text/event-stream"
 ```
 

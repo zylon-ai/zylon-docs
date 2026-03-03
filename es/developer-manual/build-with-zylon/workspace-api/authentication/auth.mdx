@@ -1,50 +1,18 @@
 ---
 title: "Autenticación"
-description: "Crea cuentas, inicia sesión y cierra sesión en la Workspace API."
+description: "Inicia y cierra sesiones para acceso a Workspace API."
 ---
 
-Usa estos endpoints para crear cuentas con credenciales, autenticar usuarios y cerrar sesión. Para los redireccionamientos SSO (Google/Microsoft) y OAuth de integraciones, consulta [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+Usa estos endpoints para autenticar con credenciales y cerrar sesión. Para los redireccionamientos SSO (Google/Microsoft) y OAuth de integraciones, consulta [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
 
-## Solicitud básica y respuesta
+## La creación de cuentas se movió a Cuentas
 
-Crea una cuenta con credenciales usando `POST /api/v1/auth/register`.
+`POST /api/v1/auth/register` ahora está documentado en [Backoffice API - Cuentas](/es/developer-manual/build-with-zylon/backoffice-api/accounts).
 
-```bash
-curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "{username}",
-    "password": "{password}",
-    "roles": ["AppAdmin"]
-  }'
-```
+Para usar esa cuenta en Workspace, necesitas al menos un usuario de workspace:
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "acct_6c8a1f3b2d4e5f7a",
-  "email": "sasha@auroralabs.com",
-  "name": "Sasha Patel",
-  "given_name": "Sasha",
-  "family_name": "Patel",
-  "provider": "Credentials",
-  "users": [
-    {
-      "id": "user_4b7c2a1d9e5f3c8b",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Sasha Patel",
-      "email": "sasha@auroralabs.com",
-      "state": "Active",
-      "roles": ["AppAdmin"],
-      "created_at": "2026-02-08T14:12:45Z"
-    }
-  ],
-  "roles": ["AppAdmin"]
-}
-```
-</Accordion>
+- Crea un usuario de workspace con el account ID en [Usuarios - Crear un usuario](/es/developer-manual/build-with-zylon/workspace-api/users/user).
+- Añade membresías/roles adicionales con el endpoint de unión a organización en [Cuenta](/es/developer-manual/build-with-zylon/workspace-api/authentication/account), documentado en [Cuentas - Unirse a una organización](/es/developer-manual/build-with-zylon/backoffice-api/accounts#unirse-a-una-organización).
 
 ## Iniciar sesión con credenciales
 
@@ -100,5 +68,4 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/logout" \
 ## Errores y casos límite
 
 - **401/403**: token inválido o ausente.
-- **409**: la cuenta ya existe (registro).
 - **429**: demasiados intentos de inicio de sesión.

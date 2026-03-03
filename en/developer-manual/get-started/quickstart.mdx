@@ -7,7 +7,9 @@ Start with ZylonGPT to send messages, or use the Workspace API to automate org a
 
 ## Prerequisites
 
-- An API token. See [Token Management](/en/api-reference/token-management).
+- A token for your target API:
+  - Workspace-only token flow: [Workspace Token Management](/en/developer-manual/get-started/token-management)
+  - One token across Workspace API + ZylonGPT API + Backoffice API: [Backoffice Developer Tools](/en/user-manual/backoffice/developer-tools)
 - Your Zylon hostname (replace `{BASE_URL}` in the examples).
 - For Workspace API: an account and an organization created in the workspace.
 
@@ -233,7 +235,7 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
 
 ## Troubleshooting
 
-- **401/403**: Your token is invalid or expired. See [Token Management](/en/api-reference/token-management).
+- **401/403**: your token is invalid, expired, or issued for the wrong flow. Use [Workspace Token Management](/en/developer-manual/get-started/token-management) for Workspace-only access, or [Backoffice Developer Tools](/en/user-manual/backoffice/developer-tools) for a cross-API token.
 - **404**: Check your base URL. For ZylonGPT, use `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: Use `"model": "default"` unless you’ve been given a specific model name.
 - **405**: You’re using the wrong method. `/messages` is `POST`.

@@ -1,0 +1,303 @@
+---
+title: "Accounts"
+description: "Manage platform accounts, organization membership, and account API tokens."
+---
+
+Use Backoffice account endpoints to manage platform identities and account-scoped API tokens.
+
+## Prerequisites
+
+- Backoffice-capable token in `Authorization: Bearer {API_TOKEN}`
+- Target base URL (`https://{BASE_URL}`)
+
+Before assigning or updating roles, review [Roles and permissions](/en/user-manual/backoffice/roles-and-permissions).
+
+## Accounts
+
+### Create an account
+
+Use `POST /api/v1/auth/register` to create a credentials-based account.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "{username}",
+    "password": "{password}",
+    "roles": ["AppAdmin"]
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "given_name": "Sasha",
+  "family_name": "Patel",
+  "provider": "Credentials",
+  "users": [
+    {
+      "id": "user_4b7c2a1d9e5f3c8b",
+      "org_id": "org_2f3a9d1c7b5e4a8f",
+      "account_id": "acct_6c8a1f3b2d4e5f7a",
+      "name": "Sasha Patel",
+      "email": "sasha@auroralabs.com",
+      "state": "Active",
+      "roles": ["AppAdmin"],
+      "created_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "roles": ["AppAdmin"]
+}
+```
+</Accordion>
+
+### List accounts
+
+`GET /api/v1/account` supports pagination (`page`, `page_size`, `page_order`, `after`, `before`, `first`, `last`, `total_count`).
+
+```bash
+curl "https://{BASE_URL}/api/v1/account?page_size=20&page=1" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "data": [
+    {
+      "id": "acct_6c8a1f3b2d4e5f7a",
+      "state": "Active",
+      "email": "sasha@auroralabs.com",
+      "name": "Sasha Patel",
+      "provider": "Credentials",
+      "roles": ["Workspace", "Developer"],
+      "created_at": "2026-02-08T14:12:45Z",
+      "updated_at": "2026-02-08T14:12:45Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+### Get an account by ID
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/{accountId}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "state": "Active",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "provider": "Credentials",
+  "roles": ["Workspace", "Developer"],
+  "created_at": "2026-02-08T14:12:45Z",
+  "updated_at": "2026-02-08T14:12:45Z"
+}
+```
+</Accordion>
+
+### Update account state or roles
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "state": "Active",
+    "roles": ["Workspace", "Developer"]
+  }'
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "state": "Active",
+  "email": "sasha@auroralabs.com",
+  "name": "Sasha Patel",
+  "provider": "Credentials",
+  "roles": ["Workspace", "Developer"],
+  "created_at": "2026-02-08T14:12:45Z",
+  "updated_at": "2026-02-08T15:01:09Z"
+}
+```
+</Accordion>
+
+### Update current account password
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/account/me" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "current_password": "{current_password}",
+    "new_password": "{new_password}"
+  }'
+```
+
+<Accordion title="Example response">
+```text
+No response body is currently documented for this endpoint.
+Use HTTP 2xx as success signal.
+```
+</Accordion>
+
+### Reset account password
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/{accountId}/reset-password" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "new_password": "M9u6x!2kQa1"
+}
+```
+</Accordion>
+
+## Organizations
+
+### List organizations for current account
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/organization" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+[
+  {
+    "id": "org_2f3a9d1c7b5e4a8f",
+    "name": "Aurora Labs",
+    "slug": "default"
+  }
+]
+```
+</Accordion>
+
+## Tokens
+
+Account tokens are intended for PrivateGPT API and Workspace API access.
+
+- `gateway_id` is required when creating account tokens.
+- To create tokens for Workspace-only usage, use [Gateways - Create a gateway token](/en/developer-manual/build-with-zylon/backoffice-api/gateways#create-a-gateway-token).
+
+### Create account API token
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "workspace-automation",
+    "gateway_id": "gw_9a2e9f4f",
+    "valid_until": "2027-12-31T00:00:00Z",
+    "revoke_existing": false
+  }'
+```
+
+<Accordion title="Example response (201)">
+```json
+{
+  "name": "workspace-automation",
+  "token": "v1--newly-issued-token",
+  "hashed_token": "sha256:0d83...",
+  "token_email": "sasha@auroralabs.com",
+  "gateway_id": "gw_9a2e9f4f",
+  "last_used_at": "",
+  "created_at": "2026-02-08T14:20:00Z",
+  "valid_until": "2027-12-31T00:00:00Z"
+}
+```
+</Accordion>
+
+### List account API tokens
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/token?page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "data": [
+    {
+      "name": "workspace-automation",
+      "hashed_token": "sha256:0d83...",
+      "token_email": "sasha@auroralabs.com",
+      "gateway_id": "gw_9a2e9f4f",
+      "last_used_at": "2026-02-09T11:43:00Z",
+      "created_at": "2026-02-08T14:20:00Z",
+      "valid_until": "2027-12-31T00:00:00Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+### Delete account API token
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/account/token/{token_hash}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```text
+No response body is currently documented for this endpoint.
+Use HTTP 200 as success signal.
+```
+</Accordion>
+
+### Join an organization
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/organization/{orgId}/join" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+</Accordion>
+
+## Common mistakes
+
+- Using `/v1/account/token/{token?}` with a query token in one request style and path token in another.
+- Updating account roles with workspace-only tokens that do not have backoffice permissions.
+- Omitting `Content-Type: application/json` on body-based endpoints.
+
+## Errors and edge cases
+
+- **401/403**: missing token or insufficient backoffice permissions.
+- **404**: account, organization, or token not found.
+- Some update/delete operations may return empty bodies.

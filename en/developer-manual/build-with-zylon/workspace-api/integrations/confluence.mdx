@@ -14,6 +14,7 @@ Fetch integration configuration with `GET /api/v1/app/integration/confluence/{in
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -30,6 +31,7 @@ curl "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/confi
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -41,6 +43,75 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationI
 }
 ```
 </Accordion>
+
+## ConfluenceLocal endpoints
+
+Use these endpoints when your deployment uses the `confluencelocal` provider with basic-auth credentials.
+
+### Create a ConfluenceLocal integration
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "{user}",
+    "password": "{password}"
+  }'
+```
+
+### Update a ConfluenceLocal integration
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "{user}",
+    "password": "{password}"
+  }'
+```
+
+### Get ConfluenceLocal config
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}/config" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+### Start ConfluenceLocal ingest
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json"
+```
+
+<Accordion title="Example integration response">
+```json
+{
+  "id": "int_6d9a2b4c5e7f",
+  "user_id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "type": "ConfluenceLocalLegacy",
+  "provider_data": {
+    "username": "confluence_service"
+  },
+  "created_at": "2026-03-01T11:00:00Z",
+  "updated_at": "2026-03-01T11:00:00Z"
+}
+```
+</Accordion>
+
+## Common mistakes
+
+- Using the OAuth-style Confluence endpoints with a `confluencelocal` integration ID.
+- Forgetting to include JSON body fields (`username`, `password`) for create/update.
+- Calling ingest before the integration is configured.
 
 ## Errors and edge cases
 

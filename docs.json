@@ -150,6 +150,16 @@
                 "pages": [
                   "en/user-manual/n8n"
                 ]
+              },
+              {
+                "group": "Backoffice",
+                "pages": [
+                  "en/user-manual/backoffice/introduction",
+                  "en/user-manual/backoffice/roles-and-permissions",
+                  "en/user-manual/backoffice/accessing-the-backoffice",
+                  "en/user-manual/backoffice/platform-backoffice",
+                  "en/user-manual/backoffice/developer-tools"
+                ]
               }
             ]
           },
@@ -162,7 +172,7 @@
                 "icon": "rocket",
                 "pages": [
                   "en/developer-manual/get-started/intro-to-zylon",
-                  "en/api-reference/token-management",
+                  "en/developer-manual/get-started/token-management",
                   "en/developer-manual/get-started/quickstart"
                 ]
               },
@@ -221,8 +231,7 @@
                         "group": "Authentication",
                         "pages": [
                           "en/developer-manual/build-with-zylon/workspace-api/authentication/openid",
-                          "en/developer-manual/build-with-zylon/workspace-api/authentication/auth",
-                          "en/developer-manual/build-with-zylon/workspace-api/authentication/account"
+                          "en/developer-manual/build-with-zylon/workspace-api/authentication/auth"
                         ]
                       },
                       {
@@ -260,6 +269,14 @@
                           "en/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
                       }
+                    ]
+                  },
+                  {
+                    "group": "Backoffice API",
+                    "pages": [
+                      "en/developer-manual/build-with-zylon/backoffice-api/overview",
+                      "en/developer-manual/build-with-zylon/backoffice-api/accounts",
+                      "en/developer-manual/build-with-zylon/backoffice-api/gateways"
                     ]
                   }
                 ]
@@ -496,6 +513,16 @@
                 "pages": [
                   "es/user-manual/n8n"
                 ]
+              },
+              {
+                "group": "Backoffice",
+                "pages": [
+                  "es/user-manual/backoffice/introduction",
+                  "es/user-manual/backoffice/roles-and-permissions",
+                  "es/user-manual/backoffice/accessing-the-backoffice",
+                  "es/user-manual/backoffice/platform-backoffice",
+                  "es/user-manual/backoffice/developer-tools"
+                ]
               }
             ]
           },
@@ -508,7 +535,7 @@
                 "icon": "rocket",
                 "pages": [
                   "es/developer-manual/get-started/intro-to-zylon",
-                  "es/api-reference/token-management",
+                  "es/developer-manual/get-started/token-management",
                   "es/developer-manual/get-started/quickstart"
                 ]
               },
@@ -567,8 +594,7 @@
                         "group": "Autenticaci\u00f3n",
                         "pages": [
                           "es/developer-manual/build-with-zylon/workspace-api/authentication/openid",
-                          "es/developer-manual/build-with-zylon/workspace-api/authentication/auth",
-                          "es/developer-manual/build-with-zylon/workspace-api/authentication/account"
+                          "es/developer-manual/build-with-zylon/workspace-api/authentication/auth"
                         ]
                       },
                       {
@@ -606,6 +632,14 @@
                           "es/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
                       }
+                    ]
+                  },
+                  {
+                    "group": "API de Backoffice",
+                    "pages": [
+                      "es/developer-manual/build-with-zylon/backoffice-api/overview",
+                      "es/developer-manual/build-with-zylon/backoffice-api/accounts",
+                      "es/developer-manual/build-with-zylon/backoffice-api/gateways"
                     ]
                   }
                 ]

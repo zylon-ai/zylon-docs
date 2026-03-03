@@ -12,6 +12,7 @@ Lista organizaciones visibles con `GET /api/v1/app/organization`.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -31,6 +32,7 @@ curl "https://{BASE_URL}/api/v1/app/organization" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Aurora Labs",

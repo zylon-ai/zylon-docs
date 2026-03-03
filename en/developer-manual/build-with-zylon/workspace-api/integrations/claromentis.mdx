@@ -12,6 +12,7 @@ Create a Claromentis integration with `POST /api/v1/app/integration/claromentis`
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "{username}",
@@ -37,6 +38,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "{username}",
@@ -62,6 +64,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integration
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -77,7 +80,10 @@ curl "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/conf
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 <Accordion title="Example response">

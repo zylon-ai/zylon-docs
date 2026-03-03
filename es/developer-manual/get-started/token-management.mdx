@@ -1,0 +1,74 @@
+---
+title: "Gestión de tokens"
+description: "Elige el flujo de token correcto: Backoffice multi-API o token solo para Workspace."
+---
+
+Usa esta página para elegir el flujo de token correcto para tu integración.
+
+## Backoffice Token
+
+Si necesitas un solo token que funcione en:
+
+- Workspace API
+- ZylonGPT API
+- Backoffice API
+
+Usa Backoffice Developer Tools:
+
+- [Backoffice Developer Tools](/es/user-manual/backoffice/developer-tools)
+
+## Workspace Token
+
+Este flujo es para acceso a **Workspace API** bajo `/api/v1/*` (especialmente `/api/v1/app/*`).
+
+<Warning>
+El flujo de token de Workspace **no** emite tokens para llamadas directas a ZylonGPT API bajo `/api/gpt/v1/*`.
+</Warning>
+
+### Crear un token de Workspace API
+
+1. Inicia sesión en Workspace con una cuenta que pueda gestionar tokens de API.
+2. Haz clic en el logo de la organización y abre **API Tokens**.
+3. Haz clic en **Create API Token**, define un nombre y guarda.
+4. Copia y guarda el valor del token de inmediato. Se muestra una sola vez.
+
+![](/images/api-reference/images/token.png)
+![](/images/api-reference/images/create-token.png)
+
+### Verificar acceso del token a Workspace API
+
+Los endpoints de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org`.
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/me" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "user_4b7c2a1d9e5f3c8b",
+  "org_id": "org_2f3a9d1c7b5e4a8f",
+  "account_id": "acct_6c8a1f3b2d4e5f7a",
+  "name": "Sasha Patel",
+  "email": "sasha@auroralabs.com",
+  "state": "Active",
+  "roles": ["AppAdmin"],
+  "created_at": "2026-02-08T14:12:45Z"
+}
+```
+</Accordion>
+
+### Revocar un token de Workspace
+
+Abre **API Tokens** y haz clic en el icono de papelera en la fila del token.
+
+![](/images/api-reference/images/revoke-token.png)
+
+## Matriz de compatibilidad
+
+| Origen del token | Workspace API (`/api/*`) | ZylonGPT API (`/api/gpt/*`) | Backoffice API |
+| --- | --- | --- | --- |
+| Flujo de token de Workspace (esta página) | Sí | No | No |
+| Token de Backoffice Developer Tools | Sí (con rol + `x-org` cuando aplique) | Sí | Sí |

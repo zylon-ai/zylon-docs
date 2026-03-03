@@ -14,6 +14,7 @@ Search across resources with `GET /api/v1/app/search`.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -40,6 +41,7 @@ curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">

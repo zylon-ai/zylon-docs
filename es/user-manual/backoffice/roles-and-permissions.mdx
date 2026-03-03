@@ -1,0 +1,38 @@
+---
+title: Roles y permisos
+description: Roles del Backoffice, niveles de acceso y responsabilidades.
+icon: unlock-keyhole
+---
+
+## Resumen
+El acceso al Backoffice se basa en roles. Lo que un usuario puede ver y hacer depende de:
+
+1. El **rol de cuenta** asignado en Backoffice.
+2. El **rol de gateway** asignado dentro de cada gateway.
+
+Una misma cuenta puede tener más de un rol.
+
+## Roles de cuenta
+Los roles de cuenta definen el acceso a nivel de plataforma.
+
+| Rol de cuenta | Qué hace este rol | Acceso en Backoffice |
+| --- | --- | --- |
+| **Super Admin** | Cuenta administrativa inicial para la configuración y gobernanza de la plataforma | Mismo acceso de plataforma que **Operator** |
+| **Operator** | Gestiona cuentas, roles, gateways y operación de la plataforma | Acceso completo a **Platform Backoffice** |
+| **Developer** | Trabaja con gateways y tokens de API para desarrollo | Acceso a **Developer Tools** |
+| **Workspace** | Usa Workspace para proyectos y colaboración | Sin acceso a Platform Backoffice |
+
+## Roles de gateway
+Los roles de gateway definen qué puede hacer un usuario dentro de un gateway concreto.
+
+| Rol en gateway | Qué hace este rol |
+| --- | --- |
+| **Owner** | Gestiona usuarios y roles del gateway, crea y gestiona tokens |
+| **Admin** | Gestiona usuarios del gateway, crea y gestiona tokens |
+| **Member** | Crea y gestiona sus propios tokens |
+
+## Cómo funciona el acceso en la práctica
+- El **rol de cuenta** controla qué secciones del Backoffice están disponibles.
+- El **rol de gateway** controla las acciones dentro de cada gateway.
+- Un **Operator** que entra en flujos de gateway usa los mismos permisos de rol de gateway que cualquier otro usuario de gateway.
+- Los permisos siempre están limitados al rol y al contexto actuales.

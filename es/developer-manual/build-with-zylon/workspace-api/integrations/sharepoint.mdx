@@ -14,6 +14,7 @@ Obtén la configuración con `GET /api/v1/app/integration/sharepoint/{integratio
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/config" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -29,7 +30,10 @@ curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/confi
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 <Accordion title="Ejemplo de respuesta">

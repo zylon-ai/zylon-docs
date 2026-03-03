@@ -21,6 +21,7 @@ Crea una interacción en un hilo con `POST /api/v1/app/thread/{threadId}/interac
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "thread_id": "{threadID}",
@@ -80,6 +81,7 @@ Crear un hilo en un proyecto:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -92,6 +94,7 @@ Listar hilos:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 {/* <!-- RESTRUCTURED --> */}
@@ -118,6 +121,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -130,6 +134,7 @@ Eliminar un hilo:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## Listar u obtener interacciones
@@ -139,6 +144,7 @@ Listar interacciones de un hilo:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Obtener una interacción:
@@ -146,6 +152,7 @@ Obtener una interacción:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## Eliminar o hacer streaming de una interacción
@@ -155,6 +162,7 @@ Eliminar una interacción:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Streaming:
@@ -162,6 +170,7 @@ Streaming:
 ```bash
 curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Accept: text/event-stream"
 ```
 
@@ -186,6 +195,7 @@ Si no necesitas un hilo, usa el endpoint de chat:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -219,6 +229,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [

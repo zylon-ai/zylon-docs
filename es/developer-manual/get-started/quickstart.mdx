@@ -7,7 +7,9 @@ Empieza con ZylonGPT para enviar mensajes o usa la Workspace API para automatiza
 
 ## Requisitos previos
 
-- Un token de API. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- Un token para la API que vas a usar:
+  - Flujo de token solo para Workspace: [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management)
+  - Un token para Workspace API + ZylonGPT API + Backoffice API: [Backoffice Developer Tools](/es/user-manual/backoffice/developer-tools)
 - El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 - Para la Workspace API: una cuenta y una organización creadas en el Workspace.
 
@@ -233,7 +235,7 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
 
 ## Solución de problemas
 
-- **401/403**: token inválido o caducado. Consulta [Gestión de tokens](/es/api-reference/token-management).
+- **401/403**: token inválido, caducado o emitido para el flujo incorrecto. Usa [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management) para acceso solo a Workspace, o [Backoffice Developer Tools](/es/user-manual/backoffice/developer-tools) para un token multi-API.
 - **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: usa `"model": "default"`.
 - **405**: método incorrecto. `/messages` es `POST`.

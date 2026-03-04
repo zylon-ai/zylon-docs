@@ -66,11 +66,11 @@ Use role assignment to control whether an user can:
 The number of accounts and role-enabled accounts is controlled by the active license.
 
 ## Gateways
-A **Gateway** is a dedicated, isolated software service that sits at the boundary between clients and Zylon’s internal APIs. It provides a single, controlled entry point for API development and testing, handling concerns like request routing, authentication/authorization hooks, traffic shaping, versioning, and observability.
+A **Gateway** is a dedicated, isolated software service that sits at the boundary between clients and Zylon’s internal APIs. It provides a single, controlled entry point for API development handling concerns request routing, authentication/authorization, traffic, and observability.
 
 Gateways are used to:
 
-- Group API development activity in separate environments
+- Group API development activity limiting access to vector database only for vectors belonging to the gateway
 - Control who can work with tokens in each environment
 - Log account usage and token usage for that gateway
 

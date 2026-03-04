@@ -196,7 +196,7 @@ In your online machine, ensure firewall access to these domains:
     Download the models based on your configuration:
 
     ```bash
-    sudo zylon-cli models download
+    sudo zylon-cli models download --no-extract
     ```
 
     This will download the AI models that you have specified in the Wizard.
@@ -205,12 +205,12 @@ In your online machine, ensure firewall access to these domains:
 
     ```bash
     sudo zylon-cli models list
-    sudo zylon-cli models download model-a model-b model-c
+    sudo zylon-cli models download --no-extract model-a model-b model-c
     ```
 
     For example, for `baseline-24g` preset:
     ```bash
-    sudo zylon-cli models download qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    sudo zylon-cli models download --no-extract qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
     ```
   </Step>
 
@@ -373,20 +373,10 @@ In your online machine, ensure firewall access to these domains:
 
     ```bash
     cd /tmp
-    sudo zylon-cli import zylon-models-<timestamp>.tar
-    ```
-  </Step>
-
-  <Step title="Install AI Models">
-    _Estimated time: 2 to 10 min_
-
-    After importing the models, install them:
-
-    ```bash
-    sudo zylon-cli models install
+    sudo zylon-cli models import zylon-models-<timestamp>.tar
     ```
 
-    This will install the AI models that were imported in the previous step.
+    This command will import and install the AI models automatically.
 
     Verify models were installed successfully:
 

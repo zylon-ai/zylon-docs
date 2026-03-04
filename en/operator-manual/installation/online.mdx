@@ -98,10 +98,10 @@ This guide covers the standard Zylon installation for environments with full int
 
   </Step>
 
-  <Step title="Install AI Models">
+  <Step title="Download AI Models">
     _Estimated time: 10min to 1h, depending on network speed and models._
 
-    **Before installing Zylon**, you must install the AI models. The models are determined by your AI preset configuration.
+    **Before installing Zylon**, you must download the AI models. The models are determined by your AI preset configuration.
 
     Check available models and compare with your AI preset:
     ```bash
@@ -110,24 +110,24 @@ This guide covers the standard Zylon installation for environments with full int
 
     More preset details in the [AI Presets documentation](/en/operator-manual/ai-presets/presets).
 
-    Install the models based on your configuration:
+    Download the models based on your configuration:
 
     ```bash
-    sudo zylon-cli models install
+    sudo zylon-cli models download
     ```
 
     This will download and install the AI models that you have specified in the Wizard.
 
-    If for some reason you need to install specific models, you can do so with:
+    If for some reason you need to download specific models, you can do so with:
 
     ```bash
     sudo zylon-cli models list
-    sudo zylon-cli models install model-a model-b model-c
+    sudo zylon-cli models download model-a model-b model-c
     ```
 
     For example, for `baseline-24g` preset:
     ```bash
-    sudo zylon-cli models install qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    sudo zylon-cli models download qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
     ```
   </Step>
 

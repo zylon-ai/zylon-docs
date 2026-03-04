@@ -169,10 +169,10 @@ Tu firewall debe permitir acceso a estos dominios:
 
   </Step>
 
-  <Step title="Instalar Modelos de IA">
+  <Step title="Descargar Modelos de IA">
     _Tiempo estimado: 10min a 1h, dependiendo de la velocidad de red y modelos._
 
-    **Antes de instalar Zylon**, debes instalar los modelos de IA. Los modelos están determinados por tu configuración de preset de IA y se descargarán desde los dominios de Hugging Face.
+    **Antes de instalar Zylon**, debes descargar los modelos de IA. Los modelos están determinados por tu configuración de preset de IA y se descargarán desde los dominios de Hugging Face.
 
     Asegúrate de que tu firewall permita acceso a:
     - `huggingface.co`
@@ -185,24 +185,24 @@ Tu firewall debe permitir acceso a estos dominios:
 
     Más detalles de preset en la [documentación de Presets de IA](/es/operator-manual/ai-presets/presets).
 
-    Instala los modelos basados en tu configuración:
+    Descarga los modelos basados en tu configuración:
 
     ```bash
-    sudo zylon-cli models install
+    sudo zylon-cli models download
     ```
 
     Esto descargará e instalará los modelos de IA que has especificado en el Wizard.
 
-    Si por alguna razón necesitas instalar modelos específicos, puedes hacerlo con:
+    Si por alguna razón necesitas descargar modelos específicos, puedes hacerlo con:
 
     ```bash
     sudo zylon-cli models list
-    sudo zylon-cli models install model-a model-b model-c
+    sudo zylon-cli models download model-a model-b model-c
     ```
 
     Por ejemplo, para el preset `baseline-24g`:
     ```bash
-    sudo zylon-cli models install qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    sudo zylon-cli models download qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
     ```
   </Step>
 

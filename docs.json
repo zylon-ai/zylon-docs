@@ -270,14 +270,6 @@
                         ]
                       }
                     ]
-                  },
-                  {
-                    "group": "Backoffice API",
-                    "pages": [
-                      "en/developer-manual/build-with-zylon/backoffice-api/overview",
-                      "en/developer-manual/build-with-zylon/backoffice-api/accounts",
-                      "en/developer-manual/build-with-zylon/backoffice-api/gateways"
-                    ]
                   }
                 ]
               }
@@ -632,14 +624,6 @@
                           "es/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
                       }
-                    ]
-                  },
-                  {
-                    "group": "API de Backoffice",
-                    "pages": [
-                      "es/developer-manual/build-with-zylon/backoffice-api/overview",
-                      "es/developer-manual/build-with-zylon/backoffice-api/accounts",
-                      "es/developer-manual/build-with-zylon/backoffice-api/gateways"
                     ]
                   }
                 ]

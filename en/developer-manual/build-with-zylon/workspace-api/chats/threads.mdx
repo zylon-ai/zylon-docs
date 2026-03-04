@@ -74,6 +74,122 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
 ```
 </Accordion>
 
+## Adding media to the chat
+
+If the selected model supports multimodal input, you can send media in `pgpt.messages[].content[]` (the same request shape used by both thread interactions and one-shot chat).
+
+You can mix multiple content blocks in one message. Supported block types in the schema:
+
+| Type | Typical use | Required fields | Notes |
+| --- | --- | --- | --- |
+| `text` | Plain text prompt/input | none | Uses `text`; supports optional `citations` metadata. |
+| `image` | Image attachment | `data` | `data` can be base64 or URL; optional `mime_type`. |
+| `audio` | Audio attachment | `data` | `data` can be base64 or URL; optional `mime_type`. |
+| `binary` | Generic binary payload | `data`, `mime_type` | Optional `filename`. |
+| `file` | File/document content block | `content` | Optional `content_type`, `doc_metadata`. |
+| `tool_use` | Tool call request | `id`, `name`, `input` | Internal/tool orchestration block. |
+
+`start_timestamp`, `stop_timestamp`, and `_meta` are optional on all blocks.
+
+<Accordion title="Example content blocks">
+```json
+[
+  { "type": "text", "text": "Summarize this image." },
+  { "type": "image", "data": "<BASE64_OR_URL>", "mime_type": "image/png" },
+  { "type": "audio", "data": "<BASE64_OR_URL>", "mime_type": "audio/mpeg" },
+  { "type": "binary", "data": "<BASE64_OR_URL>", "mime_type": "application/octet-stream", "filename": "blob.bin" },
+  {
+    "type": "file",
+    "content": "<BASE64_OR_TEXT_FILE_CONTENT>",
+    "content_type": "application/pdf",
+    "doc_metadata": { "file_name": "contract.pdf", "file_type": "pdf" }
+  },
+  {
+    "type": "source",
+    "sources": [
+      {
+        "type": "context.website",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "description": "Public report page"
+      },
+      {
+        "type": "context.chunk",
+        "id": "chunk_01",
+        "score": 0.92,
+        "text": "Support backlog dropped 8% week-over-week",
+        "document": {
+          "object": "artifact",
+          "artifact": "artifact_123",
+          "doc_metadata": { "file_name": "support.csv", "file_type": "csv" }
+        }
+      }
+    ]
+  },
+  { "type": "tool_use", "id": "toolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "toolu_123",
+    "content": [{ "type": "text", "text": "Found 5 matching passages." }],
+    "is_error": false
+  },
+  { "type": "thinking", "thinking": "I should compare the latest week to the previous one." },
+  {
+    "type": "tldr",
+    "content": [
+      { "type": "text", "text": "User: Analyze support trend" },
+      { "type": "text", "text": "Assistant: Backlog decreased 8%" }
+    ]
+  }
+]
+```
+</Accordion>
+
+Example interaction request with image + text and runtime flags:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "{threadID}",
+    "all_artifacts": true,
+    "artifact_ids": [],
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "data": "<BASE64_IMAGE_DATA>",
+              "mime_type": "image/png"
+            },
+            {
+              "type": "text",
+              "text": "What do you see here?"
+            }
+          ]
+        }
+      ],
+      "system": {
+        "use_default_prompt": true,
+        "citations": {
+          "enabled": true
+        }
+      },
+      "thinking": {
+        "enabled": true
+      }
+    }
+  }'
+```
+
+- `system.citations.enabled`: asks the model to include citation references when available.
+- `thinking.enabled`: enables deep thinking mode; responses can take longer but are typically better reasoned.
+
 ## Create or list threads
 
 Create a new thread in a project:
@@ -244,6 +360,20 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
     "temperature": 0.3
   }'
 ```
+
+## Available tools
+
+Pass tools in `pgpt.tools` as `{ "name": "...", "type": "..." }`.
+
+| Name | Type | What it does |
+| --- | --- | --- |
+| `semantic_search` | `semantic_search_v1` | Searches indexed project/workspace knowledge by semantic similarity. |
+| `file_sematic_search` | `file_semantic_search_v1` | Searches file-based content and attachments semantically. |
+| `tabular_analysis` | `tabular_analysis_v1` | Analyzes tabular datasets and returns computed insights. |
+| `database_query` | `database_query_v1` | Runs database lookups/queries through configured data sources. |
+| `web_search` | `web_search_v1` | Performs web search for external/public information. |
+| `web_extract` | `web_extract_v1` | Extracts structured text/content from URLs. |
+| `list_project_files` | `list_project_files_v1` | Lists files in the current project for downstream tool usage. |
 
 ## Errors and edge cases
 

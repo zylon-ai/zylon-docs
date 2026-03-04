@@ -7,12 +7,12 @@ Use these endpoints to exchange credentials for a session and log out. For SSO l
 
 ## Account creation
 
-`POST /api/v1/auth/register` is documented in [Backoffice API - Accounts](/en/developer-manual/build-with-zylon/backoffice-api/accounts).
+Use `POST /api/v1/auth/register` to create a new credentials-based account.
 
 To use that account in Workspace, complete one of these operations:
 
 - Create a workspace user with the account ID in [Users - Create a user](/en/developer-manual/build-with-zylon/workspace-api/users/user).
-- Join directly to an organization through `POST /api/v1/account/organization/{orgId}/join` in [Backoffice API - Accounts](/en/developer-manual/build-with-zylon/backoffice-api/accounts#join-an-organization).
+- Join directly to an organization through `POST /api/v1/account/organization/{orgId}/join`.
 
 ## Log in with credentials
 

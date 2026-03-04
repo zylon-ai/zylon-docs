@@ -7,12 +7,12 @@ Usa estos endpoints para autenticar con credenciales y cerrar sesión. Para los 
 
 ## Creación de cuentas
 
-`POST /api/v1/auth/register` ahora está documentado en [Backoffice API - Cuentas](/es/developer-manual/build-with-zylon/backoffice-api/accounts).
+Usa `POST /api/v1/auth/register` para crear una cuenta con credenciales.
 
 Para usar esa cuenta en Workspace, necesitas al menos un usuario de workspace:
 
 - Crea un usuario de workspace con el account ID en [Usuarios - Crear un usuario](/es/developer-manual/build-with-zylon/workspace-api/users/user).
-- Añade membresías/roles adicionales con el endpoint de unión a organización en [Backoffice API - Cuentas](/es/developer-manual/build-with-zylon/backoffice-api/accounts#unirse-a-una-organización).
+- Añade membresías/roles adicionales con `POST /api/v1/account/organization/{orgId}/join`.
 
 ## Iniciar sesión con credenciales
 

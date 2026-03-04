@@ -109,7 +109,7 @@ Tu firewall debe permitir acceso a estos dominios:
         <Info>
           Si necesitas volver a ejecutar el asistente de configuración, ejecuta:
           ```bash
-          sudo zylon-cli config init --force
+          sudo zylon-cli config init
           ```
         </Info>
 
@@ -169,6 +169,43 @@ Tu firewall debe permitir acceso a estos dominios:
 
   </Step>
 
+  <Step title="Instalar Modelos de IA">
+    _Tiempo estimado: 10min a 1h, dependiendo de la velocidad de red y modelos._
+
+    **Antes de instalar Zylon**, debes instalar los modelos de IA. Los modelos están determinados por tu configuración de preset de IA y se descargarán desde los dominios de Hugging Face.
+
+    Asegúrate de que tu firewall permita acceso a:
+    - `huggingface.co`
+    - `xet.huggingface.co`
+
+    Verifica los modelos disponibles y compara con tu preset de IA:
+    ```bash
+    sudo zylon-cli models list
+    ```
+
+    Más detalles de preset en la [documentación de Presets de IA](/es/operator-manual/ai-presets/presets).
+
+    Instala los modelos basados en tu configuración:
+
+    ```bash
+    sudo zylon-cli models install
+    ```
+
+    Esto descargará e instalará los modelos de IA que has especificado en el Wizard.
+
+    Si por alguna razón necesitas instalar modelos específicos, puedes hacerlo con:
+
+    ```bash
+    sudo zylon-cli models list
+    sudo zylon-cli models install model-a model-b model-c
+    ```
+
+    Por ejemplo, para el preset `baseline-24g`:
+    ```bash
+    sudo zylon-cli models install qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    ```
+  </Step>
+
   <Step title="Instalar Zylon">
     _Tiempo estimado: 15min a 1hora, dependiendo del rendimiento del sistema y velocidad de red._
 
@@ -186,8 +223,11 @@ Tu firewall debe permitir acceso a estos dominios:
     - Controladores NVIDIA y CUDA (si aplica)
     - Runtime de contenedores y herramientas (kubectl, helm)
     - Imágenes de contenedores de Zylon
-    - Modelos de IA de tu configuración
     - Generación de certificados SSL (si usas Let's Encrypt)
+
+    <Note>
+      Nota que los modelos de IA **no** están incluidos en este paso—fueron instalados en el paso anterior.
+    </Note>
 
     <InstallationMonitor />
 
@@ -284,7 +324,7 @@ Si tienes una instalación existente de Zylon (online o airgap completo) y quier
 Para migrar una instalación existente de Zylon (Online, o Airgap) a una instalación Semi-Airgap, sigue estos pasos:
 
 1. **Asegurar conectividad**: Verifica que la máquina objetivo tenga conectividad con los dominios mencionados arriba.
-2. **Actualizar configuración**: Ejecuta `sudo zylon-cli config init --force` para actualizar la configuración para operación online. Asegúrate de configurar según describe el paso [Configurar Zylon](#configure-zylon).
+2. **Actualizar configuración**: Ejecuta `sudo zylon-cli config init` para actualizar la configuración para operación online. Asegúrate de configurar según describe el paso [Configurar Zylon](#configure-zylon).
   * Asegúrate de seleccionar Semi-Airgap cuando ejecutes el asistente de configuración.
   * Si no tienes conectividad con los dominios de replicated, asegúrate de solicitar una licencia local al equipo de soporte de Zylon.
 4. **Desactivar modo offline**: Edita `/etc/zylon/zylon-conf.yaml` y establece:

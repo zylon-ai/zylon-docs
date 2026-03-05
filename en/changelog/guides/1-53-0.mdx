@@ -48,13 +48,7 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     sudo kubectl get pods -A | grep triton
     ```
 
-    If the CLI is older than 2.0.0 and Triton is not showing 1/1 READY, then you likely ran into this issue. To recover your installation, simply run the CLI self-update followed by the install again:
-
-    ```bash
-    sudo zylon-cli self-update
-    sudo zylon-cli install list-versions
-    sudo zylon-cli install <version>
-    ```
+    If the CLI is older than 2.0.0 and Triton is not showing 1/1 READY, then you likely ran into this issue. To recover your installation, simply follow the below guide.
   </Accordion>
   <Accordion title="My install is stuck">
     Installation can get stuck in a few scenarios:
@@ -120,7 +114,7 @@ Zylon 1.53.0 introduces two major platform changes that affect how you install a
     <Warning>
       The installation will stop with an error message after uninstalling the existing NVIDIA drivers:
 
-      ```
+      ```text
       The current drivers were uninstalled successfully, please REBOOT the system 
       and re-run the installation to complete the NVIDIA driver installation
       ```

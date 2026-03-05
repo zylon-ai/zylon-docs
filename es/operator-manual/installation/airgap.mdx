@@ -125,7 +125,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
         <Info>
           Si necesitas volver a ejecutar el asistente de configuración, ejecuta:
           ```bash
-          sudo zylon-cli config init --force
+          sudo zylon-cli config init
           ```
         </Info>
 
@@ -181,56 +181,87 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
   </Step>
 
+  <Step title="Descargar Modelos de IA">
+    _Tiempo estimado: 10min a 1h, dependiendo de la velocidad de red y modelos._
+
+    **Antes de descargar Zylon**, debes descargar los modelos de IA en la máquina online. Los modelos están determinados por tu configuración de preset de IA.
+
+    Verifica los modelos disponibles y compara con tu preset de IA:
+    ```bash
+    sudo zylon-cli models list
+    ```
+
+    Más detalles de preset en la [documentación de Presets de IA](/es/operator-manual/ai-presets/presets).
+
+    Descarga los modelos basados en tu configuración:
+
+    ```bash
+    sudo zylon-cli models download --no-extract
+    ```
+
+    Esto descargará los modelos de IA que has especificado en el Wizard.
+
+    Si por alguna razón necesitas descargar modelos específicos, puedes hacerlo con:
+
+    ```bash
+    sudo zylon-cli models list
+    sudo zylon-cli models download --no-extract model-a model-b model-c
+    ```
+
+    Por ejemplo, para el preset `baseline-24g`:
+    ```bash
+    sudo zylon-cli models download --no-extract qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    ```
+  </Step>
+
+  <Step title="Exportar Modelos de IA">
+    _Tiempo estimado: 5 a 30 min, dependiendo del tamaño de los modelos._
+
+    Después de descargar los modelos, expórtalos para transferirlos a la máquina offline:
+
+    ```bash
+    sudo zylon-cli models export
+    ```
+
+    Esto crea un archivo `zylon-models-<timestamp>.tar` en tu directorio actual conteniendo todos los modelos de IA seleccionados.
+
+    <Note>
+      El archivo de exportación de modelos puede ser de 10-100 GB dependiendo de qué modelos hayas descargado.
+    </Note>
+  </Step>
+
   <Step title="Descargar Bundle de Zylon">
     _Tiempo estimado: 15min a 2h, dependiendo de la velocidad de red._
-
-    <Warning>
-      **¡La primera instalación o modelos adicionales requieren modelos de IA!** Usa la bandera `--models` para especificar qué modelos incluir.
-      
-      Verifica modelos disponibles:
-      ```bash
-      sudo zylon-cli forge list
-      ```
-      Compara con tu definición de preset de IA para determinar los modelos requeridos. Más detalles de preset [aquí](/es/operator-manual/ai-presets/presets.mdx).
-
-      Por ejemplo, si tu preset es `baseline-24g`, incluye:
-      ```bash
-      --models=qwen/qwen3-14b-awq,mixedbread-ai/mxbai-embed-large-v1
-      ```
-
-      Si estás usando capacidades extra como `multilingual`, incluye:
-      ```bash
-      --models=qwen/qwen3-14b-awq,intfloat/multilingual-e5-large
-      ```
-    </Warning>
 
     Descarga la versión específica de Zylon que quieres instalar:
 
     ```bash
     sudo zylon-cli list-versions
     # Elige tu versión deseada de la lista
-    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
+    sudo zylon-cli download <version> --airgap
     ```
 
     Reemplaza `<version>` con tu versión objetivo (por ejemplo, `1.50.0`).
-    La bandera `--models` se usa para especificar qué modelos de IA incluir en la descarga. Puedes listar múltiples modelos separados por comas.
+
+    <Note>
+      Nota que **no usamos** la bandera `--models` aquí ya que los modelos fueron manejados en los pasos anteriores.
+    </Note>
   </Step>
 
   <Step title="Exportar Bundle">
-    _Tiempo estimado: 15 a 120 min, dependiendo de los modelos seleccionados y versión._
+    _Tiempo estimado: 15 a 60 min, dependiendo de la versión._
 
-    Exporta la versión descargada en un bundle airgap. Si incluiste modelos durante la descarga, asegúrate de incluirlos aquí también:
+    Exporta la versión descargada en un bundle airgap:
 
     ```bash
-    # Misma versión y modelos que el paso de descarga
-    sudo zylon-cli export <version> [--models=model-a,model-b,model-c]
+    sudo zylon-cli export <version>
     ```
 
     Esto crea `zylon-<version>-<os>-<arch>.tar` en tu directorio actual. Adicionalmente, generará
     los comandos para ejecutar en la máquina offline para la instalación para importar e instalar Zylon. Almacena estos comandos de forma segura.
 
     <Note>
-      La exportación puede tomar tiempo significativo. El archivo tar resultante puede exceder 80GB.
+      La exportación puede tomar tiempo significativo. El archivo tar resultante puede ser de 60-80GB.
     </Note>
   </Step>
 
@@ -271,16 +302,19 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
     **Primera instalación:**
     - `zylon-<version>-<os>-<arch>.tar` (bundle principal)
+    - `zylon-models-<timestamp>.tar` (exportación de modelos de IA)
     - `zylon-initial.tar.gz` (CLI y config)
     - `zylon-ssl-certs.tar.gz` (certificados SSL, si aplica)
 
     **Actualizaciones subsecuentes:**
-    - `zylon-<version>-<os>-<arch>.tar` (solo bundle principal)
+    - `zylon-<version>-<os>-<arch>.tar` (bundle principal)
+    - `zylon-models-<timestamp>.tar` (exportación de modelos de IA, si se agregan nuevos modelos)
 
     **Ejemplo SCP**
 
     ```bash
     scp zylon-<version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-models-*.tar user@offline-machine:/tmp/
     scp zylon-initial.tar.gz user@offline-machine:/tmp/
     scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
     ```
@@ -332,6 +366,25 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
   </Step>
 
+  <Step title="Importar Modelos de IA">
+    _Tiempo estimado: 5 a 30 min, dependiendo del tamaño de los modelos._
+
+    **Antes de importar Zylon**, importa los modelos de IA que fueron exportados en la máquina online:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli models import zylon-models-<timestamp>.tar
+    ```
+
+    Este comando importará e instalará los modelos de IA automáticamente.
+
+    Verifica que los modelos fueron instalados exitosamente:
+
+    ```bash
+    sudo zylon-cli models list --installed
+    ```
+  </Step>
+
   <Step title="Importar Bundle Airgap">
     _Tiempo estimado: 10 a 60 min, dependiendo del tamaño del bundle y rendimiento del sistema._
 
@@ -362,11 +415,15 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
   <Step title="Instalar Zylon">
     _Tiempo estimado: 15min a 1hora, dependiendo del rendimiento del sistema._
 
-    Instala Zylon usando el bundle importado, incluyendo bandera airgap y modelos:
+    Instala Zylon usando el bundle importado:
 
     ```bash
-    sudo zylon-cli install <version> --airgap [--models=model-a,model-b,model-c]
+    sudo zylon-cli install <version> --airgap
     ```
+
+    <Note>
+      Los modelos de IA ya fueron importados en un paso anterior, por lo que no se necesita la bandera `--models` aquí.
+    </Note>
   </Step>
 
   <Step title="Crear Organización">
@@ -403,31 +460,59 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 </Note>
 
 <Steps>
+  <Step title="En Máquina Online: Descargar Nuevos Modelos (Si Se Necesitan)">
+    _Tiempo estimado: 10 a 60 min (solo si se agregan nuevos modelos)_
+
+    **Omite este paso si no estás agregando nuevos modelos de IA.**
+
+    Si estás cambiando presets de IA, actualizando requisitos de GPU, o necesitas modelos adicionales:
+
+    Primero, verifica tus modelos actuales y disponibles:
+    ```bash
+    sudo zylon-cli models list
+    ```
+
+    Descarga los nuevos modelos:
+    ```bash
+    sudo zylon-cli models download --no-extract new-model-a new-model-b
+    ```
+
+    <Info>
+      Compara los modelos disponibles con los requisitos de tu preset de IA para determinar si se necesitan modelos adicionales. Consulta la [documentación de Presets de IA](/es/operator-manual/ai-presets/presets).
+    </Info>
+  </Step>
+
+  <Step title="En Máquina Online: Exportar Nuevos Modelos (Si Aplica)">
+    _Tiempo estimado: 5 a 30 min (solo si se descargaron nuevos modelos)_
+
+    **Omite este paso si no agregaste nuevos modelos de IA.**
+
+    Exporta los modelos recién descargados:
+
+    ```bash
+    sudo zylon-cli models export
+    ```
+
+    Esto crea un archivo `zylon-models-<timestamp>.tar` conteniendo todos los modelos descargados actualmente.
+  </Step>
+
   <Step title="En Máquina Online: Descargar Actualización">
+    _Tiempo estimado: 10 a 60 min_
+
     Descarga el bundle de la nueva versión de Zylon:
 
     ```bash
     sudo zylon-cli download <new-version> --airgap
     ```
 
-    **Añadiendo Nuevos Modelos de IA**
-    
-    Si necesitas añadir modelos no previamente instalados, inclúyelos:
-    
-    ```bash
-    sudo zylon-cli download <new-version> --airgap --models=new-model-a,new-model-b
-    ```
-
-    <Info>
-      Verifica tus modelos actuales y los disponibles:
-      ```bash
-      sudo zylon-cli forge list
-      ```
-      Compara con los requisitos de tu preset de IA para determinar si se necesitan modelos adicionales.
-    </Info>
+    <Note>
+      Nota que **ya no usamos** la bandera `--models` durante la descarga, ya que los modelos se manejan por separado.
+    </Note>
   </Step>
 
   <Step title="En Máquina Online: Crear Bundle de Actualización">
+    _Tiempo estimado: 10 a 60 min_
+
     Exporta un bundle de actualización incremental:
 
     ```bash
@@ -436,25 +521,21 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     La bandera `--from` crea un bundle diferencial que contiene solo cambios entre versiones, reduciendo significativamente el tamaño del bundle y tiempo de transferencia.
 
-    **Incluir modelos (si aplica):**
-
-    Si cambias el preset, los requisitos de GPU, o necesitas nuevos modelos, inclúyelos:
-    
-    ```bash
-    sudo zylon-cli export <new-version> --from <current-version> --models=new-model-a,new-model-b
-    ```
-
-    Esto genera `zylon-<new-version>-to-<old-version>-<os>-<arch>.tar` y muestra los comandos de importación/instalación para ejecutar en la máquina offline también.
-
     <Note>
-      Los bundles diferenciales típicamente son 5-20 GB vs. 80+ GB para bundles completos.
+      Los bundles diferenciales típicamente son 5-20 GB vs. 60-80 GB para bundles completos.
     </Note>
   </Step>
 
   <Step title="Transferir Bundle a Máquina Offline">
-    Transfiere el archivo bundle usando tu método seguro:
+    Transfiere el/los archivo(s) bundle usando tu método seguro:
 
-    **Ejemplo SCP:**
+    **Si actualizaste modelos:**
+    ```bash
+    scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-models-*.tar user@offline-machine:/tmp/
+    ```
+
+    **Si no hay nuevos modelos:**
     ```bash
     scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
     ```
@@ -463,6 +544,25 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     - Unidad USB
     - Sistema de transferencia de archivos interno
     - Compartido de red (si está disponible)
+  </Step>
+
+  <Step title="En Máquina Offline: Importar Nuevos Modelos (Si Aplica)">
+    _Tiempo estimado: 5 a 30 min (solo si se transfirieron nuevos modelos)_
+
+    **Omite este paso si no transferiste nuevos modelos de IA.**
+
+    Importa los nuevos modelos:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli models import zylon-models-*.tar
+    ```
+    
+    Verifica que los modelos fueron instalados exitosamente:
+
+    ```bash
+    sudo zylon-cli models list --installed
+    ```
   </Step>
 
   <Step title="En Máquina Offline: Importar Actualización">
@@ -491,17 +591,17 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
   </Step>
 
   <Step title="En Máquina Offline: Aplicar Actualización">
+    _Tiempo estimado: 15 a 60 min_
+
     Aplica la actualización a tu instancia de Zylon en ejecución:
 
     ```bash
     sudo zylon-cli install <new-version> --airgap
     ```
 
-    **Si incluiste nuevos modelos:**
-    
-    ```bash
-    sudo zylon-cli install <new-version> --airgap --models=new-model-a,new-model-b
-    ```
+    <Note>
+      Los nuevos modelos de IA (si los hay) ya fueron importados en un paso anterior, por lo que no se necesita la bandera `--models` aquí.
+    </Note>
   </Step>
 </Steps>
 
@@ -607,7 +707,7 @@ Si tienes una instalación existente de Zylon (online o semi-airgap) y quieres m
     Ejecuta el asistente de configuración para actualizar los ajustes para despliegue airgap:
 
     ```bash
-    sudo zylon-cli config init --force
+    sudo zylon-cli config init
     ```
 
     El asistente te guiará a través de la actualización de los siguientes ajustes:

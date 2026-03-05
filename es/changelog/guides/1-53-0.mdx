@@ -101,6 +101,12 @@ Zylon 1.53.0 introduce dos cambios importantes en la plataforma que afectan cóm
       No procedas al siguiente paso hasta que el CLI esté en la versión 2.0.0. Instalar \>=1.53.0 con un CLI anterior resultará en una instalación defectuosa.
     </Warning>
   </Step>
+  <Step title="Reconfigura tu instancia">
+    La nueva versión requerirá regenerar tu archivo de configuración. Puedes hacerlo de dos maneras:
+
+    1. **Usando el nuevo asistente**: Ejecuta `sudo zylon-cli config init` y sigue las indicaciones para configurar nuevamente la configuración de tu instancia.
+    2. **Solo regenerar el archivo de configuración**: Si no quieres pasar por el asistente, puedes simplemente ejecutar `sudo zylon-cli config init -y` para regenerar el archivo de configuración.
+  </Step>
   <Step title="Instalar la nueva versión">
     Usa el nuevo comando `install` para actualizar Zylon:
 

@@ -125,7 +125,7 @@ In your online machine, ensure firewall access to these domains:
         <Info>
           If you need to re-run the configuration wizard, execute:
           ```bash
-          sudo zylon-cli config init --force
+          sudo zylon-cli config init
           ```
         </Info>
 
@@ -181,56 +181,87 @@ In your online machine, ensure firewall access to these domains:
 
   </Step>
 
+  <Step title="Download AI Models">
+    _Estimated time: 10min to 1h, depending on network speed and models._
+
+    **Before downloading Zylon**, you must download the AI models on the online machine. The models are determined by your AI preset configuration.
+
+    Check available models and compare with your AI preset:
+    ```bash
+    sudo zylon-cli models list
+    ```
+
+    More preset details in the [AI Presets documentation](/en/operator-manual/ai-presets/presets).
+
+    Download the models based on your configuration:
+
+    ```bash
+    sudo zylon-cli models download --no-extract
+    ```
+
+    This will download the AI models that you have specified in the Wizard.
+
+    If for some reason you need to download specific models, you can do so with:
+
+    ```bash
+    sudo zylon-cli models list
+    sudo zylon-cli models download --no-extract model-a model-b model-c
+    ```
+
+    For example, for `baseline-24g` preset:
+    ```bash
+    sudo zylon-cli models download --no-extract qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    ```
+  </Step>
+
+  <Step title="Export AI Models">
+    _Estimated time: 5 to 30 min, depending on models size._
+
+    After downloading the models, export them for transfer to the offline machine:
+
+    ```bash
+    sudo zylon-cli models export
+    ```
+
+    This creates a `zylon-models-<timestamp>.tar` file in your current directory containing all selected AI models.
+
+    <Note>
+      The model export file can be 10-100 GB depending on which models you have downloaded.
+    </Note>
+  </Step>
+
   <Step title="Download Zylon Bundle">
     _Estimated time: 15min to 2h, depending on network speed._
-
-    <Warning>
-      **First installation or additional models require AI models!** Use the `--models` flag to specify which models to include.
-      
-      Check available models:
-      ```bash
-      sudo zylon-cli forge list
-      ```
-      Compare with your AI preset definition to determine required models. More preset details [here](/en/operator-manual/ai-presets/presets.mdx).
-
-      For example, if you preset is `baseline-24g`, include:
-      ```bash
-      --models=qwen/qwen3-14b-awq,mixedbread-ai/mxbai-embed-large-v1
-      ```
-
-      If you are using extra capabilities like `multilingual`, include:
-      ```bash
-      --models=qwen/qwen3-14b-awq,intfloat/multilingual-e5-large
-      ```
-    </Warning>
 
     Download the specific Zylon version you want to install:
 
     ```bash
     sudo zylon-cli list-versions
     # Choose your desired version from the list
-    sudo zylon-cli download <version> --airgap [--models=model-a,model-b,model-c]
+    sudo zylon-cli download <version> --airgap
     ```
 
     Replace `<version>` with your target version (e.g., `1.50.0`).
-    The `--models` flag is used to specify which AI models to include in the download. You can list multiple models separated by commas.
+
+    <Note>
+      Note that we **do not use** the `--models` flag here since models were already handled in the previous steps.
+    </Note>
   </Step>
 
   <Step title="Export Bundle">
-    _Estimated time: 15 to 120 min, depending on selected models and version._
+    _Estimated time: 15 to 60 min, depending on version._
 
-    Export the downloaded version into an airgap bundle. If you included models during download, ensure to include them here as well:
+    Export the downloaded version into an airgap bundle:
 
     ```bash
-    # Same version and models as download step
-    sudo zylon-cli export <version> [--models=model-a,model-b,model-c]
+    sudo zylon-cli export <version>
     ```
 
     This creates `zylon-<version>-<os>-<arch>.tar` in your current directory. Additionally, it will generate
     the commands to run on the offline machine for installation to import and install Zylon. Store these commands safely.
 
     <Note>
-      Export can take significant time. The resulting tar file may exceed 80GB.
+      Export can take significant time. The resulting tar file may be 60-80GB.
     </Note>
   </Step>
 
@@ -271,16 +302,19 @@ In your online machine, ensure firewall access to these domains:
 
     **First installation:**
     - `zylon-<version>-<os>-<arch>.tar` (main bundle)
+    - `zylon-models-<timestamp>.tar` (AI models)
     - `zylon-initial.tar.gz` (CLI and config)
     - `zylon-ssl-certs.tar.gz` (SSL certs, if applicable)
 
     **Subsequent updates:**
-    - `zylon-<version>-<os>-<arch>.tar` (main bundle only)
+    - `zylon-<version>-<os>-<arch>.tar` (main bundle)
+    - `zylon-models-<timestamp>.tar` (AI models export, if adding new models)
 
     **SCP Example**
 
     ```bash
     scp zylon-<version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-models-*.tar user@offline-machine:/tmp/
     scp zylon-initial.tar.gz user@offline-machine:/tmp/
     scp zylon-ssl-certs.tar.gz user@offline-machine:/tmp/
     ```
@@ -332,6 +366,25 @@ In your online machine, ensure firewall access to these domains:
 
   </Step>
 
+  <Step title="Import AI Models">
+    _Estimated time: 5 to 30 min, depending on model sizes._
+
+    **Before importing Zylon**, import the AI models that were exported on the online machine:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli models import zylon-models-<timestamp>.tar
+    ```
+
+    This command will import and install the AI models automatically.
+
+    Verify models were installed successfully:
+
+    ```bash
+    sudo zylon-cli models list --installed
+    ```
+  </Step>
+
   <Step title="Import Airgap Bundle">
     _Estimated time: 10 to 60 min, depending on bundle size and system performance._
 
@@ -362,11 +415,15 @@ In your online machine, ensure firewall access to these domains:
   <Step title="Install Zylon">
     _Estimated time: 15min to 1hour, depending on system performance._
 
-    Install Zylon using the imported bundle, including airgap flag and models:
+    Install Zylon using the imported bundle:
 
     ```bash
-    sudo zylon-cli install <version> --airgap [--models=model-a,model-b,model-c]
+    sudo zylon-cli install <version> --airgap
     ```
+
+    <Note>
+      The AI models have already been imported in a previous step, so no `--models` flag is needed here.
+    </Note>
   </Step>
 
   <Step title="Create Organization">
@@ -403,31 +460,59 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
 </Note>
 
 <Steps>
+  <Step title="On Online Machine: Download New Models (If Needed)">
+    _Estimated time: 10 to 60 min (only if adding new models)_
+
+    **Skip this step if you're not adding new AI models.**
+
+    If you're changing AI presets, upgrading GPU requirements, or need additional models:
+
+    First, check your current and available models:
+    ```bash
+    sudo zylon-cli models list
+    ```
+
+    Download the new models:
+    ```bash
+    sudo zylon-cli models download --no-extract new-model-a new-model-b
+    ```
+
+    <Info>
+      Compare the available models with your AI preset requirements to determine if additional models are needed. See [AI Presets documentation](/en/operator-manual/ai-presets/presets).
+    </Info>
+  </Step>
+
+  <Step title="On Online Machine: Export New Models (If Applicable)">
+    _Estimated time: 5 to 30 min (only if new models were downloaded)_
+
+    **Skip this step if you didn't add new AI models.**
+
+    Export the newly downloaded models:
+
+    ```bash
+    sudo zylon-cli models export
+    ```
+
+    This creates a `zylon-models-<timestamp>.tar` file containing all currently downloaded models.
+  </Step>
+
   <Step title="On Online Machine: Download Update">
+    _Estimated time: 10 to 60 min_
+
     Download the new Zylon version bundle:
 
     ```bash
     sudo zylon-cli download <new-version> --airgap
     ```
 
-    **Adding New AI Models**
-    
-    If you need to add models not previously installed, include them:
-    
-    ```bash
-    sudo zylon-cli download <new-version> --airgap --models=new-model-a,new-model-b
-    ```
-
-    <Info>
-      Check your current models and available ones:
-      ```bash
-      sudo zylon-cli forge list
-      ```
-      Compare with your AI preset requirements to determine if additional models are needed.
-    </Info>
+    <Note>
+      Note that we **no longer use** the `--models` flag during download, as models are handled separately.
+    </Note>
   </Step>
 
   <Step title="On Online Machine: Create Update Bundle">
+    _Estimated time: 10 to 60 min_
+
     Export an incremental update bundle:
 
     ```bash
@@ -436,25 +521,21 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
 
     The `--from` flag creates a differential bundle containing only changes between versions, significantly reducing bundle size and transfer time.
 
-    **Include models (if applicable):**
-
-    If you change the preset, the GPU requirements, or need new models, include them:
-    
-    ```bash
-    sudo zylon-cli export <new-version> --from <current-version> --models=new-model-a,new-model-b
-    ```
-
-    This generates `zylon-<new-version>-to-<old-version>-<os>-<arch>.tar` and displays the import/install commands to run on the offline machine as well.
-
     <Note>
-      Differential bundles are typically 5-20 GB vs. 80+ GB for full bundles.
+      Differential bundles are typically 5-20 GB vs. 60-80 GB for full bundles.
     </Note>
   </Step>
 
   <Step title="Transfer Bundle to Offline Machine">
-    Transfer the bundle file using your secure method:
+    Transfer the bundle file(s) using your secure method:
 
-    **SCP Example:**
+    **If you updated models:**
+    ```bash
+    scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
+    scp zylon-models-*.tar user@offline-machine:/tmp/
+    ```
+
+    **If no new models:**
     ```bash
     scp zylon-<new-version>-to-<old-version>-<os>-<arch>.tar user@offline-machine:/tmp/
     ```
@@ -463,6 +544,25 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     - USB drive
     - Internal file transfer system
     - Network share (if available)
+  </Step>
+
+  <Step title="On Offline Machine: Import New Models (If Applicable)">
+    _Estimated time: 5 to 30 min (only if new models were transferred)_
+
+    **Skip this step if you didn't transfer new AI models.**
+
+    Import the new models:
+
+    ```bash
+    cd /tmp
+    sudo zylon-cli models import zylon-models-*.tar
+    ```
+
+    Verify models were installed successfully:
+
+    ```bash
+    sudo zylon-cli models list --installed
+    ```
   </Step>
 
   <Step title="On Offline Machine: Import Update">
@@ -491,17 +591,17 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
   </Step>
 
   <Step title="On Offline Machine: Apply Update">
+    _Estimated time: 15 to 60 min_
+
     Apply the update to your running Zylon instance:
 
     ```bash
     sudo zylon-cli install <new-version> --airgap
     ```
 
-    **If you included new models:**
-    
-    ```bash
-    sudo zylon-cli install <new-version> --airgap --models=new-model-a,new-model-b
-    ```
+    <Note>
+      New AI models (if any) were already imported in a previous step, so no `--models` flag is needed here.
+    </Note>
   </Step>
 </Steps>
 
@@ -607,7 +707,7 @@ If you have an existing Zylon installation (online or semi-airgap) and want to m
     Run the configuration wizard to update settings for airgap deployment:
 
     ```bash
-    sudo zylon-cli config init --force
+    sudo zylon-cli config init
     ```
 
     The wizard will guide you through updating the following settings:

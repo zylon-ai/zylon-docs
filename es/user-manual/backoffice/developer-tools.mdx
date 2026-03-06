@@ -1,0 +1,57 @@
+---
+title: Developer Tools
+description: Gestión de tokens de API para desarrolladores.
+icon: code
+---
+
+## Resumen
+Developer Tools es el área del Backoffice para flujos de trabajo de tokens de API.
+
+Los tokens generados en Developer Tools son la opción recomendada cuando necesitas un solo token que funcione en:
+
+- Workspace API
+- ZylonGPT API
+- Backoffice API
+
+Está disponible para:
+
+- cuentas con permisos **Developer**
+- cuentas con permisos **Operator** cuando también participan en un gateway
+
+Los tokens de API se crean dentro de gateways y quedan asociados tanto al gateway como a la cuenta que los crea.
+
+<Info>
+Si solo necesitas acceso a Workspace API, puedes usar el flujo de [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management).
+</Info>
+
+Para el detalle de acceso por rol, consulta [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
+
+## Crear token de API
+Para crear un token de API:
+
+1. Abre **Developer Tools**.
+2. Selecciona el gateway de destino.
+3. Haz clic en **Create API Token**.
+4. Introduce un nombre para el token.
+5. Genera el token.
+6. Copia el secreto del token mostrado en el modal.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/j8S2_v6fuHU"
+  title="Backoffice - Crear token de API"
+  style={{ borderRadius: "12px" }}
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+<Warning>
+El secreto del token solo se muestra una vez. Después de cerrar el modal no se puede recuperar. Guárdalo de inmediato en un gestor de secretos seguro.
+</Warning>
+
+## Uso y propiedad del token
+- El token hereda las reglas y la configuración del gateway.
+- La actividad del token queda asociada a la cuenta que lo creó.
+- Si se pierde un token, revócalo y crea uno nuevo.

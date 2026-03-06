@@ -21,6 +21,7 @@ Crea una interacción en un hilo con `POST /api/v1/app/thread/{threadId}/interac
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "thread_id": "{threadID}",
@@ -73,6 +74,122 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
 ```
 </Accordion>
 
+## Agregar media al chat
+
+Si el modelo seleccionado soporta entrada multimodal, puedes enviar media en `pgpt.messages[].content[]` (la misma forma de request usada por interacciones en hilo y por chat de una sola llamada).
+
+Puedes combinar múltiples bloques de contenido en un mismo mensaje. Tipos principales en el esquema:
+
+| Tipo | Uso típico | Campos requeridos | Notas |
+| --- | --- | --- | --- |
+| `text` | Prompt/entrada en texto plano | ninguno | Usa `text`; soporta metadata opcional de `citations`. |
+| `image` | Imagen adjunta | `data` | `data` puede ser base64 o URL; `mime_type` es opcional. |
+| `audio` | Audio adjunto | `data` | `data` puede ser base64 o URL; `mime_type` es opcional. |
+| `binary` | Payload binario genérico | `data`, `mime_type` | `filename` opcional. |
+| `file` | Bloque de archivo/documento | `content` | `content_type` y `doc_metadata` opcionales. |
+| `tool_use` | Solicitud de llamada de herramienta | `id`, `name`, `input` | Bloque interno de orquestación de tools. |
+
+`start_timestamp`, `stop_timestamp` y `_meta` son opcionales en todos los bloques.
+
+<Accordion title="Ejemplo de bloques de contenido">
+```json
+[
+  { "type": "text", "text": "Summarize this image." },
+  { "type": "image", "data": "<BASE64_OR_URL>", "mime_type": "image/png" },
+  { "type": "audio", "data": "<BASE64_OR_URL>", "mime_type": "audio/mpeg" },
+  { "type": "binary", "data": "<BASE64_OR_URL>", "mime_type": "application/octet-stream", "filename": "blob.bin" },
+  {
+    "type": "file",
+    "content": "<BASE64_OR_TEXT_FILE_CONTENT>",
+    "content_type": "application/pdf",
+    "doc_metadata": { "file_name": "contract.pdf", "file_type": "pdf" }
+  },
+  {
+    "type": "source",
+    "sources": [
+      {
+        "type": "context.website",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "description": "Public report page"
+      },
+      {
+        "type": "context.chunk",
+        "id": "chunk_01",
+        "score": 0.92,
+        "text": "Support backlog dropped 8% week-over-week",
+        "document": {
+          "object": "artifact",
+          "artifact": "artifact_123",
+          "doc_metadata": { "file_name": "support.csv", "file_type": "csv" }
+        }
+      }
+    ]
+  },
+  { "type": "tool_use", "id": "toolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "toolu_123",
+    "content": [{ "type": "text", "text": "Found 5 matching passages." }],
+    "is_error": false
+  },
+  { "type": "thinking", "thinking": "I should compare the latest week to the previous one." },
+  {
+    "type": "tldr",
+    "content": [
+      { "type": "text", "text": "User: Analyze support trend" },
+      { "type": "text", "text": "Assistant: Backlog decreased 8%" }
+    ]
+  }
+]
+```
+</Accordion>
+
+Ejemplo de interacción con imagen + texto y flags de ejecución:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "{threadID}",
+    "all_artifacts": true,
+    "artifact_ids": [],
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "data": "<BASE64_IMAGE_DATA>",
+              "mime_type": "image/png"
+            },
+            {
+              "type": "text",
+              "text": "What do you see here?"
+            }
+          ]
+        }
+      ],
+      "system": {
+        "use_default_prompt": true,
+        "citations": {
+          "enabled": true
+        }
+      },
+      "thinking": {
+        "enabled": true
+      }
+    }
+  }'
+```
+
+- `system.citations.enabled`: pide al modelo incluir referencias/citas cuando estén disponibles.
+- `thinking.enabled`: activa modo de razonamiento profundo; puede tardar más pero suele mejorar la calidad.
+
 ## Crear o listar hilos
 
 Crear un hilo en un proyecto:
@@ -80,6 +197,7 @@ Crear un hilo en un proyecto:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -92,6 +210,7 @@ Listar hilos:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 {/* <!-- RESTRUCTURED --> */}
@@ -118,6 +237,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Support Brief",
@@ -130,6 +250,7 @@ Eliminar un hilo:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## Listar u obtener interacciones
@@ -139,6 +260,7 @@ Listar interacciones de un hilo:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Obtener una interacción:
@@ -146,6 +268,7 @@ Obtener una interacción:
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 ## Eliminar o hacer streaming de una interacción
@@ -155,6 +278,7 @@ Eliminar una interacción:
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 Streaming:
@@ -162,6 +286,7 @@ Streaming:
 ```bash
 curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Accept: text/event-stream"
 ```
 
@@ -186,6 +311,7 @@ Si no necesitas un hilo, usa el endpoint de chat:
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -219,6 +345,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [
@@ -233,6 +360,20 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
     "temperature": 0.3
   }'
 ```
+
+## Herramientas disponibles
+
+Pasa tools en `pgpt.tools` como `{ "name": "...", "type": "..." }`.
+
+| Nombre | Tipo | Qué hace |
+| --- | --- | --- |
+| `semantic_search` | `semantic_search_v1` | Busca conocimiento indexado del proyecto/workspace por similitud semántica. |
+| `file_sematic_search` | `file_semantic_search_v1` | Busca semánticamente en archivos y adjuntos. |
+| `tabular_analysis` | `tabular_analysis_v1` | Analiza datasets tabulares y devuelve insights calculados. |
+| `database_query` | `database_query_v1` | Ejecuta consultas a bases de datos configuradas. |
+| `web_search` | `web_search_v1` | Realiza búsqueda web para información externa/pública. |
+| `web_extract` | `web_extract_v1` | Extrae contenido estructurado de URLs. |
+| `list_project_files` | `list_project_files_v1` | Lista archivos del proyecto actual para usarlos con otras tools. |
 
 ## Errores y casos límite
 

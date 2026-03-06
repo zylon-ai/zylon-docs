@@ -8,13 +8,20 @@ Zylon is a self‑hosted AI platform that runs in your infrastructure. It provid
 - **ZylonGPT API**: the AI layer for model responses, tools, and content-aware chat.
 - **Workspace API**: the management API for organizations, users, projects, and integrations.
 
-Before you begin, generate an API token in [Token Management](/en/api-reference/token-management).
+## Choose your token flow
+
+Use the token flow that matches your integration:
 
 <CardGroup cols={2}>
-  <Card title="Token management" icon="key" href="/en/api-reference/token-management">
-    Create and rotate API tokens for access.
+  <Card title="Workspace token management" icon="key" href="/en/developer-manual/get-started/token-management">
+    Workspace-only token flow for `/api/v1/*` endpoints.
   </Card>
+  <Card title="Backoffice Developer Tools" icon="shield" href="/en/user-manual/backoffice/developer-tools">
+    Generate a token that works across Workspace API, ZylonGPT API, and Backoffice API.
+  </Card>
+</CardGroup>
 
+<CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/en/developer-manual/get-started/quickstart">
     Make your first API call with a working example.
   </Card>

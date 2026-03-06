@@ -1,0 +1,103 @@
+---
+title: Backoffice de Plataforma
+description: Controles de operador para cuentas, roles, gateways y estado del servicio.
+icon: wrench
+---
+
+## Resumen
+El Backoffice de Plataforma lo usan los Operadores para gestionar el acceso a nivel de plataforma y los entornos de desarrollo.
+
+Desde esta sección, los Operadores pueden:
+
+- Crear y gestionar cuentas
+- Asignar y actualizar roles de cuenta
+- Crear y gestionar gateways
+- Supervisar el estado de los servicios de la plataforma
+
+Solo los usuarios con permisos **Operator** pueden acceder a esta sección. Los permisos, la visibilidad y los límites dependen de la licencia activa.
+
+## Cuentas
+Una **Cuenta** representa a una persona en la plataforma Zylon. Las cuentas definen el acceso a la plataforma y determinan qué secciones del Backoffice están disponibles.
+
+### Roles y permisos
+Los roles de cuenta definen el acceso a nivel de plataforma:
+
+- Los roles **Super Admin** y **Operator** pueden acceder a funciones de administración de plataforma.
+- El rol **Developer** puede acceder a Developer Tools.
+- El rol **Workspace** no concede acceso a Platform Backoffice.
+
+Para la matriz completa de roles y el modelo de permisos, consulta [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
+
+### Crear una cuenta
+Puedes crear usuarios de dos formas.
+
+1. **Crear desde el modal**
+- Haz clic en **Add account**.
+- Introduce nombre (opcional), email y contraseña.
+- Asigna uno o varios roles de cuenta.
+- Guarda la cuenta.
+
+2. **Crear en bloque por CSV**
+- Descarga la plantilla CSV disponible en la página de Cuentas.
+- Rellena la plantilla con los datos de usuarios y sus roles.
+- Sube el CSV para crear múltiples cuentas.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/balBfwWXC0w"
+  title="Backoffice - Crear cuenta"
+  style={{ borderRadius: "12px" }}
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+### Editar cuentas y asignaciones de rol
+Para actualizar una cuenta, ábrela desde la lista y modifica sus datos o asignaciones de rol.
+
+La asignación de roles controla si un usuario puede:
+
+- acceder a Workspace,
+- acceder a Developer Tools,
+- administrar la plataforma.
+
+El número de cuentas y de cuentas habilitadas por rol está determinado por la licencia activa.
+
+## Gateways
+Un **Gateway** es un servicio de software dedicado y aislado que se sitúa en el límite entre los clientes y las APIs internas de Zylon. Proporciona un único punto de entrada controlado para el desarrollo de API, gestionando el enrutamiento de solicitudes, la autenticación/autorización, el tráfico y la observabilidad.
+
+Los gateways se usan para:
+
+- Agrupar la actividad de desarrollo de API limitando el acceso a la base de datos vectorial solo a los vectores que pertenecen al gateway
+- Controlar qué usuarios pueden trabajar con tokens en cada entorno
+- Registrar el uso de cuentas y tokens en cada gateway
+
+### Roles de usuario en Gateway
+Las cuentas con rol **Developer** (y los Operadores añadidos a un gateway) pueden tener un rol específico en gateway: **Owner**, **Admin** o **Member**.
+
+Para ver las capacidades de cada rol, consulta [Roles y permisos](/es/user-manual/backoffice/roles-and-permissions).
+
+### Crear un gateway
+Para crear un gateway:
+
+1. Abre **Gateways**.
+2. Haz clic en **New gateway**.
+3. Introduce el nombre del gateway.
+4. Haz clic en **Create**.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/sUQ_j4MrDSE"
+  title="Backoffice - Crear gateway"
+  style={{ borderRadius: "12px" }}
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+### Gestionar gateways
+Desde la lista de gateways, los Operadores pueden abrir gateways existentes para gestionar usuarios y mantener la configuración que usan los equipos de desarrollo.
+
+El número total de gateways está limitado por la licencia activa.

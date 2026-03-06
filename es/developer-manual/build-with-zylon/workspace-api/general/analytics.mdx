@@ -12,6 +12,7 @@ Empieza con los totales desde `GET /api/v1/app/organization/analytics/totals`.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -31,6 +32,7 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -59,6 +61,7 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -90,6 +93,7 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projec
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">

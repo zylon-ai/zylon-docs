@@ -12,6 +12,7 @@ Create a project with `POST /api/v1/app/project`.
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Customer Insights",
@@ -44,6 +45,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -64,6 +66,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Customer Insights",
@@ -99,6 +102,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 ```bash
 curl -X PATCH "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "project_context": "Support analytics for Q1 with strict PII handling."
@@ -118,6 +122,7 @@ HTTP/1.1 200 OK
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -131,6 +136,7 @@ HTTP/1.1 204 No Content
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/transfer" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "old_owner_id": "{userID}",
@@ -151,6 +157,7 @@ HTTP/1.1 200 OK
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/info/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -163,6 +170,7 @@ HTTP/1.1 200 OK
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/info" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "is_pinned": true
@@ -182,6 +190,7 @@ HTTP/1.1 200 OK
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "all_artifacts": true,

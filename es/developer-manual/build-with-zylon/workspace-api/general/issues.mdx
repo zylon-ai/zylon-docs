@@ -12,6 +12,7 @@ Lista incidencias con `GET /api/v1/app/issue` antes de crear o actualizar.
 ```bash
 curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -52,6 +53,7 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "description": "Response missed the attached policy details.",
@@ -94,6 +96,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
 ```bash
 curl "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -111,6 +114,7 @@ curl "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
     "state": "InReview",
@@ -135,6 +139,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
   -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">

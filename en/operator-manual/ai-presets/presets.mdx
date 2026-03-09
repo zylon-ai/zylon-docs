@@ -83,6 +83,37 @@ ai:
 Using more context windows does not always yield better results. Consider your specific use case before selecting context-optimized presets.
 </Info>
 
+
+### Unified Vision and LLM Alternatives
+
+These presets use large models with both vision and language capabilities in a single model. They are ideal when you need higher quality in document, image, and extended conversation understanding, at the cost of speed and GPU usage.
+
+| Preset                                  | Required GPU Memory | Trade-off                           |
+|------------------------------------------|---------------------|-------------------------------------|
+| `alternatives.baseline-48g-vision-unified` | 48GB                | Qwen3-VL-32B-Instruct               |
+| `alternatives.baseline-96g-vision-unified` | 96GB                | Qwen3-VL-32B-Instruct               |
+
+**When to use unified vision and LLM presets:**
+
+- Processing scanned documents and high-quality slide comprehension
+- Analyzing complex graphics, tables, and visual data
+- Image understanding and description tasks with superior accuracy
+- Extended conversation sessions requiring both visual and textual context
+
+**Configuration Example:**
+
+```yaml
+ai:
+  preset: "alternatives.baseline-96g-vision-unified"
+```
+
+<Warning> Using these presets requires high-performance GPUs and may require adjusting the shared memory configuration of the inference server. Refer to the [Shared Memory Configuration](/en/operator-manual/ai-presets/configuration#shared-memory-configuration) section for details. </Warning>
+
+<Info>
+These models do not include thinking capabilities. If your use case requires complex reasoning tasks, consider using standard baseline presets instead.
+</Info>
+
+
 ## Experimental Presets
 
 <Warning>

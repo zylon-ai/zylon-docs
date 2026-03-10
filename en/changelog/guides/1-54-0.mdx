@@ -1,0 +1,185 @@
+---
+title: "Upgrading to v1.54+ and Migrating API Tokens"
+description: "End-to-end guide covering pre-upgrade preparation, platform installation, and post-upgrade token migration for Zylon v1.54 and later."
+---
+
+<Warning>
+  This guide is **required** before upgrading to Zylon 1.54.0 or any later version. Skipping these steps will cause Triton to fail to boot and may break existing API token access.
+</Warning>
+
+## Overview
+
+This guide walks you through the full upgrade lifecycle in three phases:
+
+- **Pre-upgrade** — back up your instance and update the CLI
+- **Upgrade** — reconfigure and install the new platform version
+- **Post-upgrade** — migrate API tokens to the new Gateway system (required for ZylonGPT API access)
+
+Plan for approximately **45–60 minutes** of total upgrade time, including **~35 minutes of GPU downtime** during which inference will not be available. Notify your users before starting.
+
+---
+
+## Do I need the token migration?
+
+<CardGroup cols={2}>
+  <Card title="Only using Workspace endpoints" icon="check">
+    You're not affected by the token changes. Complete the platform upgrade steps and skip the post-upgrade section.
+  </Card>
+  <Card title="Using ZylonGPT API (or planning to)" icon="triangle-exclamation">
+    Tokens generated before v1.54 will **only work as Workspace tokens** and cannot call `/api/gpt/v1/*`. You must complete the post-upgrade token migration.
+  </Card>
+</CardGroup>
+
+---
+
+## Pre-upgrade
+
+<Steps>
+  <Step title="Back up your instance">
+    Take a full [backup of your instance](/en/operator-manual/operations/backup) before making any changes. The upgrade only affects the platform layer and drivers — your knowledge base, chats, agent flows, and configuration are not touched — but a backup is strongly recommended.
+  </Step>
+  <Step title="Upgrade the CLI to 2.0.0">
+    Run the CLI self-update to get Zylon CLI 2.0.0:
+
+    ```bash
+    sudo zylon-cli self-update
+    ```
+
+    Verify the version before continuing:
+
+    ```bash
+    sudo zylon-cli version
+    # Expected: 2.0.0 or higher
+    ```
+
+    <Warning>
+      Do not proceed until the CLI is on version **2.0.0 or higher**. Installing v1.53.0+ with an older CLI will result in a broken installation.
+    </Warning>
+  </Step>
+</Steps>
+
+---
+
+## Upgrade
+
+<Steps>
+  <Step title="Reconfigure your instance">
+    v1.54.0 requires you to regenerate your config file. Choose one of the following:
+
+    1. **Interactive wizard** — run `sudo zylon-cli config init` and follow the prompts.
+    2. **Silent regeneration** — run `sudo zylon-cli config init -y` to regenerate without prompts.
+  </Step>
+  <Step title="Start the installation">
+    List available versions and install your target version:
+
+    ```bash
+    sudo zylon-cli list-versions
+    sudo zylon-cli install <version>
+    ```
+
+    Starting with v1.54.0, each version bundles its own dependencies — including Apt packages, binaries, and drivers — so you get the exact environment required for that version. This release also upgrades to **CUDA 13.0**.
+
+    <Warning>
+      The installation will intentionally stop with the following message after uninstalling the existing NVIDIA drivers:
+
+      ```text
+      The current drivers were uninstalled successfully, please REBOOT the system
+      and re-run the installation to complete the NVIDIA driver installation
+      ```
+
+      **This is expected behavior.** Proceed to the next step to reboot before continuing.
+    </Warning>
+  </Step>
+  <Step title="Reboot the system">
+    After seeing the uninstall message, reboot:
+
+    ```bash
+    sudo reboot
+    ```
+
+    This is required before the new CUDA 13.0 drivers can be installed.
+  </Step>
+  <Step title="Complete the installation">
+    Once the system is back up, re-run the install command:
+
+    ```bash
+    sudo zylon-cli install <version>
+    ```
+
+    The installation will now complete successfully with the new CUDA 13.0 drivers.
+
+    <Info>
+      Going forward, always use `sudo zylon-cli install <version>` to upgrade. The `sudo zylon-cli update` command still exists but no longer manages version upgrades as of v1.53.0 — it now acts as `sudo zylon-cli sync`.
+    </Info>
+  </Step>
+</Steps>
+
+---
+
+## Post-upgrade: Migrate API tokens
+
+<Warning>
+  Skip this section if you are **not** using the ZylonGPT API (`/api/gpt/v1/*`).
+</Warning>
+
+Tokens generated before v1.54 only work as Workspace tokens. To call ZylonGPT endpoints, you need a **Gateway token**.
+
+<Steps>
+  <Step title="Create a Gateway">
+    Log in with your `admin@zylon.ai` account and create a new Gateway in the Backoffice. [Go to Backoffice → Gateways](/en/user-manual/backoffice/platform-backoffice#gateways)
+
+    <Info>
+      Only the `admin@zylon.ai` account has Gateway creation permissions by default. Any operator assigned the **Operator** role in the Backoffice can also create Gateways.
+    </Info>
+  </Step>
+  <Step title="Add members to the Gateway">
+    Once the Gateway is created, add the users who need access as **Developer** members.
+
+    <Warning>
+      Only users with the **Developer** role can be added to a Gateway. If a user is not yet a Developer, promote them first in [Account Management](/en/user-manual/backoffice/platform-backoffice#edit-accounts-and-role-assignments) before adding them here.
+    </Warning>
+  </Step>
+  <Step title="Generate a new Gateway token">
+    1. Log in with your **user account** (not the admin account).
+    2. Open **Developer Tools** and select your Gateway.
+    3. Click **Create API Token**, name it, and generate.
+    4. Copy the token secret — it is shown **only once**.
+
+    You can now use this token to access all ZylonGPT (`/api/gpt/v1/*`) endpoints. See the full [token management documentation](/en/developer-manual/get-started/token-management#gateway-token-zylongpt) for details.
+  </Step>
+</Steps>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Triton fails to boot after upgrading">
+    The most likely cause is that the CLI was not updated to 2.0.0 before running the install. Verify:
+
+    ```bash
+    sudo zylon-cli version
+    sudo kubectl get pods -A | grep triton
+    ```
+
+    If the CLI is older than 2.0.0 and Triton is not showing `1/1 READY`, follow the recovery steps in this guide from the beginning, starting with the CLI self-update.
+  </Accordion>
+  <Accordion title="Installation is stuck on an apt library (e.g. libc-bin)">
+    Stop the current install command, manually reinstall the problematic package, then retry:
+
+    ```bash
+    sudo apt-get install --reinstall libc-bin
+    sudo zylon-cli install <version>
+    ```
+  </Accordion>
+  <Accordion title="Installation is stuck uninstalling NVIDIA drivers (e.g. nvidia-container-toolkit)">
+    Reboot the machine and retry. If the issue persists, contact Zylon support. You can also run a faster check by skipping packages and binaries:
+
+    ```bash
+    sudo zylon-cli install <version> --no-packages --no-binaries
+    ```
+  </Accordion>
+  <Accordion title="My existing token stopped working after upgrading">
+    Tokens generated before v1.54 only work as Workspace tokens. If you're calling `/api/gpt/v1/*` endpoints, follow the **Post-upgrade: Migrate API tokens** steps above to create a Gateway and generate a new Gateway token.
+  </Accordion>
+</AccordionGroup>

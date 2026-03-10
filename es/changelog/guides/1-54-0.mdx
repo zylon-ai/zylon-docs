@@ -1,0 +1,185 @@
+---
+title: "Actualización a v1.53+ y Migración de Tokens de API"
+description: "Guía completa que cubre la preparación previa a la actualización, la instalación de la plataforma y la migración de tokens posterior a la actualización para Zylon v1.53 y versiones posteriores."
+---
+
+<Warning>
+  Esta guía es **obligatoria** antes de actualizar a Zylon 1.53.0 o cualquier versión posterior. Omitir estos pasos causará que Triton no pueda arrancar y puede romper el acceso existente a los tokens de API.
+</Warning>
+
+## Resumen
+
+Esta guía te lleva a través del ciclo completo de actualización en tres fases:
+
+- **Pre-actualización** — realiza una copia de seguridad de tu instancia y actualiza la CLI
+- **Actualización** — reconfigura e instala la nueva versión de la plataforma
+- **Post-actualización** — migra los tokens de API al nuevo sistema de Gateway (obligatorio para acceder a la API de ZylonGPT)
+
+Planifica aproximadamente **45–60 minutos** de tiempo total de actualización, incluyendo **~35 minutos de inactividad de GPU** durante los cuales la inferencia no estará disponible. Notifica a tus usuarios antes de comenzar.
+
+---
+
+## ¿Necesito la migración de tokens?
+
+<CardGroup cols={2}>
+  <Card title="Solo uso endpoints de Workspace" icon="check">
+    No te ves afectado por los cambios de tokens. Completa los pasos de actualización de la plataforma y omite la sección de post-actualización.
+  </Card>
+  <Card title="Uso la API de ZylonGPT (o planeo usarla)" icon="triangle-exclamation">
+    Los tokens generados antes de v1.54 **solo funcionarán como tokens de Workspace** y no podrán llamar a `/api/gpt/v1/*`. Debes completar la migración de tokens post-actualización.
+  </Card>
+</CardGroup>
+
+---
+
+## Pre-actualización
+
+<Steps>
+  <Step title="Realiza una copia de seguridad de tu instancia">
+    Toma una [copia de seguridad completa de tu instancia](/es/operator-manual/operations/backup) antes de realizar cualquier cambio. La actualización solo afecta la capa de plataforma y los drivers — tu base de conocimiento, chats, flujos de agentes y configuración no se verán afectados — pero se recomienda encarecidamente hacer una copia de seguridad.
+  </Step>
+  <Step title="Actualiza la CLI a 2.0.0">
+    Ejecuta la auto-actualización de la CLI para obtener Zylon CLI 2.0.0:
+
+    ```bash
+    sudo zylon-cli self-update
+    ```
+
+    Verifica la versión antes de continuar:
+
+    ```bash
+    sudo zylon-cli version
+    # Esperado: 2.0.0 o superior
+    ```
+
+    <Warning>
+      No continúes hasta que la CLI esté en la versión **2.0.0 o superior**. Instalar v1.53.0+ con una CLI más antigua resultará en una instalación dañada.
+    </Warning>
+  </Step>
+</Steps>
+
+---
+
+## Actualización
+
+<Steps>
+  <Step title="Reconfigura tu instancia">
+    v1.53.0 requiere que regeneres tu archivo de configuración. Elige una de las siguientes opciones:
+
+    1. **Asistente interactivo** — ejecuta `sudo zylon-cli config init` y sigue las instrucciones.
+    2. **Regeneración silenciosa** — ejecuta `sudo zylon-cli config init -y` para regenerar sin asistente.
+  </Step>
+  <Step title="Inicia la instalación">
+    Lista las versiones disponibles e instala la versión que deseas:
+
+    ```bash
+    sudo zylon-cli list-versions
+    sudo zylon-cli install <version>
+    ```
+
+    A partir de v1.53.0, cada versión incluye sus propias dependencias — incluyendo paquetes Apt, binarios y drivers — de modo que obtienes el entorno exacto requerido para esa versión. Esta versión también actualiza a **CUDA 13.0**.
+
+    <Warning>
+      La instalación se detendrá intencionalmente con el siguiente mensaje después de desinstalar los drivers NVIDIA existentes:
+
+      ```text
+      The current drivers were uninstalled successfully, please REBOOT the system
+      and re-run the installation to complete the NVIDIA driver installation
+      ```
+
+      **Este es el comportamiento esperado.** Procede al siguiente paso para reiniciar antes de continuar.
+    </Warning>
+  </Step>
+  <Step title="Reinicia el sistema">
+    Después de ver el mensaje de desinstalación, reinicia:
+
+    ```bash
+    sudo reboot
+    ```
+
+    Esto es necesario antes de que los nuevos drivers de CUDA 13.0 puedan instalarse.
+  </Step>
+  <Step title="Completa la instalación">
+    Una vez que el sistema haya vuelto a arrancar, vuelve a ejecutar el comando de instalación:
+
+    ```bash
+    sudo zylon-cli install <version>
+    ```
+
+    La instalación ahora se completará correctamente con los nuevos drivers de CUDA 13.0.
+
+    <Info>
+      De aquí en adelante, usa siempre `sudo zylon-cli install <version>` para actualizar. El comando `sudo zylon-cli update` sigue existiendo pero ya no gestiona las actualizaciones de versión a partir de v1.53.0 — ahora actúa como `sudo zylon-cli sync`.
+    </Info>
+  </Step>
+</Steps>
+
+---
+
+## Post-actualización: Migrar tokens de API
+
+<Warning>
+  Omite esta sección si **no** estás usando la API de ZylonGPT (`/api/gpt/v1/*`).
+</Warning>
+
+Los tokens generados antes de v1.54 solo funcionan como tokens de Workspace. Para llamar a los endpoints de ZylonGPT, necesitas un **token de Gateway**.
+
+<Steps>
+  <Step title="Crea un Gateway">
+    Inicia sesión con tu cuenta `admin@zylon.ai` y crea un nuevo Gateway en el Backoffice. [Ir a Backoffice → Gateways](/es/user-manual/backoffice/platform-backoffice#gateways)
+
+    <Info>
+      Solo la cuenta `admin@zylon.ai` tiene permisos para crear Gateways por defecto. Cualquier operador con el rol **Operator** asignado en el Backoffice también puede crear Gateways.
+    </Info>
+  </Step>
+  <Step title="Añade miembros al Gateway">
+    Una vez creado el Gateway, añade los usuarios que necesiten acceso como miembros con rol **Developer**.
+
+    <Warning>
+      Solo los usuarios con el rol **Developer** pueden ser añadidos a un Gateway. Si un usuario aún no es Developer, asciéndelo primero en [Gestión de Cuentas](/es/user-manual/backoffice/platform-backoffice#edit-accounts-and-role-assignments) antes de añadirlo aquí.
+    </Warning>
+  </Step>
+  <Step title="Genera un nuevo token de Gateway">
+    1. Inicia sesión con tu **cuenta de usuario** (no la cuenta de administrador).
+    2. Abre **Developer Tools** y selecciona tu Gateway.
+    3. Haz clic en **Create API Token**, asígnale un nombre y genera el token.
+    4. Copia el secreto del token — se muestra **solo una vez**.
+
+    Ahora puedes usar este token para acceder a todos los endpoints de ZylonGPT (`/api/gpt/v1/*`). Consulta la [documentación completa de gestión de tokens](/es/developer-manual/get-started/token-management#gateway-token-zylongpt) para más detalles.
+  </Step>
+</Steps>
+
+---
+
+## Resolución de problemas
+
+<AccordionGroup>
+  <Accordion title="Triton no arranca después de actualizar">
+    La causa más probable es que la CLI no se actualizó a 2.0.0 antes de ejecutar la instalación. Verifica:
+
+    ```bash
+    sudo zylon-cli version
+    sudo kubectl get pods -A | grep triton
+    ```
+
+    Si la CLI es anterior a 2.0.0 y Triton no muestra `1/1 READY`, sigue los pasos de recuperación de esta guía desde el principio, comenzando con la auto-actualización de la CLI.
+  </Accordion>
+  <Accordion title="La instalación se queda atascada en una librería apt (ej. libc-bin)">
+    Detén el comando de instalación actual, reinstala manualmente el paquete problemático y vuelve a intentarlo:
+
+    ```bash
+    sudo apt-get install --reinstall libc-bin
+    sudo zylon-cli install <version>
+    ```
+  </Accordion>
+  <Accordion title="La instalación se queda atascada desinstalando drivers NVIDIA (ej. nvidia-container-toolkit)">
+    Reinicia la máquina y vuelve a intentarlo. Si el problema persiste, contacta con el soporte de Zylon. También puedes ejecutar una verificación más rápida omitiendo paquetes y binarios:
+
+    ```bash
+    sudo zylon-cli install <version> --no-packages --no-binaries
+    ```
+  </Accordion>
+  <Accordion title="Mi token existente dejó de funcionar después de actualizar">
+    Los tokens generados antes de v1.54 solo funcionan como tokens de Workspace. Si estás llamando a endpoints `/api/gpt/v1/*`, sigue los pasos de **Post-actualización: Migrar tokens de API** descritos arriba para crear un Gateway y generar un nuevo token de Gateway.
+  </Accordion>
+</AccordionGroup>

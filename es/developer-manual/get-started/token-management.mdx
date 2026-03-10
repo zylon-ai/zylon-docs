@@ -1,74 +1,100 @@
 ---
-title: "Gestión de tokens"
-description: "Elige el flujo de token correcto: Backoffice multi-API o token solo para Workspace."
+title: "Gestión de Tokens"
+description: "Elige el flujo de token correcto: token cross-API de Backoffice o token exclusivo de Workspace."
 ---
 
-Usa esta página para elegir el flujo de token correcto para tu integración.
+Usa esta página para seleccionar el flujo de token adecuado para tu integración.
 
-## Backoffice Token
+## ¿Qué token necesito?
 
-Si necesitas un solo token que funcione en:
+<CardGroup cols={2}>
+  <Card title="Token de Workspace" icon="briefcase">
+    Rutas `/api/v1/*`.
 
-- Workspace API
-- ZylonGPT API
-- Backoffice API
+    Automatiza operaciones de Workspace — crea proyectos, gestiona usuarios, interactúa con archivos ingestados y más.
+  </Card>
+  <Card title="Token de Gateway" icon="bolt">
+    Rutas `/api/gpt/v1/*`.
 
-Usa Backoffice Developer Tools:
+    Llama directamente a la API de ZylonGPT, de la misma forma que usarías la API de Anthropic.
+  </Card>
+</CardGroup>
 
-- [Backoffice Developer Tools](/es/user-manual/backoffice/developer-tools)
+<Tabs>
+  <Tab title="Token de Workspace">
+    Este flujo es para el acceso a la **API de Workspace** bajo `/api/v1/*`.
 
-## Workspace Token
+    <Warning>
+      El flujo de token de Workspace **no** emite tokens para llamadas directas a la API de ZylonGPT bajo `/api/gpt/v1/*`.
+    </Warning>
 
-Este flujo es para acceso a **Workspace API** bajo `/api/v1/*` (especialmente `/api/v1/app/*`).
+    ### Crea un token de API de Workspace
 
-<Warning>
-El flujo de token de Workspace **no** emite tokens para llamadas directas a ZylonGPT API bajo `/api/gpt/v1/*`.
-</Warning>
+    1. Inicia sesión en Workspace con una cuenta que pueda gestionar tokens de API.
+    2. Haz clic en el logo de la organización y abre **API Tokens**.
+    3. Haz clic en **Create API Token**, proporciona un nombre y guarda.
+    4. Copia y almacena el valor del token inmediatamente. Se muestra solo una vez.
 
-### Crear un token de Workspace API
+    ![](/images/api-reference/images/token.png)
+    ![](/images/api-reference/images/create-token.png)
 
-1. Inicia sesión en Workspace con una cuenta que pueda gestionar tokens de API.
-2. Haz clic en el logo de la organización y abre **API Tokens**.
-3. Haz clic en **Create API Token**, define un nombre y guarda.
-4. Copia y guarda el valor del token de inmediato. Se muestra una sola vez.
+    ### Verifica el acceso del token
 
-![](/images/api-reference/images/token.png)
-![](/images/api-reference/images/create-token.png)
+    Los endpoints de Workspace bajo `/api/v1/app/*` requieren el header `x-org`.
 
-### Verificar acceso del token a Workspace API
+    ```bash
+    curl "https://{BASE_URL}/api/v1/app/me" \
+      -H "Authorization: Bearer {API_TOKEN}" \
+      -H "x-org: {org_slug}"
+    ```
 
-Los endpoints de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org`.
+    <Accordion title="Ejemplo de respuesta">
+      ```json
+      {
+        "id": "user_4b7c2a1d9e5f3c8b",
+        "org_id": "org_2f3a9d1c7b5e4a8f",
+        "account_id": "acct_6c8a1f3b2d4e5f7a",
+        "name": "Sasha Patel",
+        "email": "sasha@auroralabs.com",
+        "state": "Active",
+        "roles": ["AppAdmin"],
+        "created_at": "2026-02-08T14:12:45Z"
+      }
+      ```
+    </Accordion>
 
-```bash
-curl "https://{BASE_URL}/api/v1/app/me" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "x-org: {org_slug}"
-```
+    ### Revoca un token de Workspace
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
-  "state": "Active",
-  "roles": ["AppAdmin"],
-  "created_at": "2026-02-08T14:12:45Z"
-}
-```
-</Accordion>
+    Abre **API Tokens** y haz clic en el icono de papelera en la fila del token.
 
-### Revocar un token de Workspace
+    ![](/images/api-reference/images/revoke-token.png)
+  </Tab>
 
-Abre **API Tokens** y haz clic en el icono de papelera en la fila del token.
+  <Tab title="Token de Gateway (ZylonGPT)">
+    Este flujo otorga acceso a la **API de ZylonGPT** bajo `/api/gpt/v1/*`, así como a las APIs de Workspace y Backoffice.
 
-![](/images/api-reference/images/revoke-token.png)
+    ### Crea un token de Gateway
 
-## Matriz de compatibilidad
+    1. Abre **Developer Tools**.
+    2. Selecciona el gateway de destino.
+    3. Haz clic en **Create API Token**.
+    4. Introduce un nombre para el token.
+    5. Genera el token.
+    6. Copia el secreto del token que aparece en el modal.
 
-| Origen del token | Workspace API (`/api/*`) | ZylonGPT API (`/api/gpt/*`) | Backoffice API |
-| --- | --- | --- | --- |
-| Flujo de token de Workspace (esta página) | Sí | No | No |
-| Token de Backoffice Developer Tools | Sí (con rol + `x-org` cuando aplique) | Sí | Sí |
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.youtube.com/embed/j8S2_v6fuHU"
+      title="Backoffice - Create API Token"
+      style={{ borderRadius: "12px" }}
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    ></iframe>
+
+    <Warning>
+      El secreto del token se muestra **solo una vez**. Una vez cerrado el modal, no podrá recuperarse. Guárdalo en un gestor de secretos seguro de inmediato.
+    </Warning>
+  </Tab>
+</Tabs>

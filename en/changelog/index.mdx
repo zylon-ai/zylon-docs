@@ -2,6 +2,38 @@
 title: "Changelog"
 ---
 
+<Update label="1.54.0" description="March 09, 2026">
+  <Danger>
+    **⚠️ Action required before updating to version ≥ 1.54.0**
+
+    This release requires migrating to the new CLI version before updating. Skipping this step will cause a critical failure and Zylon will be unable to start.
+    This update requires 45–60 minutes of planned downtime. Plan accordingly and notify your users before starting.
+    This version contains a breaking change regarding Workspace API Tokens.
+    Follow the complete [1.54.0 migration guide](/en/changelog/guides/1-54-0) for full details.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Features
+
+  - **Audit Logs Revamp:** Enhanced visibility and filtering capabilities for audit trails with granular tracking of user actions.
+  - **Confluence On-Prem Connector:** Integration with on-premises Confluence instances for seamless document access and collaboration. [Check more](/en/user-manual/connectors/confluence-server)
+
+  ### 🐛 Bug Fixes
+
+    - Fixed crashes when processing excessively large SQL queries with the DB Connector.
+    - Resolved issue where files linked in the Knowledge Base remained accessible after a user left a project.
+    - Added proper titles for MCP connectors when only one tool is present.
+    - Fixed error on chats when the context compression happened.
+    - Optimized the organization switcher for long lists, improving usability.
+
+  ## 🛠️ Platform
+  ### ✨ Features
+
+  - **Backoffice:**  The Platform Backoffice is used by Operators to manage platform-level access and developer environments. [Check more.](/en/user-manual/backoffice/introduction)
+  - **AI Gateways:** A dedicated, isolated software service that sits at the boundary between clients and Zylon's internal APIs. [Check more.](/en/user-manual/backoffice/platform-backoffice#gateways)
+
+</Update>
+
 <Update label="1.53.0" description="February 23, 2026">
   <Danger>
     **⚠️ Action required before updating to version ≥ 1.53.0**

@@ -8,9 +8,30 @@ title: "Registro de cambios"
 
     Esta versión requiere migrar a la nueva versión de la CLI antes de actualizar. Omitir este paso causará un fallo crítico y Zylon no podrá iniciarse.
     Esta actualización requiere entre 45 y 60 minutos de inactividad planificada. Planifícalo con antelación y notifica a tus usuarios antes de comenzar.
+    Esta versión contiene un cambio incompatible con versiones antiguas con los tokens de API del Workspace.
 
     Consulta la [guía de migración completa de la versión 1.54.0](/es/changelog/guides/1-54-0) para todos los detalles.
   </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Funcionalidades
+
+  - **Renovación de los registros de auditoría:** mayor visibilidad y capacidades de filtrado en las entradas de auditoría con seguimiento granular de las acciones de los usuarios.
+  - **Conector de Confluence On-Prem:** integración con instancias on-premises de Confluence para un acceso y colaboración documental sin fricciones. [Más información](/es/user-manual/connectors/confluence-server)
+
+  ### 🐛 Correcciones de errores
+
+  - Se corrigieron cierres inesperados al procesar consultas SQL excesivamente grandes con el conector de base de datos.
+  - Se resolvió un problema por el que archivos vinculados en la base de conocimiento seguían siendo accesibles después de que un usuario abandonara un proyecto.
+  - Se añadieron títulos correctos para conectores MCP cuando solo hay una herramienta.
+  - Se corrigió un error en chats cuando ocurría la compresión de contexto.
+  - Se optimizó el selector de organización para listas largas, mejorando la usabilidad.
+
+  ## 🛠️ Plataforma
+  ### ✨ Funcionalidades
+
+  - **Backoffice:** el Backoffice de la plataforma es utilizado por los operadores para gestionar el acceso a nivel de plataforma y los entornos de desarrollo. [Más información](/es/user-manual/backoffice/introduction)
+  - **AI Gateways:** un servicio de software dedicado y aislado que se sitúa entre los clientes y las APIs internas de Zylon. [Más información](/es/user-manual/backoffice/platform-backoffice#gateways)
 </Update>
 
 <Update label="1.53.0" description="February 23, 2026">

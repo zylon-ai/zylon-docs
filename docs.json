@@ -151,16 +151,6 @@
                 "pages": [
                   "en/user-manual/n8n"
                 ]
-              },
-              {
-                "group": "Backoffice",
-                "pages": [
-                  "en/user-manual/backoffice/introduction",
-                  "en/user-manual/backoffice/roles-and-permissions",
-                  "en/user-manual/backoffice/accessing-the-backoffice",
-                  "en/user-manual/backoffice/platform-backoffice",
-                  "en/user-manual/backoffice/developer-tools"
-                ]
               }
             ]
           },
@@ -174,7 +164,8 @@
                 "pages": [
                   "en/developer-manual/get-started/intro-to-zylon",
                   "en/developer-manual/get-started/token-management",
-                  "en/developer-manual/get-started/quickstart"
+                  "en/developer-manual/get-started/quickstart",
+                  "en/developer-manual/get-started/developer-console"
                 ]
               },
               {
@@ -299,6 +290,22 @@
                 ]
               },
               {
+                "group": "Maintenance & Operations",
+                "pages": [
+                  "en/operator-manual/operations/backup",
+                  "en/operator-manual/operations/sys-admin-dashboard"
+                ]
+              },
+              {
+                "group": "Backoffice",
+                "pages": [
+                  "en/operator-manual/backoffice/introduction",
+                  "en/operator-manual/backoffice/roles-and-permissions",
+                  "en/operator-manual/backoffice/accessing-the-backoffice",
+                  "en/operator-manual/backoffice/platform-backoffice"
+                ]
+              },
+              {
                 "group": "Configuration",
                 "pages": [
                   "en/operator-manual/configuration/index",
@@ -359,13 +366,6 @@
                     ]
                   },
                   "en/operator-manual/configuration/cli"
-                ]
-              },
-              {
-                "group": "Maintenance & Operations",
-                "pages": [
-                  "en/operator-manual/operations/backup",
-                  "en/operator-manual/operations/sys-admin-dashboard"
                 ]
               },
               {
@@ -508,16 +508,6 @@
                 "pages": [
                   "es/user-manual/n8n"
                 ]
-              },
-              {
-                "group": "Backoffice",
-                "pages": [
-                  "es/user-manual/backoffice/introduction",
-                  "es/user-manual/backoffice/roles-and-permissions",
-                  "es/user-manual/backoffice/accessing-the-backoffice",
-                  "es/user-manual/backoffice/platform-backoffice",
-                  "es/user-manual/backoffice/developer-tools"
-                ]
               }
             ]
           },
@@ -531,7 +521,8 @@
                 "pages": [
                   "es/developer-manual/get-started/intro-to-zylon",
                   "es/developer-manual/get-started/token-management",
-                  "es/developer-manual/get-started/quickstart"
+                  "es/developer-manual/get-started/quickstart",
+                  "es/developer-manual/get-started/developer-console"
                 ]
               },
               {
@@ -656,6 +647,22 @@
                 ]
               },
               {
+                "group": "Mantenimiento y Operaciones",
+                "pages": [
+                  "es/operator-manual/operations/backup",
+                  "es/operator-manual/operations/sys-admin-dashboard"
+                ]
+              },
+              {
+                "group": "Backoffice",
+                "pages": [
+                  "es/operator-manual/backoffice/introduction",
+                  "es/operator-manual/backoffice/roles-and-permissions",
+                  "es/operator-manual/backoffice/accessing-the-backoffice",
+                  "es/operator-manual/backoffice/platform-backoffice"
+                ]
+              },
+              {
                 "group": "Configuraci\u00f3n",
                 "pages": [
                   "es/operator-manual/configuration/index",
@@ -716,13 +723,6 @@
                     ]
                   },
                   "es/operator-manual/configuration/cli"
-                ]
-              },
-              {
-                "group": "Mantenimiento y Operaciones",
-                "pages": [
-                  "es/operator-manual/operations/backup",
-                  "es/operator-manual/operations/sys-admin-dashboard"
                 ]
               },
               {

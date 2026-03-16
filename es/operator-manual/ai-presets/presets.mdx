@@ -11,10 +11,10 @@ Los presets base proporcionan configuraciones estándar optimizadas para cargas 
 
 | Preset         | Memoria GPU Requerida | Ejemplos de Hardware Compatible  | Modelos                                                      |
 |----------------|---------------------|-------------------------------|--------------------------------------------------------------|
-| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
-| `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
-| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
-| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen3-32b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen-3-5-35b-a3b, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen-3-5-122b-a10b, mixedbread-ai/mxbai-embed-large-v1      |
 
 ### Ejemplo de Configuración
 
@@ -31,40 +31,13 @@ Elige el preset que coincida con la capacidad de memoria de tu GPU. Siempre sele
 
 Zylon proporciona presets alternativos que ofrecen configuraciones especializadas intercambiando ciertas capacidades por otras. Estos son opcionales y solo deben usarse cuando tienes requisitos específicos que difieren de los presets estándar.
 
-### Alternativas Habilitadas para Visión
-
-Estos presets incluyen capacidades especializadas de visión por computadora en el pipeline de ingesta, permitiendo al sistema procesar y entender imágenes, documentos y contenido visual.
-
-| Preset                             | Memoria GPU Requerida | Compensación                  | Modelos                                                                                  |
-|------------------------------------|---------------------|----------------------------|-----------------------------------------------------------------------------------------|
-| `alternatives.baseline-48g-vision` | 48GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
-| `alternatives.baseline-96g-vision` | 96GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, qwen/qwen2.5-vl-7b-instruct-awq, mixedbread-ai/mxbai-embed-large-v1 |
-
-**Cuándo usar presets habilitados para visión:**
-
-- Procesar documentos escaneados y comprensión de diapositivas
-- Analizar gráficos, tablas y datos visuales
-- Tareas de comprensión y descripción de imágenes
-
-**Ejemplo de Configuración:**
-
-```yaml
-ai:
-  preset: "alternatives.baseline-96g-vision"
-```
-
-<Warning>
-El uso de estos presets probablemente requiere modificar la memoria compartida del servidor de inferencia. Consulta la sección [Configuración de Memoria Compartida](/es/operator-manual/ai-presets/configuration#shared-memory-configuration).
-</Warning>
-
 ### Alternativas Optimizadas para Contexto
 
 Estos presets usan modelos de IA más pequeños para proporcionar ventanas de contexto significativamente más grandes, permitiendo sesiones de conversación extendidas y tareas de análisis complejas.
 
 | Preset                              | Memoria GPU Requerida | Compensación                  | Modelos                                                      |
 |-------------------------------------|---------------------|----------------------------|--------------------------------------------------------------|
-| `alternatives.baseline-48g-context` | 48GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
-| `alternatives.baseline-96g-context` | 96GB                | Modelo más pequeño (Qwen 3 14B) | qwen/qwen3-14b-awq, mixedbread-ai/mxbai-embed-large-v1      |
+| `alternatives.baseline-96g-27b-context` | 96GB                | Modelo balanceado (Qwen 3.5 27B) | qwen/qwen-3-5-27b, mixedbread-ai/mxbai-embed-large-v1      |
 
 **Cuándo usar presets optimizados para contexto:**
 
@@ -76,7 +49,7 @@ Estos presets usan modelos de IA más pequeños para proporcionar ventanas de co
 
 ```yaml
 ai:
-  preset: "alternatives.baseline-48g-context"
+  preset: "alternatives.baseline-96g-context"
 ```
 
 <Info>

@@ -97,15 +97,26 @@ Deprecated presets are maintained for backward compatibility only and will not r
 
 For customers that require older configurations, deprecated presets are available but not recommended for new installations.
 
-| Preset Pattern                | Description                     | Recommendation                           |
-|-------------------------------|---------------------------------|------------------------------------------|
-| `deprecated.<size>g.20250710` | Pre-Qwen 3 model configurations | Upgrade to current presets when possible |
+| Preset                                  | GPU Memory | Description                              |
+|-----------------------------------------|------------|------------------------------------------|
+| `deprecated.24g.20250710`               | 24GB       | Pre-Qwen 3 configuration                 |
+| `deprecated.24g.20260327`               | 24GB       | Pre-Qwen 3.5 configuration               |
+| `deprecated.32g.20250710`               | 32GB       | Pre-Qwen 3 configuration                 |
+| `deprecated.32g.20260327`               | 32GB       | Pre-Qwen 3.5 configuration               |
+| `deprecated.48g.20250710`               | 48GB       | Pre-Qwen 3 configuration                 |
+| `deprecated.48g.20260327`               | 48GB       | Pre-Qwen 3.5 configuration               |
+| `deprecated.48g.20260327-context`       | 48GB       | Pre-Qwen 3.5 context-optimized configuration |
+| `deprecated.48g.20260327-vision`        | 48GB       | Pre-Qwen 3.5 vision-optimized configuration |
+| `deprecated.96g.20250710`               | 96GB       | Pre-Qwen 3 configuration                 |
+| `deprecated.96g.20260327`               | 96GB       | Pre-Qwen 3.5 configuration               |
+| `deprecated.96g.20260327-context`       | 96GB       | Pre-Qwen 3.5 context-optimized configuration |
+| `deprecated.96g.20260327-vision`        | 96GB       | Pre-Qwen 3.5 vision-optimized configuration |
+| `deprecated.96g.qwen3-32b-96g`          | 96GB       | Pre-Qwen 3.5 Qwen 3 32B configuration   |
 
-**Example Configuration:**
 
 ```yaml
 ai:
-  preset: "deprecated.24g.20250710"
+  preset: "deprecated.24g.20260327"
 ```
 
 ### Migration from Deprecated Presets

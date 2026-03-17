@@ -1,0 +1,73 @@
+---
+title: "Hard delete"
+description: "Configure the retention policy used by the workspace cleanup task"
+---
+
+The hard delete task permanently removes items after they have first been soft deleted or marked inactive.
+
+Chats, projects, artifacts, and organizations are soft deleted by default. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
+
+## Default configuration
+
+By default, cleanup checks run daily at `03:00` in `UTC`, and items become eligible for hard delete after `14` days.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      timezone: "UTC"
+      deleteAfterDays: 14
+```
+
+## Configuration example
+
+Edit `/etc/zylon/zylon-conf.yaml`, then apply the change with `sudo zylon-cli sync`.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      timezone: "UTC"
+      deleteAfterDays: 14
+```
+
+`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive or soft-deleted item is flagged to be hard deleted by the cron execution.
+
+## Accepted values
+
+Cleanup uses the same 5-part cron format as sync:
+
+```text
+minute hour day-of-month month day-of-week
+```
+
+Use values in these ranges:
+
+| Field | Accepted values |
+| --- | --- |
+| Minute | `0-59` or `*` |
+| Hour | `0-23` or `*` |
+| Day of month | `1-31` or `*` |
+| Month | `1-12` or `*` |
+| Day of week | `0-6` or `*` |
+
+Examples:
+
+- `0 3 * * *` runs every day at 03:00
+- `15 4 * * 0` runs every Sunday at 04:15
+
+For `zylonBackend.scheduler.cleanup.timezone`, use a valid IANA timezone identifier such as `UTC`, `Europe/Madrid`, or `America/New_York`.
+
+For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, or `90`.
+
+## Execution and failure handling
+
+Chats, projects, artifacts, and organizations are soft deleted by default. The cleanup task runs on the cron schedule and checks whether inactive or soft-deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
+
+A cleanup run may permanently delete chats, artifacts, projects, and organizations, together with associated resources such as files and other cascaded data.
+
+Per-item failures are logged. The task continues with other items, and the next scheduled run retries remaining items.

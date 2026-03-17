@@ -1,0 +1,69 @@
+---
+title: "Sync"
+description: "Configure the scheduled integration sync task"
+---
+
+The sync task keeps integration-backed content up to date by checking connected external sources and updating Zylon artifacts when content is added, changed, or removed.
+
+Use this task when you want content from SharePoint, Confluence, file systems, or other supported integrations to stay fresh without manual resyncs.
+
+## Default configuration
+
+By default, scheduled integration sync is disabled. When enabled, the default schedule is daily at `01:00` in `UTC`.
+
+```yaml
+integration:
+  sync:
+    enabled: false
+    cron: "0 1 * * *"
+    timezone: "UTC"
+```
+
+## Configuration example
+
+Edit `/etc/zylon/zylon-conf.yaml`, then apply the change with `sudo zylon-cli sync`.
+
+```yaml
+integration:
+  sync:
+    enabled: true
+    cron: "0 1 * * *"
+    timezone: "UTC"
+```
+
+`enabled` turns the scheduled sync on or off. `cron` defines when it runs, and `timezone` defines which timezone is used to interpret that cron expression.
+
+## Accepted cron and timezone values
+
+Cron schedules use a 5-part format:
+
+```text
+minute hour day-of-month month day-of-week
+```
+
+Use values in these ranges:
+
+| Field | Accepted values |
+| --- | --- |
+| Minute | `0-59` or `*` |
+| Hour | `0-23` or `*` |
+| Day of month | `1-31` or `*` |
+| Month | `1-12` or `*` |
+| Day of week | `0-6` or `*` |
+
+Examples:
+
+- `0 3 * * *` runs every day at 03:00
+- `30 2 * * 1` runs every Monday at 02:30
+
+For `integration.sync.timezone`, use a valid IANA timezone identifier. Common examples include:
+
+- `UTC`
+- `Europe/Madrid`
+- `America/New_York`
+
+## Execution and failure handling
+
+A scheduled sync run checks active integration content and may call external APIs, download content, create or remove artifacts, trigger ingestion or vector lifecycle work, and emit sync completion messages.
+
+If one sync target fails, the error is logged and the task continues with other targets. The next scheduled run tries again.

@@ -356,6 +356,13 @@
                     ]
                   },
                   {
+                    "group": "Cron Tasks",
+                    "pages": [
+                      "en/operator-manual/configuration/cron-tasks/sync",
+                      "en/operator-manual/configuration/cron-tasks/hard-delete"
+                    ]
+                  },
+                  {
                     "group": "Advanced Settings",
                     "pages": [
                       "en/operator-manual/configuration/observability",
@@ -710,6 +717,13 @@
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",
                       "es/operator-manual/configuration/features/feat-multimodal"
+                    ]
+                  },
+                  {
+                    "group": "Tareas cron",
+                    "pages": [
+                      "es/operator-manual/configuration/cron-tasks/sync",
+                      "es/operator-manual/configuration/cron-tasks/hard-delete"
                     ]
                   },
                   {

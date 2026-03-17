@@ -1,0 +1,23 @@
+---
+title: "Project Custom Instructions"
+---
+
+Users can customize project instructions from the project settings dialog, as explained in [Adding custom instructions](/en/user-manual/adding-custom-instructions).
+
+These instructions are applied at the project level and influence how Zylon responds in chats for that project.
+
+### Configuration
+
+Use the following key to control the maximum instructions length:
+
+```yaml
+zylonWorkspace:
+  projects:
+    maxInstructionsLength: 4000
+```
+
+### Configuration details
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `maxInstructionsLength` | `4000` | Positive integer | Maximum instructions length accepted by both the Workspace UI and the API |

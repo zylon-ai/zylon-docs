@@ -1,14 +1,32 @@
 ---
 title: Adding custom instructions
-description: Provide project‑specific context and formatting rules used in every chat in the project.
+description: Provide project-specific instructions used in every chat in the project.
 icon: chalkboard-user
 ---
 
-Each project can define **custom instructions** that the AI uses on **every interaction in that project**. These augment (they don’t replace) the organization‑wide company context.
+Each project can define **custom instructions** that the AI uses on **every interaction in that project**. These augment, rather than replace, the organization-wide company context.
 
-- Use the **Context** box for background: what this project is for, who it serves, key acronyms, etc.
-- Use the **Format** box for response style rules (e.g., “answer in French”, “bullet points only”).
+Open **Project Settings**, write your instructions in the single **Instructions** field, and save the project settings.
 
+Use this field for project-specific guidance such as:
+
+- what this project is for
+- who it serves
+- important acronyms or domain context
+- preferred response style or language
+
+The maximum size of this field is controlled by your operator through `zylonWorkspace.projects.maxInstructionsLength` in `/etc/zylon/zylon-conf.yaml`. The default limit is `4000`, and the same limit is enforced in both the Workspace UI and the API. For operator-side configuration, see [Project custom instructions](/en/operator-manual/configuration/features/feat-project-custom-instructions).
 ![](/images/project_context.png)
 
-> **Behavior:** Custom instructions apply to all new chats in the project. Combined with the org “company context”, they let you shape project‑specific “mini‑agents”.
+## Advanced Settings
+
+Project settings also include two advanced toggles:
+![](/images/advanced_settings.png)
+- **Citations**: Enables or disables citations in Zylon chat responses for that project.
+- **System prompt**: Keeps or removes Zylon's default prompt layer. This prompt cannot be edited from the UI, only removed.
+
+<Warning>
+  These settings change how Zylon responds. Changing them can reduce answer quality, reduce traceability, or cause responses to fail, so use them carefully.
+</Warning>
+
+> **Behavior:** Custom instructions apply at the project level and shape how Zylon responds in that project together with the organization-wide company context.

@@ -350,6 +350,7 @@
                       "en/operator-manual/configuration/features/feat-mcp",
                       "en/operator-manual/configuration/features/feat-database",
                       "en/operator-manual/configuration/features/feat-audit",
+                      "en/operator-manual/configuration/features/feat-project-custom-instructions",
                       "en/operator-manual/configuration/features/feat-webextract",
                       "en/operator-manual/configuration/features/feat-websearch",
                       "en/operator-manual/configuration/features/feat-multimodal"
@@ -714,6 +715,7 @@
                       "es/operator-manual/configuration/features/feat-mcp",
                       "es/operator-manual/configuration/features/feat-database",
                       "es/operator-manual/configuration/features/feat-audit",
+                      "es/operator-manual/configuration/features/feat-project-custom-instructions",
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",
                       "es/operator-manual/configuration/features/feat-multimodal"

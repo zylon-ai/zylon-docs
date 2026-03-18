@@ -5,7 +5,7 @@ description: "Configure the retention policy used by the workspace cleanup task"
 
 The hard delete task permanently removes items after they have first been soft deleted or marked inactive.
 
-Chats, projects, artifacts, and organizations are soft deleted by default. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
+Chats, projects, files, and organizations are soft deleted by default. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
 
 ## Default configuration
 
@@ -64,10 +64,16 @@ For `zylonBackend.scheduler.cleanup.timezone`, use a valid IANA timezone identif
 
 For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, or `90`.
 
+## Access before hard delete
+
+Before the retention window expires, the data is still soft deleted rather than permanently removed. During that time, an operator can use the CLI migration and restore flow to recover organizations, projects, chats, or files.
+
+If you need help performing that recovery, you can also contact [Customer support](/en/customer-support-manual/zendesk-client-manual).
+
 ## Execution and failure handling
 
-Chats, projects, artifacts, and organizations are soft deleted by default. The cleanup task runs on the cron schedule and checks whether inactive or soft-deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
+Chats, projects, files, and organizations are soft deleted by default. The cleanup task runs on the cron schedule and checks whether inactive or soft-deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
 
-A cleanup run may permanently delete chats, artifacts, projects, and organizations, together with associated resources such as files and other cascaded data.
+A cleanup run may permanently delete chats, files, projects, and organizations, together with associated cascaded data.
 
 Per-item failures are logged. The task continues with other items, and the next scheduled run retries remaining items.

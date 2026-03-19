@@ -85,6 +85,9 @@ Enable or disable specific features to control what's available to your users.
   <Card title="Database Connector" icon="database" href="/en/operator-manual/configuration/features/feat-database">
     Enable direct database querying from chat conversations
   </Card>
+  <Card title="Project Custom Instructions" icon="chalkboard-user" href="/en/operator-manual/configuration/features/feat-project-custom-instructions">
+    Configure the maximum instruction length and understand project-level chat behavior settings
+  </Card>
   <Card title="MCP Connector" icon="plug" href="/en/operator-manual/configuration/features/feat-mcp">
     Integrate Model Context Protocol tools for extended capabilities
   </Card>
@@ -96,6 +99,21 @@ Enable or disable specific features to control what's available to your users.
   </Card>
   <Card title="Web Search" icon="globe" href="/en/operator-manual/configuration/features/feat-websearch">
     Enable internet search capabilities within chat conversations
+  </Card>
+</CardGroup>
+
+---
+
+## Cron Tasks
+
+Use these pages to understand how Zylon schedules recurring backend work for sync and hard delete cleanup.
+
+<CardGroup cols={2}>
+  <Card title="Sync" icon="arrows-rotate" href="/en/operator-manual/configuration/cron-tasks/sync">
+    Configure the scheduled integration sync task, including cron and timezone values
+  </Card>
+  <Card title="Hard delete" icon="trash" href="/en/operator-manual/configuration/cron-tasks/hard-delete">
+    Configure the retention policy used to permanently remove soft-deleted or inactive items
   </Card>
 </CardGroup>
 

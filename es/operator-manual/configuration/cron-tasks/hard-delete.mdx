@@ -1,0 +1,100 @@
+---
+title: "Borrado permanente"
+description: "Configure la politica de retencion usada por la tarea de limpieza"
+---
+
+La tarea de borrado permanente elimina definitivamente los elementos despues de que primero hayan sido marcados como borrados o inactivos.
+
+Chats, proyectos, archivos y organizaciones se borran de forma logica por defecto. Esta configuracion de limpieza permite que cada organizacion alinee el borrado permanente de Zylon con su propia politica de retencion de datos.
+
+## Configuracion predeterminada
+
+Por defecto, la limpieza revisa elementos todos los dias a las `03:00`, y los elementos pasan a ser elegibles para borrado permanente despues de `14` dias. Si `timezone` no esta definido, Zylon usa la zona horaria predeterminada de la maquina servidor.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      deleteAfterDays: 14
+```
+
+## Ejemplo de configuracion
+
+Edite `/etc/zylon/zylon-conf.yaml` y luego aplique el cambio con `sudo zylon-cli sync`.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      timezone: "Europe/Madrid"
+      deleteAfterDays: 14
+```
+
+`enabled` activa o desactiva las revisiones programadas de borrado permanente. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o borrado logicamente quede marcado para borrado permanente por la ejecucion del cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
+
+<Tip>
+  Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
+</Tip>
+
+## Valores aceptados
+
+### Valores de cron
+
+La limpieza usa el mismo formato cron de 5 partes que la sincronizacion:
+
+```text
+minute hour day-of-month month day-of-week
+```
+
+Use valores dentro de estos rangos:
+
+| Campo | Valores aceptados |
+| --- | --- |
+| Minuto | `0-59` o `*` |
+| Hora | `0-23` o `*` |
+| Dia del mes | `1-31` o `*` |
+| Mes | `1-12` o `*` |
+| Dia de la semana | `0-6` o `*` |
+
+Ejemplos:
+
+- `0 3 * * *` se ejecuta todos los dias a las 03:00
+- `15 4 * * 0` se ejecuta cada domingo a las 04:15
+
+### Valores de zona horaria
+
+`zylonBackend.scheduler.cleanup.timezone` es opcional. Si no se define, el cron de limpieza se ejecuta en la zona horaria predeterminada de la maquina servidor.
+
+Cuando configure `zylonBackend.scheduler.cleanup.timezone`, use un identificador IANA valido. Ejemplos comunes:
+
+- `UTC`
+- `Europe/Madrid`
+- `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+Para una lista practica de identificadores de zona horaria IANA, consulte [IANA Time Zones](https://datetime.app/iana-timezones).
+
+### Valores de retencion
+
+Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero positivo de dias como `14`, `30` o `90`.
+
+## Acceso antes del borrado permanente
+
+Antes de que expire la ventana de retencion, los datos siguen estando en estado de borrado logico y no se han eliminado de forma definitiva. Durante ese tiempo, un operador puede usar el flujo de migracion y restauracion por CLI para recuperar organizaciones, proyectos, chats o archivos.
+
+Si necesita ayuda para realizar esa recuperacion, tambien puede contactar con [Atencion al cliente](/es/customer-support-manual/zendesk-client-manual).
+
+## Ejecucion y manejo de fallos
+
+Chats, proyectos, archivos y organizaciones se borran logicamente por defecto. La tarea de limpieza se ejecuta segun el cron configurado y revisa si los elementos inactivos o borrados logicamente ya superaron la ventana de retencion `deleteAfterDays`. Cuando la superan, el sistema los marca para borrado permanente y los elimina de Zylon.
+
+Una ejecucion de limpieza puede borrar definitivamente chats, archivos, proyectos y organizaciones, junto con otros datos en cascada.
+
+Los fallos por elemento se registran. La tarea continua con los demas elementos y la siguiente ejecucion programada reintenta los pendientes.

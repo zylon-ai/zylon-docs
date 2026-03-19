@@ -9,7 +9,7 @@ Chats, projects, files, and organizations are soft deleted by default. This clea
 
 ## Default configuration
 
-By default, cleanup checks run daily at `03:00` in `UTC`, and items become eligible for hard delete after `14` days.
+By default, cleanup checks run daily at `03:00`, and items become eligible for hard delete after `14` days. If `timezone` is not set, Zylon uses the server machine's default timezone.
 
 ```yaml
 zylonBackend:
@@ -17,7 +17,6 @@ zylonBackend:
     cleanup:
       enabled: true
       cron: "0 3 * * *"
-      timezone: "UTC"
       deleteAfterDays: 14
 ```
 
@@ -31,13 +30,19 @@ zylonBackend:
     cleanup:
       enabled: true
       cron: "0 3 * * *"
-      timezone: "UTC"
+      timezone: "Europe/Madrid"
       deleteAfterDays: 14
 ```
 
-`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive or soft-deleted item is flagged to be hard deleted by the cron execution.
+`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` optionally defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive or soft-deleted item is flagged to be hard deleted by the cron execution. If `timezone` is omitted, the server machine's default timezone is used.
+
+<Tip>
+  We suggest setting an [IANA timezone](#timezone-values) that matches your company's timezone.
+</Tip>
 
 ## Accepted values
+
+### Cron values
 
 Cleanup uses the same 5-part cron format as sync:
 
@@ -60,7 +65,23 @@ Examples:
 - `0 3 * * *` runs every day at 03:00
 - `15 4 * * 0` runs every Sunday at 04:15
 
-For `zylonBackend.scheduler.cleanup.timezone`, use a valid IANA timezone identifier such as `UTC`, `Europe/Madrid`, or `America/New_York`.
+### Timezone values
+
+`zylonBackend.scheduler.cleanup.timezone` is optional. If it is not set, the cleanup cron runs in the server machine's default timezone.
+
+When you set `zylonBackend.scheduler.cleanup.timezone`, use a valid IANA timezone identifier. Common examples include:
+
+- `UTC`
+- `Europe/Madrid`
+- `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+For a practical list of IANA timezone identifiers, see [IANA Time Zones](https://datetime.app/iana-timezones).
+
+### Retention values
 
 For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, or `90`.
 

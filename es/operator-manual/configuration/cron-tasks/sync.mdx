@@ -9,14 +9,13 @@ Use esta tarea cuando quiera que el contenido de [SharePoint](/es/operator-manua
 
 ## Configuracion predeterminada
 
-Por defecto, la sincronizacion programada de integraciones esta deshabilitada. Cuando se habilita, la programacion predeterminada es diaria a la `01:00` en `UTC`.
+Por defecto, la sincronizacion programada de integraciones esta deshabilitada. Cuando se habilita, la programacion predeterminada es diaria a la `01:00`. Si `timezone` no esta definido, Zylon usa la zona horaria predeterminada de la maquina servidor.
 
 ```yaml
 integration:
   sync:
     enabled: false
     cron: "0 1 * * *"
-    timezone: "UTC"
 ```
 
 ## Ejemplo de configuracion
@@ -28,12 +27,18 @@ integration:
   sync:
     enabled: true
     cron: "0 1 * * *"
-    timezone: "UTC"
+    timezone: "Europe/Madrid"
 ```
 
-`enabled` activa o desactiva la sincronizacion programada. `cron` define cuando se ejecuta y `timezone` define la zona horaria usada para interpretar esa expresion cron.
+`enabled` activa o desactiva la sincronizacion programada. `cron` define cuando se ejecuta y `timezone` define de forma opcional la zona horaria usada para interpretar esa expresion cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
+
+<Tip>
+  Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
+</Tip>
 
 ## Valores aceptados para cron y zona horaria
+
+### Valores de cron
 
 Las programaciones cron usan un formato de 5 partes:
 
@@ -56,11 +61,21 @@ Ejemplos:
 - `0 3 * * *` se ejecuta todos los dias a las 03:00
 - `30 2 * * 1` se ejecuta cada lunes a las 02:30
 
-Para `integration.sync.timezone`, use un identificador IANA valido. Ejemplos comunes:
+### Valores de zona horaria
+
+`integration.sync.timezone` es opcional. Si no se define, el cron de sincronizacion se ejecuta en la zona horaria predeterminada de la maquina servidor.
+
+Cuando configure `integration.sync.timezone`, use un identificador IANA valido. Ejemplos comunes:
 
 - `UTC`
 - `Europe/Madrid`
 - `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+Para una lista practica de identificadores de zona horaria IANA, consulte [IANA Time Zones](https://datetime.app/iana-timezones).
 
 ## Ejecucion y manejo de fallos
 

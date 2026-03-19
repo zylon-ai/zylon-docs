@@ -9,14 +9,13 @@ Use this task when you want content from [SharePoint](/en/operator-manual/knowle
 
 ## Default configuration
 
-By default, scheduled integration sync is disabled. When enabled, the default schedule is daily at `01:00` in `UTC`.
+By default, scheduled integration sync is disabled. When enabled, the default schedule is daily at `01:00`. If `timezone` is not set, Zylon uses the server machine's default timezone.
 
 ```yaml
 integration:
   sync:
     enabled: false
     cron: "0 1 * * *"
-    timezone: "UTC"
 ```
 
 ## Configuration example
@@ -28,12 +27,18 @@ integration:
   sync:
     enabled: true
     cron: "0 1 * * *"
-    timezone: "UTC"
+    timezone: "Europe/Madrid"
 ```
 
-`enabled` turns the scheduled sync on or off. `cron` defines when it runs, and `timezone` defines which timezone is used to interpret that cron expression.
+`enabled` turns the scheduled sync on or off. `cron` defines when it runs, and `timezone` optionally defines which timezone is used to interpret that cron expression. If `timezone` is omitted, the server machine's default timezone is used.
+
+<Tip>
+  We suggest setting an [IANA timezone](#timezone-values) that matches your company's timezone.
+</Tip>
 
 ## Accepted cron and timezone values
+
+### Cron values
 
 Cron schedules use a 5-part format:
 
@@ -56,11 +61,21 @@ Examples:
 - `0 3 * * *` runs every day at 03:00
 - `30 2 * * 1` runs every Monday at 02:30
 
-For `integration.sync.timezone`, use a valid IANA timezone identifier. Common examples include:
+### Timezone values
+
+`integration.sync.timezone` is optional. If it is not set, the sync cron runs in the server machine's default timezone.
+
+When you set `integration.sync.timezone`, use a valid IANA timezone identifier. Common examples include:
 
 - `UTC`
 - `Europe/Madrid`
 - `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+For a practical list of IANA timezone identifiers, see [IANA Time Zones](https://datetime.app/iana-timezones).
 
 ## Execution and failure handling
 

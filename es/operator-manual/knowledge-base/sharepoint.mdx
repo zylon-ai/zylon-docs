@@ -2,13 +2,13 @@
 title: SharePoint
 ---
 
-Para integrar con SharePoint, necesitas **crear una aplicación de Azure AD** que actúa como un puente entre Zylon ↔ SharePoint y **configurar Zylon** para usar esta aplicación de Microsoft.
+Para integrar con SharePoint, necesitas **crear una aplicación de Microsof Entra** que actúa como un puente entre Zylon ↔ SharePoint y **configurar Zylon** para usar esta aplicación de Microsoft.
 
-Esta guía te guía a través de la integración de SharePoint con Zylon usando el flujo OAuth 2.0 de Microsoft a través de Azure Active Directory. Esto permite a Zylon acceder de forma segura a tus recursos de SharePoint usando permisos delegados.
+Esta guía te guía a través de la integración de SharePoint con Zylon usando el flujo OAuth 2.0 de Microsoft. Esto permite a Zylon acceder de forma segura a tus recursos de SharePoint usando permisos delegados.
 
-## Crear una aplicación de Azure AD
+## Crear una aplicación de Microsoft Entra
 
-Primero necesitas una aplicación de Azure AD. Recomendamos usar una cuenta no personal para crear esto desde el panel de Microsoft Entra. Esta cuenta no necesita tener acceso a ningún elemento en Sharepoint pero tiene los permisos correctos para configurar la aplicación que servirá como un puente entre Zylon y Sharepoint.
+Primero necesitas una aplicación de Microsoft Entra. Recomendamos usar una cuenta no personal para crear esto desde el panel de Microsoft Entra. Esta cuenta no necesita tener acceso a ningún elemento en Sharepoint pero tiene los permisos correctos para configurar la aplicación que servirá como un puente entre Zylon y Sharepoint.
 
 1. Ve a [https://entra.microsoft.com](https://entra.microsoft.com/).
 
@@ -119,7 +119,7 @@ Guarda y cierra el archivo `/etc/zylon/zylon-conf.yaml`
 Finalmente, ejecuta el siguiente comando para reiniciar Zylon y actualizar la configuración
 
 ```bash
-zylon-cli update
+sudo zylon-cli sync
 ```
 
 ¡Todo está listo 🎉

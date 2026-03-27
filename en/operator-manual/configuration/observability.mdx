@@ -2,27 +2,317 @@
 title: "Observability"
 ---
 
-In order to provide support in case something goes south, there are two main observability tools that are enabled:
+Zylon ships with two observability tools enabled by default:
 
-- Sentry for crash reporting
-- Grafana for anonymous and aggregated usage metrics
+- **Sentry** for crash reporting: helps diagnose platform malfunctions
+- **Grafana** for anonymous, aggregated usage metrics: helps understand how Zylon is being used to expedite support
 
-The data sent will help us to diagnose any malfunctioning in the platform and understand how Zylon is being used to expedite any support actions.
+No private information is sent by either tool.
 
-In case you want to opt out of this you can do so by adding the following snippet to the configuration file:
+## Network domains to whitelist
+
+If your cluster restricts outbound traffic, the following domains must be whitelisted for usage telemetry:
+
+- `*.grafana.net`
+
+For added granularity, the specific endpoints used are:
+
+- Basic usage metrics: [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
+- System Traces: [https://tempo-prod-10-prod-eu-west-2.grafana.net](https://tempo-prod-10-prod-eu-west-2.grafana.net/)
+
+## Observability Configuration
+
+All observability settings live under the `observability` key in your values file. Below is the full reference with every available flag.
+
+```yaml
+observability:
+  crashReporting: true          
+  monitoring: true              
+  usageMetrics: true            
+  platformMetrics:
+    enabled: false              
+    generationIntervalMs: 2000  
+    gpu:
+      enabled: true             
+    inference:
+      counterLatencies: true   
+      histogramLatencies: true 
+      summaryLatencies: true   
+      summaryQuantiles: ""     
+```
+
+### Flag reference
+
+| Flag | Default | Description |
+|---|---|---|
+| `crashReporting` | `true` | Sends crash reports to Sentry. Disable if you want no external telemetry. |
+| `monitoring` | `true` | Master switch. Deploys the monitoring infrastructure (Prometheus, Grafana, k8s-monitoring). Must be `true` for any metrics to be collected. |
+| `usageMetrics` | `true` | Sends anonymous, aggregated usage telemetry to Grafana Cloud. No private data is included. |
+| `platformMetrics.enabled` | `false` | Enables scraping of Triton and vLLM Prometheus metrics. Requires `monitoring: true`. |
+| `platformMetrics.generationIntervalMs` | `2000` | Interval at which Triton generates metrics internally, in milliseconds. This is not the scrape interval. |
+| `platformMetrics.gpu.enabled` | `true` | Includes GPU metrics from the DCGM exporter alongside inference metrics. |
+| `platformMetrics.inference.counterLatencies` | `true` | Exposes cumulative latency counters (`nv_inference_*_duration_us`). |
+| `platformMetrics.inference.histogramLatencies` | `true` | Exposes latency histograms (`nv_inference_first_response_histogram_ms`). |
+| `platformMetrics.inference.summaryLatencies` | `true` | Exposes sliding-window summary quantiles (`nv_inference_*_summary_us`). |
+| `platformMetrics.inference.summaryQuantiles` | `""` | Override the default quantiles. Format: `"<quantile>:<error>,..."`. Leave empty to use Triton defaults. |
+
+### Disabling observability entirely
+
+To opt out of all monitoring and telemetry:
 
 ```yaml
 observability:
   crashReporting: false
+  monitoring: false
   usageMetrics: false
 ```
 
-## Grafana
+### Enabling platform metrics scraping
 
-The following domain needs to be whitelisted:  `*.grafana.net`
+Deploying the monitoring infrastructure does not start scraping on its own. Scraping only begins when the specific metrics flags are also set to `true`:
 
-For added granularity, the domains used are:
+```yaml
+observability:
+  monitoring: true
+  platformMetrics:
+    enabled: true
+```
 
-- Basic usage metrics (no private information sent)-\> [https://prometheus-prod-24-prod-eu-west-2.grafana.net](https://prometheus-prod-24-prod-eu-west-2.grafana.net/)
-- Logs (no private information sent); [https://logs-prod-012.grafana.net](https://logs-prod-012.grafana.net/)
-- System Traces (no private information sent): [https://tempo-prod-10-prod-eu-west-2.grafana.net](https://tempo-prod-10-prod-eu-west-2.grafana.net/)
+## Sending Metrics to an External Destination
+
+By default, the monitoring stack collects metrics internally. To forward metrics to an external receiver such as your own Grafana Cloud stack, a self-hosted Prometheus, or any other compatible endpoint, use `k8s-monitoring.extraDestinations` in your values file.
+
+Each entry under `extraDestinations` is a named destination. You can add multiple destinations by adding more named entries:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    my-grafana:
+      type: prometheus
+      url: https://prometheus-prod-58-prod-eu-central-0.grafana.net/api/prom/push
+      auth:
+        type: basic
+        username: "<your-username>"
+        password: "<your-api-token>"
+    my-open-telemetry:
+      type: otlp
+      url: https://your-otel.com/push
+      auth:
+        type: basic
+        username: "<username>"
+        password: "<token>"
+```
+
+Supported destination types are `prometheus` and `otlp`.
+
+## Grafana Dashboard
+
+A reference Grafana dashboard is available to visualise Triton Inference Server and vLLM metrics. It is provided as a starting point that you can import, customise, and extend to fit your own observability needs. The dashboard definition can be found in [grafana-dashboard.json](https://raw.githubusercontent.com/zylon-ai/zylon-docs/main/snippets/grafana-dashboard.json).
+
+The metrics surfaced in the dashboard come from two sources, both scraped through the `/metrics` endpoint on the Triton service:
+
+- **Triton Inference Server**: request counts, latency breakdowns, GPU health, and queue statistics. See the [Triton metrics reference](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/metrics.html) for the full list.
+- **vLLM**: scheduler state, KV cache utilisation, token throughput, and latency histograms, forwarded by Triton via its custom metrics API. See the [vLLM metrics reference](https://docs.vllm.ai/en/stable/usage/metrics/) for the full list.
+
+### Dashboard Variables
+
+The dashboard exposes four drop-down filters at the top:
+
+| Variable | Description |
+|---|---|
+| **Datasource** | Prometheus datasource to query |
+| **Environment** | Filter by deployment environment label (your company identifier) |
+| **Model** | Filter by model name served by Triton |
+| **GPU** | Filter by `gpu_uuid` for GPU-specific panels |
+
+### Dashboard Sections
+
+The dashboard is organised around a natural investigation flow: start at the health overview, drill into throughput, then latency, understand *why* latency may be high via scheduler/capacity signals, analyse the workload shape, and finally check hardware health.
+
+Download the [grafana-dashboard.json](https://raw.githubusercontent.com/zylon-ai/zylon-docs/main/snippets/grafana-dashboard.json) file and import it into Grafana using **Dashboards → New → Import**. For detailed steps, see the [Grafana import dashboards documentation](https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/import-dashboards/).
+
+| # | Section | Question it answers |
+|---|---|---|
+| 1 | Overview | What does the workload look like at a glance? |
+| 2 | Throughput & Errors | How much is it handling? |
+| 3 | Latency | How fast is it? |
+| 4 | Capacity & Scheduler | Why might it be slow? |
+| 5 | Workload Analysis | What does the load look like? |
+| 6 | GPU Health | Is the GPU under pressure? |
+| 7 | Host Resources | Is the node healthy? |
+
+### 1. Overview
+
+Quick-glance stat tiles showing the current health of the inference service.
+
+![Overview and Throughput & Errors sections](/images/operator-manual/observability/overview.png)
+
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **Request Success Rate** | `nv_inference_request_success`, `nv_inference_request_failure` | Percentage of successful requests over the selected window. Color coded: red < 95 %, yellow ≥ 95 %, green ≥ 99 %. |
+| **Requests / sec** | `nv_inference_request_success` | Current throughput: successful requests per second summed across all selected models. |
+| **LLM Concurrent Requests** | `vllm_llms_v1:num_requests_running` | Number of LLM requests actively executing inside the vLLM scheduler at this moment. |
+| **Embedding Concurrent Requests** | `vllm_embeddings_v1:num_requests_running` | Same as above, for embedding models. |
+| **Pending Requests (Queue Depth)** | `nv_inference_pending_request_count` | Requests received but not yet executing. Color coded: green = 0–9, yellow = 10–49, red ≥ 50. Sustained high values indicate the system is capacity-constrained. |
+
+### 2. Throughput & Errors
+
+Detailed time-series view of request rates and failure modes.
+
+![Throughput & Errors panels](/images/operator-manual/observability/throughput-and-errors.png)
+![Failure breakdown by reason, inference count vs execution count, and pending request queue depth](/images/operator-manual/observability/throughput-and-errors-2.png)
+
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **Successful Requests / sec (per model)** | `nv_inference_request_success` | Per-model successful request rate over time. |
+| **Failed Requests / sec (per model)** | `nv_inference_request_failure` | Per-model failed request rate over time. Displayed in red. |
+| **Failure Breakdown by Reason** | `nv_inference_request_failure` (by `reason` label) | Bar chart breaking down failures by category: `REJECTED` (queue timeout), `CANCELED` (client cancelled), `BACKEND` (model error), `OTHER` (uncategorised). |
+| **Inference Count vs Execution Count** | `nv_inference_count`, `nv_inference_exec_count` | Compares total inference requests against actual execution cycles. The gap between the two lines indicates dynamic batching. Dividing inference count by execution count gives the average effective batch size. |
+| **Pending Request Count over Time** | `nv_inference_pending_request_count` | Queue depth per model over time. Sustained growth means the model cannot keep up with the incoming load. |
+
+### 3. Latency
+
+Unified view of latency across both the Triton and vLLM layers. Triton-level averages and phase breakdowns come first, followed by vLLM histogram percentiles (TTFT, TPOT, E2E) and phase timing (prefill/decode).
+![Avg end-to-end latency and latency waterfall](/images/operator-manual/observability/latency.png)
+
+![Avg queue, compute, and I/O overhead; Triton and vLLM TTFT percentiles](/images/operator-manual/observability/latency-2.png)
+
+![Time per output token, end-to-end latency, prefill and decode time, Triton summary quantiles](/images/operator-manual/observability/latency-3.png)
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **Avg End-to-End Latency per Model (ms)** | `nv_inference_request_duration_us`, `nv_inference_request_success` | Average total request duration from entry to response, including queue wait and compute. |
+| **Latency Waterfall (stacked avg ms)** | `nv_inference_queue_duration_us`, `nv_inference_compute_input_duration_us`, `nv_inference_compute_infer_duration_us`, `nv_inference_compute_output_duration_us` | Stacked chart showing time spent in each phase: queue wait, input preprocessing, model compute, output postprocessing. A dominant queue segment indicates a capacity problem; a dominant compute segment means the model itself is the bottleneck. |
+| **Avg Queue Wait Time per Model (ms)** | `nv_inference_queue_duration_us` | Time each request spends waiting in Triton's scheduler queue before execution starts. |
+| **Avg Model Compute Time per Model (ms)** | `nv_inference_compute_infer_duration_us`, `nv_inference_exec_count` | Time the model backend spends executing inference, normalised per execution batch. |
+| **Avg Compute I/O Overhead per Model (ms)** | `nv_inference_compute_input_duration_us`, `nv_inference_compute_output_duration_us` | Time spent on input preprocessing and output postprocessing, outside of actual model execution. |
+| **Triton Time to First Response (P50 / P90 / P99, ms)** | `nv_inference_first_response_histogram_ms` | End-to-end latency to first response token as observed by Triton. |
+| **vLLM Time to First Token - TTFT (P50 / P90 / P99)** | `vllm_llms_v1:time_to_first_token_seconds_bucket`, `vllm_embeddings_v1:time_to_first_token_seconds_bucket` | TTFT percentiles reported by the vLLM backend for both LLM and embedding models. |
+| **Time Per Output Token (P50 / P90 / P99)** | `vllm_llms_v1:time_per_output_token_seconds_bucket` | Inter-token latency (time between consecutive generated tokens). Only meaningful for LLM models. |
+| **End-to-End Request Latency (P50 / P90 / P99)** | `vllm_llms_v1:e2e_request_latency_seconds_bucket`, `vllm_embeddings_v1:e2e_request_latency_seconds_bucket` | Full request latency from vLLM's perspective, covering both LLM and embedding models. |
+| **Prefill & Decode Time** | `vllm_llms_v1:request_prefill_time_seconds_sum`, `vllm_llms_v1:request_decode_time_seconds_sum`, `vllm_embeddings_v1:*` | Per-phase time inside vLLM: prefill processes the full prompt, decode generates each output token incrementally. |
+| **Triton Queue & Compute Latency Percentiles (µs)** | `nv_inference_queue_summary_us`, `nv_inference_compute_infer_summary_us` | Pre-computed sliding window quantiles from Triton summary metrics. Queue wait and model compute time at P50/P99. |
+
+### 4. Capacity & Scheduler
+
+Signals that explain *why* latency may be elevated. If latency is high, check KV cache pressure and preemptions first, then scheduler queue depth and iteration batch size.
+
+![Capacity & Scheduler panels](/images/operator-manual/observability/capacity-and-scheduler.png)
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **vLLM Scheduler State (Running / Waiting)** | `vllm_llms_v1:num_requests_running`, `vllm_llms_v1:num_requests_waiting`, `vllm_embeddings_v1:num_requests_running`, `vllm_embeddings_v1:num_requests_waiting` | Number of requests in RUNNING and WAITING state inside the vLLM scheduler over time. |
+| **vLLM KV Cache Utilization** | `vllm_llms_v1:kv_cache_usage_perc` | Percentage of KV cache blocks currently in use. Approaching 100 % triggers request queuing or preemption. Thresholds: green < 70 %, yellow 70–89 %, red ≥ 90 %. |
+| **Request Queue Time (vLLM)** | `vllm_llms_v1:request_queue_time_seconds_sum`, `vllm_embeddings_v1:request_queue_time_seconds_sum` | Time each request spent waiting in vLLM's internal queue before execution. |
+| **Preemptions Rate** | `vllm_llms_v1:num_preemptions_total`, `vllm_embeddings_v1:num_preemptions_total` | Rate of scheduler preemptions. Each preemption evicts a running request from the KV cache due to memory pressure. A sustained non-zero rate indicates the KV cache is too small for the current load. |
+| **Iteration Batch Size (P50 / P90 / P99, tokens)** | `vllm_llms_v1:iteration_tokens_total_bucket`, `vllm_embeddings_v1:iteration_tokens_total_bucket` | Distribution of total tokens processed per engine step (prompt + generation). A low P50 relative to the configured max batch size indicates the GPU is under-utilised; a high P99 signals occasional very large batches. |
+
+### 5. Workload Analysis
+
+Characterises the shape of the incoming workload. Useful for capacity planning, tuning, and understanding caller behaviour.
+
+![Token throughput, avg tokens per request, and prompt/generation length distributions](/images/operator-manual/observability/work-analysis.png)
+
+![Max generation tokens, max tokens per request percentiles, and prefix cache hit rate](/images/operator-manual/observability/work-analysis-2.png)
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **Token Throughput (tokens/sec)** | `vllm_llms_v1:prompt_tokens_total`, `vllm_llms_v1:generation_tokens_total`, `vllm_embeddings_v1:prompt_tokens_total` | Prompt ingestion speed and generation output speed per model. |
+| **Avg Tokens per Request** | `vllm_llms_v1:request_prompt_tokens_*`, `vllm_llms_v1:request_generation_tokens_*`, `vllm_embeddings_v1:request_prompt_tokens_*` | Average prompt token count and generation token count per request, per model. |
+| **Request Prompt Length Distribution** | `vllm_llms_v1:request_prompt_tokens_bucket` | Heatmap showing the distribution of prompt token lengths across requests over time. |
+| **Request Generation Length Distribution** | `vllm_llms_v1:request_generation_tokens_bucket` | Heatmap showing the distribution of generation token lengths across requests over time. |
+| **Max Generation Tokens in Sequence Group** | `vllm_llms_v1:request_max_num_generation_tokens_sum`, `vllm_embeddings_v1:request_max_num_generation_tokens_sum` | Rate of the maximum output token limit configured per request. Indicates how far requests are allowed to generate. |
+| **Max Tokens per Request (P50 / P90 / P99)** | `vllm_llms_v1:request_params_max_tokens_bucket`, `vllm_embeddings_v1:request_params_max_tokens_bucket` | Distribution of the `max_tokens` parameter set by callers. A rising P99 means clients are requesting progressively longer generations, which impacts capacity planning. |
+| **Prefix Cache: Tokens Cached / sec** | `vllm_llms_v1:prompt_tokens_cached_total`, `vllm_llms_v1:prompt_tokens_total`, `vllm_embeddings_v1:*` | Rate of prompt tokens served from the prefix (radix) cache versus total prompt tokens. Compare the two series to derive an effective cache hit rate. |
+
+### 6. GPU Health
+
+Hardware-level GPU metrics sourced from NVIDIA's Triton DCGM exporter.
+
+![GPU utilization, memory, power, and energy consumption panels](/images/operator-manual/observability/gpu-health.png)
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **GPU Utilization % (per GPU)** | `nv_gpu_utilization` | Percentage of time the GPU SMs are active. Thresholds: green < 75 %, yellow 75–89 %, red ≥ 90 %. |
+| **GPU Memory Used vs Total (per GPU)** | `nv_gpu_memory_used_bytes`, `nv_gpu_memory_total_bytes` | Absolute GPU VRAM consumption compared to the total available capacity per device. |
+| **GPU Allocated Memory % (per GPU)** | `nv_gpu_memory_used_bytes / nv_gpu_memory_total_bytes` | Gauge showing VRAM pressure per device. Thresholds: green < 80 %, yellow 80–89 %, red ≥ 90 %. |
+| **GPU Power Usage vs Limit (per GPU)** | `nv_gpu_power_usage`, `nv_gpu_power_limit` | Current draw in watts compared to the configured TDP limit. Approaching the limit risks thermal throttling. |
+| **Cumulative Energy Consumption (per GPU)** | `nv_energy_consumption` | Total joules consumed since Triton started, per device. Useful for cost tracking and efficiency comparisons. |
+
+### 7. Host Resources
+
+Node-level metrics sourced from `node_exporter`.
+
+![CPU usage, RAM usage, and disk availability panels](/images/operator-manual/observability/host-resources.png)
+
+| Panel | Metric(s) | Description |
+|---|---|---|
+| **CPU Usage** | `node_cpu_seconds_total` | Percentage of CPU time spent in non-idle modes, averaged across all cores per environment. Thresholds: green < 70 %, yellow 70–89 %, red ≥ 90 %. |
+| **RAM Usage** | `node_memory_MemAvailable_bytes`, `node_memory_MemTotal_bytes` | Percentage of total memory in use (total minus `MemAvailable`) per instance. Thresholds: green < 70 %, yellow 70–89 %, red ≥ 90 %. |
+| **Disk Availability** | `node_filesystem_avail_bytes`, `node_filesystem_size_bytes` | Percentage of disk space still free per mount point. Thresholds warn at ≤ 20 % free and alert at ≤ 10 % free. Temporary and overlay filesystems are excluded. |
+
+## Complete Prometheus Metrics Reference
+
+### Triton (`nv_*`)
+
+| Metric | Type | Description |
+|---|---|---|
+| `nv_inference_request_success` | counter | Total successful inference requests |
+| `nv_inference_request_failure` | counter | Total failed inference requests, with `reason` label |
+| `nv_inference_pending_request_count` | gauge | Requests queued but not yet executing |
+| `nv_inference_count` | counter | Total number of individual inferences |
+| `nv_inference_exec_count` | counter | Total number of execution batches |
+| `nv_inference_request_duration_us` | counter | Cumulative end-to-end duration in microseconds |
+| `nv_inference_queue_duration_us` | counter | Cumulative queue wait time in microseconds |
+| `nv_inference_compute_input_duration_us` | counter | Cumulative input preprocessing time in microseconds |
+| `nv_inference_compute_infer_duration_us` | counter | Cumulative model compute time in microseconds |
+| `nv_inference_compute_output_duration_us` | counter | Cumulative output postprocessing time in microseconds |
+| `nv_inference_first_response_histogram_ms` | histogram | First-response latency histogram in milliseconds |
+| `nv_inference_queue_summary_us` | summary | Sliding-window queue latency quantiles in microseconds |
+| `nv_inference_compute_infer_summary_us` | summary | Sliding-window compute latency quantiles in microseconds |
+| `nv_gpu_utilization` | gauge | GPU SM utilisation (0–1) |
+| `nv_gpu_memory_used_bytes` | gauge | GPU VRAM currently used |
+| `nv_gpu_memory_total_bytes` | gauge | Total GPU VRAM capacity |
+| `nv_gpu_power_usage` | gauge | Current GPU power draw in watts |
+| `nv_gpu_power_limit` | gauge | Configured GPU TDP limit in watts |
+| `nv_energy_consumption` | counter | Cumulative GPU energy in joules since Triton start |
+
+### vLLM LLM backend (`vllm_llms_v1:*`)
+
+| Metric | Type | Description |
+|---|---|---|
+| `vllm_llms_v1:num_requests_running` | gauge | Requests currently executing |
+| `vllm_llms_v1:num_requests_waiting` | gauge | Requests waiting in the scheduler queue |
+| `vllm_llms_v1:kv_cache_usage_perc` | gauge | KV cache utilisation percentage (0–1) |
+| `vllm_llms_v1:prompt_tokens_total` | counter | Total prompt tokens processed |
+| `vllm_llms_v1:generation_tokens_total` | counter | Total generation tokens produced |
+| `vllm_llms_v1:prompt_tokens_cached_total` | counter | Prompt tokens served from the prefix cache |
+| `vllm_llms_v1:time_to_first_token_seconds_bucket` | histogram | TTFT latency histogram |
+| `vllm_llms_v1:time_per_output_token_seconds_bucket` | histogram | Inter-token latency histogram |
+| `vllm_llms_v1:e2e_request_latency_seconds_bucket` | histogram | End-to-end request latency histogram |
+| `vllm_llms_v1:request_prompt_tokens_*` | histogram | Prompt token count per request |
+| `vllm_llms_v1:request_generation_tokens_*` | histogram | Generation token count per request |
+| `vllm_llms_v1:request_queue_time_seconds_sum` | counter | Cumulative time requests spent in the vLLM queue |
+| `vllm_llms_v1:request_prefill_time_seconds_sum` | counter | Cumulative prefill phase time |
+| `vllm_llms_v1:request_decode_time_seconds_sum` | counter | Cumulative decode phase time |
+| `vllm_llms_v1:request_max_num_generation_tokens_sum` | counter | Cumulative max generation tokens limit across requests |
+| `vllm_llms_v1:request_params_max_tokens_bucket` | histogram | Distribution of `max_tokens` parameter values |
+| `vllm_llms_v1:num_preemptions_total` | counter | Total scheduler preemptions due to KV cache pressure |
+| `vllm_llms_v1:iteration_tokens_total_bucket` | histogram | Tokens processed per engine iteration (batch) |
+
+### vLLM Embedding backend (`vllm_embeddings_v1:*`)
+
+The embedding backend exposes the same metric names under the `vllm_embeddings_v1:` prefix.
+
+
+### Node Exporter (`node_*`)
+
+| Metric | Description |
+|---|---|
+| `node_cpu_seconds_total` | CPU time per mode (used to derive usage %) |
+| `node_memory_MemAvailable_bytes` | Available system memory |
+| `node_memory_MemTotal_bytes` | Total system memory |
+| `node_filesystem_avail_bytes` | Available disk space per mount |
+| `node_filesystem_size_bytes` | Total disk capacity per mount |

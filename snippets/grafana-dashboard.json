@@ -1,0 +1,1969 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "NVIDIA Triton Inference Server — throughput, latency, GPU health, memory and cache",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "refresh": "30s",
+    "schemaVersion": 38,
+    "tags": ["triton", "inference", "gpu", "nvidia", "llm"],
+    "time": { "from": "now-1h", "to": "now" },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Triton Inference Server",
+    "uid": "triton-inference-server",
+    "version": 1,
+    "templating": {
+      "list": [
+        {
+          "current": {},
+          "hide": 0,
+          "includeAll": false,
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "refresh": 1,
+          "type": "datasource",
+          "label": "Datasource"
+        },
+        {
+          "current": {},
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "definition": "label_values(nv_inference_request_success, environment)",
+          "hide": 0,
+          "includeAll": true,
+          "allValue": ".*",
+          "multi": true,
+          "name": "environment",
+          "query": {
+            "query": "label_values(nv_inference_request_success, environment)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 2,
+          "sort": 1,
+          "type": "query",
+          "label": "Environment"
+        },
+        {
+          "current": {},
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "definition": "label_values(nv_inference_request_success{environment=~\"$environment\"}, model)",
+          "hide": 0,
+          "includeAll": true,
+          "allValue": ".*",
+          "multi": true,
+          "name": "model",
+          "query": {
+            "query": "label_values(nv_inference_request_success{environment=~\"$environment\"}, model)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 2,
+          "sort": 1,
+          "type": "query",
+          "label": "Model"
+        },
+        {
+          "current": {},
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "definition": "label_values(nv_gpu_utilization{environment=~\"$environment\"}, gpu_uuid)",
+          "hide": 0,
+          "includeAll": true,
+          "allValue": ".*",
+          "multi": true,
+          "name": "gpu",
+          "query": {
+            "query": "label_values(nv_gpu_utilization{environment=~\"$environment\"}, gpu_uuid)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 2,
+          "sort": 1,
+          "type": "query",
+          "label": "GPU"
+        }
+      ]
+    },
+    "panels": [
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+        "id": 1,
+        "title": "Overview",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red",    "value": null },
+                { "color": "yellow", "value": 95   },
+                { "color": "green",  "value": 99   }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+        "id": 2,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "Request Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "(sum(rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / (sum(rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) + sum(rate(nv_inference_request_failure{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))) * 100) or vector(100)",
+            "instant": true,
+            "legendFormat": "Success Rate",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "blue", "value": null }
+              ]
+            },
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+        "id": 3,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "Requests / sec",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "instant": true,
+            "legendFormat": "Req/s",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "blue", "value": null }
+              ]
+            },
+            "unit": "short",
+            "decimals": 0
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+        "id": 4,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "LLM Concurrent Requests",
+        "description": "Active LLM requests currently running inside the vLLM scheduler.",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(vllm_llms_v1:num_requests_running{model=~\"$model\", environment=~\"$environment\"})",
+            "instant": true,
+            "legendFormat": "LLM Running",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "blue", "value": null }
+              ]
+            },
+            "unit": "short",
+            "decimals": 0
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+        "id": 6,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "Embedding Concurrent Requests",
+        "description": "Active embedding requests currently running inside the vLLM scheduler.",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(vllm_embeddings_v1:num_requests_running{model=~\"$model\", environment=~\"$environment\"})",
+            "instant": true,
+            "legendFormat": "Embed Running",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 10   },
+                { "color": "red",    "value": 50   }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+        "id": 5,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "Pending Requests (Queue Depth)",
+        "description": "Requests received but not yet executing. Sustained high values = capacity constrained.",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(nv_inference_pending_request_count{model=~\"$model\", environment=~\"$environment\"})",
+            "instant": true,
+            "legendFormat": "Pending",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+        "id": 10,
+        "title": "Throughput & Errors",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": false
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+        "id": 11,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Successful Requests / sec (per model)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": { "fixedColor": "red", "mode": "fixed" },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 15,
+              "showPoints": "never",
+              "spanNulls": false
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+        "id": 12,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Failed Requests / sec (per model)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_request_failure{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "custom": {
+              "drawStyle": "bars",
+              "fillOpacity": 80,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 14 },
+        "id": 13,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Failure Breakdown by Reason",
+        "description": "REJECTED=queue timeout, CANCELED=client cancel, BACKEND=model error, OTHER=uncategorized",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (reason) (rate(nv_inference_request_failure{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{reason}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 14 },
+        "id": 14,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Inference Count vs Execution Count",
+        "description": "Gap between the two lines indicates batching. Inference Count / Execution Count = avg batch size.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "Inference Count",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "Execution Count",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 14 },
+        "id": 15,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Pending Request Count (Queue Depth) over Time",
+        "description": "Requests waiting to be executed. Sustained growth = model cannot keep up with load.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (nv_inference_pending_request_count{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+        "id": 20,
+        "title": "Latency",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+        "id": 21,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Avg End-to-End Latency per Model (ms)",
+        "description": "Total request duration including queue wait and compute.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_request_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum by (model) (rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 25,
+              "showPoints": "never",
+              "spanNulls": true,
+              "stacking": { "mode": "normal", "group": "A" }
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 23 },
+        "id": 22,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Latency Waterfall (stacked avg ms)",
+        "description": "Stacked view of where time is spent. Dominant queue = capacity issue. Dominant compute = model is the bottleneck.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_queue_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum(rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "Queue Wait",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_compute_input_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum(rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "Compute Input",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_compute_infer_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum(rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "Compute (Model)",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum(rate(nv_inference_compute_output_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum(rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "Compute Output",
+            "refId": "D"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 31 },
+        "id": 23,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Avg Queue Wait Time per Model (ms)",
+        "description": "Time spent waiting in the scheduler queue before execution starts.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_queue_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum by (model) (rate(nv_inference_request_success{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 31 },
+        "id": 24,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Avg Model Compute Time per Model (ms)",
+        "description": "Time the model backend spends executing inference. Normalized per execution (batch).",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_compute_infer_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum by (model) (rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 31 },
+        "id": 25,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Avg Compute I/O Overhead per Model (ms)",
+        "description": "Time spent on input preprocessing and output postprocessing (outside of model execution).",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_compute_input_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum by (model) (rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "{{model}} — input",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(nv_inference_compute_output_duration_us{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / sum by (model) (rate(nv_inference_exec_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / 1000",
+            "legendFormat": "{{model}} — output",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+        "id": 53,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Triton Time to First Response — P50 / P90 / P99 (ms)",
+        "description": "Computed from nv_inference_first_response_histogram_ms. Measures end-to-end from Triton's perspective.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(nv_inference_first_response_histogram_ms_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(nv_inference_first_response_histogram_ms_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(nv_inference_first_response_histogram_ms_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "C"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+        "id": 54,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "vLLM Time to First Token — TTFT P50 / P90 / P99",
+        "description": "From vLLM backend. Covers both LLM (vllm_llms_v1:) and embedding (vllm_embeddings_v1:) models.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_llms_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_llms_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_llms_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P99",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_embeddings_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P50",
+            "refId": "D"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_embeddings_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P90",
+            "refId": "E"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_embeddings_v1:time_to_first_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P99",
+            "refId": "F"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 47 },
+        "id": 55,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Time Per Output Token — P50 / P90 / P99",
+        "description": "Time between consecutive generated tokens (inter-token latency). Only meaningful for LLM models, not embeddings.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_llms_v1:time_per_output_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_llms_v1:time_per_output_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_llms_v1:time_per_output_token_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "C"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 47 },
+        "id": 56,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "End-to-End Request Latency — P50 / P90 / P99",
+        "description": "Full request latency from vLLM backend. Covers both LLM and embedding models.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_llms_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_llms_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_llms_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P99",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_embeddings_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P50",
+            "refId": "D"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_embeddings_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P90",
+            "refId": "E"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_embeddings_v1:e2e_request_latency_seconds_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} P99",
+            "refId": "F"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 47 },
+        "id": 63,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Prefill & Decode Time",
+        "description": "Per-phase time inside vLLM: prefill processes the prompt, decode generates each output token.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_prefill_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — prefill",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_decode_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — decode",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:request_prefill_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — prefill",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:request_decode_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — decode",
+            "refId": "D"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "µs",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 55 },
+        "id": 58,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Triton Queue & Compute Latency Percentiles (µs)",
+        "description": "Pre-computed sliding window quantiles from Triton summary metrics. Queue wait and model compute time at P50/P99.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "nv_inference_queue_summary_us{model=~\"$model\", environment=~\"$environment\", quantile=\"0.5\"}",
+            "legendFormat": "{{model}} queue P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "nv_inference_queue_summary_us{model=~\"$model\", environment=~\"$environment\", quantile=\"0.99\"}",
+            "legendFormat": "{{model}} queue P99",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "nv_inference_compute_infer_summary_us{model=~\"$model\", environment=~\"$environment\", quantile=\"0.5\"}",
+            "legendFormat": "{{model}} compute P50",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "nv_inference_compute_infer_summary_us{model=~\"$model\", environment=~\"$environment\", quantile=\"0.99\"}",
+            "legendFormat": "{{model}} compute P99",
+            "refId": "D"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 63 },
+        "id": 80,
+        "title": "Capacity & Scheduler",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 64 },
+        "id": 59,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "vLLM Scheduler State (Running / Waiting)",
+        "description": "Number of requests in RUNNING and WAITING state inside the vLLM scheduler.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (vllm_llms_v1:num_requests_running{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}} — running (LLM)",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (vllm_llms_v1:num_requests_waiting{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}} — waiting (LLM)",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (vllm_embeddings_v1:num_requests_running{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}} — running (embed)",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (vllm_embeddings_v1:num_requests_waiting{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}} — waiting (embed)",
+            "refId": "D"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 0.7  },
+                { "color": "red",    "value": 0.9  }
+              ]
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 64 },
+        "id": 60,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "vLLM KV Cache Utilization",
+        "description": "Percentage of KV cache blocks in use. Approaching 100% causes request queuing or preemption.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (model) (vllm_llms_v1:kv_cache_usage_perc{model=~\"$model\", environment=~\"$environment\"})",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 72 },
+        "id": 62,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Request Queue Time (vLLM)",
+        "description": "Time each request spent waiting in vLLM's internal scheduler queue before execution begins.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_queue_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:request_queue_time_seconds_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 72 },
+        "id": 67,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Preemptions Rate",
+        "description": "Rate of scheduler preemptions. Each preemption evicts a running request from the KV cache due to memory pressure — a sustained rate here indicates the KV cache is too small for the current load.",
+        "type": "timeseries",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:num_preemptions_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} (LLM)",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:num_preemptions_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} (embed)",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 72 },
+        "id": 69,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Iteration Batch Size — P50 / P90 / P99 (tokens)",
+        "description": "Distribution of total tokens processed per engine step (prompt + generation). Low P50 relative to max batch size indicates the GPU is under-utilised; a high P99 suggests occasional very large batches.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_llms_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_llms_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_llms_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_embeddings_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "D"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_embeddings_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "E"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_embeddings_v1:iteration_tokens_total_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "F"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 80 },
+        "id": 90,
+        "title": "Workload Analysis",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 81 },
+        "id": 51,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Token Throughput (tokens/sec)",
+        "description": "Prompt tokens/sec = ingestion speed. Generation tokens/sec = output speed. Covers both LLM (vllm_llms_v1:) and embedding (vllm_embeddings_v1:) backends.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:prompt_tokens_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — prompt (LLM)",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:generation_tokens_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — generation",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:prompt_tokens_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — prompt (embed)",
+            "refId": "C"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 81 },
+        "id": 57,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Avg Tokens per Request",
+        "description": "Average prompt and generation token counts per request. Covers both LLM and embedding models.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_prompt_tokens_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / (sum by (model) (rate(vllm_llms_v1:request_prompt_tokens_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) > 0)",
+            "legendFormat": "{{model}} — prompt tokens",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_generation_tokens_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / (sum by (model) (rate(vllm_llms_v1:request_generation_tokens_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) > 0)",
+            "legendFormat": "{{model}} — generation tokens",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:request_prompt_tokens_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) / (sum by (model) (rate(vllm_embeddings_v1:request_prompt_tokens_count{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])) > 0)",
+            "legendFormat": "{{model}} — prompt tokens (embed)",
+            "refId": "C"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+              "scaleDistribution": { "type": "linear" }
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 89 },
+        "id": 65,
+        "options": {
+          "calculate": false,
+          "cellGap": 1,
+          "cellValues": { "unit": "none" },
+          "color": {
+            "exponent": 0.5,
+            "fill": "dark-orange",
+            "min": 0,
+            "mode": "scheme",
+            "reverse": false,
+            "scale": "exponential",
+            "scheme": "Spectral",
+            "steps": 64
+          },
+          "exemplars": { "color": "rgba(255,0,255,0.7)" },
+          "filterValues": { "le": 1e-9 },
+          "legend": { "show": true },
+          "rowsFrame": { "layout": "auto", "value": "Request count" },
+          "tooltip": { "mode": "single", "showColorScale": false, "yHistogram": true },
+          "yAxis": { "axisLabel": "Prompt Length (tokens)", "axisPlacement": "left", "reverse": false, "unit": "none" }
+        },
+        "pluginVersion": "11.2.0",
+        "title": "Request Prompt Length Distribution",
+        "description": "Heatmap of prompt token counts per request.",
+        "type": "heatmap",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (le) (increase(vllm_llms_v1:request_prompt_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "format": "heatmap",
+            "legendFormat": "{{le}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+              "scaleDistribution": { "type": "linear" }
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 89 },
+        "id": 66,
+        "options": {
+          "calculate": false,
+          "cellGap": 1,
+          "cellValues": { "unit": "none" },
+          "color": {
+            "exponent": 0.5,
+            "fill": "dark-orange",
+            "min": 0,
+            "mode": "scheme",
+            "reverse": false,
+            "scale": "exponential",
+            "scheme": "Spectral",
+            "steps": 64
+          },
+          "exemplars": { "color": "rgba(255,0,255,0.7)" },
+          "filterValues": { "le": 1e-9 },
+          "legend": { "show": true },
+          "rowsFrame": { "layout": "auto", "value": "Request count" },
+          "tooltip": { "mode": "single", "showColorScale": false, "yHistogram": true },
+          "yAxis": { "axisLabel": "Generation Length (tokens)", "axisPlacement": "left", "reverse": false, "unit": "none" }
+        },
+        "pluginVersion": "11.2.0",
+        "title": "Request Generation Length Distribution",
+        "description": "Heatmap of generation token counts per request.",
+        "type": "heatmap",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (le) (increase(vllm_llms_v1:request_generation_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "format": "heatmap",
+            "legendFormat": "{{le}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 97 },
+        "id": 64,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Max Generation Tokens in Sequence Group",
+        "description": "Rate of max output tokens configured per request. Indicates how far requests are allowed to generate.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:request_max_num_generation_tokens_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:request_max_num_generation_tokens_sum{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}}",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 97 },
+        "id": 70,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Max Tokens per Request — P50 / P90 / P99",
+        "description": "Distribution of the explicit max_tokens parameter set by callers. Useful for capacity planning — a rising P99 means clients are requesting longer generations.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_llms_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_llms_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_llms_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.50, sum by (le, model) (rate(vllm_embeddings_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P50",
+            "refId": "D"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.90, sum by (le, model) (rate(vllm_embeddings_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P90",
+            "refId": "E"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "histogram_quantile(0.99, sum by (le, model) (rate(vllm_embeddings_v1:request_params_max_tokens_bucket{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval])))",
+            "legendFormat": "{{model}} — P99",
+            "refId": "F"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 105 },
+        "id": 68,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Prefix Cache — Tokens Cached / sec",
+        "description": "Rate of prompt tokens served from the prefix cache (local + external). Compare against prompt_tokens_total to derive an effective cache hit rate in tokens.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:prompt_tokens_cached_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — cached (LLM)",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_llms_v1:prompt_tokens_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — total (LLM)",
+            "refId": "B"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:prompt_tokens_cached_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — cached (embed)",
+            "refId": "C"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "sum by (model) (rate(vllm_embeddings_v1:prompt_tokens_total{model=~\"$model\", environment=~\"$environment\"}[$__rate_interval]))",
+            "legendFormat": "{{model}} — total (embed)",
+            "refId": "D"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 113 },
+        "id": 30,
+        "title": "GPU Health",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 75   },
+                { "color": "red",    "value": 90   }
+              ]
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 114 },
+        "id": 31,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "GPU Utilization % (per GPU)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_utilization{gpu_uuid=~\"$gpu\", environment=~\"$environment\"}) * 100",
+            "legendFormat": "{{gpu_uuid}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 114 },
+        "id": 32,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "GPU Memory Used vs Total (per GPU)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_memory_used_bytes{gpu_uuid=~\"$gpu\", environment=~\"$environment\"})",
+            "legendFormat": "{{gpu_uuid}} — used",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_memory_total_bytes{gpu_uuid=~\"$gpu\", environment=~\"$environment\"})",
+            "legendFormat": "{{gpu_uuid}} — total",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 80   },
+                { "color": "red",    "value": 90   }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 122 },
+        "id": 33,
+        "options": {
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "orientation": "auto",
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "title": "GPU Allocated Memory % (per GPU)",
+        "type": "gauge",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_memory_used_bytes{gpu_uuid=~\"$gpu\", environment=~\"$environment\"}) / avg by (gpu_uuid) (nv_gpu_memory_total_bytes{gpu_uuid=~\"$gpu\", environment=~\"$environment\"}) * 100",
+            "instant": true,
+            "legendFormat": "{{gpu_uuid}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "watt",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 5,
+              "showPoints": "never"
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 122 },
+        "id": 34,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "GPU Power Usage vs Limit (per GPU)",
+        "description": "Approaching the power limit risks thermal throttling.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_power_usage{gpu_uuid=~\"$gpu\", environment=~\"$environment\"})",
+            "legendFormat": "{{gpu_uuid}} — usage",
+            "refId": "A"
+          },
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_gpu_power_limit{gpu_uuid=~\"$gpu\", environment=~\"$environment\"})",
+            "legendFormat": "{{gpu_uuid}} — limit",
+            "refId": "B"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [{ "color": "blue", "value": null }]
+            },
+            "unit": "joule"
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 122 },
+        "id": 35,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+          "textMode": "auto"
+        },
+        "title": "Cumulative Energy Consumption (per GPU)",
+        "description": "Total energy since Triton started. Useful for cost tracking.",
+        "type": "stat",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "avg by (gpu_uuid) (nv_energy_consumption{gpu_uuid=~\"$gpu\", environment=~\"$environment\"})",
+            "instant": true,
+            "legendFormat": "{{gpu_uuid}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "collapsed": false,
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 130 },
+        "id": 71,
+        "title": "Host Resources",
+        "type": "row"
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 70 },
+                { "color": "red",    "value": 90 }
+              ]
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 131 },
+        "id": 72,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "CPU Usage",
+        "description": "Percentage of CPU time spent in non-idle modes, averaged across all cores per instance.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "(1 - avg by (environment) (rate(node_cpu_seconds_total{mode=\"idle\", environment=~\"$environment\"}[$__rate_interval]))) * 100",
+            "legendFormat": "{{environment}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 70 },
+                { "color": "red",    "value": 90 }
+              ]
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 131 },
+        "id": 73,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "RAM Usage",
+        "description": "Percentage of total memory in use (total minus MemAvailable) per instance.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "(1 - (node_memory_MemAvailable_bytes{environment=~\"$environment\"} / node_memory_MemTotal_bytes{environment=~\"$environment\"})) * 100",
+            "legendFormat": "{{environment}}",
+            "refId": "A"
+          }
+        ]
+      },
+  
+      {
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green",  "value": null },
+                { "color": "yellow", "value": 20 },
+                { "color": "red",    "value": 10 }
+              ]
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "fillOpacity": 10,
+              "showPoints": "never",
+              "spanNulls": true
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 131 },
+        "id": 74,
+        "options": {
+          "tooltip": { "mode": "multi", "sort": "desc" },
+          "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+        },
+        "title": "Disk Availability",
+        "description": "Percentage of disk space still available per mount point and instance. Thresholds warn at 20% free and alert at 10% free.",
+        "type": "timeseries",
+        "targets": [
+          {
+            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "expr": "(node_filesystem_avail_bytes{environment=~\"$environment\", fstype!~\"tmpfs|overlay|squashfs|fuse.lxcfs\"} / node_filesystem_size_bytes{environment=~\"$environment\", fstype!~\"tmpfs|overlay|squashfs|fuse.lxcfs\"}) * 100",
+            "legendFormat": "{{environment}} — {{mountpoint}}",
+            "refId": "A"
+          }
+        ]
+      }
+  
+    ]
+  }
+  

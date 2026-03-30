@@ -22,7 +22,7 @@ For added granularity, the specific endpoints used are:
 
 ## Observability Configuration
 
-All observability settings live under the `observability` key in your values file. Below is the full reference with every available flag.
+All observability settings live under the `observability` key in your configuration file. Below is the full reference with every available flag.
 
 ```yaml
 observability:
@@ -80,7 +80,7 @@ observability:
 
 ## Sending Metrics to an External Destination
 
-By default, the monitoring stack collects metrics internally. To forward metrics to an external receiver such as your own Grafana Cloud stack, a self-hosted Prometheus, or any other compatible endpoint, use `k8s-monitoring.extraDestinations` in your values file.
+By default, the monitoring stack collects metrics internally. To forward metrics to an external receiver such as your own Grafana Cloud stack, a self-hosted Prometheus, or any other compatible endpoint, use `k8s-monitoring.extraDestinations` in your configuration file.
 
 Each entry under `extraDestinations` is a named destination. You can add multiple destinations by adding more named entries:
 

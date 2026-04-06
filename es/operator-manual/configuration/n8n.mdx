@@ -87,6 +87,34 @@ por lo que no se requiere configuración adicional específica para n8n.
 
 Si tu organización usa un proxy, configúralo siguiendo la [guía de configuración de proxy](/es/operator-manual/configuration/network/proxy).
 
+### Solución de Problemas
+
+#### DNS
+
+Si experimentas problemas de resolución DNS con n8n (por ejemplo, búsquedas lentas o fallidas para servicios internos), puedes necesitar ajustar la configuración `dnsConfig.options.ndots`.
+Para aplicar configuraciones DNS personalizadas, añade lo siguiente a tu configuración:
+
+```yaml
+n8n:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1" # El valor por defecto es 5
+```
+
+Después de hacer cambios, ejecuta `sudo zylon-cli sync` para aplicarlos.
+
+#### Rechazo de Certificados
+
+Si tienes un certificado autofirmado, n8n podría rechazarlo. Para evitar la verificación TLS en llamadas internas puedes configurar el siguiente flag:
+
+```yaml
+n8n:
+  tlsRejectUnauthorized: 0  # El valor por defecto es 1
+```
+Después de hacer cambios, ejecuta `sudo zylon-cli sync` para aplicarlos.
+
+
 ## Gestión de  Backups
 
 n8n utiliza PostgreSQL como base de datos, lo que significa que toda la información de n8n se incluye automáticamente en los backups estándar de base de datos de Zylon. Para más información sobre la gestión de backups, consulta la [documentación de backups de Zylon](/es/operator-manual/operations/backup).

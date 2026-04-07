@@ -73,10 +73,11 @@ sudo apt install cryptsetup
 
 <Steps>
   <Step title="Identify the target disk or partition">
-    List available block devices to find your spare disk (e.g. `/dev/sdb`):
+    List available block devices to find your spare disk (e.g. `/dev/sdb`).
+    The `-e 7` flag excludes loop devices (snap packages) to reduce noise:
 
     ```bash
-    lsblk
+    lsblk -d -e 7
     ```
   </Step>
 
@@ -181,7 +182,7 @@ Save it as `encrypt-zylon.sh` and run with `sudo bash encrypt-zylon.sh`.
 
 ```bash
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
 
 log()   { echo "[INFO]  $*"; }
 warn()  { echo "[WARN]  $*"; }
@@ -191,8 +192,24 @@ abort() { echo "[ERROR] $*" >&2; exit 1; }
 command -v cryptsetup >/dev/null || abort "cryptsetup not found. Run: apt install cryptsetup"
 command -v rsync      >/dev/null || abort "rsync not found. Run: apt install rsync"
 
-lsblk
+lsblk -d -e 7
 echo
+
+ROOT_DISK=$(lsblk -rno PKNAME,MOUNTPOINT 2>/dev/null | awk '$2=="/" {print $1}')
+if [ -n "$ROOT_DISK" ]; then
+    warn "Root disk (do NOT use this): /dev/$ROOT_DISK"
+fi
+
+log "Unpartitioned disks (candidates for encryption):"
+lsblk -d -e 7 -rno NAME | while read -r name; do
+    part_count=$(lsblk "/dev/$name" -rno NAME | grep -c ".")
+    if [ "$part_count" -eq 1 ] && [ "$name" != "$ROOT_DISK" ]; then
+        size=$(lsblk -d "/dev/$name" -rno SIZE)
+        echo "    /dev/$name  $size"
+    fi
+done
+echo
+
 read -rp "Enter the target disk device (e.g. /dev/sdb): " DEVICE
 
 [ -b "$DEVICE" ] || abort "$DEVICE is not a valid block device."
@@ -206,6 +223,9 @@ MOUNT_TMP="/mnt/zylon-data"
 DATA_DIR="/var/zylon"
 BACKUP_DIR="/var/zylon.bak"
 
+log "Stopping Zylon... (if the script is interrupted from this point on, start it again manually with: sudo k0s start)"
+k0s stop || true
+
 log "Formatting $DEVICE with LUKS..."
 cryptsetup luksFormat "$DEVICE"
 
@@ -214,9 +234,6 @@ cryptsetup open "$DEVICE" "$MAPPER_NAME"
 
 log "Creating ext4 filesystem..."
 mkfs.ext4 "/dev/mapper/$MAPPER_NAME"
-
-log "Stopping Zylon..."
-k0s stop
 
 mkdir -p "$MOUNT_TMP"
 mount "/dev/mapper/$MAPPER_NAME" "$MOUNT_TMP"
@@ -243,6 +260,9 @@ k0s start
 
 echo
 log "Done. Zylon data is now on an encrypted partition."
+log "Verifying..."
+lsblk -o NAME,FSTYPE,MOUNTPOINT | grep -E "crypto|zylon"
+echo
 log "Backup at $BACKUP_DIR — remove it once everything looks good:"
 echo "  sudo rm -rf $BACKUP_DIR"
 ```

@@ -250,10 +250,20 @@ mount "/dev/mapper/$MAPPER_NAME" "$DATA_DIR"
 UUID=$(cryptsetup luksDump "$DEVICE" | awk '/^UUID:/ { print $2 }')
 
 log "Updating /etc/crypttab..."
-echo "$MAPPER_NAME UUID=$UUID none luks" >> /etc/crypttab
+CRYPTTAB_LINE="$MAPPER_NAME UUID=$UUID none luks"
+if ! grep -Fqx "$CRYPTTAB_LINE" /etc/crypttab; then
+  echo "$CRYPTTAB_LINE" >> /etc/crypttab
+else
+  log "/etc/crypttab already contains the required entry; skipping."
+fi
 
 log "Updating /etc/fstab..."
-echo "/dev/mapper/$MAPPER_NAME $DATA_DIR ext4 defaults 0 2" >> /etc/fstab
+FSTAB_LINE="/dev/mapper/$MAPPER_NAME $DATA_DIR ext4 defaults 0 2"
+if ! grep -Fqx "$FSTAB_LINE" /etc/fstab; then
+  echo "$FSTAB_LINE" >> /etc/fstab
+else
+  log "/etc/fstab already contains the required entry; skipping."
+fi
 
 log "Starting Zylon..."
 k0s start

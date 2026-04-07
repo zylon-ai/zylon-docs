@@ -741,6 +741,14 @@
                   "es/operator-manual/troubleshooting/exporting-logs",
                   "es/operator-manual/troubleshooting/nvidia-drivers"
                 ]
+              },
+              {
+                "group": "Seguridad",
+                "pages": [
+                  "es/operator-manual/instance-hardening/index",
+                  "es/operator-manual/instance-hardening/airgap-your-server",
+                  "es/operator-manual/instance-hardening/disk-encryption"
+                ]
               }
             ]
           },

@@ -1,0 +1,128 @@
+---
+title: Aislar el servidor de la red
+---
+
+<Note>
+    Esta guía asume que instalaste Zylon
+    usando Ubuntu 22.04 o Ubuntu 24.04 como sistema operativo base.
+    Para otras configuraciones, debes instalar UFW (Uncomplicated Firewall)
+    y adaptar los comandos según corresponda.
+</Note>
+
+Si por requisitos de seguridad o cumplimiento normativo tu servidor Zylon debe operar
+en un entorno aislado de la red (sin acceso a internet), puedes hacerlo
+configurando UFW (Uncomplicated Firewall), que viene preinstalado en tu sistema operativo.
+
+Casi todo el tráfico de red saliente puede bloquearse y la mayoría de las funciones de Zylon
+continuarán funcionando con normalidad.
+
+Ejemplos de funciones que *no* estarán disponibles sin acceso a internet (la lista puede crecer en el futuro):
+* Búsqueda web con IA
+* Conexiones MCP
+* Integraciones de bases de datos que requieren acceso a internet (por ejemplo: Google BigQuery, Snowflake, etc.)
+
+Activar el modo aislado implica que a partir de ese momento el proceso de actualización debe
+adaptarse mediante dos enfoques:
+* Deshabilitar temporalmente el firewall, ejecutar la actualización y volver a habilitarlo
+* Pasar a un procedimiento de instalación completamente aislado tal como se describe [aquí](TODO: PABLO ENLAZAR ESTO)
+
+### Configuración de UFW
+
+¡Después de cualquier cambio no olvides habilitar el firewall!
+
+```bash
+sudo ufw enable --force
+```
+
+#### Reglas genéricas
+
+Estas son las reglas más restrictivas que deben aplicarse a tu servidor Zylon.
+Por lo general, no necesitarás modificarlas, a menos que tengas requisitos de
+red específicos.
+
+```bash
+
+# Permitir SSH (entrada y salida), ¡de lo contrario podrías bloquearte el acceso!
+sudo ufw allow ssh
+sudo ufw allow out ssh
+
+# Establecer políticas por defecto: permitir tráfico entrante, denegar tráfico saliente
+# Necesario para que el workspace siga funcionando mientras se bloquea
+# el acceso a internet
+sudo ufw default allow incoming
+sudo ufw default deny outgoing
+
+# Permitir tráfico de loopback, para k8s y servicios locales
+sudo ufw allow in on lo
+sudo ufw allow out on lo
+
+# Comunicación interna de k8s
+sudo ufw allow in from 10.0.0.0/8
+sudo ufw allow out to 10.0.0.0/8
+```
+
+Además, se recomienda encarecidamente permitir la resolución DNS; de lo contrario,
+las funciones opcionales listadas a continuación no funcionarán correctamente.
+
+El siguiente script añadirá las reglas necesarias desde
+`/etc/resolv.conf`:
+```bash
+for ns in $(awk '/^nameserver/ {print $2}' /etc/resolv.conf); do
+    sudo ufw allow out to $ns port 53
+done
+```
+
+#### Reglas para Google Single Sign-On (SSO)
+Si usas Google SSO para la autenticación, debes permitir
+el tráfico saliente hacia los servidores OAuth de Google.
+
+El siguiente script obtendrá la lista actual de rangos IP de Google
+y añadirá las reglas UFW necesarias:
+```bash
+google_rules=$(
+curl -s https://www.gstatic.com/ipranges/goog.json \
+| jq -r '.prefixes[]
+         | select(.ipv4Prefix)
+         | "sudo ufw allow from \(.ipv4Prefix) to any port 443"'
+)
+# Y las aplica
+eval "$google_rules"
+```
+
+#### Reglas para Microsoft Entra
+Si usas Microsoft Entra (Azure AD) para la autenticación, debes permitir
+el tráfico saliente hacia los servidores OAuth de Microsoft.
+
+Los pasos para permitir Microsoft Entra son los siguientes:
+
+* Descarga la lista actual de rangos IP de Microsoft desde [aquí](https://www.microsoft.com/en-us/download/details.aspx?id=56519)
+* Copia el archivo `ServiceTags_Public_YYYYMMDD.json` a tu servidor
+* Ejecuta el siguiente script para generar y aplicar las reglas UFW necesarias:
+
+```bash
+# Reemplaza ServiceTags_Public_YYYYMMDD.json con el nombre real del archivo
+microsoft_rules=$(
+jq -r '[.values
+| map(select(.id=="AzureActiveDirectory"
+or .id=="AzureActiveDirectory.ServiceEndpoint"
+or .id=="AzureActiveDirectoryDomainServices"))
+| .[].properties.addressPrefixes]
+| flatten[]
+| "sudo ufw allow from \(. ) to any port 443"' ServiceTags_Public_20260119.json
+)
+# Y las aplica
+eval "$microsoft_rules"
+```
+
+#### Reglas genéricas para otros servicios
+
+Si usas otros servicios que requieren acceso a internet, como servidores MCP,
+también deberás permitir el tráfico saliente hacia esos servicios mediante sus direcciones IP.
+
+Para obtener las direcciones IP, puedes usar los comandos `nslookup` o `dig`, por ejemplo:
+
+```bash
+nslookup mcp.tu-servidor-mcp.com
+# o
+dig mcp.tu-servidor-mcp.com +short
+```

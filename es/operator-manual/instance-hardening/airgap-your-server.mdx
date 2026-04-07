@@ -83,7 +83,7 @@ google_rules=$(
 curl -s https://www.gstatic.com/ipranges/goog.json \
 | jq -r '.prefixes[]
          | select(.ipv4Prefix)
-         | "sudo ufw allow from \(.ipv4Prefix) to any port 443"'
+         | "sudo ufw allow out to \(.ipv4Prefix) port 443"'
 )
 # Y las aplica
 eval "$google_rules"
@@ -108,7 +108,7 @@ or .id=="AzureActiveDirectory.ServiceEndpoint"
 or .id=="AzureActiveDirectoryDomainServices"))
 | .[].properties.addressPrefixes]
 | flatten[]
-| "sudo ufw allow from \(. ) to any port 443"' ServiceTags_Public_20260119.json
+| "sudo ufw allow out to \(.) port 443"' ServiceTags_Public_20260119.json
 )
 # Y las aplica
 eval "$microsoft_rules"

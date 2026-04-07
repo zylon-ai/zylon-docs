@@ -1,0 +1,253 @@
+---
+title: Disk Encryption
+description: Encrypt your Zylon server's disk to protect data at rest on Ubuntu 24.04
+---
+
+<Note>
+  This guide is written for Ubuntu 24.04. Other operating systems and distributions
+  may require different tools or steps — adapt accordingly.
+</Note>
+
+Disk encryption ensures that data stored on your server is unreadable without the
+correct passphrase, protecting it against physical theft or unauthorized hardware access.
+
+Choose the approach that matches your situation:
+
+- **Clean machine** — no OS installed yet. Full-disk encryption is set up during Ubuntu installation.
+- **Zylon already installed** — encrypt a separate data partition without reinstalling.
+
+---
+
+## Option 1: Clean Machine — Full-Disk Encryption During Installation
+
+This is the recommended approach. Ubuntu's installer can encrypt the entire disk
+using LUKS (Linux Unified Key Setup) with a single passphrase.
+
+<Steps>
+  <Step title="Boot from Ubuntu 24.04 installer">
+    Download the Ubuntu 24.04 Server ISO and boot your machine from it.
+  </Step>
+
+  <Step title="Proceed through installer until storage configuration">
+    At the **Storage configuration** screen, select **Custom storage layout**
+    and then choose **Use entire disk** option.
+  </Step>
+
+  <Step title="Enable encryption">
+    Check **Encrypt the LVM group with LUKS**. You will be prompted to set a passphrase.
+
+    Choose a strong passphrase and store it securely — **losing it means losing access to all data**.
+  </Step>
+
+  <Step title="Complete installation">
+    Finish the installer normally. On every boot, you will be prompted to enter
+    the passphrase before the system starts.
+  </Step>
+
+  <Step title="Install Zylon">
+    Once Ubuntu is running, follow the standard [Zylon installation guide](/en/operator-manual/installation/index).
+  </Step>
+</Steps>
+
+---
+
+## Option 2: Zylon Already Installed — Encrypt a Data Partition
+
+If Zylon is already running, a full reinstall is disruptive. Instead, you can
+create an encrypted partition for Zylon's data directory (`/var/zylon`)
+using LUKS and move the data into it.
+
+<Warning>
+  This process moves live application data. **Take a full backup before proceeding.**
+  See the [Backup guide](/en/operator-manual/operations/backup).
+</Warning>
+
+### Prerequisites
+
+- A spare disk or unpartitioned space available on the server.
+- `cryptsetup` installed:
+
+```bash
+sudo apt install cryptsetup
+```
+
+<Steps>
+  <Step title="Identify the target disk or partition">
+    List available block devices to find your spare disk (e.g. `/dev/sdb`):
+
+    ```bash
+    lsblk
+    ```
+  </Step>
+
+  <Step title="Create and format the LUKS container">
+    Replace `/dev/sdb` with your actual device. This will **erase all data on it**.
+
+    ```bash
+    sudo cryptsetup luksFormat /dev/sdb
+    ```
+
+    You will be prompted to confirm (`YES`) and set a passphrase.
+  </Step>
+
+  <Step title="Open the encrypted container">
+    ```bash
+    sudo cryptsetup open /dev/sdb zylon-data
+    ```
+
+    This maps the container to `/dev/mapper/zylon-data`.
+  </Step>
+
+  <Step title="Create a filesystem on the mapped device">
+    ```bash
+    sudo mkfs.ext4 /dev/mapper/zylon-data
+    ```
+  </Step>
+
+  <Step title="Stop Zylon before migrating data">
+    ```bash
+    sudo k0s stop
+    ```
+  </Step>
+
+  <Step title="Mount the encrypted partition and migrate data">
+    ```bash
+    sudo mount /dev/mapper/zylon-data /mnt/zylon-data
+    sudo rsync -aAX /var/zylon/ /mnt/zylon-data/
+    ```
+
+    Verify the copy completed successfully before continuing.
+  </Step>
+
+  <Step title="Replace the original data directory with the encrypted mount">
+    ```bash
+    sudo mv /var/zylon /var/zylon.bak
+    sudo mkdir /var/zylon
+    sudo umount /mnt/zylon-data
+    sudo mount /dev/mapper/zylon-data /var/zylon
+    ```
+  </Step>
+
+  <Step title="Configure automatic mounting at boot">
+    Add the LUKS device to `/etc/crypttab`:
+
+    ```bash
+    # Get the UUID of the LUKS device
+    sudo cryptsetup luksDump /dev/sdb | grep UUID
+    ```
+
+    Append a line to `/etc/crypttab` (replace `YOUR_UUID` with the value above):
+
+    ```
+    zylon-data UUID=YOUR_UUID none luks
+    ```
+
+    Then add the mount to `/etc/fstab`:
+
+    ```
+    /dev/mapper/zylon-data /var/zylon ext4 defaults 0 2
+    ```
+
+    <Note>
+      Using `none` as the key file means the passphrase will be prompted at every boot.
+      For headless servers, see the Ubuntu documentation on remote LUKS unlocking.
+    </Note>
+  </Step>
+
+  <Step title="Start Zylon and verify">
+    ```bash
+    sudo k0s start
+    ```
+
+    Confirm everything is working, then remove the backup:
+
+    ```bash
+    sudo rm -rf /var/zylon.bak
+    ```
+  </Step>
+</Steps>
+
+### Automated script (alternative)
+
+The script below performs all the steps above interactively. It will ask for
+the target disk and the LUKS passphrase, then handle the rest.
+
+<Warning>
+  Review the script before running it. It will **erase the target disk** and
+  stop Zylon during the migration.
+</Warning>
+
+Save it as `encrypt-zylon.sh` and run with `sudo bash encrypt-zylon.sh`.
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+log()   { echo "[INFO]  $*"; }
+warn()  { echo "[WARN]  $*"; }
+abort() { echo "[ERROR] $*" >&2; exit 1; }
+
+[ "$(id -u)" -eq 0 ] || abort "Run this script with sudo: sudo bash $0"
+command -v cryptsetup >/dev/null || abort "cryptsetup not found. Run: apt install cryptsetup"
+command -v rsync      >/dev/null || abort "rsync not found. Run: apt install rsync"
+
+lsblk
+echo
+read -rp "Enter the target disk device (e.g. /dev/sdb): " DEVICE
+
+[ -b "$DEVICE" ] || abort "$DEVICE is not a valid block device."
+
+warn "ALL DATA ON $DEVICE WILL BE ERASED. This cannot be undone."
+read -rp "Type YES to confirm: " CONFIRM
+[ "$CONFIRM" = "YES" ] || abort "Aborted."
+
+MAPPER_NAME="zylon-data"
+MOUNT_TMP="/mnt/zylon-data"
+DATA_DIR="/var/zylon"
+BACKUP_DIR="/var/zylon.bak"
+
+log "Formatting $DEVICE with LUKS..."
+cryptsetup luksFormat "$DEVICE"
+
+log "Opening encrypted container..."
+cryptsetup open "$DEVICE" "$MAPPER_NAME"
+
+log "Creating ext4 filesystem..."
+mkfs.ext4 "/dev/mapper/$MAPPER_NAME"
+
+log "Stopping Zylon..."
+k0s stop
+
+mkdir -p "$MOUNT_TMP"
+mount "/dev/mapper/$MAPPER_NAME" "$MOUNT_TMP"
+
+log "Copying data from $DATA_DIR to encrypted partition (this may take a while)..."
+rsync -aAX "$DATA_DIR/" "$MOUNT_TMP/"
+
+log "Swapping data directory..."
+mv "$DATA_DIR" "$BACKUP_DIR"
+mkdir "$DATA_DIR"
+umount "$MOUNT_TMP"
+mount "/dev/mapper/$MAPPER_NAME" "$DATA_DIR"
+
+UUID=$(cryptsetup luksDump "$DEVICE" | awk '/^UUID:/ { print $2 }')
+
+log "Updating /etc/crypttab..."
+echo "$MAPPER_NAME UUID=$UUID none luks" >> /etc/crypttab
+
+log "Updating /etc/fstab..."
+echo "/dev/mapper/$MAPPER_NAME $DATA_DIR ext4 defaults 0 2" >> /etc/fstab
+
+log "Starting Zylon..."
+k0s start
+
+echo
+log "Done. Zylon data is now on an encrypted partition."
+log "Backup at $BACKUP_DIR — remove it once everything looks good:"
+echo "  sudo rm -rf $BACKUP_DIR"
+```
+
+<Note>
+  The passphrase will be prompted at every boot. For headless servers, see
+  the Ubuntu documentation on remote LUKS unlocking.
+</Note>

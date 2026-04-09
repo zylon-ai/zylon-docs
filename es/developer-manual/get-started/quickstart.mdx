@@ -149,15 +149,15 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
     curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "x-org: {org_slug}" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "type": "Document",
-        "source": "User",
-        "name": "Q1 Support Summary",
-        "props": {
-          "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
-        }
-      }'
+      -F 'type=Document' \
+      -F 'source=User' \
+      -F 'name=Q1 Support Summary' \
+      -F 'description=Weekly summary notes.' \
+      -F 'config={
+        "content_type":"text/plain",
+        "file_name":"q1-support-summary.txt"
+      };type=application/json' \
+      -F 'fileData=@./q1-support-summary.txt;type=text/plain'
     ```
 
     Ejemplo de respuesta:
@@ -168,7 +168,9 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
       "type": "Document",
-      "ingest_status": "NotApplicable"
+      "state": "Ready",
+      "ingest_status": "Done",
+      "has_content": true
     }
     ```
   </Step>

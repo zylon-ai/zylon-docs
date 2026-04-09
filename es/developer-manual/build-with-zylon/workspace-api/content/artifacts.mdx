@@ -29,16 +29,13 @@ Los documentos contienen contenido, los enlaces referencian artefactos existente
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "InlineText",
-    "source": "User",
-    "name": "Q1 Support Summary",
-    "description": "Weekly summary notes.",
-    "props": {
-      "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
-    }
-  }'
+  -F 'type=Document' \
+  -F 'name=Q1 Support Summary' \
+  -F 'props={
+    "content_type":"text/plain",
+    "file_name":"q1-support-summary.txt"
+  };type=application/json' \
+  -F 'fileData=@./q1-support-summary.txt;type=text/plain'
 ```
 
 {/* <!-- RESTRUCTURED --> */}
@@ -48,12 +45,15 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "id": "artifact_doc_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support Summary",
-  "type": "InlineText",
+  "type": "Document",
   "source": "User",
-  "state": "Published",
-  "ingest_status": "NotApplicable",
+  "state": "Ready",
+  "ingest_status": "Done",
+  "has_content": true,
   "props": {
-    "content": "Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases."
+    "file_name": "q1-support-summary.txt",
+    "content_type": "text/plain",
+    "content_length": 79
   },
   "created_at": "2026-02-08T14:30:12Z",
   "updated_at": "2026-02-08T14:31:02Z"

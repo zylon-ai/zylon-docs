@@ -227,8 +227,13 @@ k0s stop || true
 log "Formatting $DEVICE with LUKS..."
 cryptsetup luksFormat "$DEVICE"
 
+log "Verifying LUKS formatting..."
+cryptsetup isLuks "$DEVICE" || abort "LUKS formatting failed — $DEVICE is not a valid LUKS container. Aborting before any data is moved."
+
 log "Opening encrypted container..."
 cryptsetup open "$DEVICE" "$MAPPER_NAME"
+
+[ -b "/dev/mapper/$MAPPER_NAME" ] || abort "Failed to open LUKS container — mapper device not found."
 
 log "Creating ext4 filesystem..."
 mkfs.ext4 "/dev/mapper/$MAPPER_NAME"

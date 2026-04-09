@@ -376,6 +376,14 @@
                   "en/operator-manual/troubleshooting/nvidia-drivers",
                   "en/operator-manual/troubleshooting/ai"
                 ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "en/operator-manual/instance-hardening/index",
+                  "en/operator-manual/instance-hardening/airgap-your-server",
+                  "en/operator-manual/instance-hardening/disk-encryption"
+                ]
               }
             ]
           },
@@ -732,6 +740,14 @@
                   "es/operator-manual/troubleshooting/ai",
                   "es/operator-manual/troubleshooting/exporting-logs",
                   "es/operator-manual/troubleshooting/nvidia-drivers"
+                ]
+              },
+              {
+                "group": "Seguridad",
+                "pages": [
+                  "es/operator-manual/instance-hardening/index",
+                  "es/operator-manual/instance-hardening/airgap-your-server",
+                  "es/operator-manual/instance-hardening/disk-encryption"
                 ]
               }
             ]

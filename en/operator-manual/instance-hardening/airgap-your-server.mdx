@@ -1,0 +1,129 @@
+---
+title: Airgap Your Server
+---
+
+<Note>
+    This guide assumes you installed Zylon
+    using either Ubuntu 22.04 or Ubuntu 24.04 as the base OS.
+    For other setups, you must install UFW (Uncomplicated Firewall)
+    and adapt the commands accordingly.
+</Note>
+
+If due to security or compliance requirements your Zylon server must operate
+in an airgapped environment (no internet access), you can do so by
+configuring UFW (Uncomplicated Firewall) that comes preinstalled
+in your OS.
+
+Almost all outgoing network traffic can be blocked and most Zylon features will
+continue to work as usual.
+
+Examples of features that *won't* be available without internet access are (list might grow in the future):
+* AI Web search
+* MCP connections
+* Database integrations that require internet access (e.g.: Google BigQuery, Snowflake, etc)
+
+Enabling airgap mode implies from this point onwards the update process needs to
+be adapted via two approaches:
+* Temporarily disable the firewall, run the update, re-enable the firewall
+* Move to a completely airgap install procedure as described [here](/en/operator-manual/installation/airgap)
+
+### Configuring UFW
+
+After any change don't forget to enable the firewall!
+
+```bash
+sudo ufw enable --force
+```
+
+#### Generic rules
+
+These are the most restrictive rules that should be applied to your Zylon server.
+Generally, you shouldn't need to modify them, unless you have specific
+networking requirements.
+
+```bash
+
+# Allow SSH (inbound & outbound), otherwise you may lock yourself out!
+sudo ufw allow ssh
+sudo ufw allow out ssh
+
+# Set default policies, allow incoming traffic, deny outgoing
+# Required so the workspace remains functional while blocking
+# internet access
+sudo ufw default allow incoming
+sudo ufw default deny outgoing
+
+# Allow loopback traffic, for k8s and local services
+sudo ufw allow in on lo
+sudo ufw allow out on lo
+
+# k8s internal communication
+sudo ufw allow in from 10.0.0.0/8
+sudo ufw allow out to 10.0.0.0/8
+```
+
+Additionally, it's highly recommended to allow DNS resolution through UFW; otherwise,
+the optional features listed below won't work properly.
+
+Running the following bash script will add the necessary rules from
+`/etc/resolv.conf`:
+```bash
+for ns in $(awk '/^nameserver/ {print $2}' /etc/resolv.conf); do
+    sudo ufw allow out to $ns port 53
+done
+```
+
+#### Google Single Sign-On (SSO) rules
+If you are using Google SSO for authentication, you need to allow
+outgoing traffic to Google's OAuth servers.
+
+The following script will fetch the current list of Google IP ranges
+and add the necessary UFW rules:
+```bash
+google_rules=$(
+curl -s https://www.gstatic.com/ipranges/goog.json \
+| jq -r '.prefixes[]
+         | select(.ipv4Prefix)
+         | "sudo ufw allow out to \(.ipv4Prefix) port 443"'
+)
+# And apply them
+eval "$google_rules"
+```
+
+#### Microsoft Entra rules
+If you are using Microsoft Entra (Azure AD) for authentication, you need to allow
+outgoing traffic to Microsoft's OAuth servers.
+
+The steps to allow Microsoft Entra are as follows:
+
+* Download the current list of Microsoft IP ranges from [here](https://www.microsoft.com/en-us/download/details.aspx?id=56519)
+* Copy the file `ServiceTags_Public_YYYYMMDD.json` to your server
+* Run the following script to generate and apply the necessary UFW rules:
+
+```bash
+# Replace ServiceTags_Public_YYYYMMDD.json with the actual filename
+microsoft_rules=$(
+jq -r '[.values
+| map(select(.id=="AzureActiveDirectory"
+or .id=="AzureActiveDirectory.ServiceEndpoint"
+or .id=="AzureActiveDirectoryDomainServices"))
+| .[].properties.addressPrefixes]
+| flatten[]
+| "sudo ufw allow out to \(.) port 443"' ServiceTags_Public_20260119.json
+)
+# And apply them
+eval "$microsoft_rules"
+```
+
+#### Generic rules for other services:
+
+If you are using other services that require internet access, like MCP servers,
+you will need to allow outgoing traffic to those services as well by their IP addresses.
+
+To figure out the IP addresses, you can use the `nslookup` or `dig` commands, for example:
+
+```bash
+nslookup mcp.your-mcp-server.com
+# or
+dig mcp.your-mcp-server.com +short
+```

@@ -1,0 +1,26 @@
+---
+title: "Seguridad del servidor"
+description: "Guías para proteger y reforzar la seguridad de tu servidor Zylon contra accesos no autorizados y exposición de red"
+---
+
+El endurecimiento de la instancia abarca las prácticas y configuraciones que reducen la superficie de ataque de tu despliegue de Zylon.
+Aplica estas guías tras la instalación para fortalecer la postura de seguridad de tu servidor.
+
+## Temas
+
+<CardGroup cols={2}>
+  <Card
+    title="Aislar el servidor de la red"
+    icon="shield"
+    href="/es/operator-manual/instance-hardening/airgap-your-server"
+  >
+    Restringe el tráfico de red entrante y saliente mediante reglas de firewall UFW para aislar tu instancia de Zylon.
+  </Card>
+  <Card
+    title="Cifrado de disco"
+    icon="lock"
+    href="/es/operator-manual/instance-hardening/disk-encryption"
+  >
+    Cifra el disco de tu servidor con LUKS para proteger los datos en reposo, tanto en máquinas nuevas como en instalaciones existentes de Zylon.
+  </Card>
+</CardGroup>

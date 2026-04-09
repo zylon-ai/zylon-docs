@@ -1,0 +1,26 @@
+---
+title: "Security overview"
+description: "Guides for securing and hardening your Zylon server against unauthorized access and network exposure"
+---
+
+Instance hardening covers the practices and configurations that reduce the attack surface of your Zylon deployment.
+Apply these guides after installation to strengthen your server's security posture.
+
+## Topics
+
+<CardGroup cols={2}>
+  <Card
+    title="Airgap Your Server"
+    icon="shield"
+    href="/en/operator-manual/instance-hardening/airgap-your-server"
+  >
+    Restrict inbound and outbound network traffic using UFW firewall rules to isolate your Zylon instance.
+  </Card>
+  <Card
+    title="Disk Encryption"
+    icon="lock"
+    href="/en/operator-manual/instance-hardening/disk-encryption"
+  >
+    Encrypt your server's disk with LUKS to protect data at rest, whether setting up a clean machine or securing an existing Zylon installation.
+  </Card>
+</CardGroup>

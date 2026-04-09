@@ -58,8 +58,18 @@ create an encrypted partition for Zylon's data directory (`/var/zylon`)
 using LUKS and move the data into it.
 
 <Warning>
-  This process moves live application data. **Take a full backup before proceeding.**
-  See the [Backup guide](/en/operator-manual/operations/backup).
+  **This is a complex, high-risk operation. Data loss is possible if anything goes wrong.**
+
+  Before proceeding, back up all Zylon data and move it off the server:
+
+  ```bash
+  sudo zylon-cli backup
+  ```
+
+  Copy the resulting backup file to a safe external location (S3, another machine, etc.)
+  and verify you can access it before continuing. Do not proceed without a verified backup.
+
+  See the [Backup guide](/en/operator-manual/operations/backup) for details.
 </Warning>
 
 ### Prerequisites

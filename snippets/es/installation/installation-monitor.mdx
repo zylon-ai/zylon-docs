@@ -1,0 +1,29 @@
+**Monitorear la instalación**
+
+Supervisa el progreso de la instalación:
+
+```bash
+# Ver pods de Zylon
+watch sudo k0s kubectl get pods -n zylon
+
+# Ver validación de GPU (si aplica)
+watch sudo k0s kubectl get pods -n nvidia
+```
+
+Espera hasta que todos los pods muestren estado listo `1/1`.
+
+<Tip>
+  **Reinicia después de la instalación** para asegurarte de que los drivers de GPU se carguen correctamente.
+</Tip>
+
+<Danger>
+  **Las actualizaciones del kernel pueden romper los drivers de NVIDIA!**
+
+  Verifica los drivers con: `nvidia-smi`
+
+  Solución de problemas: [Guía de Drivers de NVIDIA](/es/operator-manual/troubleshooting/nvidia-drivers)
+</Danger>
+
+<Warning>
+  Si los servicios permanecen en `ContainerCrashLoopBackOff` durante más de 1 hora, contacta con soporte y comparte los logs.
+</Warning>

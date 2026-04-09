@@ -31,7 +31,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "type": "InlineText",
+    "type": "Document",
     "source": "User",
     "name": "Q1 Support Summary",
     "description": "Weekly summary notes.",
@@ -48,7 +48,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "id": "artifact_doc_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support Summary",
-  "type": "InlineText",
+  "type": "Document",
   "source": "User",
   "state": "Published",
   "ingest_status": "NotApplicable",

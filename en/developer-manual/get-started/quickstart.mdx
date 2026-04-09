@@ -151,7 +151,7 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
       -H "x-org: {org_slug}" \
       -H "Content-Type: application/json" \
       -d '{
-        "type": "InlineText",
+        "type": "Document",
         "source": "User",
         "name": "Q1 Support Summary",
         "props": {
@@ -167,7 +167,7 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
       "id": "artifact_2b4d6f8a1c3e5a7b",
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
-      "type": "InlineText",
+      "type": "Document",
       "ingest_status": "NotApplicable"
     }
     ```

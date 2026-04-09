@@ -247,7 +247,7 @@ Your firewall must allow access to these domains:
     Edit `/etc/zylon/zylon-conf.yaml` and add:
     ```yaml
     airgap:
-      offline_operation: true
+      offlineOperation: true
     ```
 
     And sync the configuration:
@@ -278,7 +278,7 @@ Before you update, be sure to disable offline mode by editing `/etc/zylon/zylon-
 
 ```yaml
 airgap:
-  offline_operation: false
+  offlineOperation: false
 ```
 
 Validate if Zylon has connectivity again by running:
@@ -305,7 +305,7 @@ When the process is complete, re-enable offline mode by setting:
 
 ```yaml
 airgap:
-  offline_operation: true
+  offlineOperation: true
 ```
 
 ---
@@ -331,7 +331,7 @@ To migrate an existing Zylon installation (Online, or Airgap) to an Online insta
 4. **Disable offline mode**: Edit `/etc/zylon/zylon-conf.yaml` and set:
     ```yaml
     airgap:
-      offline_operation: false
+      offlineOperation: false
     ```
 5. **Refresh configuration**: Execute `sudo zylon-cli sync` to apply the new configuration settings.
 6. **Verify operation**: Confirm that all services are functioning correctly.

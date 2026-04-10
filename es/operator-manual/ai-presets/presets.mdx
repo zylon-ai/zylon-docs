@@ -14,7 +14,7 @@ Los presets base proporcionan configuraciones estándar optimizadas para cargas 
 | `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
 | `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
 | `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen-3-5-35b-a3b, mixedbread-ai/mxbai-embed-large-v1      |
-| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen-3-5-122b-a10b, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen-3-5-27b, mixedbread-ai/mxbai-embed-large-v1      |
 
 ### Ejemplo de Configuración
 
@@ -31,29 +31,43 @@ Elige el preset que coincida con la capacidad de memoria de tu GPU. Siempre sele
 
 Zylon proporciona presets alternativos que ofrecen configuraciones especializadas intercambiando ciertas capacidades por otras. Estos son opcionales y solo deben usarse cuando tienes requisitos específicos que difieren de los presets estándar.
 
-### Alternativas Optimizadas para Contexto
+### Alternativa Optimizada para Throughput
 
-Estos presets usan modelos de IA más pequeños para proporcionar ventanas de contexto significativamente más grandes, permitiendo sesiones de conversación extendidas y tareas de análisis complejas.
+Este preset utiliza un modelo más pequeño y ligero que genera tokens significativamente más rápido. Aunque puede no igualar al modelo estándar en calidad y profundidad de razonamiento, pero a cambio ofrece respuestas notablemente más rápidas.
 
-| Preset                              | Memoria GPU Requerida | Compensación                  | Modelos                                                      |
-|-------------------------------------|---------------------|----------------------------|--------------------------------------------------------------|
-| `alternatives.baseline-96g-27b-context` | 96GB                | Modelo balanceado (Qwen 3.5 27B) | qwen/qwen-3-5-27b, mixedbread-ai/mxbai-embed-large-v1      |
+**Cuándo usar:**
 
-**Cuándo usar presets optimizados para contexto:**
+- Principalmente manejas consultas sencillas o directas
+- Tienes un alto número de usuarios concurrentes y necesitas tiempos de respuesta rápidos
+- La velocidad de generación importa más que la máxima calidad de respuesta
 
-- Sesiones de conversación extendidas
-- Análisis complejo que requiere grandes cantidades de contexto
-- Procesamiento de documentos largos
+| Preset                              | Memoria GPU Requerida | Modelos                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-throughput-96g` | 96GB (A100 80GB, H100, A6000 dual) | txn545/qwen3.5-35b-a3b-nvfp4, mixedbread-ai/mxbai-embed-large-v1      |
 
-**Ejemplo de Configuración:**
+### Alternativa de Modelo Grande
+
+Este preset utiliza un modelo más grande y capaz, con mayor conocimiento intrínseco. La contrapartida es una ventana de contexto más reducida.
+
+**Cuándo usar:**
+
+- Necesitas mayor rendimiento en tareas complejas o especializadas
+- El conocimiento intrínseco del modelo es prioritario
+- Puedes trabajar con una ventana de contexto más pequeña
+
+| Preset                              | Memoria GPU Requerida | Modelos                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-large-96g` | 96GB (A100 80GB, H100, A6000 dual) | qwen/qwen-3-5-122b-a10b, mixedbread-ai/mxbai-embed-large-v1      |
+
+### Ejemplo de Configuración
 
 ```yaml
 ai:
-  preset: "alternatives.baseline-96g-context"
+  preset: "alternatives.baseline-throughput-96g"
 ```
 
 <Info>
-Usar más ventanas de contexto no siempre produce mejores resultados. Considera tu caso de uso específico antes de seleccionar presets optimizados para contexto.
+Cada preset alternativo implica una compensación. Considera tu caso de uso específico — volumen de usuarios, complejidad de las consultas y necesidades de contexto — antes de cambiar del preset estándar.
 </Info>
 
 ## Presets Experimentales

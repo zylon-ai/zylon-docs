@@ -14,7 +14,7 @@ Base presets provide standard configurations optimized for general-purpose AI wo
 | `baseline-24g` | 24GB                | RTX 4090, L4, RTX 3090 Ti     | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
 | `baseline-32g` | 32GB                | RTX 5090                      | qwen/qwen-3-5-9b, mixedbread-ai/mxbai-embed-large-v1      |
 | `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | qwen/qwen-3-5-35b-a3b, mixedbread-ai/mxbai-embed-large-v1      |
-| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen-3-5-122b-a10b, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | qwen/qwen-3-5-27b, mixedbread-ai/mxbai-embed-large-v1      |
 
 ### Configuration Example
 
@@ -29,32 +29,45 @@ Choose the preset that matches your GPU memory capacity. Always select a preset 
 
 ## Alternative Presets
 
-Zylon provides alternative presets that offer specialized configurations trading certain capabilities for others. These are optional and should only be used when you have specific requirements that differ from the standard presets.
+Zylon provides alternative presets that offer specialized configurations by trading certain capabilities for others. These are optional and should only be used when you have specific requirements that differ from the standard presets.
 
+### Throughput-Optimized Alternative
 
-### Context-Optimized Alternatives
+This preset uses a smaller, lighter model that generates tokens significantly faster. While it may not match the standard model in quality and reasoning depth, it delivers noticeably faster responses in return.
 
-These presets use smaller AI models to provide significantly larger context windows, allowing for extended conversations and complex analysis tasks.
+**When to use:**
 
-| Preset                                 | Required GPU Memory | Trade-off                       | Models                                                           |
-|----------------------------------------|---------------------|---------------------------------|------------------------------------------------------------------|
-| `alternatives.baseline-96g-context`| 96GB                | Balanced model (Qwen 3.5 27B) | qwen/qwen-3-5-27b, mixedbread-ai/mxbai-embed-large-v1 |
+- You primarily handle simple or straightforward queries
+- You have a high number of concurrent users and need fast response times
+- Generation speed matters more than peak response quality
 
-**When to use context-optimized presets:**
+| Preset                              | GPU Memory Required | Models                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-throughput-96g` | 96GB (A100 80GB, H100, A6000 dual) | txn545/qwen3.5-35b-a3b-nvfp4, mixedbread-ai/mxbai-embed-large-v1      |
 
-- Extended conversation sessions
-- Complex analysis requiring large amounts of context
-- Long document processing
+### Large Model Alternative
 
-**Configuration Example:**
+This preset uses a larger, more capable model with greater intrinsic knowledge. The trade-off is a reduced context window.
+
+**When to use:**
+
+- You need stronger performance on complex or specialized tasks
+- The model's intrinsic knowledge is a priority
+- You can work with a smaller context window
+
+| Preset                              | GPU Memory Required | Models                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-large-96g` | 96GB (A100 80GB, H100, A6000 dual) | qwen/qwen-3-5-122b-a10b, mixedbread-ai/mxbai-embed-large-v1      |
+
+### Configuration Example
 
 ```yaml
 ai:
-  preset: "alternatives.baseline-96g-context"
+  preset: "alternatives.baseline-throughput-96g"
 ```
 
 <Info>
-Using more context windows does not always yield better results. Consider your specific use case before selecting context-optimized presets.
+Each alternative preset involves a trade-off. Consider your specific use case — user volume, query complexity, and context needs — before switching from the standard preset.
 </Info>
 
 ## Experimental Presets

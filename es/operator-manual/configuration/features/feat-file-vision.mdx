@@ -1,0 +1,46 @@
+---
+title: "Procesamiento de Archivos con Visión"
+---
+
+<Info>
+**Disponible desde la versión 1.56**
+</Info>
+<Note>**Característica en Alpha**</Note>
+<Note>**Esta característica requiere un modelo con capacidades de visión. Consulta [Preajustes de IA](/es/operator-manual/ai-presets/presets).**</Note>
+
+Habilita el procesamiento de archivos con visión para documentos y presentaciones.
+
+### Modos
+
+| Modo   | Descripción |
+| ------ | ----------- |
+| `none` | Desactiva el procesamiento con visión |
+| `lite` | Activa el procesamiento de imágenes usando modelos con visión |
+
+### Configuración
+
+| Clave                                  | Por Defecto | Valores        | Descripción                                         |
+| -------------------------------------- | ----------- | -------------- | --------------------------------------------------- |
+| `transformation.pptx.vision.mode`      | `none`      | `none \| lite` | Controla el modo de visión para diapositivas PPTX   |
+| `transformation.docling.vision.mode`   | `none`      | `none \| lite` | Controla el modo de visión para documentos Docling  |
+
+### Recomendaciones
+
+- Usa `lite` cuando los documentos incluyan gráficos, diagramas o imágenes importantes.
+- Usa `lite` en PPTX cuando sea importante comprender la estructura de las diapositivas e interpretar gráficos.
+
+<Warning>
+Activar `lite` aumenta el consumo de recursos y el tiempo de procesamiento de los documentos.
+</Warning>
+
+### Ejemplo
+
+```yaml
+transformation:
+    pptx:
+      vision:
+        mode: lite
+    docling:
+      vision:
+        mode: lite
+```

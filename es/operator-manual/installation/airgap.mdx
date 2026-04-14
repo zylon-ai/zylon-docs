@@ -196,7 +196,7 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     Descarga los modelos basados en tu configuración:
 
     ```bash
-    sudo zylon-cli models download --no-extract
+    sudo zylon-cli models download --no-install
     ```
 
     Esto descargará los modelos de IA que has especificado en el Wizard.
@@ -205,12 +205,12 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
     ```bash
     sudo zylon-cli models list
-    sudo zylon-cli models download --no-extract model-a model-b model-c
+    sudo zylon-cli models download --no-install model-a model-b model-c
     ```
 
     Por ejemplo, para el preset `baseline-24g`:
     ```bash
-    sudo zylon-cli models download --no-extract qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
+    sudo zylon-cli models download --no-install qwen/qwen3-14b-awq mixedbread-ai/mxbai-embed-large-v1
     ```
   </Step>
 
@@ -474,7 +474,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
 
     Descarga los nuevos modelos:
     ```bash
-    sudo zylon-cli models download --no-extract new-model-a new-model-b
+    sudo zylon-cli models download --no-install new-model-a new-model-b
     ```
 
     <Info>

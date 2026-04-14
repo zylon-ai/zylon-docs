@@ -51,7 +51,6 @@ Based on your GPU memory, choose the matching preset:
 
 | GPU Memory | Preset to Use  | Example Hardware          |
 |------------|----------------|---------------------------|
-| 24GB       | `baseline-24g` | RTX 4090, L4, RTX 3090 Ti |
 | 32GB       | `baseline-32g` | RTX 5090                  |
 | 48GB       | `baseline-48g` | RTX A6000, A40, L40       |
 | 96GB       | `baseline-96g` | A100 80GB, H100           |
@@ -66,7 +65,7 @@ Edit your Zylon configuration file at `/etc/config/zylon-config.yaml`:
 
 ```yaml
 ai:
-  preset: "baseline-24g"  # Replace with your selected preset
+  preset: "baseline-48g"  # Replace with your selected preset
 ```
 
 ### Step 4: Apply Configuration

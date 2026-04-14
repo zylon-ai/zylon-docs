@@ -105,7 +105,7 @@ Reemplaza el modelo por defecto con tu versión fine-tuned específica del domin
 
 ```yaml
 ai:
-  preset: "baseline-24g"
+  preset: "baseline-48g"
   config:
     models:
       - id: llm
@@ -178,7 +178,7 @@ El concepto crítico: **La memoria GPU es un recurso fijo que debe dividirse man
 
 Cada modelo usa una fracción de la memoria GPU total, controlada por `gpuMemoryUtilization` (un valor entre 0.0 y 1.0). La suma de todas las asignaciones de memoria de los modelos no puede exceder **0.95** (reservando 5% para sobrecarga del sistema).
 
-**Asignación por defecto para baseline-24g:**
+**Asignación por defecto para baseline-48g:**
 ```
 llm:   0.85  (85% de 24GB = ~20.4GB)
 embed: 0.10  (10% de 24GB = ~2.4GB)
@@ -233,7 +233,7 @@ Si reduces la asignación total de memoria de 0.85 a 0.50, los pesos del modelo 
 
 | Preset           | Asignación de Memoria | Ventana de Contexto | KV Cache Aprox |
 |------------------|-------------------|----------------|-----------------|
-| baseline-24g/48g | 0.85              | 16384 (16k)    | ~4-6GB          |
+| baseline-48g | 0.85              | 16384 (16k)    | ~4-6GB          |
 | baseline-96g     | 0.85              | 32768 (32k)    | ~8-12GB         |
 
 <Warning>
@@ -356,7 +356,7 @@ Ahora combina todos los modelos con sus asignaciones calculadas:
 
 ```yaml
 ai:
-  preset: "baseline-24g"
+  preset: "baseline-48g"
   config:
     models:
       - id: llm
@@ -448,7 +448,7 @@ Total:         0.95
 
 ```yaml
 ai:
-  preset: "baseline-24g"
+  preset: "baseline-48g"
   numGPUs: 1
   config:
     models:

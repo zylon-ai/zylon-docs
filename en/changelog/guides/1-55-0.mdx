@@ -75,6 +75,14 @@ Follow the steps for your installation type.
         ```bash
         sudo zylon-cli models download <model_id>
         ```
+
+        <Info>
+          If `sudo zylon-cli models ...` is not available or returns `command not found`, run:
+
+          ```bash
+          sudo zylon-cli self-update
+          ```
+        </Info>
       </Step>
       <Step title="Install 1.55">
         ```bash
@@ -111,6 +119,14 @@ Follow the steps for your installation type.
         ```bash
         sudo zylon-cli models download <model_id>
         ```
+
+        <Info>
+          If `sudo zylon-cli models ...` is not available or returns `command not found`, run:
+
+          ```bash
+          sudo zylon-cli self-update
+          ```
+        </Info>
       </Step>
       <Step title="Install 1.55">
         ```bash
@@ -143,6 +159,30 @@ Follow the steps for your installation type.
         sudo zylon-cli models download --no-install <model_id>
         sudo zylon-cli models export
         ```
+
+        <Info>
+          If `sudo zylon-cli models ...` is not available or returns `command not found`:
+
+          **Required when upgrading from very old versions:** after this setup, the CLI self-updates from airgap bundles.
+
+          1. On the online machine, update the CLI:
+          ```bash
+          sudo zylon-cli self-update
+          ```
+          2. Prepare the transfer package:
+          ```bash
+          sudo tar -czf zylon-update.tar.gz \
+            /usr/local/bin/zylon-cli \
+            /usr/local/bin/zylon-forge-cli \
+            /etc/zylon/zylon-conf.yaml
+          ```
+          3. Transfer it to the offline machine:
+          ```bash
+          scp zylon-update.tar.gz user@offline-machine:/tmp/
+          ```
+
+          For full context, see the [Full-airgap update guide](/en/operator-manual/installation/airgap#updating-zylon).
+        </Info>
       </Step>
       <Step title="Online machine: export the 1.55 platform bundle">
         ```bash
@@ -156,10 +196,20 @@ Follow the steps for your installation type.
         ```
       </Step>
       <Step title="Transfer artifacts to the offline machine">
-        Move both files across your transfer medium:
+        Move the required files across your transfer medium:
 
         - `zylon-models-*.tar`
         - `zylon-*.tar`
+        - `zylon-update.tar.gz` (if needed; see previous step)
+
+      </Step>
+      <Step title="Offline machine: extract CLI transfer package (if needed)">
+        ```bash
+        cd /tmp
+        sudo tar -xzf zylon-update.tar.gz -C /
+        sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+        sudo zylon-cli version  # It should show 2.3.0 or later
+        ```
       </Step>
       <Step title="Offline machine: import and install">
         ```bash

@@ -2,22 +2,6 @@
 title: "Changelog"
 ---
 
-<Update label="1.55.0" description="TODO: Add release date">
-
-  ## 🛠️ Platform
-  ### ⚠️ Breaking Changes
-
-  - **Monitoring infrastructure now enabled by default**: `monitoring: true` is now the default. This deploys the monitoring stack (Prometheus, Grafana, node-exporter, k8s-monitoring) even if you previously opted out of metrics. No metrics are scraped or sent unless explicitly enabled, but the infrastructure will be deployed on your next update. If you want to avoid this, set the following in your values file:
-
-    ```yaml
-    observability:
-      monitoring: false
-    ```
-
-    See the [Observability configuration](/en/operator-manual/configuration/observability) for the full reference.
-
-</Update>
-
 <Update label="1.54.0" description="March 09, 2026">
   <Danger>
     **⚠️ Action required before updating to version ≥ 1.54.0**

@@ -1,6 +1,40 @@
 ---
 title: "Registro de cambios"
 ---
+<Update label="1.55.0" description="April 15, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión 1.55.X**
+
+    Esta versión cambia la familia de modelos de IA predeterminada a Qwen 3.5 y deshabilita la descarga automática de modelos por defecto.
+    Si instalas la actualización de la plataforma antes de descargar el modelo necesario, los servicios de IA no arrancarán.
+
+    Consulta la [guía de migración a la versión 1.55](/es/changelog/guides/1-55-0) antes de actualizar.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Nuevos modelos y nueva familia predeterminada**: Se ha añadido compatibilidad con Qwen 3.5 y, de forma experimental, con Ministral, GLM 4.7 y los modelos NVIDIA Nemotron. Qwen 3.5 pasa a ser la familia base predeterminada, mejorando la calidad de razonamiento, el comportamiento agéntico y la calidad de las respuestas.
+  - **Nuevas herramientas de Workspace en el chat**: Con el nuevo conjunto de modelos, el chat puede ahora listar contenido, obtener contenido, crear resúmenes y análisis, y generar documentos en blanco a partir del contexto del chat.
+  - **Rediseño de las instrucciones en ajustes de proyecto**: Los ajustes de proyecto utilizan ahora un único campo de instrucciones personalizadas en lugar de dos, simplificando la configuración y mejorando la experiencia de usuario.
+  - **Sincronización automática de la base de conocimiento**: Las integraciones pueden ahora sincronizarse automáticamente tras su configuración. Los flujos de sincronización manual ya no son necesarios para el uso habitual.
+  - **Tokens personales de Workspace**: Todos los usuarios pueden ahora generar sus propios tokens de API personales de Workspace directamente desde los ajustes de su cuenta, sin necesidad de intervención de un administrador.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Rediseño completo del Backoffice**: El Backoffice ha sido completamente rediseñado con importantes mejoras de interfaz y experiencia de usuario para hacer la administración de la plataforma más clara, ágil y coherente.
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Métricas de plataforma para visibilidad de IA/GPU**: Ahora es posible recopilar y consumir métricas de plataforma, incluyendo métricas de GPU y de cargas de trabajo de IA, para mejorar la observabilidad y la visibilidad operativa. Consulta la [configuración de observabilidad](/en/operator-manual/configuration/observability).
+
+  ### 🐛 Corrección de errores
+
+  - Corregidos errores cuando el sistema se ejecuta en una máquina con IPv6 habilitado.
+
+</Update>
 
 <Update label="1.54.0" description="March 09, 2026">
   <Danger>

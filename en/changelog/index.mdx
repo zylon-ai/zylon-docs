@@ -2,6 +2,41 @@
 title: "Changelog"
 ---
 
+<Update label="1.55.0" description="April 15, 2026">
+  <Danger>
+    **⚠️ Action required before updating to version 1.55.X**
+
+    This release changes the default AI model family to Qwen 3.5 and disables automatic model pull by default.
+    If you install the platform update before downloading the required model, AI services will fail to start.
+
+    Follow the complete [1.55 migration guide](/en/changelog/guides/1-55-0) before updating.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Features
+
+  - **New Model Support + New Default Family**: Added support for Qwen 3.5, experimentally Ministral, GLM 4.7 and NVIDIA Nemotron models. Qwen 3.5 is now the default baseline family, improving reasoning quality, agentic behavior, and response quality.
+  - **New Workspace Tools in Chat**: With the new model stack, chat can now list content, fetch content, create summaries/analysis, and generate blank documents from chat context.
+  - **Project Settings Instructions Revamp**: Project settings now uses a single custom instruction input instead of two. This simplifies configuration and improves the UX.  
+  - **Automatic Knowledge Base Synchronization**: Integrations can now sync automatically after configuration. Manual sync workflows are no longer required for standard usage.
+  - **Personal Workspace Tokens**: All users can now generate their own personal workspace API tokens directly from their account settings, without requiring administrator intervention.
+
+  ## 🛠️ Backoffice
+  ### ✨ Features
+
+  - **Complete Backoffice redesign**: The Backoffice has been fully redesigned with major UI/UX improvements to make platform administration clearer, faster, and more consistent.
+
+  ## 🛠️ Platform
+  ### ✨ Features
+
+  - **Platform metrics for AI/GPU visibility**: You can now collect and consume platform metrics, including GPU and AI workload metrics, to improve observability and operational visibility. See [Observability configuration](/en/operator-manual/configuration/observability).
+
+  ### 🐛 Bug Fixes
+
+  - Fixed bugs when the system is running in a machine with IPv6 enabled.
+
+</Update>
+
 <Update label="1.54.0" description="March 09, 2026">
   <Danger>
     **⚠️ Action required before updating to version ≥ 1.54.0**

@@ -3,7 +3,7 @@ title: "Sync"
 description: "Configure the scheduled integration sync task"
 ---
 
-The sync task keeps integration-backed content up to date by checking connected external sources and updating Zylon artifacts when content is added, changed, or removed.
+The sync task keeps integration-backed knowledge base content up to date by checking connected external sources and updating the synced content in Zylon when source content is added, changed, or removed.
 
 Use this task when you want content from [SharePoint](/en/operator-manual/knowledge-base/sharepoint), [Confluence](/en/operator-manual/knowledge-base/confluence), [File System](/en/operator-manual/knowledge-base/file-system), [Claromentis](/en/operator-manual/knowledge-base/claromentis), or other supported integrations to stay fresh without manual resyncs.
 
@@ -79,6 +79,6 @@ For a practical list of IANA timezone identifiers, see [IANA Time Zones](https:/
 
 ## Execution and failure handling
 
-A scheduled sync run checks active integration content and may call external APIs, download content, create or remove artifacts, trigger ingestion or vector lifecycle work, and emit sync completion messages.
+A scheduled sync run checks active integration content and may call external APIs, download content, create or remove synced knowledge base content, trigger ingestion, and emit sync completion messages.
 
 If one sync target fails, the error is logged and the task continues with other targets. The next scheduled run tries again.

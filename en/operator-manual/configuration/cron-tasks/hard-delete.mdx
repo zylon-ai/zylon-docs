@@ -87,6 +87,10 @@ For a practical list of IANA timezone identifiers, see [IANA Time Zones](https:/
 
 For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, `90`, or `365`, according to your retention policy.
 
+<Warning>
+  The minimum supported value for `deleteAfterDays` is `1` day. Set this value according to your company's deletion or retention policy before enabling hard delete.
+</Warning>
+
 ## Access before hard delete
 
 Before the retention window expires, deleted data is not yet permanently removed. During that time, an operator can use the CLI migration and restore flow to recover organizations, projects, chats, or files.

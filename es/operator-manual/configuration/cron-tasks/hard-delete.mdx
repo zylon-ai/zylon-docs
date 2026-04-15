@@ -87,6 +87,10 @@ Para una lista practica de identificadores de zona horaria IANA, consulte [IANA 
 
 Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero positivo de dias como `14`, `30`, `90` o `365`, segun su politica de retencion.
 
+<Warning>
+  El valor minimo admitido para `deleteAfterDays` es `1` dia. Configure este valor segun la politica de eliminacion o retencion de su empresa antes de habilitar el borrado permanente.
+</Warning>
+
 ## Acceso antes del borrado permanente
 
 Antes de que expire la ventana de retencion, los datos eliminados todavia no se han borrado de forma definitiva. Durante ese tiempo, un operador puede usar el flujo de migracion y restauracion por CLI para recuperar organizaciones, proyectos, chats o archivos.

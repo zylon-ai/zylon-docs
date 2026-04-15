@@ -3,7 +3,7 @@ title: "Sincronizacion"
 description: "Configure la tarea programada de sincronizacion de integraciones"
 ---
 
-La tarea de sincronizacion mantiene actualizado el contenido respaldado por integraciones revisando las fuentes externas conectadas y actualizando los artefactos de Zylon cuando el contenido se agrega, cambia o elimina.
+La tarea de sincronizacion mantiene actualizado el contenido de la base de conocimiento respaldado por integraciones revisando las fuentes externas conectadas y actualizando en Zylon el contenido sincronizado cuando el contenido de origen se agrega, cambia o elimina.
 
 Use esta tarea cuando quiera que el contenido de [SharePoint](/es/operator-manual/knowledge-base/sharepoint), [Confluence](/es/operator-manual/knowledge-base/confluence), [File System](/es/operator-manual/knowledge-base/file-system), [Claromentis](/es/operator-manual/knowledge-base/claromentis) u otras integraciones compatibles se mantenga fresco sin resincronizaciones manuales.
 
@@ -79,6 +79,6 @@ Para una lista practica de identificadores de zona horaria IANA, consulte [IANA 
 
 ## Ejecucion y manejo de fallos
 
-Una ejecucion programada de sincronizacion revisa el contenido activo de integraciones y puede llamar APIs externas, descargar contenido, crear o eliminar artefactos, disparar trabajo de ingestion o de ciclo de vida de vectores y emitir mensajes de fin de sincronizacion.
+Una ejecucion programada de sincronizacion revisa el contenido activo de integraciones y puede llamar APIs externas, descargar contenido, crear o eliminar contenido sincronizado de la base de conocimiento, disparar la ingesta y emitir mensajes de fin de sincronizacion.
 
 Si falla un objetivo de sincronizacion, el error se registra y la tarea continua con los demas. La siguiente ejecucion programada lo intentara de nuevo.

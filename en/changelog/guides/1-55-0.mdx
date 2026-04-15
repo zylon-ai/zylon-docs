@@ -1,0 +1,181 @@
+---
+title: "Upgrading to 1.55"
+description: "Migrate to the Qwen 3.5 model family. Download the new model before running the platform update to minimize downtime."
+---
+
+<Warning>
+  **Download the new model before upgrading.** Automatic model pull is disabled by default in 1.55. If you run the platform update first, AI services will fail to start.
+</Warning>
+
+## What changed
+
+1.55 ships with a new default AI model family. Here's what that means for your installation:
+
+- **Qwen 3 is deprecated.** All baseline presets now use Qwen 3.5.
+- **Automatic model pull is disabled.** The new model will not download on its own, so you must pull it manually before upgrading.
+- **Vision presets are deprecated.** Qwen 3.5 includes native image support, so `alternatives.baseline-48g-vision` and `alternatives.baseline-96g-vision` no longer exist. They are replaced by their standard baseline equivalents.
+- **Monitoring infrastructure now enabled by default**: `monitoring: true` is now the default. This deploys the monitoring stack (Prometheus, Grafana, node-exporter, k8s-monitoring) even if you previously opted out of metrics. No metrics are scraped or sent unless explicitly enabled, but the infrastructure will be deployed on your next update. If you want to avoid this, set the following in your values file:
+    ```yaml
+    observability:
+      monitoring: false
+    ```
+     See the [Observability configuration](/en/operator-manual/configuration/observability) for the full reference.
+## How to upgrade
+
+<Info>
+  If you need help, [open a support ticket](https://zylonsupport.zendesk.com/hc/en-us/requests/new?tf_subject=1.55+Upgrade+Help) and our engineering team will assist you.
+</Info>
+
+### Step 1: Check your current preset
+
+```bash
+sudo cat /etc/zylon/zylon-conf.yaml | grep preset
+```
+
+
+### Step 2: Find your new model
+
+Use the table below to identify the model you need to download before upgrading.
+
+**Standard presets**
+
+| Current preset | Model to download |
+|---|---|
+| `baseline-24g` | `cyankiwi/qwen3.5-9b-awq-4bit` |
+| `baseline-32g` | `cyankiwi/qwen3.5-9b-awq-4bit` |
+| `baseline-48g` | `txn545/qwen3.5-35b-a3b-nvfp4` |
+| `baseline-96g` | `cyankiwi/qwen3.5-27b-awq-4bit` |
+
+**Vision presets (deprecated)**
+
+<Warning>
+  If you are on a vision preset, update your `zylon-conf.yaml` to the new preset **before** downloading the model.
+</Warning>
+
+| Current preset | Change to | Model to download |
+|---|---|---|
+| `alternatives.baseline-48g-vision` | `baseline-48g` | `txn545/qwen3.5-35b-a3b-nvfp4` |
+| `alternatives.baseline-96g-vision` | `baseline-96g` | `cyankiwi/qwen3.5-27b-awq-4bit` |
+
+<Info>
+  Not sure what a preset means? See the [AI Presets documentation](/en/operator-manual/ai-presets/presets).
+</Info>
+
+### Step 3: Download the model and upgrade
+
+Follow the steps for your installation type.
+
+<Tabs>
+  <Tab title="Online">
+
+    <Steps>
+      <Step title="Download the model">
+        Replace `<model_id>` with the value from the table above.
+
+        ```bash
+        sudo zylon-cli models download <model_id>
+        ```
+      </Step>
+      <Step title="Install 1.55">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.55.X
+        ```
+      </Step>
+    </Steps>
+
+    For full environment details and troubleshooting, see the [Online update guide](/en/operator-manual/installation/online#updating-zylon).
+
+  </Tab>
+  <Tab title="Semi-Airgap">
+
+    <Steps>
+      <Step title="Re-enable internet access">
+        Temporarily allow online operations in your config, then apply it:
+
+        ```yaml
+        airgap:
+          offlineOperation: false
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+      <Step title="Verify connectivity">
+        ```bash
+        sudo zylon-cli preflight --network -v
+        ```
+      </Step>
+      <Step title="Download the model">
+        ```bash
+        sudo zylon-cli models download <model_id>
+        ```
+      </Step>
+      <Step title="Install 1.55">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.55.X
+        ```
+      </Step>
+      <Step title="Re-enable offline mode">
+        ```yaml
+        airgap:
+          offlineOperation: true
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+    </Steps>
+
+    For networking and proxy guidance, see the [Semi-airgap update guide](/en/operator-manual/installation/semi-airgap#updating-zylon).
+
+  </Tab>
+  <Tab title="Full Airgap">
+
+    These steps run across two machines: an internet-connected machine for downloading, and the offline target machine.
+
+    <Steps>
+      <Step title="Online machine: download and export the model">
+        ```bash
+        sudo zylon-cli models download --no-install <model_id>
+        sudo zylon-cli models export
+        ```
+      </Step>
+      <Step title="Online machine: export the 1.55 platform bundle">
+        ```bash
+        sudo zylon-cli list-versions
+
+        # Use --from if your current version is known (smaller bundle)
+        sudo zylon-cli export 1.55.X --from CURRENT_VERSION
+
+        # Otherwise export a full bundle
+        sudo zylon-cli export 1.55.X
+        ```
+      </Step>
+      <Step title="Transfer artifacts to the offline machine">
+        Move both files across your transfer medium:
+
+        - `zylon-models-*.tar`
+        - `zylon-*.tar`
+      </Step>
+      <Step title="Offline machine: import and install">
+        ```bash
+        # Import the model, then install the model
+        sudo zylon-cli models import zylon-models-*.tar
+        sudo zylon-cli models download --offline <model_id>
+
+        # Import the Zylon bundle, check the new version is available, then install it
+        sudo zylon-cli import zylon-*.tar
+        sudo zylon-cli list-versions --offline
+        sudo zylon-cli install 1.55.X --airgap
+        ```
+      </Step>
+    </Steps>
+
+    For differential bundle details and transfer guidance, see the [Full-airgap update guide](/en/operator-manual/installation/airgap#updating-zylon).
+
+  </Tab>
+</Tabs>

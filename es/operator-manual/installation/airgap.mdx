@@ -374,9 +374,10 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     ```bash
     cd /tmp
     sudo zylon-cli models import zylon-models-<timestamp>.tar
+    sudo zylon-cli models download --offline
     ```
 
-    Este comando importará e instalará los modelos de IA automáticamente.
+    `models import` registra los artefactos del modelo localmente y `models download --offline` los instala en el runtime offline.
 
     Verifica que los modelos fueron instalados exitosamente:
 
@@ -556,6 +557,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     ```bash
     cd /tmp
     sudo zylon-cli models import zylon-models-*.tar
+    sudo zylon-cli models download --offline
     ```
     
     Verifica que los modelos fueron instalados exitosamente:

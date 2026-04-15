@@ -16,16 +16,16 @@ description: "Diagnostica y resuelve problemas con presets de IA y configuracion
 
 2. **Prueba el siguiente preset inferior**
    ```yaml
-   # Si estás usando baseline-32g, prueba baseline-24g en su lugar
+   # Si estás usando baseline-32g, prueba baseline-48g en su lugar
    ai:
-     preset: "baseline-24g"
+     preset: "baseline-48g"
    ```
 
 3. **Elimina capacidades opcionales para reducir el uso de memoria**
    ```yaml
    # Elimina capacidades
    ai:
-     preset: "baseline-24g"  # En lugar de "baseline-24g,capabilities.multilingual"
+     preset: "baseline-48g"  # En lugar de "baseline-48g,capabilities.multilingual"
    ```
 
 4. **Verifica otras aplicaciones usando memoria GPU**

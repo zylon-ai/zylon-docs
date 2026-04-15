@@ -1,0 +1,106 @@
+---
+title: "Hard delete"
+description: "Configure the retention policy used by the workspace cleanup task"
+---
+
+The hard delete task permanently removes items after they have first been deleted in Zylon or marked inactive.
+
+When chats, projects, files, or organizations are deleted in Zylon, they remain recoverable until the retention window expires. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
+
+## Default configuration
+
+By default, cleanup checks run daily at `03:00`, and items become eligible for hard delete after `14` days. If `timezone` is not set, Zylon uses the server machine's default timezone.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      deleteAfterDays: 14
+```
+
+## Configuration example
+
+Edit `/etc/zylon/zylon-conf.yaml`, then apply the change with `sudo zylon-cli sync`.
+
+Use a retention window that matches your company's policy. Many organizations require a value much higher than the default.
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      timezone: "Europe/Madrid"
+      deleteAfterDays: 365
+```
+
+`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` optionally defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive item or a previously deleted item is permanently removed by the cron execution. If `timezone` is omitted, the server machine's default timezone is used.
+
+<Tip>
+  We suggest setting an [IANA timezone](#timezone-values) that matches your company's timezone.
+</Tip>
+
+## Accepted values
+
+### Cron values
+
+Cleanup uses the same 5-part cron format as sync:
+
+```text
+minute hour day-of-month month day-of-week
+```
+
+Use values in these ranges:
+
+| Field | Accepted values |
+| --- | --- |
+| Minute | `0-59` or `*` |
+| Hour | `0-23` or `*` |
+| Day of month | `1-31` or `*` |
+| Month | `1-12` or `*` |
+| Day of week | `0-6` or `*` |
+
+Examples:
+
+- `0 3 * * *` runs every day at 03:00
+- `15 4 * * 0` runs every Sunday at 04:15
+
+### Timezone values
+
+`zylonBackend.scheduler.cleanup.timezone` is optional. If it is not set, the cleanup cron runs in the server machine's default timezone.
+
+When you set `zylonBackend.scheduler.cleanup.timezone`, use a valid IANA timezone identifier. Common examples include:
+
+- `UTC`
+- `Europe/Madrid`
+- `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+For a practical list of IANA timezone identifiers, see [IANA Time Zones](https://datetime.app/iana-timezones).
+
+### Retention values
+
+For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, `90`, or `365`, according to your retention policy.
+
+<Warning>
+  The minimum supported value for `deleteAfterDays` is `1` day. Set this value according to your company's deletion or retention policy before enabling hard delete.
+</Warning>
+
+## Access before hard delete
+
+Before the retention window expires, deleted data is not yet permanently removed. During that time, an operator can use the CLI migration and restore flow to recover organizations, projects, chats, or files.
+
+If you need help performing that recovery, you can also contact [Customer support](/en/customer-support-manual/zendesk-client-manual).
+
+## Execution and failure handling
+
+The cleanup task runs on the cron schedule and checks whether inactive items and previously deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
+
+A cleanup run may permanently delete chats, files, projects, and organizations, together with associated cascaded data.
+
+Per-item failures are logged. The task continues with other items, and the next scheduled run retries remaining items.

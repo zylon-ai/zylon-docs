@@ -2,7 +2,7 @@
 title: "All Features"
 ---
 
-Zylon supports feature toggling, allowing you to enable or disable certain features on demand. This is managed through the `features` field in your configuration file.
+Zylon supports feature toggling, allowing you to enable or disable certain features on demand. Most of these settings are managed through the `features` field in your configuration file, while some user-facing capabilities have their own dedicated configuration keys.
 
 Each feature can define its own set of keys to control behavior.
 
@@ -30,6 +30,9 @@ features:
   <Card title="Audit log" icon="list" href="/en/operator-manual/configuration/features/feat-audit">
     Store Audit Log events & traces
   </Card>
+  <Card title="Project custom instructions" icon="chalkboard-user" href="/en/operator-manual/configuration/features/feat-project-custom-instructions">
+    Configure project instruction limits and advanced response behavior settings.
+  </Card>
   <Card title="Web Extract" icon="file-code" href="/en/operator-manual/configuration/features/feat-webextract">
     Extract and parse content from web pages.
   </Card>
@@ -46,4 +49,3 @@ features:
     <Badge color="orange" size="xs">Alpha</Badge> Enable image support in chats.
   </Card>
 </CardGroup>
-

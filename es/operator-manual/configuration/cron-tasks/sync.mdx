@@ -1,0 +1,84 @@
+---
+title: "Sincronizacion"
+description: "Configure la tarea programada de sincronizacion de integraciones"
+---
+
+La tarea de sincronizacion mantiene actualizado el contenido de la base de conocimiento respaldado por integraciones revisando las fuentes externas conectadas y actualizando en Zylon el contenido sincronizado cuando el contenido de origen se agrega, cambia o elimina.
+
+Use esta tarea cuando quiera que el contenido de [SharePoint](/es/operator-manual/knowledge-base/sharepoint), [Confluence](/es/operator-manual/knowledge-base/confluence), [File System](/es/operator-manual/knowledge-base/file-system), [Claromentis](/es/operator-manual/knowledge-base/claromentis) u otras integraciones compatibles se mantenga fresco sin resincronizaciones manuales.
+
+## Configuracion predeterminada
+
+Por defecto, la sincronizacion programada de integraciones esta deshabilitada. Cuando se habilita, la programacion predeterminada es diaria a la `01:00`. Si `timezone` no esta definido, Zylon usa la zona horaria predeterminada de la maquina servidor.
+
+```yaml
+integration:
+  sync:
+    enabled: false
+    cron: "0 1 * * *"
+```
+
+## Ejemplo de configuracion
+
+Edite `/etc/zylon/zylon-conf.yaml` y luego aplique el cambio con `sudo zylon-cli sync`.
+
+```yaml
+integration:
+  sync:
+    enabled: true
+    cron: "0 1 * * *"
+    timezone: "Europe/Madrid"
+```
+
+`enabled` activa o desactiva la sincronizacion programada. `cron` define cuando se ejecuta y `timezone` define de forma opcional la zona horaria usada para interpretar esa expresion cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
+
+<Tip>
+  Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
+</Tip>
+
+## Valores aceptados para cron y zona horaria
+
+### Valores de cron
+
+Las programaciones cron usan un formato de 5 partes:
+
+```text
+minute hour day-of-month month day-of-week
+```
+
+Use valores dentro de estos rangos:
+
+| Campo | Valores aceptados |
+| --- | --- |
+| Minuto | `0-59` o `*` |
+| Hora | `0-23` o `*` |
+| Dia del mes | `1-31` o `*` |
+| Mes | `1-12` o `*` |
+| Dia de la semana | `0-6` o `*` |
+
+Ejemplos:
+
+- `0 3 * * *` se ejecuta todos los dias a las 03:00
+- `30 2 * * 1` se ejecuta cada lunes a las 02:30
+
+### Valores de zona horaria
+
+`integration.sync.timezone` es opcional. Si no se define, el cron de sincronizacion se ejecuta en la zona horaria predeterminada de la maquina servidor.
+
+Cuando configure `integration.sync.timezone`, use un identificador IANA valido. Ejemplos comunes:
+
+- `UTC`
+- `Europe/Madrid`
+- `America/New_York`
+- `America/Los_Angeles`
+- `Asia/Tokyo`
+- `Pacific/Auckland`
+- `Africa/Johannesburg`
+
+Para una lista practica de identificadores de zona horaria IANA, consulte [IANA Time Zones](https://datetime.app/iana-timezones).
+
+## Ejecucion y manejo de fallos
+
+Una ejecucion programada de sincronizacion revisa el contenido activo de integraciones y puede llamar APIs externas, descargar contenido, crear o eliminar contenido sincronizado de la base de conocimiento, disparar la ingesta y emitir mensajes de fin de sincronizacion.
+
+Si falla un objetivo de sincronizacion, el error se registra y la tarea continua con los demas. La siguiente ejecucion programada lo intentara de nuevo.

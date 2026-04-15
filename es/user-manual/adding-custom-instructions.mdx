@@ -1,14 +1,32 @@
 ---
 title: Añadir instrucciones personalizadas
-description: Proporciona contexto específico del proyecto y reglas de formato usadas en cada chat del proyecto.
+description: Proporciona instrucciones específicas del proyecto usadas en cada chat del proyecto.
 icon: chalkboard-user
 ---
 
-Cada proyecto puede definir **instrucciones personalizadas** que la IA usa en **cada interacción en ese proyecto**. Estas complementan (no reemplazan) el contexto de la empresa a nivel de organización.
+Cada proyecto puede definir **instrucciones personalizadas** que la IA usa en **cada interacción en ese proyecto**. Estas complementan, y no reemplazan, el contexto de empresa a nivel de organización.
 
-- Usa el cuadro **Contexto** para información de fondo: para qué es este proyecto, a quién sirve, acrónimos clave, etc.
-- Usa el cuadro **Formato** para reglas de estilo de respuesta (p. ej., "responde en francés", "solo viñetas").
+Abre **Project Settings**, escribe tus instrucciones en el único campo **Instructions** y guarda la configuración del proyecto.
 
+Usa este campo para indicar, por ejemplo:
+
+- para qué sirve el proyecto
+- a quién va dirigido
+- acrónimos o contexto importante del dominio
+- idioma o estilo de respuesta preferido
+
+El tamaño máximo de este campo lo controla el operador mediante `zylonWorkspace.projects.maxInstructionsLength` en `/etc/zylon/zylon-conf.yaml`. El límite predeterminado es `4000`, y el mismo límite se aplica tanto en la UI de Workspace como en la API. Para la configuración del lado del operador, consulta [Instrucciones personalizadas de proyecto](/es/operator-manual/configuration/features/feat-project-custom-instructions).
 ![](/images/project_context.png)
 
-> **Comportamiento:** Las instrucciones personalizadas se aplican a todos los chats nuevos del proyecto. Combinadas con el "contexto de la empresa" de la organización, te permiten dar forma a "mini‑agentes" específicos del proyecto.
+## Ajustes avanzados
+
+La configuración del proyecto también incluye dos toggles avanzados:
+![](/images/advanced_settings.png)
+- **Citations**: Habilita o deshabilita las citas en las respuestas de chat de Zylon para ese proyecto.
+- **System prompt**: Mantiene o elimina la capa de prompt predeterminada de Zylon. Este prompt no se puede editar desde la UI, solo eliminar.
+
+<Warning>
+  Estos ajustes cambian cómo responde Zylon. Cambiarlos puede reducir la calidad de la respuesta, reducir la trazabilidad o hacer que las respuestas fallen, así que úsalos con cuidado.
+</Warning>
+
+> **Comportamiento:** Las instrucciones personalizadas se aplican a nivel de proyecto y modelan cómo responde Zylon en ese proyecto junto con el contexto de empresa de la organización.

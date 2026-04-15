@@ -1,0 +1,46 @@
+---
+title: "Vision File Processing"
+---
+
+<Info>
+**Available from version 1.56**
+</Info>
+<Note>**Feature in Alpha**</Note>
+<Note>**This feature requires a model with vision capabilities. See [AI Presets](/en/operator-manual/ai-presets/presets).**</Note>
+
+Enable vision-based file processing for documents and slides.
+
+### Modes
+
+| Mode   | Description |
+| ------ | ----------- |
+| `none` | Disables vision processing |
+| `lite` | Enables image processing using vision-capable models |
+
+### Configuration
+
+| Key                             | Default | Values           | Description                                       |
+| ------------------------------- | ------- | ---------------- | ------------------------------------------------- |
+| `transformation.pptx.vision.mode`    | `none`  | `none \| lite` | Controls vision processing mode for PPTX slides   |
+| `transformation.docling.vision.mode` | `none`  | `none \| lite` | Controls vision processing mode for Docling files |
+
+### Recommendations
+
+- Use `lite` when documents include important charts, diagrams, or images.
+- Use `lite` for PPTX files when slide structure and chart interpretation matter.
+
+<Warning>
+Enabling `lite` increases resource consumption and document processing time.
+</Warning>
+
+### Example
+
+```yaml
+transformation:
+    pptx:
+      vision:
+        mode: lite
+    docling:
+      vision:
+        mode: lite
+```

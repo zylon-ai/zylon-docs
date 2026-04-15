@@ -14,7 +14,12 @@ description: "Migrate to the Qwen 3.5 model family. Download the new model befor
 - **Qwen 3 is deprecated.** All baseline presets now use Qwen 3.5.
 - **Automatic model pull is disabled.** The new model will not download on its own, so you must pull it manually before upgrading.
 - **Vision presets are deprecated.** Qwen 3.5 includes native image support, so `alternatives.baseline-48g-vision` and `alternatives.baseline-96g-vision` no longer exist. They are replaced by their standard baseline equivalents.
-
+- **Monitoring infrastructure now enabled by default**: `monitoring: true` is now the default. This deploys the monitoring stack (Prometheus, Grafana, node-exporter, k8s-monitoring) even if you previously opted out of metrics. No metrics are scraped or sent unless explicitly enabled, but the infrastructure will be deployed on your next update. If you want to avoid this, set the following in your values file:
+    ```yaml
+    observability:
+      monitoring: false
+    ```
+     See the [Observability configuration](/en/operator-manual/configuration/observability) for the full reference.
 ## How to upgrade
 
 <Info>

@@ -14,6 +14,12 @@ La versión 1.55 incluye una nueva familia de modelos por defecto. Esto implica 
 - **Qwen 3 está deprecado.** Todos los presets baseline ahora usan Qwen 3.5.
 - **La descarga automática de modelos está deshabilitada.** El nuevo modelo no se descargará solo, así que debes descargarlo manualmente antes de actualizar.
 - **Los presets de visión están deprecados.** Qwen 3.5 ya incluye soporte nativo de imágenes, por lo que `alternatives.baseline-48g-vision` y `alternatives.baseline-96g-vision` ya no existen. Se reemplazan por sus equivalentes baseline.
+- **Infraestructura de monitorizacion activada por defecto**: `monitoring: true` es el valor por defecto. Esto instala los servicios de monitorización (Prometheus, Grafana, node-exporter, k8s-monitoring) a pesar de que las métricas hayan sido desactivadas. Ninguna métrica es enviada sin ser activada explicitamente, pero la infraestructura será instalada. Si no quieres que se instale, añade lo siguiente al fichero de configuración:
+    ```yaml
+    observability:
+      monitoring: false
+    ```
+     Mira [la configuración de observabilidad](/es/operator-manual/configuration/observability) para más información.
 
 ## Cómo actualizar
 

@@ -3,9 +3,9 @@ title: "Hard delete"
 description: "Configure the retention policy used by the workspace cleanup task"
 ---
 
-The hard delete task permanently removes items after they have first been soft deleted or marked inactive.
+The hard delete task permanently removes items after they have first been deleted in Zylon or marked inactive.
 
-Chats, projects, files, and organizations are soft deleted by default. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
+When chats, projects, files, or organizations are deleted in Zylon, they remain recoverable until the retention window expires. This cleanup configuration lets each organization align Zylon's permanent deletion behavior with its own data retention policy.
 
 ## Default configuration
 
@@ -24,6 +24,8 @@ zylonBackend:
 
 Edit `/etc/zylon/zylon-conf.yaml`, then apply the change with `sudo zylon-cli sync`.
 
+Use a retention window that matches your company's policy. Many organizations require a value much higher than the default.
+
 ```yaml
 zylonBackend:
   scheduler:
@@ -31,10 +33,10 @@ zylonBackend:
       enabled: true
       cron: "0 3 * * *"
       timezone: "Europe/Madrid"
-      deleteAfterDays: 14
+      deleteAfterDays: 365
 ```
 
-`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` optionally defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive or soft-deleted item is flagged to be hard deleted by the cron execution. If `timezone` is omitted, the server machine's default timezone is used.
+`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` optionally defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive item or a previously deleted item is permanently removed by the cron execution. If `timezone` is omitted, the server machine's default timezone is used.
 
 <Tip>
   We suggest setting an [IANA timezone](#timezone-values) that matches your company's timezone.
@@ -83,17 +85,17 @@ For a practical list of IANA timezone identifiers, see [IANA Time Zones](https:/
 
 ### Retention values
 
-For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, or `90`.
+For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, `90`, or `365`, according to your retention policy.
 
 ## Access before hard delete
 
-Before the retention window expires, the data is still soft deleted rather than permanently removed. During that time, an operator can use the CLI migration and restore flow to recover organizations, projects, chats, or files.
+Before the retention window expires, deleted data is not yet permanently removed. During that time, an operator can use the CLI migration and restore flow to recover organizations, projects, chats, or files.
 
 If you need help performing that recovery, you can also contact [Customer support](/en/customer-support-manual/zendesk-client-manual).
 
 ## Execution and failure handling
 
-Chats, projects, files, and organizations are soft deleted by default. The cleanup task runs on the cron schedule and checks whether inactive or soft-deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
+The cleanup task runs on the cron schedule and checks whether inactive items and previously deleted items have passed the `deleteAfterDays` retention window. When they have, the system flags them for hard delete and removes them from Zylon.
 
 A cleanup run may permanently delete chats, files, projects, and organizations, together with associated cascaded data.
 

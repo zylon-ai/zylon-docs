@@ -3,9 +3,9 @@ title: "Borrado permanente"
 description: "Configure la politica de retencion usada por la tarea de limpieza"
 ---
 
-La tarea de borrado permanente elimina definitivamente los elementos despues de que primero hayan sido marcados como borrados o inactivos.
+La tarea de borrado permanente elimina definitivamente los elementos despues de que primero se hayan eliminado en Zylon o marcado como inactivos.
 
-Chats, proyectos, archivos y organizaciones se borran de forma logica por defecto. Esta configuracion de limpieza permite que cada organizacion alinee el borrado permanente de Zylon con su propia politica de retencion de datos.
+Cuando se eliminan chats, proyectos, archivos u organizaciones en Zylon, siguen siendo recuperables hasta que vence la ventana de retencion. Esta configuracion de limpieza permite que cada organizacion alinee el borrado permanente de Zylon con su propia politica de retencion de datos.
 
 ## Configuracion predeterminada
 
@@ -24,6 +24,8 @@ zylonBackend:
 
 Edite `/etc/zylon/zylon-conf.yaml` y luego aplique el cambio con `sudo zylon-cli sync`.
 
+Use una ventana de retencion que coincida con la politica de su empresa. Muchas organizaciones necesitan un valor bastante mayor que el predeterminado.
+
 ```yaml
 zylonBackend:
   scheduler:
@@ -31,10 +33,10 @@ zylonBackend:
       enabled: true
       cron: "0 3 * * *"
       timezone: "Europe/Madrid"
-      deleteAfterDays: 14
+      deleteAfterDays: 365
 ```
 
-`enabled` activa o desactiva las revisiones programadas de borrado permanente. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o borrado logicamente quede marcado para borrado permanente por la ejecucion del cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
+`enabled` activa o desactiva las revisiones programadas de borrado permanente. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o un elemento eliminado previamente se elimine de forma definitiva por la ejecucion del cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
 
 <Tip>
   Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
@@ -83,17 +85,17 @@ Para una lista practica de identificadores de zona horaria IANA, consulte [IANA 
 
 ### Valores de retencion
 
-Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero positivo de dias como `14`, `30` o `90`.
+Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero positivo de dias como `14`, `30`, `90` o `365`, segun su politica de retencion.
 
 ## Acceso antes del borrado permanente
 
-Antes de que expire la ventana de retencion, los datos siguen estando en estado de borrado logico y no se han eliminado de forma definitiva. Durante ese tiempo, un operador puede usar el flujo de migracion y restauracion por CLI para recuperar organizaciones, proyectos, chats o archivos.
+Antes de que expire la ventana de retencion, los datos eliminados todavia no se han borrado de forma definitiva. Durante ese tiempo, un operador puede usar el flujo de migracion y restauracion por CLI para recuperar organizaciones, proyectos, chats o archivos.
 
 Si necesita ayuda para realizar esa recuperacion, tambien puede contactar con [Atencion al cliente](/es/customer-support-manual/zendesk-client-manual).
 
 ## Ejecucion y manejo de fallos
 
-Chats, proyectos, archivos y organizaciones se borran logicamente por defecto. La tarea de limpieza se ejecuta segun el cron configurado y revisa si los elementos inactivos o borrados logicamente ya superaron la ventana de retencion `deleteAfterDays`. Cuando la superan, el sistema los marca para borrado permanente y los elimina de Zylon.
+La tarea de limpieza se ejecuta segun el cron configurado y revisa si los elementos inactivos y los elementos eliminados previamente ya superaron la ventana de retencion `deleteAfterDays`. Cuando la superan, el sistema los marca para borrado permanente y los elimina de Zylon.
 
 Una ejecucion de limpieza puede borrar definitivamente chats, archivos, proyectos y organizaciones, junto con otros datos en cascada.
 

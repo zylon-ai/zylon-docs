@@ -33,6 +33,24 @@ adaptarse mediante dos enfoques:
 ```bash
 sudo ufw enable --force
 ```
+### Registro
+
+````md
+# Habilitar el registro para supervisar el tráfico bloqueado/permitido
+sudo ufw logging low
+sudo ufw enable --force
+````
+
+> **Nota:** El registro de UFW captura la actividad del firewall y es obligatorio para la mayoría de los marcos de cumplimiento de seguridad (SOC 2, ISO 27001, NIS2). El nivel `low` registra todos los paquetes bloqueados y las infracciones de políticas; esto es suficiente para auditoría y respuesta ante incidentes sin generar un volumen excesivo de ruido por el tráfico permitido habitual. Los registros los escribe el kernel y normalmente aparecen en una o varias de las siguientes ubicaciones, según la configuración de su sistema:
+>
+> * `/var/log/ufw.log` — cuando `rsyslog` está activo (predeterminado en Ubuntu)
+> * `/var/log/syslog` — como alternativa o junto con `ufw.log` en algunas configuraciones
+> * Accesibles mediante `sudo journalctl -k | grep UFW` en sistemas basados en systemd
+>
+> Recomendamos verificar qué ubicación está activa en su sistema después de habilitar el registro.
+
+```
+```
 
 #### Reglas genéricas
 

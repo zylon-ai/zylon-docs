@@ -1,17 +1,21 @@
 ---
-title: "Opencode"
-description: "Instala y configura Opencode CLI para trabajar con la plataforma de IA de Zylon."
+title: "Claude Code"
+description: "Configura Claude Code CLI para trabajar con la plataforma de IA de Zylon."
 ---
 
-**Opencode** es una herramienta interactiva de línea de comandos que ayuda a los desarrolladores con tareas de ingeniería de software. Proporciona un asistente de codificación impulsado por IA directamente en tu terminal, permitiéndote construir, depurar y mantener código con soporte inteligente.
+**Claude Code** es la herramienta de línea de comandos de Anthropic para interactuar con los modelos Claude. Te permite usar las capacidades de Claude directamente desde tu terminal para tareas de desarrollo y análisis.
 
-Para instrucciones de instalación, consulta la [documentación oficial de Opencode](https://opencode.ai).
+Para instrucciones de instalación, consulta la [documentación oficial de Claude Code](https://claude.com/product/claude-code).
+
+<Note>
+  Esta guía fue probada el 16 de abril de 2026. Si no funciona, consulta otras alternativas en la [guía de configuración de Opencode](./opencode-setup).
+</Note>
 
 ## Pasos de Configuración
 
 <Steps>
   <Step title="Crear un token de Gateway">
-    Antes de configurar Opencode, necesitas un **token de Gateway** de Zylon.
+    Antes de configurar Claude Code, necesitas un **token de Gateway** de Zylon.
 
     Consulta [Gestión de Tokens](./token-management) para obtener instrucciones detalladas sobre cómo crear tokens de Gateway.
   </Step>
@@ -41,49 +45,25 @@ Para instrucciones de instalación, consulta la [documentación oficial de Openc
     ```
   </Step>
 
-  <Step title="Configurar Opencode">
-    Crea el directorio de configuración de Opencode:
+  <Step title="Configurar Claude Code">
+    Agrega lo siguiente a tu archivo de configuración de shell (`~/.zshrc` o `~/.bashrc`):
 
     ```bash
-    mkdir -p ~/.config/opencode
+    echo 'export ANTHROPIC_BASE_URL="$ZYLON_BASE_URL"' >> ~/.zshrc
+    echo 'export ANTHROPIC_AUTH_TOKEN="$ZYLON_API_TOKEN"' >> ~/.zshrc
+    echo 'export ANTHROPIC_MODEL="$ZYLON_MODEL"' >> ~/.zshrc
+    source ~/.zshrc
     ```
-
-    Crea el archivo de configuración en `~/.config/opencode/opencode.json`:
-
-    ```json
-    {
-      "$schema": "https://opencode.ai/config.json",
-      "provider": {
-        "anthropic": {
-          "options": {
-            "baseURL": "{env:ZYLON_BASE_URL}/v1",
-            "apiKey": "{env:ZYLON_API_TOKEN}"
-          },
-          "models": {
-            "{env:ZYLON_MODEL}": {
-              "name": "Zylon - {env:ZYLON_MODEL}",
-              "limit": {
-                "context": 128000,
-                "output": 20000
-              }
-            }
-          }
-        }
-      }
-    }
-    ```
-
-    Para más detalles sobre las opciones de configuración de Opencode, consulta la [documentación oficial de Opencode](https://opencode.ai).
   </Step>
 
-  <Step title="Ejecutar Opencode">
+  <Step title="Ejecutar Claude Code">
     Prueba tu configuración ejecutando:
 
     ```bash
-    opencode
+    claude-code
     ```
 
-    Si está configurado correctamente, Opencode se conectará a tu instancia de Zylon y estará listo para ayudarte con tareas de codificación.
+    Si está configurado correctamente, Claude Code se conectará a tu instancia de Zylon y estará listo para ayudarte.
   </Step>
 </Steps>
 

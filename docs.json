@@ -268,7 +268,8 @@
               {
                 "group": "Coding Agents",
                 "pages": [
-                  "en/developer-manual/get-started/opencode-setup"
+                  "en/developer-manual/get-started/opencode-setup",
+                  "en/developer-manual/get-started/claude-code-setup"
                 ]
               }
             ]
@@ -647,7 +648,8 @@
               {
                 "group": "Coding Agents",
                 "pages": [
-                  "es/developer-manual/get-started/opencode-setup"
+                  "es/developer-manual/get-started/opencode-setup",
+                  "es/developer-manual/get-started/claude-code-setup"
                 ]
               }
             ]

@@ -264,6 +264,12 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Coding Agents",
+                "pages": [
+                  "en/developer-manual/get-started/opencode-setup"
+                ]
               }
             ]
           },
@@ -636,6 +642,12 @@
                       }
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Coding Agents",
+                "pages": [
+                  "es/developer-manual/get-started/opencode-setup"
                 ]
               }
             ]

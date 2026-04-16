@@ -22,10 +22,11 @@ For installation instructions, see the [official Opencode documentation](https:/
     ```bash
     echo 'export ZYLON_BASE_URL="https://your-host/api/gpt/v1"' >> ~/.zshrc
     echo 'export ZYLON_API_TOKEN="your-gateway-token"' >> ~/.zshrc
+    echo 'export ZYLON_MODEL="default"' >> ~/.zshrc
     source ~/.zshrc
     ```
 
-    Replace `your-host` with your Zylon instance URL and `your-gateway-token` with your actual Gateway token.
+    Replace `your-host` with your Zylon instance URL and `your-gateway-token` with your actual Gateway token. The model defaults to `default`.
 
     <Warning>
       Never commit environment variables containing tokens to version control. Add them to your `.gitignore`.
@@ -36,6 +37,7 @@ For installation instructions, see the [official Opencode documentation](https:/
     ```bash
     echo $ZYLON_BASE_URL
     echo $ZYLON_API_TOKEN
+    echo $ZYLON_MODEL
     ```
   </Step>
 
@@ -58,8 +60,8 @@ For installation instructions, see the [official Opencode documentation](https:/
             "apiKey": "{env:ZYLON_API_TOKEN}"
           },
           "models": {
-            "default": {
-              "name": "Zylon - Default",
+            "{env:ZYLON_MODEL}": {
+              "name": "Zylon - {env:ZYLON_MODEL}",
               "limit": {
                 "context": 128000,
                 "output": 20000

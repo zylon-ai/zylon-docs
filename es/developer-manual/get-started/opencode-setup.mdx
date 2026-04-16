@@ -22,10 +22,11 @@ Para instrucciones de instalación, consulta la [documentación oficial de Openc
     ```bash
     echo 'export ZYLON_BASE_URL="https://your-host/api/gpt/v1"' >> ~/.zshrc
     echo 'export ZYLON_API_TOKEN="your-gateway-token"' >> ~/.zshrc
+    echo 'export ZYLON_MODEL="default"' >> ~/.zshrc
     source ~/.zshrc
     ```
 
-    Reemplaza `your-host` con la URL de tu instancia de Zylon y `your-gateway-token` con tu token de Gateway real.
+    Reemplaza `your-host` con la URL de tu instancia de Zylon y `your-gateway-token` con tu token de Gateway real. El modelo predeterminado es `default`.
 
     <Warning>
       Nunca hagas commit de variables de entorno que contengan tokens al control de versiones. Agrégalas a tu `.gitignore`.
@@ -36,6 +37,7 @@ Para instrucciones de instalación, consulta la [documentación oficial de Openc
     ```bash
     echo $ZYLON_BASE_URL
     echo $ZYLON_API_TOKEN
+    echo $ZYLON_MODEL
     ```
   </Step>
 
@@ -58,8 +60,8 @@ Para instrucciones de instalación, consulta la [documentación oficial de Openc
             "apiKey": "{env:ZYLON_API_TOKEN}"
           },
           "models": {
-            "default": {
-              "name": "Zylon - Default",
+            "{env:ZYLON_MODEL}": {
+              "name": "Zylon - {env:ZYLON_MODEL}",
               "limit": {
                 "context": 128000,
                 "output": 20000

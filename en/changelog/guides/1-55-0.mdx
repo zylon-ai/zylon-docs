@@ -69,6 +69,12 @@ Follow the steps for your installation type.
   <Tab title="Online">
 
     <Steps>
+      <Step title="Update the CLI (required)">
+        ```bash
+        sudo zylon-cli self-update
+        sudo zylon-cli version
+        ```
+      </Step>
       <Step title="Download the model">
         Replace `<model_id>` with the value from the table above.
 
@@ -76,13 +82,6 @@ Follow the steps for your installation type.
         sudo zylon-cli models download <model_id>
         ```
 
-        <Info>
-          If `sudo zylon-cli models ...` is not available or returns `command not found`, run:
-
-          ```bash
-          sudo zylon-cli self-update
-          ```
-        </Info>
       </Step>
       <Step title="Install 1.55">
         ```bash
@@ -98,6 +97,12 @@ Follow the steps for your installation type.
   <Tab title="Semi-Airgap">
 
     <Steps>
+      <Step title="Update the CLI (required)">
+        ```bash
+        sudo zylon-cli self-update
+        sudo zylon-cli version
+        ```
+      </Step>
       <Step title="Re-enable internet access">
         Temporarily allow online operations in your config, then apply it:
 
@@ -120,13 +125,6 @@ Follow the steps for your installation type.
         sudo zylon-cli models download <model_id>
         ```
 
-        <Info>
-          If `sudo zylon-cli models ...` is not available or returns `command not found`, run:
-
-          ```bash
-          sudo zylon-cli self-update
-          ```
-        </Info>
       </Step>
       <Step title="Install 1.55">
         ```bash
@@ -154,35 +152,24 @@ Follow the steps for your installation type.
     These steps run across two machines: an internet-connected machine for downloading, and the offline target machine.
 
     <Steps>
+      <Step title="Online machine: update the CLI (required)">
+        ```bash
+        sudo zylon-cli self-update
+        sudo zylon-cli version
+        ```
+      </Step>
       <Step title="Online machine: download and export the model">
         ```bash
         sudo zylon-cli models download --no-install <model_id>
         sudo zylon-cli models export
         ```
-
-        <Info>
-          If `sudo zylon-cli models ...` is not available or returns `command not found`:
-
-          **Required when upgrading from very old versions:** after this setup, the CLI self-updates from airgap bundles.
-
-          1. On the online machine, update the CLI:
-          ```bash
-          sudo zylon-cli self-update
-          ```
-          2. Prepare the transfer package:
-          ```bash
-          sudo tar -czf zylon-update.tar.gz \
-            /usr/local/bin/zylon-cli \
-            /usr/local/bin/zylon-forge-cli \
-            /etc/zylon/zylon-conf.yaml
-          ```
-          3. Transfer it to the offline machine:
-          ```bash
-          scp zylon-update.tar.gz user@offline-machine:/tmp/
-          ```
-
-          For full context, see the [Full-airgap update guide](/en/operator-manual/installation/airgap#updating-zylon).
-        </Info>
+      </Step>
+      <Step title="Online machine: prepare the CLI transfer package">
+        ```bash
+        sudo tar -czf zylon-update.tar.gz \
+          /usr/local/bin/zylon-cli \
+          /usr/local/bin/zylon-forge-cli
+        ```
       </Step>
       <Step title="Online machine: export the 1.55 platform bundle">
         ```bash
@@ -200,10 +187,10 @@ Follow the steps for your installation type.
 
         - `zylon-models-*.tar`
         - `zylon-*.tar`
-        - `zylon-update.tar.gz` (if needed; see previous step)
+        - `zylon-update.tar.gz`
 
       </Step>
-      <Step title="Offline machine: extract CLI transfer package (if needed)">
+      <Step title="Offline machine: extract CLI transfer package">
         ```bash
         cd /tmp
         sudo tar -xzf zylon-update.tar.gz -C /

@@ -1,0 +1,106 @@
+---
+title: "Opencode"
+description: "Instala y configura Opencode CLI para trabajar con la plataforma de IA de Zylon."
+---
+
+**Opencode** es una herramienta interactiva de línea de comandos que ayuda a los desarrolladores con tareas de ingeniería de software. Proporciona un asistente de codificación impulsado por IA directamente en tu terminal, permitiéndote construir, depurar y mantener código con soporte inteligente.
+
+Para instrucciones de instalación, consulta la [documentación oficial de Opencode](https://opencode.ai).
+
+## Pasos de Configuración
+
+<Steps>
+  <Step title="Crear un token de Gateway">
+    Antes de configurar Opencode, necesitas un **token de Gateway** de Zylon.
+
+    Consulta [Gestión de Tokens](./token-management) para obtener instrucciones detalladas sobre cómo crear tokens de Gateway.
+  </Step>
+
+  <Step title="Establecer variables de entorno">
+    Agrega lo siguiente a tu archivo de configuración de shell (`~/.zshrc` o `~/.bashrc`):
+
+    ```bash
+    echo 'export ZYLON_BASE_URL="https://your-host/api/gpt"' >> ~/.zshrc
+    echo 'export ZYLON_API_TOKEN="your-gateway-token"' >> ~/.zshrc
+    echo 'export ZYLON_MODEL="default"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+
+    Reemplaza `your-host` con la URL de tu instancia de Zylon y `your-gateway-token` con tu token de Gateway real. El modelo predeterminado es `default`.
+
+    <Warning>
+      Nunca hagas commit de variables de entorno que contengan tokens al control de versiones. Agrégalas a tu `.gitignore`.
+    </Warning>
+
+    Confirma que las variables se establecieron correctamente:
+
+    ```bash
+    echo $ZYLON_BASE_URL
+    echo $ZYLON_API_TOKEN
+    echo $ZYLON_MODEL
+    ```
+  </Step>
+
+  <Step title="Configurar Opencode">
+    Crea el directorio de configuración de Opencode:
+
+    ```bash
+    mkdir -p ~/.config/opencode
+    ```
+
+    Crea el archivo de configuración en `~/.config/opencode/opencode.json`:
+
+    ```json
+    {
+      "$schema": "https://opencode.ai/config.json",
+      "provider": {
+        "anthropic": {
+          "options": {
+            "baseURL": "{env:ZYLON_BASE_URL}/v1",
+            "apiKey": "{env:ZYLON_API_TOKEN}"
+          },
+          "models": {
+            "{env:ZYLON_MODEL}": {
+              "name": "Zylon - {env:ZYLON_MODEL}",
+              "limit": {
+                "context": 128000,
+                "output": 20000
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    Para más detalles sobre las opciones de configuración de Opencode, consulta la [documentación oficial de Opencode](https://opencode.ai).
+  </Step>
+
+  <Step title="Ejecutar Opencode">
+    Prueba tu configuración ejecutando:
+
+    ```bash
+    opencode
+    ```
+
+    Si está configurado correctamente, Opencode se conectará a tu instancia de Zylon y estará listo para ayudarte con tareas de codificación.
+  </Step>
+</Steps>
+
+## Limitaciones
+
+- Las imágenes no son compatibles
+
+## Solución de Problemas
+
+### Errores de conexión
+
+- Verifica que `ZYLON_BASE_URL` sea correcta y accesible
+- Asegúrate de que tu token de Gateway sea válido y no haya expirado
+- Comprueba la conectividad de red con tu instancia de Zylon
+
+### Fallos de autenticación
+
+- Confirma que el token se copió correctamente sin espacios en blanco adicionales
+- Regenera el token si pudo haber sido comprometido
+- Verifica que el token tenga los permisos apropiados

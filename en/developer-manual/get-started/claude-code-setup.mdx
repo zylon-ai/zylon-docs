@@ -1,0 +1,86 @@
+---
+title: "Claude Code"
+description: "Configure Claude Code CLI to work with Zylon's AI platform."
+---
+
+**Claude Code** is Anthropic's CLI tool for interacting with Claude models. It allows you to use Claude's capabilities directly from your terminal for development and analysis tasks.
+
+For installation instructions, see the [official Claude Code documentation](https://claude.com/product/claude-code).
+
+<Note>
+  This guide was tested on April 16th, 2026. If it's not working, please check other alternatives in the [Opencode setup guide](./opencode-setup).
+</Note>
+
+## Setup Steps
+
+<Steps>
+  <Step title="Create a Gateway Token">
+    Before configuring Claude Code, you need a **Gateway Token** from Zylon.
+
+    See [Token Management](./token-management) for detailed instructions on creating Gateway tokens.
+  </Step>
+
+  <Step title="Set Environment Variables">
+    Add the following to your shell configuration file (`~/.zshrc` or `~/.bashrc`):
+
+    ```bash
+    echo 'export ZYLON_BASE_URL="https://your-host/api/gpt"' >> ~/.zshrc
+    echo 'export ZYLON_API_TOKEN="your-gateway-token"' >> ~/.zshrc
+    echo 'export ZYLON_MODEL="default"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+
+    Replace `your-host` with your Zylon instance URL and `your-gateway-token` with your actual Gateway token. The model defaults to `default`.
+
+    <Warning>
+      Never commit environment variables containing tokens to version control. Add them to your `.gitignore`.
+    </Warning>
+
+    Confirm the variables are set correctly:
+
+    ```bash
+    echo $ZYLON_BASE_URL
+    echo $ZYLON_API_TOKEN
+    echo $ZYLON_MODEL
+    ```
+  </Step>
+
+  <Step title="Configure Claude Code">
+    Add the following to your shell configuration file (`~/.zshrc` or `~/.bashrc`):
+
+    ```bash
+    echo 'export ANTHROPIC_BASE_URL="$ZYLON_BASE_URL"' >> ~/.zshrc
+    echo 'export ANTHROPIC_AUTH_TOKEN="$ZYLON_API_TOKEN"' >> ~/.zshrc
+    echo 'export ANTHROPIC_MODEL="$ZYLON_MODEL"' >> ~/.zshrc
+    source ~/.zshrc
+    ```
+  </Step>
+
+  <Step title="Run Claude Code">
+    Test your configuration by running:
+
+    ```bash
+    claude
+    ```
+
+    If configured correctly, Claude Code will connect to your Zylon instance and be ready to assist.
+  </Step>
+</Steps>
+
+## Limitations
+
+- Images are not supported
+
+## Troubleshooting
+
+### Connection Errors
+
+- Verify `ZYLON_BASE_URL` is correct and accessible
+- Ensure your Gateway token is valid and not expired
+- Check network connectivity to your Zylon instance
+
+### Authentication Failures
+
+- Confirm the token is copied correctly without extra whitespace
+- Regenerate the token if it may have been compromised
+- Verify the token has appropriate permissions

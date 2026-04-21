@@ -35,6 +35,21 @@ After any change don't forget to enable the firewall!
 sudo ufw enable --force
 ```
 
+### Logging 
+
+```bash
+# Enable logging to monitor blocked/allowed traffic
+sudo ufw logging low
+sudo ufw enable --force
+```
+
+> **Note:** UFW logging captures firewall activity and is required for most security compliance frameworks (SOC 2, ISO 27001, NIS2). The `low` level logs all blocked packets and policy violations — this is sufficient for audit and incident response without generating excessive noise from routine allowed traffic. Logs are written by the kernel and typically appear in one or more of the following locations depending on your system configuration:
+> - `/var/log/ufw.log` — when `rsyslog` is active (default on Ubuntu)
+> - `/var/log/syslog` — fallback or alongside `ufw.log` on some configurations
+> - Accessible via `sudo journalctl -k | grep UFW` on systemd-based systems
+>
+> We recommend verifying which location is active on your system after enabling logging.
+
 #### Generic rules
 
 These are the most restrictive rules that should be applied to your Zylon server.

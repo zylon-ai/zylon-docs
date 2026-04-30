@@ -373,7 +373,15 @@
                   {
                     "group": "Advanced Settings",
                     "pages": [
-                      "en/operator-manual/configuration/observability",
+                      {
+                        "group": "Observability",
+                        "pages": [
+                          "en/operator-manual/configuration/observability/index",
+                          "en/operator-manual/configuration/observability/platform-metrics",
+                          "en/operator-manual/configuration/observability/destinations",
+                          "en/operator-manual/configuration/observability/external-grafana-dashboard"
+                        ]
+                      },
                       "en/operator-manual/configuration/search",
                       "en/operator-manual/configuration/performance",
                       "en/operator-manual/configuration/whitelabel",
@@ -753,7 +761,15 @@
                   {
                     "group": "Configuraci\u00f3n Avanzada",
                     "pages": [
-                      "es/operator-manual/configuration/observability",
+                      {
+                        "group": "Observabilidad",
+                        "pages": [
+                          "es/operator-manual/configuration/observability/index",
+                          "es/operator-manual/configuration/observability/platform-metrics",
+                          "es/operator-manual/configuration/observability/destinations",
+                          "es/operator-manual/configuration/observability/external-grafana-dashboard"
+                        ]
+                      },
                       "es/operator-manual/configuration/search",
                       "es/operator-manual/configuration/performance",
                       "es/operator-manual/configuration/whitelabel",

@@ -1,0 +1,184 @@
+---
+title: "Metrics Destinations"
+---
+
+Use destinations when you want to send Zylon metrics to your own monitoring backend.
+
+This requires:
+
+- `observability.monitoring: true`
+- a destination under `k8s-monitoring.extraDestinations`
+
+If you need to replace Zylon's default destinations instead of adding new ones, see [Override Zylon default destinations](#override-zylon-default-destinations).
+
+## Supported backends
+
+Zylon supports three backend families:
+
+| Backend | YAML type | Typical URL |
+|---|---|---|
+| Prometheus | `prometheus` | `https://prometheus.example.com/api/v1/write` |
+| Grafana-compatible Prometheus backend | `prometheus` | `https://<stack>.grafana.net/api/prom/push` |
+| OTLP collector | `otlp` | `https://otel.example.com/v1/metrics` or `grpc://otel.example.com:4317` |
+
+There is no separate `grafana` destination type. Grafana-compatible metrics services still use `type: prometheus`.
+
+## Destination shape
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    <destination-name>:
+      type: prometheus|otlp
+      url: <endpoint-url>
+
+      # Define authentication settings for the destination, 
+      # if required by your backend
+      auth:
+        type: basic|bearer
+
+      # Define the proxy to connect to the destination, 
+      # if required by your network setup
+      proxyURL: http://proxy:port
+
+      # Define TLS settings for the destination, 
+      # if your endpoint uses a private or self-signed CA
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          ...
+          -----END CERTIFICATE-----
+```
+
+## Destination examples
+
+<Tabs>
+  <Tab title="Prometheus">
+
+Use `type: prometheus` for a self-hosted Prometheus server with remote-write enabled:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    prometheus:
+      type: prometheus
+      url: https://prometheus.example.com/api/v1/write
+      auth:
+        type: basic
+        username: "zylon-metrics"
+        password: "${PROMETHEUS_API_KEY}"
+```
+
+Prometheus must have the remote-write receiver enabled, for example by starting Prometheus with:
+
+```bash
+--web.enable-remote-write-receiver
+```
+
+For self-signed Prometheus endpoints, pass the CA certificate so TLS verification stays enabled:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    prometheus-selfsigned:
+      type: prometheus
+      url: https://prometheus.internal:9090/api/v1/write
+      auth:
+        type: basic
+        username: "admin"
+        password: "${PROMETHEUS_PASS}"
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          MIID...
+          -----END CERTIFICATE-----
+```
+
+  </Tab>
+  <Tab title="Grafana-Compatible">
+
+Grafana Cloud and similar backends use Prometheus remote write, so they still use `type: prometheus`:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    grafana-cloud:
+      type: prometheus
+      url: https://<stack>.grafana.net/api/prom/push
+      auth:
+        type: basic
+        username: "your-access-policy-id"
+        password: "${GRAFANA_CLOUD_API_KEY}"
+```
+
+Use the exact write URL and credentials given by your provider.
+
+  </Tab>
+  <Tab title="OTLP">
+
+Use `type: otlp` when you are sending metrics to an OpenTelemetry collector.
+
+OTLP over HTTPS:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    otlp-https:
+      type: otlp
+      url: https://otel-collector.company.com/v1/metrics
+      auth:
+        type: bearer
+        token: "${OTLP_BEARER_TOKEN}"
+```
+
+OTLP over gRPC:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    otlp-grpc:
+      type: otlp
+      url: grpc://otel-collector.company.com:4317
+      auth:
+        type: bearer
+        token: "${OTLP_GRPC_TOKEN}"
+```
+
+  </Tab>
+</Tabs>
+
+## Multiple destinations
+
+You can send metrics to more than one backend at the same time:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    grafana-primary:
+      type: prometheus
+      url: https://prometheus-prod-XX.grafana.net/api/prom/push
+      auth:
+        type: basic
+        username: "primary-access-id"
+        password: "${GRAFANA_PRIMARY_KEY}"
+
+    internal-prometheus:
+      type: prometheus
+      url: https://prometheus.internal:9090/api/v1/write
+      auth:
+        type: basic
+        username: "backup"
+        password: "${INTERNAL_PROMETHEUS_KEY}"
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          MIID...
+          -----END CERTIFICATE-----
+
+    compliance-otel:
+      type: otlp
+      url: https://compliance-otel.company.com/v1/metrics
+      auth:
+        type: bearer
+        token: "${COMPLIANCE_OTEL_TOKEN}"
+```

@@ -1,0 +1,227 @@
+---
+title: "Destinos de métricas"
+---
+
+Usa destinos cuando quieras enviar las métricas de Zylon a tu propio backend de monitorización.
+
+Esto requiere:
+
+- `observability.monitoring: true`
+- un destino bajo `k8s-monitoring.extraDestinations`
+
+Si necesitas reemplazar los destinos por defecto de Zylon en lugar de añadir nuevos, consulta [Sobrescribir los destinos por defecto de Zylon](#sobrescribir-los-destinos-por-defecto-de-zylon).
+
+## Backends compatibles
+
+Zylon soporta tres familias de backend:
+
+| Backend | Tipo YAML | URL típica |
+|---|---|---|
+| Prometheus | `prometheus` | `https://prometheus.example.com/api/v1/write` |
+| Backend compatible con Prometheus para Grafana | `prometheus` | `https://<stack>.grafana.net/api/prom/push` |
+| Colector OTLP | `otlp` | `https://otel.example.com/v1/metrics` o `grpc://otel.example.com:4317` |
+
+No existe un tipo de destino `grafana` separado. Los servicios de métricas compatibles con Grafana siguen usando `type: prometheus`.
+
+## Estructura del destino
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    <destination-name>:
+      type: prometheus|otlp
+      url: <endpoint-url>
+
+      # Define la configuración de autenticación del destino,
+      # si tu backend la requiere
+      auth:
+        type: basic|bearer
+
+      # Define el proxy para conectarte al destino,
+      # si tu red lo requiere
+      proxyURL: http://proxy:port
+
+      # Define la configuración TLS del destino,
+      # si el endpoint usa una CA privada o autofirmada
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          ...
+          -----END CERTIFICATE-----
+```
+
+## Sobrescribir los destinos por defecto de Zylon
+
+Úsalo cuando quieras reemplazar los destinos gestionados por Zylon en lugar de añadir destinos extra.
+
+Esto usa `destinations`, no `extraDestinations`.
+
+Qué tienes que hacer:
+
+- Mantén la entrada `otlp` y pon `url: "-"` para desactivar el destino OTLP por defecto de Zylon.
+- Mantén la entrada `loki` y pon `url: "-"` para desactivar el destino Loki por defecto de Zylon.
+- Añade tu propio destino como un nuevo elemento dentro de la misma lista `destinations`.
+- Cambia el `name`, el `type` y la `url` del destino para que coincidan con tu backend.
+- Si tu endpoint usa una CA privada o autofirmada, sustituye el certificado de ejemplo bajo `tls.ca` por tu propia CA.
+
+Ejemplo:
+
+```yaml
+destinations:
+  - name: otlp
+    type: otlp
+    protocol: grpc
+    url: "-"
+  - name: loki
+    type: loki
+    url: "-"
+  - name: my-local-prometheus
+    type: prometheus
+    url: https://prometheus.example.com/api/v1/write
+    tls:
+      ca: |
+        -----BEGIN CERTIFICATE-----
+        MIID...
+        -----END CERTIFICATE-----
+```
+
+## Ejemplos de destinos
+
+<Tabs>
+  <Tab title="Prometheus">
+
+Usa `type: prometheus` para un servidor Prometheus autoalojado con remote write activado:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    prometheus:
+      type: prometheus
+      url: https://prometheus.example.com/api/v1/write
+      auth:
+        type: basic
+        username: "zylon-metrics"
+        password: "${PROMETHEUS_API_KEY}"
+```
+
+Prometheus debe tener activado el receptor de remote write, por ejemplo arrancando Prometheus con:
+
+```bash
+--web.enable-remote-write-receiver
+```
+
+Para endpoints de Prometheus con certificado autofirmado, pasa el certificado CA para mantener la verificación TLS activa:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    prometheus-selfsigned:
+      type: prometheus
+      url: https://prometheus.internal:9090/api/v1/write
+      auth:
+        type: basic
+        username: "admin"
+        password: "${PROMETHEUS_PASS}"
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          MIID...
+          -----END CERTIFICATE-----
+```
+
+  </Tab>
+  <Tab title="Grafana-Compatible">
+
+Grafana Cloud y backends similares usan Prometheus remote write, así que siguen usando `type: prometheus`:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    grafana-cloud:
+      type: prometheus
+      url: https://<stack>.grafana.net/api/prom/push
+      auth:
+        type: basic
+        username: "your-access-policy-id"
+        password: "${GRAFANA_CLOUD_API_KEY}"
+```
+
+Usa la URL de escritura exacta y las credenciales que te dé tu proveedor.
+
+  </Tab>
+  <Tab title="OTLP">
+
+Usa `type: otlp` cuando vayas a enviar métricas a un colector OpenTelemetry.
+
+OTLP sobre HTTPS:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    otlp-https:
+      type: otlp
+      url: https://otel-collector.company.com/v1/metrics
+      auth:
+        type: bearer
+        token: "${OTLP_BEARER_TOKEN}"
+```
+
+OTLP sobre gRPC:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    otlp-grpc:
+      type: otlp
+      url: grpc://otel-collector.company.com:4317
+      auth:
+        type: bearer
+        token: "${OTLP_GRPC_TOKEN}"
+```
+
+  </Tab>
+</Tabs>
+
+## Múltiples destinos
+
+Puedes enviar métricas a más de un backend al mismo tiempo:
+
+```yaml
+k8s-monitoring:
+  extraDestinations:
+    grafana-primary:
+      type: prometheus
+      url: https://prometheus-prod-XX.grafana.net/api/prom/push
+      auth:
+        type: basic
+        username: "primary-access-id"
+        password: "${GRAFANA_PRIMARY_KEY}"
+
+    internal-prometheus:
+      type: prometheus
+      url: https://prometheus.internal:9090/api/v1/write
+      auth:
+        type: basic
+        username: "backup"
+        password: "${INTERNAL_PROMETHEUS_KEY}"
+      tls:
+        ca: |
+          -----BEGIN CERTIFICATE-----
+          MIID...
+          -----END CERTIFICATE-----
+
+    compliance-otel:
+      type: otlp
+      url: https://compliance-otel.company.com/v1/metrics
+      auth:
+        type: bearer
+        token: "${COMPLIANCE_OTEL_TOKEN}"
+```
+
+## Secretos
+
+Usa variables de entorno para tokens y contraseñas:
+
+```yaml
+password: "${ENV_VARIABLE_NAME}"
+```

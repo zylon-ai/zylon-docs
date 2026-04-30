@@ -9,6 +9,8 @@ Esto requiere:
 - `observability.monitoring: true`
 - un destino bajo `k8s-monitoring.extraDestinations`
 
+Si necesitas reemplazar los destinos por defecto de Zylon en lugar de añadir nuevos, consulta [Sobrescribir los destinos por defecto de Zylon](#sobrescribir-los-destinos-por-defecto-de-zylon).
+
 ## Backends compatibles
 
 Zylon soporta tres familias de backend:
@@ -29,15 +31,58 @@ k8s-monitoring:
     <destination-name>:
       type: prometheus|otlp
       url: <endpoint-url>
+
+      # Define la configuración de autenticación del destino,
+      # si tu backend la requiere
       auth:
         type: basic|bearer
-      proxy:
-        url: http://proxy:port
+
+      # Define el proxy para conectarte al destino,
+      # si tu red lo requiere
+      proxyURL: http://proxy:port
+
+      # Define la configuración TLS del destino,
+      # si el endpoint usa una CA privada o autofirmada
       tls:
         ca: |
           -----BEGIN CERTIFICATE-----
           ...
           -----END CERTIFICATE-----
+```
+
+## Sobrescribir los destinos por defecto de Zylon
+
+Úsalo cuando quieras reemplazar los destinos gestionados por Zylon en lugar de añadir destinos extra.
+
+Esto usa `destinations`, no `extraDestinations`.
+
+Qué tienes que hacer:
+
+- Mantén la entrada `otlp` y pon `url: "-"` para desactivar el destino OTLP por defecto de Zylon.
+- Mantén la entrada `loki` y pon `url: "-"` para desactivar el destino Loki por defecto de Zylon.
+- Añade tu propio destino como un nuevo elemento dentro de la misma lista `destinations`.
+- Cambia el `name`, el `type` y la `url` del destino para que coincidan con tu backend.
+- Si tu endpoint usa una CA privada o autofirmada, sustituye el certificado de ejemplo bajo `tls.ca` por tu propia CA.
+
+Ejemplo:
+
+```yaml
+destinations:
+  - name: otlp
+    type: otlp
+    protocol: grpc
+    url: "-"
+  - name: loki
+    type: loki
+    url: "-"
+  - name: my-local-prometheus
+    type: prometheus
+    url: https://prometheus.example.com/api/v1/write
+    tls:
+      ca: |
+        -----BEGIN CERTIFICATE-----
+        MIID...
+        -----END CERTIFICATE-----
 ```
 
 ## Ejemplos de destinos
@@ -94,7 +139,7 @@ k8s-monitoring:
   extraDestinations:
     grafana-cloud:
       type: prometheus
-      url: https://prometheus-prod-16-prod-eu-west-2.grafana.net/api/prom/push
+      url: https://<stack>.grafana.net/api/prom/push
       auth:
         type: basic
         username: "your-access-policy-id"

@@ -9,6 +9,8 @@ This requires:
 - `observability.monitoring: true`
 - a destination under `k8s-monitoring.extraDestinations`
 
+If you need to replace Zylon's default destinations instead of adding new ones, see [Override Zylon default destinations](#override-zylon-default-destinations).
+
 ## Supported backends
 
 Zylon supports three backend families:
@@ -29,10 +31,18 @@ k8s-monitoring:
     <destination-name>:
       type: prometheus|otlp
       url: <endpoint-url>
+
+      # Define authentication settings for the destination, 
+      # if required by your backend
       auth:
         type: basic|bearer
-      proxy:
-        url: http://proxy:port
+
+      # Define the proxy to connect to the destination, 
+      # if required by your network setup
+      proxyURL: http://proxy:port
+
+      # Define TLS settings for the destination, 
+      # if your endpoint uses a private or self-signed CA
       tls:
         ca: |
           -----BEGIN CERTIFICATE-----
@@ -94,7 +104,7 @@ k8s-monitoring:
   extraDestinations:
     grafana-cloud:
       type: prometheus
-      url: https://prometheus-prod-16-prod-eu-west-2.grafana.net/api/prom/push
+      url: https://<stack>.grafana.net/api/prom/push
       auth:
         type: basic
         username: "your-access-policy-id"
@@ -171,12 +181,4 @@ k8s-monitoring:
       auth:
         type: bearer
         token: "${COMPLIANCE_OTEL_TOKEN}"
-```
-
-## Secrets
-
-Use environment variables for tokens and passwords:
-
-```yaml
-password: "${ENV_VARIABLE_NAME}"
 ```

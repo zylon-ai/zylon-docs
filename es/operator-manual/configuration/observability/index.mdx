@@ -1,5 +1,5 @@
 ---
-title: "Observabilidad"
+title: "Cómo configurar la observabilidad"
 ---
 
 La observabilidad te ayuda a responder tres preguntas:
@@ -22,7 +22,7 @@ En la mayoría de los casos, piensa en la observabilidad en este orden:
 
 1. Activa `monitoring` si quieres métricas.
 2. Activa `platformMetrics` si quieres métricas de Triton, vLLM, GPU y nodos.
-3. Añade `extraDestinations` solo si quieres enviar esas métricas a tu propio backend.
+3. Añade `destinations` si quieres enviar esas métricas a tu propio backend.
 4. Mantén o desactiva `crashReporting` y `usageMetrics` según quieras o no la telemetría de Zylon.
 
 Ejemplo mínimo:
@@ -36,18 +36,7 @@ observability:
 
 Esto te da métricas locales en el stack de monitorización del clúster.
 
-## Siguientes páginas
-
-Para la configuración principal de Zylon:
-
-- [Métricas de plataforma](/es/operator-manual/configuration/observability/platform-metrics): habilita métricas de Triton, vLLM, GPU y nodos
-- [Destinos de métricas](/es/operator-manual/configuration/observability/destinations): envía métricas a Prometheus, backends compatibles con Grafana u OTLP
-
-Si usas tu propia instancia de Grafana, el dashboard es un paso opcional aparte:
-
-- [Dashboard externo de Grafana](/es/operator-manual/configuration/observability/external-grafana-dashboard): importa el dashboard de referencia en tu propia instancia de Grafana
-
-## Crash reporting
+### Crash reporting
 
 ```yaml
 observability:
@@ -58,7 +47,7 @@ observability:
 
 Actívalo si quieres que el equipo de soporte de Zylon tenga información cuando la plataforma falle. Desactívalo si no quieres enviar ningún diagnóstico de fallos a Zylon.
 
-## Métricas de uso
+### Métricas de uso
 
 ```yaml
 observability:
@@ -69,7 +58,7 @@ observability:
 
 Esta es telemetría de producto, no las métricas detalladas de Triton o vLLM que se usan para operar el clúster. Desactívala si no quieres enviar telemetría de uso a Zylon.
 
-## Monitorización
+### Monitorización
 
 La monitorización debe estar activada si quieres métricas locales o reenvío de métricas a destinos externos.
 
@@ -82,7 +71,7 @@ observability:
 
 Es la base de todo lo relacionado con métricas. Si `monitoring` está desactivado, no podrás inspeccionar métricas de plataforma localmente ni reenviarlas a tus propios destinos.
 
-## Métricas de plataforma
+### Métricas de plataforma
 
 Las métricas de plataforma requieren `monitoring`:
 
@@ -99,7 +88,7 @@ Son las métricas que se usan para entender tasa de peticiones, fallos, latencia
 
 Para la configuración completa de estas métricas, consulta [Métricas de plataforma](/es/operator-manual/configuration/observability/platform-metrics).
 
-## Destinos externos
+### Destinos externos
 
 Los destinos externos también requieren `monitoring`:
 
@@ -123,3 +112,14 @@ Para la configuración de destinos, consulta [Destinos de métricas](/es/operato
 <Warning>
 Si tu clúster restringe el tráfico saliente, la telemetría y los destinos externos pueden requerir allowlisting de dominios o endpoints. Si desactivas `usageMetrics`, no necesitas los dominios de telemetría de Zylon.
 </Warning>
+
+## Siguientes páginas
+
+Para la configuración principal de Zylon:
+
+- [Métricas de plataforma](/es/operator-manual/configuration/observability/platform-metrics): habilita métricas de Triton, vLLM, GPU y nodos
+- [Destinos de métricas](/es/operator-manual/configuration/observability/destinations): envía métricas a Prometheus, backends compatibles con Grafana u OTLP
+
+Si usas tu propia instancia de Grafana, el dashboard es un paso opcional aparte:
+
+- [Dashboard externo de Grafana](/es/operator-manual/configuration/observability/external-grafana-dashboard): importa el dashboard de referencia en tu propia instancia de Grafana

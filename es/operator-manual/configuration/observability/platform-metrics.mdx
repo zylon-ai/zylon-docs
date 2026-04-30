@@ -1,0 +1,106 @@
+---
+title: "Métricas de plataforma"
+---
+
+Las métricas de plataforma son las métricas operativas generadas por el stack de inferencia que se ejecuta en tu clúster.
+
+Incluyen:
+
+- **Métricas de Triton** como tasa de peticiones, fallos, profundidad de cola y latencia
+- **Métricas de vLLM** como estado del scheduler, presión sobre la caché KV y rendimiento de tokens
+- **Métricas de GPU** del exportador DCGM
+- **Métricas de nodo** de `node_exporter`
+
+## Antes de activarlas
+
+Las métricas de plataforma requieren el stack de monitorización:
+
+```yaml
+observability:
+  monitoring: true
+```
+
+## Activar métricas de plataforma
+
+```yaml
+observability:
+  monitoring: true
+  platformMetrics:
+    enabled: true
+    generationIntervalMs: 2000
+    gpu:
+      enabled: true
+    inference:
+      counterLatencies: true
+      histogramLatencies: true
+      summaryLatencies: true
+      summaryQuantiles: ""
+```
+
+## Opciones de configuración
+
+| Clave | Valor por defecto | Qué controla |
+|---|---|---|
+| `platformMetrics.enabled` | `false` | Activa la recogida de métricas de plataforma |
+| `platformMetrics.generationIntervalMs` | `2000` | Intervalo de generación de métricas de Triton |
+| `platformMetrics.gpu.enabled` | `true` | Incluye métricas de GPU |
+| `platformMetrics.inference.counterLatencies` | `true` | Activa contadores acumulativos de latencia |
+| `platformMetrics.inference.histogramLatencies` | `true` | Activa histogramas de latencia |
+| `platformMetrics.inference.summaryLatencies` | `true` | Activa resúmenes de latencia con ventana deslizante |
+| `platformMetrics.inference.summaryQuantiles` | `""` | Sobrescribe los cuantiles por defecto de Triton |
+
+## Qué obtienes
+
+### Triton
+
+Familia principal de métricas: `nv_*`
+
+Ejemplos:
+
+- `nv_inference_request_success`
+- `nv_inference_request_failure`
+- `nv_inference_pending_request_count`
+- `nv_inference_request_duration_us`
+- `nv_inference_compute_infer_duration_us`
+
+### vLLM
+
+Familias principales de métricas:
+
+- `vllm_llms_v1:*`
+- `vllm_embeddings_v1:*`
+
+Ejemplos:
+
+- `vllm_llms_v1:num_requests_running`
+- `vllm_llms_v1:kv_cache_usage_perc`
+- `vllm_llms_v1:time_to_first_token_seconds_bucket`
+- `vllm_llms_v1:generation_tokens_total`
+
+### GPU
+
+Ejemplos:
+
+- `nv_gpu_utilization`
+- `nv_gpu_memory_used_bytes`
+- `nv_gpu_power_usage`
+
+### Nodo
+
+Familia principal de métricas: `node_*`
+
+Ejemplos:
+
+- `node_cpu_seconds_total`
+- `node_memory_MemAvailable_bytes`
+- `node_filesystem_avail_bytes`
+
+## Siguiente paso
+
+Una vez activadas las métricas de plataforma, puedes:
+
+- inspeccionarlas en el stack de Grafana del clúster
+- reenviarlas a tu propio backend mediante [Destinos de métricas](/es/operator-manual/configuration/observability/destinations)
+- usar el [Dashboard externo de Grafana](/es/operator-manual/configuration/observability/external-grafana-dashboard)
+
+Para las listas completas de métricas upstream, consulta la [referencia de métricas de Triton](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/metrics.html) y la [referencia de métricas de vLLM](https://docs.vllm.ai/en/stable/usage/metrics/).

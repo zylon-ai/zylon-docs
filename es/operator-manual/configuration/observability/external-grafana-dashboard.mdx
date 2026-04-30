@@ -1,0 +1,108 @@
+---
+title: "Dashboard externo de Grafana"
+---
+
+Esta página es para equipos que usan su propia instancia de Grafana.
+
+Zylon proporciona un dashboard de referencia para métricas de plataforma de Triton y vLLM, pero importarlo es una tarea separada en Grafana. No es necesario para activar la observabilidad en Zylon.
+
+Úsalo cuando quieras un dashboard externo de Grafana para:
+
+- salud del servicio
+- rendimiento y errores
+- análisis de latencia
+- cuellos de botella del scheduler y de GPU
+
+## Qué necesitas antes
+
+Antes de que este dashboard sea útil, necesitas:
+
+- métricas de plataforma activadas en Zylon
+- un backend de métricas compatible con Prometheus que ya contenga métricas de Zylon
+- una instancia de Grafana con un datasource de Prometheus conectado a ese backend
+
+Consulta [Métricas de plataforma](/es/operator-manual/configuration/observability/platform-metrics) y [Destinos de métricas](/es/operator-manual/configuration/observability/destinations).
+
+## Importar el dashboard
+
+Descarga [grafana-dashboard.json](https://raw.githubusercontent.com/zylon-ai/zylon-docs/main/snippets/grafana-dashboard.json) e impórtalo en tu instancia de Grafana mediante **Dashboards → Nuevo → Importar**.
+
+Para el flujo de importación en Grafana, consulta la [documentación de importación de dashboards de Grafana](https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/import-dashboards/).
+
+## Qué muestra el dashboard
+
+El dashboard está construido a partir de las métricas expuestas en el endpoint `/metrics` de Triton:
+
+- métricas de **Triton Inference Server** como recuento de peticiones, latencia, profundidad de cola y salud de GPU
+- métricas de **vLLM** como estado del scheduler, uso de la caché KV, rendimiento de tokens e histogramas de latencia
+
+## Filtros del dashboard
+
+| Variable | Propósito |
+|---|---|
+| **Datasource** | Datasource de Prometheus a consultar |
+| **Environment** | Despliegue o identificador de empresa |
+| **Model** | Modelo servido por Triton |
+| **GPU** | Filtro `gpu_uuid` para paneles específicos de GPU |
+
+## Cómo leer el dashboard
+
+Sigue este orden cuando investigues un problema:
+
+| Sección | Qué te ayuda a responder |
+|---|---|
+| Overview | ¿Está sano el servicio ahora mismo? |
+| Throughput & Errors | ¿Cuánto tráfico está gestionando y están fallando peticiones? |
+| Latency | ¿Dónde se está yendo el tiempo? |
+| Capacity & Scheduler | ¿El cuello de botella es cola, presión de caché KV o batching? |
+| Workload Analysis | ¿Qué tipo de peticiones envían los clientes? |
+| GPU Health | ¿La GPU está saturada o limitada por memoria? |
+| Host Resources | ¿El nodo está bajo presión? |
+
+## Paneles por sección
+
+### Overview
+
+Indicadores rápidos de salud para tasa de éxito, peticiones por segundo, peticiones concurrentes y profundidad de cola.
+
+![Secciones Resumen y Rendimiento y errores](/images/operator-manual/observability/overview.png)
+
+### Throughput & Errors
+
+Tasa de peticiones, tasa de fallos, motivos de fallo, comportamiento de batching y profundidad de cola a lo largo del tiempo.
+
+![Paneles de rendimiento y errores](/images/operator-manual/observability/throughput-and-errors.png)
+![Desglose de fallos por motivo, recuento de inferencias vs. ejecuciones y profundidad de la cola de peticiones pendientes](/images/operator-manual/observability/throughput-and-errors-2.png)
+
+### Latency
+
+Latencia extremo a extremo, desglose por fases, TTFT, TPOT y percentiles de latencia de petición.
+
+![Latencia media de extremo a extremo y cascada de latencia](/images/operator-manual/observability/latency.png)
+![Cola media, cómputo y sobrecarga de E/S; percentiles TTFT de Triton y vLLM](/images/operator-manual/observability/latency-2.png)
+![Tiempo por token de salida, latencia extremo a extremo, tiempo de prefill y decode, cuantiles de resumen de Triton](/images/operator-manual/observability/latency-3.png)
+
+### Capacity & Scheduler
+
+Estado del scheduler, tiempo en cola, utilización de caché KV, preemptions y tamaño de batch.
+
+![Paneles de capacidad y planificador](/images/operator-manual/observability/capacity-and-scheduler.png)
+
+### Workload Analysis
+
+Rendimiento de tokens, longitud de prompts, longitud de generación y comportamiento de la caché de prefijos.
+
+![Rendimiento de tokens, tokens medios por solicitud y distribuciones de longitud de prompt y generación](/images/operator-manual/observability/work-analysis.png)
+![Máximo de tokens de generación, percentiles de máximo de tokens por solicitud y tasa de acierto de la caché de prefijos](/images/operator-manual/observability/work-analysis-2.png)
+
+### GPU Health
+
+Utilización de GPU, presión de memoria, consumo energético y energía acumulada.
+
+![Utilización de GPU, memoria, consumo energético y energía acumulada](/images/operator-manual/observability/gpu-health.png)
+
+### Host Resources
+
+CPU, RAM y disponibilidad de disco desde `node_exporter`.
+
+![Uso de CPU, uso de RAM y disponibilidad de disco](/images/operator-manual/observability/host-resources.png)

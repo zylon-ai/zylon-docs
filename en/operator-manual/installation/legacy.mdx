@@ -217,13 +217,10 @@ To start using Zylon you will need to create your organization in it, as well as
 You will need:
 
 - A name for your organization (can be changed later)
-- A password for the root administrator (can be changed later).
-  - Due to some encoding limitations in the CLI some special symbols in password don’t work correctly, prefer using a long alphanumeric password.
 - An email regex to allow users to join automatically. If your usual work email is [`name@company.com`](mailto:name@company.com) your email regex should be `.*@company\.com` . If your access control is performed with SSO (like Microsoft Entra, or Google), you can use `.*`  as your regular expression.
 
 ```bash
-# Put a secure password!
-sudo zylon-cli seed --org-name "My Org" --admin-password "admin" --email-regex ".*@yourcompany\.com"
+sudo zylon-cli seed --org-name "My Org" --email-regex ".*@yourcompany\.com"
 
 # At seed time, if Zylon is not ready,
 # this command will wait until it’s completed.
@@ -233,11 +230,17 @@ sudo zylon-cli seed --org-name "My Org" --admin-password "admin" --email-regex "
   **Running the seed command will WIPE ALL DATA. Only do this once during the Zylon lifecycle**
 </Danger>
 
+After seeding, retrieve the one-time login password for the admin account:
+
+```bash
+sudo zylon-cli admin-password
+```
+
 The credentials to login to Zylon will be:
 
 ```bash
 user: admin@zylon.ai
-password: the_password_you_set_up_previously
+password: the_one_time_password_printed_above
 ```
 
 The root admin email is fixed and will always be `admin@zylon.ai` . You will need to use these credentials to login for the first time in the workspace.

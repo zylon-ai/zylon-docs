@@ -3,10 +3,11 @@ title: "Intro to Zylon"
 description: "Self‑hosted AI platform with Anthropic‑compatible Messages endpoints and a Workspace API."
 ---
 
-Zylon is a self‑hosted AI platform that runs in your infrastructure. It provides Anthropic‑compatible Messages endpoints for model interaction plus a Workspace API for organizations and project management. In these docs, you’ll use **two APIs**:
+Zylon is a self‑hosted AI platform that runs in your infrastructure. It provides Anthropic‑compatible Messages endpoints for model interaction, a Workspace API for organizations and project management, and a Backoffice API for operational workflows. In these docs, you’ll use **three APIs**:
 
 - **ZylonGPT API**: the AI layer for model responses, tools, and content-aware chat.
 - **Workspace API**: the management API for organizations, users, projects, and integrations.
+- **Backoffice API**: the operational API for Backoffice workflows such as manual log retrieval.
 
 ## Choose your token flow
 
@@ -32,5 +33,9 @@ Use the token flow that matches your integration:
 
   <Card title="Workspace API" icon="building" href="/en/developer-manual/build-with-zylon/workspace-api/overview">
     Manage organizations, users, projects, and integrations.
+  </Card>
+
+  <Card title="Backoffice API" icon="shield" href="/en/developer-manual/build-with-zylon/backoffice-api/overview">
+    Retrieve operational data such as Zylon logs.
   </Card>
 </CardGroup>

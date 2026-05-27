@@ -1,0 +1,421 @@
+---
+title: "Log delivery & Storage"
+description: "Configure Zylon log storage, syslog delivery, and HTTP delivery."
+---
+
+## Overview
+
+Zylon supports internal log storage and external log delivery through syslog and HTTP.
+
+- Syslog delivery is intended for SIEM applications and log collectors that accept syslog or CEF events.
+- HTTP delivery is intended for structured ingestion endpoints, cloud log destinations, and customer-managed collection pipelines.
+- Delivery is asynchronous.
+- With `failurePolicy: "drop"`, delivery is designed to stay off the critical request path when queues are full.
+- Delivered events can be filtered by action patterns and organization IDs.
+
+Configure these settings through the Zylon Helm values YAML. The chart maps values to backend runtime settings internally; customer configuration should use the YAML keys shown here.
+
+For conceptual logging, auditability, EU AI Act-aligned traceability, and retention guidance, see [Operator Manual: Log delivery & Storage](/en/operator-manual/backoffice/log-delivery-storage). For manual log retrieval, see [Backoffice API: Logging](/en/developer-manual/build-with-zylon/backoffice-api/logging).
+
+## At a glance
+
+| Channel | Enable with | Format options | Best for |
+| --- | --- | --- | --- |
+| Internal storage | `logging.storage.enabled: true` | Stored structured Zylon log records | Backoffice review and manual API retrieval |
+| Syslog | `logging.delivery.syslog.enabled: true` | `rfc5424_json`, `cef` | SIEM applications, syslog collectors, and CEF collectors |
+| HTTP | `logging.delivery.http.enabled: true` | `canonical_json` | HTTP collectors, ingestion gateways, and cloud log destinations |
+
+<Note>
+Syslog and HTTP delivery can be enabled at the same time. When both are enabled, Zylon dispatches matching logs to both destinations. Filters, failure policy, queue, and batch settings are configured separately for each delivery method but follow the same behavior.
+</Note>
+
+## Before you configure delivery
+
+- Confirm the collector endpoint is reachable from the Zylon backend.
+- Confirm host or URL and port.
+- Select transport and format.
+- Decide TLS certificate verification behavior.
+- Configure collector-side input, index, parser, or ingestion route.
+- Understand retention requirements in both Zylon and downstream systems.
+- Review filters so required audit events are not excluded.
+
+## Choose a delivery channel
+
+| Requirement | Recommended channel |
+| --- | --- |
+| Existing SIEM or syslog collector input | Syslog |
+| Collector accepts RFC 5424 style syslog messages | Syslog with `rfc5424_json` |
+| Collector accepts CEF events | Syslog with `cef` |
+| Custom HTTP ingestion gateway | HTTP with `canonical_json` |
+| Vendor-specific pipeline transformation | HTTP with downstream mapping |
+
+## Storage and retention
+
+Internal log storage is controlled under `logging.storage`.
+
+### Storage keys
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `enabled` | `true` | `true`, `false` | Enables internal structured log persistence. |
+| `dropLogsAtDiskUsagePercent` | empty | empty, `0`, or `1` to `100` | Optional disk-pressure guard. Empty or `0` disables it. Values from `1` to `100` drop new stored log records when disk usage is at or above the threshold. |
+
+### Retention keys
+
+Internal log cleanup is controlled by the cleanup scheduler.
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `cleanup.enabled` | `false` | `true`, `false` | Enables the cleanup scheduler. |
+| `cron` | `0 3 * * *` | cron expression | Cleanup schedule. Shared with hard delete cleanup. |
+| `timezone` | `UTC` | time zone | Time zone used by the cleanup schedule. Shared with hard delete cleanup. |
+| `logging.enabled` | `false` | `true`, `false` | Enables stored log cleanup. |
+| `logging.deleteAfterDays` | `180` | integer days | Deletes stored log records older than this threshold. |
+
+<Note>
+External collectors such as SIEM platforms, syslog receivers, HTTP collectors, and data lakes have independent retention settings.
+</Note>
+
+<Warning>
+Log retention cleanup uses the same cleanup cron and timezone settings as hard delete cleanup. Review [Hard delete cron configuration](/en/operator-manual/configuration/cron-tasks/hard-delete) before changing the shared cleanup schedule.
+</Warning>
+
+## Syslog delivery
+
+Syslog delivery sends formatted log records to a socket collector over TCP, TLS, or UDP.
+
+Use `rfc5424_json` for structured syslog pipelines. Use `cef` when the collector has a native CEF input.
+
+| Format | Description | Use when |
+| --- | --- | --- |
+| `rfc5424_json` | RFC 5424 syslog with a JSON envelope in the message body. The schema value is `zylon.rfc5424_json.v1`. | You want structured syslog events for SIEM/search pipelines. |
+| `cef` | Raw CEF event format. The CEF extension includes a raw structured record under `cs1`. | Your collector has a native CEF input. |
+
+| Transport | Behavior |
+| --- | --- |
+| `tls` | Persistent TLS socket. Supports certificate verification and custom CA file. |
+| `tcp` | Persistent TCP socket without TLS. |
+| `udp` | Datagram delivery. One event is sent per datagram; stream framing is ignored. |
+
+<Note>
+UDP is best-effort. It does not use stream framing and does not retry the current batch on write failure.
+</Note>
+
+### Supported syslog matrix
+
+Backend tests confirm both syslog formats with `tcp`, `tls`, and `udp`.
+
+| Format | Transport | Framing | Notes |
+| --- | --- | --- | --- |
+| `rfc5424_json` | `tls` | `newline` or `octet_counting` | Recommended secure path for structured syslog collectors. |
+| `rfc5424_json` | `tcp` | `newline` or `octet_counting` | Persistent socket path without TLS. |
+| `rfc5424_json` | `udp` | Datagram | One datagram per event. |
+| `cef` | `tcp` | `newline` or `octet_counting` | Raw CEF over TCP. |
+| `cef` | `tls` | `newline` or `octet_counting` | Raw CEF over TLS. |
+| `cef` | `udp` | Datagram | One datagram per event. |
+
+### Syslog keys
+
+Under `logging.delivery.syslog`:
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `syslog.enabled` | `false` | `true`, `false` | Enables syslog delivery. |
+| `format` | `rfc5424_json` | `rfc5424_json`, `cef` | Syslog payload format. |
+| `host` | empty | hostname or IP | Required collector host. |
+| `port` | `6514` | valid TCP/UDP port | Collector port. |
+| `transport` | `tls` | `tls`, `tcp`, `udp` | Socket transport. |
+| `framing` | `octet_counting` | `newline`, `octet_counting` | Stream framing for TCP/TLS. Ignored for UDP. |
+| `timeoutSeconds` | `10` | positive integer | Socket connect/write timeout. |
+| `failurePolicy` | `drop` | `drop`, `block` | Queue behavior when the async queue is full. |
+| `reconnect.enabled` | `true` | `true`, `false` | Enables reconnect after connect or write failure. |
+| `reconnect.backoffSeconds` | `5` | non-negative integer | Backoff before reconnect after failure. |
+| `queue.maxEvents` | `10000` | positive integer | Async delivery queue capacity. |
+| `batch.maxEvents` | `25` | positive integer | Maximum events per batch. Forced to `1` for UDP. |
+| `batch.maxDelayMillis` | `250` | positive integer | Maximum time to wait before flushing a partial batch. |
+| `batch.drainTimeoutMillis` | `1000` | positive integer | Shutdown drain timeout for queued batch entries. |
+| `verifyCertificate` | `false` | `true`, `false` | Enables TLS certificate and hostname verification. |
+| `caFile` | empty | readable file path | Custom CA bundle used when certificate verification is enabled. |
+
+### Syslog full example
+
+```yaml
+logging:
+  storage:
+    enabled: true
+    dropLogsAtDiskUsagePercent: 90
+  delivery:
+    syslog:
+      enabled: true
+      format: "rfc5424_json"
+      endpoint:
+        host: "syslog.example.com"
+        port: 6514
+        transport: "tls"
+        framing: "octet_counting"
+      filters:
+        includeActionPatterns:
+          - "ws.*"
+          - "backoffice.*"
+        excludeActionPatterns:
+          - "ws.user.enable"
+        includeOrgIds:
+          - "01985a4d-3c21-7000-8003-0e10dd81d901"
+      delivery:
+        timeoutSeconds: 10
+        failurePolicy: "drop"
+        reconnect:
+          enabled: true
+          backoffSeconds: 5
+        queue:
+          maxEvents: 10000
+        batch:
+          maxEvents: 25
+          maxDelayMillis: 250
+          drainTimeoutMillis: 1000
+      tls:
+        verifyCertificate: true
+        caFile: "/etc/zylon/certs/syslog-ca.pem"
+```
+
+### Syslog simplified example
+
+```yaml
+logging:
+  delivery:
+    syslog:
+      enabled: true
+      format: "rfc5424_json"
+      endpoint:
+        host: "syslog.example.com"
+        port: 6514
+        transport: "tls"
+```
+
+## HTTP delivery
+
+HTTP delivery sends structured JSON records to an HTTP collector. Use it for ingestion gateways, data lakes, or pipelines that transform Zylon's canonical payload downstream.
+
+The supported HTTP format is `canonical_json`. The schema value is `zylon.canonical_json.v1`.
+
+HTTP supports `POST`, optional bearer authentication, static headers using `Header=Value` or `Header: Value`, retries for network errors and HTTP `5xx` responses, and no retry for HTTP `4xx` client errors.
+
+Vendor-specific transformations should happen at the collector or ingestion layer.
+
+### HTTP keys
+
+Under `logging.delivery.http`:
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `http.enabled` | `false` | `true`, `false` | Enables HTTP delivery. |
+| `format` | `canonical_json` | `canonical_json` | HTTP payload format. |
+| `url` | empty | URL | Required when HTTP delivery is enabled. |
+| `method` | `POST` | `POST` | HTTP method. |
+| `auth.type` | `none` | `none`, `bearer` | Authentication mode. |
+| `auth.token` | empty | string | Required when `auth.type` is `bearer`. Sent as `Authorization: Bearer <token>`. |
+| `headers` | `[]` | YAML list | Static outbound headers. Supports `Header=Value` and `Header: Value`. |
+| `timeoutSeconds` | `10` | positive integer | HTTP connect, read, and write timeout. |
+| `failurePolicy` | `drop` | `drop`, `block` | Queue behavior when the async queue is full. |
+| `retry.enabled` | `true` | `true`, `false` | Enables HTTP retry. |
+| `retry.maxAttempts` | `3` | positive integer | Maximum request attempts when retry is enabled. |
+| `retry.backoffSeconds` | `3` | non-negative integer | Sleep between retry attempts. |
+| `queue.maxEvents` | `10000` | positive integer | Async delivery queue capacity. |
+| `batch.maxEvents` | `1` | positive integer | Maximum events per HTTP request. Multi-event batches are sent as a JSON array. |
+| `batch.maxDelayMillis` | `1` | positive integer | Maximum time to wait before flushing a partial batch. |
+| `batch.drainTimeoutMillis` | `1000` | positive integer | Shutdown drain timeout for queued batch entries. |
+
+### HTTP full example
+
+```yaml
+logging:
+  delivery:
+    http:
+      enabled: true
+      format: "canonical_json"
+      endpoint:
+        url: "https://collector.example.com/logs"
+        method: "POST"
+      auth:
+        type: "bearer"
+        token: "replace-me"
+      headers:
+        - "X-Collector-Token=replace-me"
+        - "X-Customer: default"
+      filters:
+        includeActionPatterns:
+          - "zylon.gateway.*"
+          - "ws.*"
+        excludeActionPatterns: []
+        includeOrgIds: []
+      delivery:
+        timeoutSeconds: 10
+        failurePolicy: "drop"
+        retry:
+          enabled: true
+          maxAttempts: 3
+          backoffSeconds: 3
+        queue:
+          maxEvents: 10000
+        batch:
+          maxEvents: 1
+          maxDelayMillis: 1
+          drainTimeoutMillis: 1000
+```
+
+### HTTP simplified example
+
+```yaml
+logging:
+  delivery:
+    http:
+      enabled: true
+      format: "canonical_json"
+      endpoint:
+        url: "https://collector.example.com/logs"
+        method: "POST"
+```
+
+## Filtering delivered events
+
+Syslog and HTTP delivery use the same filter behavior under `filters`.
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `includeActionPatterns` | `[]` | wildcard list | If non-empty, only matching action names are delivered. `*` matches any number of characters. Matching is case-sensitive and covers the full action string. |
+| `excludeActionPatterns` | `[]` | wildcard list | Matching action names are excluded before include filters are evaluated. |
+| `includeOrgIds` | `[]` | organization UUID list | If non-empty, only logs for matching organization IDs are delivered. Logs without `organization_id` are not delivered. |
+
+Evaluation order:
+
+1. Exclude action patterns.
+2. Include action patterns.
+3. Included organization IDs.
+
+## Delivery behavior
+
+The delivery pipeline is:
+
+1. Zylon emits a structured log event.
+2. Delivery filters decide whether to deliver it externally.
+3. The event is normalized with severity, outcome, and actor metadata.
+4. The event is formatted as syslog, CEF, or canonical JSON.
+5. The formatted payload is placed on the async delivery queue.
+6. The delivery worker sends the event to the configured destination.
+7. Reconnect or retry behavior applies when delivery fails.
+
+## Failure policies
+
+| Policy | Behavior | Use when |
+| --- | --- | --- |
+| `drop` | Drops events when the async queue is full and avoids blocking request threads. | Recommended default for most production deployments. |
+| `block` | Applies backpressure when the queue is full. | Use only when delivery completeness is more important than request latency. |
+
+<Warning>
+`failurePolicy: "block"` can slow requests when the delivery queue is full. Use it only after sizing queues and confirming collector availability.
+</Warning>
+
+Disk-backed external delivery spooling is not implemented.
+
+## Queue and batching
+
+| Setting | Description |
+| --- | --- |
+| `queue.maxEvents` | Maximum events that can wait in the async delivery queue. Larger queues absorb bursts but use more memory. |
+| `batch.maxEvents` | Maximum events per delivery batch. Larger batches can improve throughput but can increase delay. |
+| `batch.maxDelayMillis` | Maximum time before a partial batch is flushed. Smaller values reduce latency. |
+| `batch.drainTimeoutMillis` | Time allowed to drain queued batch entries during shutdown. |
+
+For syslog over UDP, `batch.maxEvents` is forced to `1`, because one datagram carries one event. For HTTP, multi-event batches are delivered as a JSON array. The application default is one event per request.
+
+<Tip>
+Queue and batching settings already have production defaults. If your HTTP destination, SIEM, or log collector does not require specific values, leave the defaults unchanged. Customize them only when your environment needs different throughput, latency, or burst handling.
+</Tip>
+
+## Reconnect and retry
+
+### Syslog reconnect
+
+TCP and TLS syslog delivery lazily opens a socket, reuses it, and retries the current batch once on a fresh connection after write failure. If retry fails, the reconnect backoff window applies.
+
+| Setting | Description |
+| --- | --- |
+| `reconnect.enabled` | Enables reconnect after socket failure. If disabled, future reconnect attempts stop after the first failure until process restart or appender reset. |
+| `reconnect.backoffSeconds` | Time before another connect attempt after failure. |
+
+### HTTP retry
+
+HTTP delivery reuses one HTTP client and retries failed requests according to retry settings.
+
+| Setting | Description |
+| --- | --- |
+| `retry.enabled` | Enables retry after retryable failures. |
+| `retry.maxAttempts` | Maximum attempts for one delivery. |
+| `retry.backoffSeconds` | Sleep between attempts. |
+
+HTTP retries network exceptions and HTTP `5xx` responses. HTTP `4xx` responses are treated as client errors and are not retried.
+
+## TLS configuration
+
+| Setting | Description |
+| --- | --- |
+| `tls.verifyCertificate` | Enables TLS certificate verification and hostname verification for syslog TLS. |
+| `tls.caFile` | Path to a readable CA file used to trust a private collector CA when verification is enabled. |
+
+<Tip>
+Local or lab deployments may disable certificate verification. Production deployments should enable certificate verification when the collector has a trusted certificate path. Use `tls.caFile` when the collector uses a private CA.
+</Tip>
+
+## Local validation
+
+1. Enable one delivery channel.
+2. Apply configuration.
+3. Trigger an API action that emits a log, such as project creation or API token creation.
+4. Query the collector.
+5. Confirm the expected `event`, `action`, `log.id`, and actor fields appear.
+6. Check backend logs for delivery warnings.
+
+Validation queries depend on your collector. Use whichever search or inspection tool your destination provides, then confirm one of these payload markers appears:
+
+- `zylon.rfc5424_json.v1` for RFC 5424 JSON syslog payloads.
+- `CEF:0|Zylon` for CEF payloads.
+- `zylon.canonical_json.v1` for HTTP payloads.
+- A known action such as `ws.project.create`.
+
+For reconnect testing, stop the collector, trigger events, restart the collector, then confirm new events arrive after the reconnect backoff.
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| No events arrive | `enabled`, endpoint host or URL, port, collector reachability, and backend logs. |
+| Syslog startup fails | Missing host, invalid port, unsupported format/transport/framing, or unreadable CA file. |
+| TLS connection fails | `tls.verifyCertificate`, `tls.caFile`, collector certificate, and hostname. |
+| CEF events are not parsed | `format: "cef"`, collector input type, and port. |
+| Requests slow down | `failurePolicy: "block"`, queue size, collector throughput, and backend logs. |
+| Missing events during bursts | Queue size, batch settings, collector throughput, and whether `failurePolicy: "drop"` is acceptable. |
+| Events do not reconnect after outage | `reconnect.enabled`, `reconnect.backoffSeconds`, and backend logs. |
+| HTTP delivery fails | Endpoint URL, method, bearer token, static headers, retry settings, and backend logs. |
+| HTTP keeps failing without retry | Collector HTTP `4xx` responses. Fix auth, URL, headers, or collector route. |
+| Retention is shorter than expected | Log cleanup settings, DB retention/backup policy, and downstream collector retention. |
+
+## Recommended production defaults
+
+For syslog and SIEM:
+
+- Prefer TLS where supported.
+- Prefer `rfc5424_json` for structured syslog ingestion unless the collector requires CEF.
+
+- Use `octet_counting` or `newline` according to the collector input.
+- Enable certificate verification in production where possible.
+- Keep `failurePolicy: "drop"` unless strict delivery completeness is more important than request latency.
+- Keep queue and batch defaults unless your destination requires different throughput, latency, or burst handling.
+- Keep stored log retention at or above `180` days unless legal, security, and operations teams approve a shorter period.
+
+For HTTP:
+
+- Use `canonical_json`.
+- Keep vendor-specific transformations at the ingestion layer.
+- Use bearer authentication and static headers when required by the collector.
+- Tune retry settings for the collector's availability profile.
+- Confirm downstream retention in the customer-controlled collector.

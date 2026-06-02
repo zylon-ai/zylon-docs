@@ -337,7 +337,8 @@
                     "group": "Authentication",
                     "pages": [
                       "en/operator-manual/openid/google",
-                      "en/operator-manual/openid/microsoft"
+                      "en/operator-manual/openid/microsoft",
+                      "en/operator-manual/authentication/ldap"
                     ]
                   },
                   {

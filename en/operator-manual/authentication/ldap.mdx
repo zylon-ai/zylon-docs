@@ -1,0 +1,195 @@
+---
+title: LDAP Directory Authentication
+description: Configure Zylon to authenticate users against an LDAP directory or Active Directory, enabling centralized login without an external identity provider.
+---
+
+LDAP authentication lets users log in to Zylon with their existing directory credentials, whether on a standard LDAP server or Microsoft Active Directory. Because LDAP requires no connection to external identity providers like Google or Microsoft, it is the recommended authentication method for air-gapped and strictly on-prem deployments.
+
+<Note>
+  This page covers operator configuration only. No UI-based configuration is available; all settings are applied through the configuration file located at `/etc/zylon/zylon-conf.yaml`.
+</Note>
+
+---
+
+## Prerequisites
+
+Before enabling LDAP, confirm the following:
+
+- The LDAP or Active Directory host is reachable from the Zylon cluster on the port your server is configured to listen on.
+- A **read-only service account** exists in the directory. Zylon uses this account (the bind account) to search for users and resolve group membership. It does not need write permissions.
+- You know the **Base DN** under which all users and groups reside (e.g., `dc=company,dc=local`).
+- You have the **Distinguished Names (DNs)** of any directory groups you want to map to Zylon roles.
+
+---
+
+## How sign-in works
+
+When LDAP is enabled, users continue to use the standard Zylon login form. There is no separate LDAP login page.
+
+1. The user enters their directory username in the email field and their directory password.
+2. Zylon normalizes the username: a `DOMAIN\user` prefix is stripped to `user`; an email address (`user@company.com`) and a plain username (`user`) are used as-is.
+3. Zylon searches the directory for the user, then performs a bind to verify the password.
+4. On success, Zylon resolves the user's directory groups and maps them to Zylon roles using `roleMapping` configuration.
+5. If the account does not exist in Zylon yet, it is **created automatically** with the roles derived from group membership.
+
+<Note>
+  Roles are assigned at account creation time. If a user's directory group membership changes after their first login, Zylon roles are not updated automatically. To change a user's roles after creation, update them through the Backoffice. See [Roles and Permissions](/en/operator-manual/backoffice/roles-and-permissions) for details.
+</Note>
+
+<Note>
+  If LDAP is enabled and the directory is temporarily unreachable or returns an error, Zylon falls back to local credential authentication.
+</Note>
+
+---
+
+## Configuration
+
+
+If LDAP is enabled and any required field is missing or invalid, the application will **refuse to start** and log a descriptive error. This prevents misconfigured deployments from silently falling.
+
+### `/etc/zylon/zylon-conf.yaml`
+
+Add the `auth.ldap` block to the configuration file:
+
+<Warning>
+  The config file is a `.yaml` file, so indentation, spaces, and quotes are important. Review carefully before saving.
+</Warning>
+
+```yaml
+auth:
+  ldap:
+    enabled: true
+    host: "ldap.company.local"
+    port: "389"
+    useTls: false
+    bindDn: "cn=LDAP Bind,ou=service,dc=company,dc=local"
+    bindPassword: "CHANGE_ME"
+    baseDn: "dc=company,dc=local"
+    userFilter: "(|(sAMAccountName={username})(userPrincipalName={username})(mail={username}))"
+    groupFilter: "(member={userDn})"
+    attributes:
+      username: "sAMAccountName"
+      email: "mail"
+      group: "memberOf"
+    roleMapping:
+      defaultRole: "Workspace"
+      mappings: '[{"match":"CN=admins,OU=groups,DC=company,DC=local","role":"Operator"},{"match":"CN=developers,OU=groups,DC=company,DC=local","role":"Developer"},{"match":"CN=workspace-users,OU=groups,DC=company,DC=local","role":"Workspace"}]'
+```
+
+Apply the changes:
+
+```bash
+sudo zylon-cli sync
+```
+
+---
+
+## Configuration reference
+
+The table below lists every LDAP setting, its chart default, and whether it is required when `enabled` is `true`.
+
+| Key | Default | Required | Description |
+|---|---|---|---|
+| `enabled` | `false` | - | Set to `true` to activate LDAP authentication. The application will not start if enabled with an invalid configuration. |
+| `host` | `""` | Yes | Hostname or IP address of the LDAP or Active Directory server. |
+| `port` | `"389"` | Yes | Port as a string. Must match the port your LDAP server is listening on. Common values are `389` for plain LDAP and `636` for LDAPS, but your server may be configured differently. |
+| `useTls` | `false` | No | Set to `true` to open an LDAPS connection (TLS from the first byte). |
+| `bindDn` | `""` | Yes | Full Distinguished Name of the service account used to search the directory. Example: `cn=LDAP Bind,ou=service,dc=company,dc=local`. |
+| `bindPassword` | `""` | Yes | Password for the bind account. |
+| `baseDn` | `""` | Yes | Root of the directory subtree where user and group searches are performed. Example: `dc=company,dc=local`. |
+| `userFilter` | `(\|(sAMAccountName={username})(userPrincipalName={username})(mail={username}))` | No | LDAP filter used to locate the user entry. Must contain `{username}`, which is replaced with the normalized login name at runtime. The default targets Active Directory and supports `sAMAccountName`, UPN, and mail formats. |
+| `groupFilter` | `(member={userDn})` | No | LDAP filter used to find groups when `memberOf` is not populated on the user entry. Must contain `{userDn}`. |
+| `attributes.username` | `sAMAccountName` | No | Directory attribute to use as the Zylon display name. |
+| `attributes.email` | `mail` | No | Directory attribute to use as the Zylon account email. This attribute must be present on every user entry; if it is missing, login is rejected. |
+| `attributes.group` | `memberOf` | No | Directory attribute on the user entry that lists group membership. If this attribute is absent or empty, Zylon falls back to a separate group search using `groupFilter`. |
+| `roleMapping.defaultRole` | `Workspace` | No | Role assigned to a user when no group mapping matches. Valid values: `Workspace`, `Developer`, `Operator`. |
+| `roleMapping.mappings` | `""` | No | Stringified JSON array of group-to-role mappings. See [Role mapping](#role-mapping) below. When empty, all users receive `defaultRole`. |
+
+
+## Role mapping
+
+Group-to-role mapping is defined as a **stringified JSON array** in the `roleMapping.mappings` field. The value must always be a JSON-encoded string, both in `values.yaml` and in `zylon-conf.yaml`. Zylon evaluates the mapping at login time and assigns roles based on the directory groups the user belongs to.
+
+```yaml
+roleMapping:
+  mappings: '[{"match":"CN=admins,OU=groups,DC=company,DC=local","role":"Operator"},{"match":"CN=developers,OU=groups,DC=company,DC=local","role":"Developer"},{"match":"CN=workspace-users,OU=groups,DC=company,DC=local","role":"Workspace"}]'
+```
+
+**Matching behaviour:**
+
+- Each `match` value is compared against every group DN the user belongs to. The comparison is case-insensitive.
+- If a user belongs to multiple mapped groups, they receive all matching roles.
+- If no mapping matches, the user receives `defaultRole`.
+- Multiple groups can map to the same role; duplicates are collapsed.
+
+
+For a complete description of what each role can do, see [Roles and Permissions](/en/operator-manual/backoffice/roles-and-permissions).
+
+<Note>
+  Roles are computed once at account creation (first login). Subsequent changes to directory group membership are not reflected in Zylon automatically. Update roles manually through the Backoffice if needed.
+</Note>
+
+---
+
+## Active Directory notes
+
+The default configuration targets Active Directory out of the box:
+
+- `userFilter` accepts logins in three formats: plain username (`jdoe`), UPN (`jdoe@company.com`), and Windows domain format (`DOMAIN\jdoe`, normalized to `jdoe` before the search).
+- `attributes.username` defaults to `sAMAccountName` and `attributes.email` to `mail`, matching standard AD schemas.
+- Group membership is read from the `memberOf` attribute on the user entry.
+
+For standard LDAP servers (OpenLDAP, 389 Directory Server, etc.) you will typically need to adjust `userFilter`, `groupFilter`, and `attributes.*` to match your schema. A common starting point:
+
+```yaml
+userFilter: "(uid={username})"
+groupFilter: "(member={userDn})"
+attributes:
+  username: "uid"
+  email: "mail"
+  group: "memberOf"
+```
+
+---
+
+## Verify the configuration
+
+After applying the configuration, follow these steps to confirm LDAP is working correctly:
+
+<Steps>
+  <Step title="Confirm the application started successfully">
+    Check the backend pod is running. If a required field is missing, the service will not start and will log the specific field that failed validation.
+  </Step>
+  <Step title="Test login with a directory user">
+    Log in to the Zylon workspace with a directory user account. Use the username or email address format your directory supports.
+  </Step>
+  <Step title="Verify roles in the Backoffice">
+    Open the Backoffice and locate the newly created account. Confirm it has the expected roles based on the user's group membership and the `roleMapping` configuration.
+  </Step>
+  <Step title="Test each role group">
+    Repeat the test for at least one user per mapped group (Operator, Developer, Workspace) to confirm the role mapping is working correctly across all groups.
+  </Step>
+</Steps>
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause | What to check |
+|---------|-------------|---------------|
+| Application does not start | Required field missing or `port` is not a valid integer | Check logs for the specific validation error; confirm `host`, `baseDn`, `bindDn`, `bindPassword`, and `port` are all set |
+| Login fails for a valid directory user | Unreachable server, wrong `bindPassword`, or `userFilter` does not match the user entry | Verify network connectivity on the configured port; test the bind account credentials with an LDAP client; review `userFilter` |
+| "Ambiguous LDAP user" error on login | `userFilter` returns more than one directory entry for the username | Tighten the filter to target a unique attribute, or remove overlapping login format matchers |
+| Login succeeds but user has the wrong role | Group DN in `roleMapping.mappings` does not match the actual group DN (check for typos, OU differences, or casing) | Compare the `match` values against the exact group DNs in your directory; matching is case-insensitive but the DN structure must be correct |
+| Login succeeds but user has `defaultRole` only | No group mapping matched, or `mappings` is empty | Check that `memberOf` is populated on the user entry; verify the JSON syntax of `mappings` |
+| LDAP user cannot log in - missing email | The `mail` (or configured `attributes.email`) attribute is absent on the directory entry | Populate the email attribute for the user in the directory, or update `attributes.email` to point to a different attribute that is present |
+| Users appear to log in with local credentials despite LDAP being enabled | LDAP returned an error (server unreachable, bad bind password), triggering a fallback | Check server connectivity and bind account credentials; review backend logs for the LDAP error that caused the fallback |
+
+---
+
+## Security considerations
+
+- Use a **read-only, least-privilege** service account for the bind credentials. The account needs search permission on users and groups under `baseDn`, nothing more.
+- Directory group membership changes are not reflected in Zylon after account creation. Operators must update roles manually in the Backoffice if group membership changes.
+
+For air-gapped deployments, LDAP requires no outbound internet access. See [Airgap Your Server](/en/operator-manual/instance-hardening/airgap-your-server) for firewall configuration guidance.

@@ -2,18 +2,27 @@
 title: "Registro de Auditoría"
 ---
 
-Almacena eventos y trazas del Registro de Auditoría.
+Habilita eventos y trazas del Registro de Auditoría.
+
+Los eventos de auditoria se emiten cuando el flag de auditoria esta habilitado. El historial de auditoria persistido tambien requiere almacenamiento interno de logs. La retencion, la entrega por syslog y la entrega por HTTP se configuran en [Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).
 
 ### Configuración
 
-| Clave      | Por Defecto | Valores          | Descripción                      |
-| -------- | ------- | --------------- | -------------------------------- |
-| `enabled`| `true`  | `true \| false` | Almacena eventos y trazas del Registro de Auditoría  |
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `features.audit.enabled` | `true` | `true`, `false` | Habilita eventos y trazas del Registro de Auditoría. |
+| `logging.storage.enabled` | `true` | `true`, `false` | Habilita la persistencia interna de logs estructurados para el historial de auditoria. |
 
 ### Ejemplo
 
 ```yaml
 features:
-    audit:
-        enabled: true
+  audit:
+    enabled: true
+
+logging:
+  storage:
+    enabled: true
 ```
+
+Configure la retencion de logs y la entrega opcional por syslog o HTTP en [Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).

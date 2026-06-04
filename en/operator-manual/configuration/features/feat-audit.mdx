@@ -2,18 +2,27 @@
 title: "Audit Log"
 ---
 
-Store Audit Log events & traces.
+Enable Audit Log events and traces.
+
+Audit events are emitted when the audit feature flag is enabled. Persisted audit history also requires internal log storage. Retention, syslog delivery, and HTTP delivery are configured through [Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage).
 
 ### Configuration
 
-| Key      | Default | Values          | Description                      |
-| -------- | ------- | --------------- | -------------------------------- |
-| `enabled`| `true`  | `true \| false` | Store Audit Log events & traces  |
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `features.audit.enabled` | `true` | `true`, `false` | Enables Audit Log events and traces. |
+| `logging.storage.enabled` | `true` | `true`, `false` | Enables internal structured log persistence for audit history. |
 
 ### Example
 
 ```yaml
 features:
-    audit:
-        enabled: true
+  audit:
+    enabled: true
+
+logging:
+  storage:
+    enabled: true
 ```
+
+Configure log retention and optional syslog or HTTP delivery in [Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage).

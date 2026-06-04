@@ -1,0 +1,109 @@
+---
+title: "Entrega y almacenamiento de logs"
+description: "Guia operativa de logging, almacenamiento, auditabilidad y trazabilidad en Zylon."
+icon: list
+---
+
+## Resumen
+
+Zylon registra eventos estructurados de auditoria, seguridad, aplicacion y ciclo de vida de chats de IA cuando el almacenamiento o la entrega de logs estan habilitados. Los operadores pueden usar estos logs para investigar que ocurrio, quien lo inicio, que se solicito, que se respondio y que herramientas o rutas de datos observables se usaron.
+
+Zylon puede:
+
+- Almacenar logs estructurados internamente cuando `logging.storage.enabled` esta habilitado.
+- Enviar logs a SIEMs y colectores mediante syslog, incluidos RFC 5424 JSON y CEF.
+- Enviar logs JSON estructurados a destinos HTTP.
+- Permitir que usuarios autorizados de Backoffice recuperen logs almacenados mediante API.
+
+La configuracion de entrega externa esta documentada en [Configuracion: Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).
+
+<Note>
+La entrega externa es asincrona. Con `failurePolicy=drop`, la entrega evita bloquear el camino critico cuando las colas estan bajo presion.
+</Note>
+
+## Antes de configurar la entrega
+
+- Confirme que logs deben almacenarse en Zylon y que logs deben entregarse a sistemas controlados por el cliente.
+- Confirme el host y puerto del colector syslog, o la URL del colector HTTP, desde la red del backend de Zylon.
+- Seleccione syslog `rfc5424_json`, syslog `cef` o HTTP `canonical_json` segun el input del colector.
+- Decida si se requiere verificacion de certificados TLS y prepare una ruta CA confiable si hace falta.
+- Decida la retencion en el almacenamiento interno de Zylon y en sistemas externos.
+- Revise filtros de accion y organizacion para no excluir eventos de auditoria requeridos.
+
+## Que registra Zylon
+
+El backend almacena un sobre de log compartido y datos estructurados especificos del evento. Los campos exactos dependen de la familia de evento y de los valores `include` usados al recuperar logs.
+
+| Categoria | Ejemplos | Por que importa |
+| --- | --- | --- |
+| Contexto de actor | `user_id`, `account_id`, `account_email`, `token_id`, actor `user`, `api_token`, `system` o `unknown` | Ayuda a determinar quien o que inicio una accion. |
+| Contexto de organizacion y proyecto | `organization_id`, `gateway_id`, `project_id` | Ayuda a acotar la investigacion a un workspace, gateway o proyecto. |
+| Contexto de chat de IA | Modelo, longitud de request, tokens, mensajes opcionales, respuesta opcional, latencia y herramientas usadas | Ayuda a reconstruir el ciclo de vida observable del chat. |
+| Eventos de seguridad y auditoria | Fallos de autenticacion, tokens invalidos o expirados, creacion de cuentas, login, reset de password, creacion o borrado de tokens API | Soporta revision de seguridad y monitoreo de acceso. |
+| Tiempo y resultado | `start_timestamp`, `end_timestamp`, `error`, outcome y severity normalizados | Ayuda a correlacionar eventos e identificar fallos. |
+| Metadatos de entrega | Esquema externo, severity, outcome, actor y entorno para syslog | Ayuda a clasificar eventos en SIEM y colectores. |
+
+Campos sensibles como passwords, tokens, API keys, secretos, credenciales, cookies y connection strings se enmascaran antes de almacenar payloads de entrada.
+
+## Auditabilidad de IA
+
+Zylon proporciona auditabilidad del ciclo de vida observable del chat y de acciones visibles para el agente. Los logs pueden ayudar a reconstruir:
+
+- quien inicio un chat;
+- que organizacion, gateway o proyecto participo;
+- que metadatos de request se almacenaron;
+- que respuesta del modelo se almaceno, cuando se incluye;
+- que herramientas fueron visibles en el payload de respuesta;
+- que acciones, integraciones, archivos, chats y proyectos se usaron.
+
+<Note>
+Zylon registra entradas, salidas, acciones, herramientas, rutas de datos, actores y eventos de sistema observables. No expone razonamiento interno privado o propietario de ZylonGPT salvo que ese razonamiento se haya emitido y almacenado explicitamente como parte de la respuesta.
+</Note>
+
+## Logging y trazabilidad para EU AI Act
+
+El logging de Zylon esta diseñado para apoyar flujos de trazabilidad y logging alineados con EU AI Act, segun la configuracion y el despliegue. Debe tratarse como un control dentro de un programa mas amplio de gobierno, monitoreo y retencion.
+
+| Tema relacionado | Como ayuda Zylon | Responsabilidad del cliente |
+| --- | --- | --- |
+| Logging automatico | Zylon registra eventos configurados de auditoria, seguridad, aplicacion y ciclo de vida de chats. | Habilitar almacenamiento o entrega para los eventos requeridos y confirmar cobertura. |
+| Trazabilidad | Los logs ayudan a reconstruir actores, timestamps, prompts o datos de request, respuestas, herramientas y contexto de organizacion/proyecto. | Mantener controles de acceso y decidir que campos se conservan. |
+| Monitoreo | Los logs pueden revisarse por API o entregarse a SIEM/syslog/HTTP. | Configurar monitoreo, alertas, revisiones y escalado. |
+| Investigacion | Los logs soportan revision de incidentes en usuarios, tokens, workspace, seguridad y ciclo de vida de IA. | Correlacionar logs de Zylon con infraestructura, identidad, red y SIEM del cliente. |
+| Retencion | Zylon puede limpiar logs almacenados tras una ventana configurada. El predeterminado de aplicacion es `180` dias cuando la limpieza de logs esta habilitada. | Mantener retencion alineada con requisitos legales, de seguridad y operativos. |
+
+<Note>
+Esta documentacion no es asesoramiento legal. Los clientes son responsables de determinar si su despliegue esta sujeto al EU AI Act u otras leyes, que rol ocupan y que controles de logging, monitoreo y retencion requieren.
+</Note>
+
+## Almacenamiento y retencion de logs
+
+Cuando el almacenamiento esta habilitado, Zylon persiste logs estructurados internamente. Cuando esta deshabilitado, los logs nuevos no se persisten internamente.
+
+Zylon puede limpiar logs almacenados tras una ventana configurada. El predeterminado confirmado de aplicacion es `180` dias cuando la limpieza de logs esta habilitada.
+
+Los colectores externos mantienen sus propias politicas de retencion fuera de Zylon.
+
+| Ubicacion | Quien controla la retencion | Notas |
+| --- | --- | --- |
+| Almacenamiento interno de Zylon | Operador y configuracion de limpieza | El almacenamiento esta habilitado por defecto. La limpieza de logs usa `180` dias por defecto cuando se habilita. |
+| SIEM o colector syslog del cliente | Cliente | Controlado por input, indice, archivo y politica de borrado del colector. |
+| Colector HTTP o data lake del cliente | Cliente | Controlado por ingesta, transformacion y almacenamiento downstream. |
+
+## Formas de consumir logs
+
+| Metodo | Uso | Documentacion |
+| --- | --- | --- |
+| Backoffice UI | Revision interactiva de uso por operadores. | [Backoffice de Plataforma](/es/operator-manual/backoffice/platform-backoffice) |
+| Syslog | Un SIEM o colector syslog debe recibir eventos. | [Configuracion de entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage#entrega-por-syslog) |
+| HTTP | Un gateway de ingesta o pipeline personalizado debe recibir JSON estructurado. | [Configuracion de entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage#entrega-por-http) |
+
+## Recomendaciones operativas
+
+- Mantenga el almacenamiento interno habilitado salvo aprobacion de seguridad, legal y operaciones.
+- Entregue logs a un SIEM o colector controlado por el cliente cuando se requiera monitoreo o retencion independiente.
+- Prefiera TLS para syslog cuando el colector lo soporte.
+- Habilite verificacion de certificados en produccion cuando exista una ruta de confianza.
+- Use filtros con cuidado para no excluir eventos necesarios para investigacion.
+- Confirme retencion downstream por separado de la retencion interna de Zylon.
+- Pruebe recuperacion y entrega despues de cambiar configuracion de logging.

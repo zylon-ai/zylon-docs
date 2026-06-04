@@ -704,7 +704,8 @@
                   "es/operator-manual/backoffice/introduction",
                   "es/operator-manual/backoffice/roles-and-permissions",
                   "es/operator-manual/backoffice/accessing-the-backoffice",
-                  "es/operator-manual/backoffice/platform-backoffice"
+                  "es/operator-manual/backoffice/platform-backoffice",
+                  "es/operator-manual/backoffice/log-delivery-storage"
                 ]
               },
               {
@@ -752,6 +753,7 @@
                       "es/operator-manual/configuration/features/feat-mcp",
                       "es/operator-manual/configuration/features/feat-database",
                       "es/operator-manual/configuration/features/feat-audit",
+                      "es/operator-manual/configuration/features/log-delivery-storage",
                       "es/operator-manual/configuration/features/feat-project-custom-instructions",
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",

@@ -123,13 +123,13 @@
                 ]
               },
               {
-                "group": "Agent Flows",
+                "group": "AI Documents",
                 "pages": [
                   "en/user-manual/when-to-use-agent-flows",
                   "en/user-manual/real-time-collaboration",
                   "en/user-manual/inline-ai-in-editor",
                   {
-                    "group": "Available Agent Flows",
+                    "group": "Available AI Documents",
                     "pages": [
                       "en/user-manual/agent-flows/summarize-file",
                       "en/user-manual/agent-flows/answer-in-bulk",

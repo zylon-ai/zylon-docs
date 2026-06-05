@@ -1,9 +1,9 @@
 ---
 title: "Artifacts"
-description: "Workspace artifacts for documents, agent flows, and connectors."
+description: "Workspace artifacts for documents, AI Documents, and connectors."
 ---
 
-An artifact is a piece of information **or tool** you provide to Zylon so it can be used as context for queries and operations. The Workspace API groups artifacts into **document artifacts**, **agent flows**, and **other artifacts**.
+An artifact is a piece of information **or tool** you provide to Zylon so it can be used as context for queries and operations. The Workspace API groups artifacts into **document artifacts**, **AI Documents**, and **other artifacts**.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ An artifact is a piece of information **or tool** you provide to Zylon so it can
 | Category | Includes | When to use |
 | --- | --- | --- |
 | **Document artifacts** | Documents, folders, links | Store or organize content inside a project. |
-| **Agent flows** | Summary, composition, extraction flows | Run workflows across artifacts to produce outputs. |
+| **AI Documents** | Summary, composition, extraction flows | Run workflows across artifacts to produce outputs. |
 | **Other artifacts** | MCP servers, SQL databases | Provide external tools or data sources. |
 
 ### Document artifacts
@@ -138,9 +138,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 </Tabs>
 
-### Agent flows
+### AI Documents
 
-Agent flows run a Zylon workflow across one or more artifacts to produce a structured output.
+AI Documents run a Zylon workflow across one or more artifacts to produce a structured output.
 
 <Tabs>
   <Tab title="Summary">

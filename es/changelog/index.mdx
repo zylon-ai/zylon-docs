@@ -122,7 +122,7 @@ title: "Registro de cambios"
 
     ### 🐛 Bug Fixes
     - **Visibilidad mejorada**: Hemos mejorado el contraste y la colocación de algunos elementos de la interfaz para mejor descubribilidad y usabilidad.
-    - **Duplicar Agent Flow para flows en ejecución**: Ahora puedes duplicar Agent Flows incluso mientras aún están en ejecución, permitiendo iteración y experimentación más rápidas.
+    - **Duplicar Documento IA para flows en ejecución**: Ahora puedes duplicar Documentos IA incluso mientras aún están en ejecución, permitiendo iteración y experimentación más rápidas.
     - **Corrección de duplicación de preguntas y respuestas masivas**: Se resolvió un problema donde la duplicación de preguntas y respuestas masivas fallaba bajo ciertas condiciones.
     - **Bloqueo de chat cuando se selecciona herramienta MCP**: Se corrigió un error donde seleccionar una herramienta rota impedía a los usuarios continuar las interacciones de chat mientras MCP estaba activo.
 
@@ -195,7 +195,7 @@ Esto desbloquea compatibilidad con:
   - Panel de problemas:
     - El contenido completo del chat ahora se muestra al reportar un problema.
     - Se añadió la capacidad de limpiar el filtro de fecha.
-  - Agent flow:
+  - Documento IA:
     - Se corrigió un problema que impedía usar Zylon AI como fuente para crear flow de borrador.
     - Se permitió el uso de comillas dobles en preguntas para el flow de preguntas y respuestas masivas.
 
@@ -236,9 +236,9 @@ Esto desbloquea compatibilidad con:
   ### 🐛 Bug Fixes
 
   - Estabilidad y confiabilidad de conexión mejoradas.
-  - Se corrigió un error que podía causar fallos al configurar nuevos Agent Flows.
+  - Se corrigió un error que podía causar fallos al configurar nuevos Documentos IA.
   - Se corrigió un problema raro que podía hacer que la IA se quedara bloqueada mientras procesaba solicitudes.
-  - Se corrigió un error donde no se podían crear nuevos agent flows si no se generaba un título automáticamente.
+  - Se corrigió un error donde no se podían crear nuevos documentos IA si no se generaba un título automáticamente.
   - El sistema ahora elige el modelo de lenguaje correcto para cada tarea de forma más consistente.
   - Se corrigió un problema que afectaba la sincronización de datos entre sistemas.
   - Se corrigió un problema que ocasionalmente afectaba la interpretación de imágenes en archivos PPTX. 
@@ -257,7 +257,7 @@ Esto desbloquea compatibilidad con:
 escribir consultas SQL.
   - Esta función está en **fase Alpha** y [necesita ser habilitada](/es/operator-manual/configuration/features).
   - Aprende cómo usarla con el [Manual de usuario](/es/user-manual/tools/database-connector).
-- Agent Flow - Nuevas opciones de menú para una experiencia de usuario mejorada:
+- Documento IA - Nuevas opciones de menú para una experiencia de usuario mejorada:
   - Reintentar: Permite a los usuarios reiniciar flujos de trabajo fallidos con un solo clic.
   - Duplicar: El usuario es llevado a un nuevo flujo de trabajo prellenado con los mismos datos que el original
 
@@ -285,7 +285,7 @@ escribir consultas SQL.
 - Extracción de contenido de diapositivas mejorada gracias a ejecutar un modelo de lenguaje visual (VLM) en conjunto con un modelo de lenguaje grande (LLM). Por favor consulta los nuevos presets alternativos para entender [cómo configurarlo y habilitarlo](/es/operator-manual/ai-presets/presets#vision-enabled-alternatives). Las nuevas capacidades añadidas son:
   - **Comprensión inteligente de contenido**: Extracción impulsada por VLM implementada que puede analizar y entender contenido visual complejo incluyendo diapositivas, diagramas, gráficos e imágenes.
   - **Análisis contextual**: La integración VLM permite mejor comprensión del contexto de diapositivas, relaciones entre elementos visuales y contenido textual dentro de imágenes.
-- Mostrar la última hora de actualización para Agent Flows.
+- Mostrar la última hora de actualización para Documentos IA.
 
 ### 🐛 Bug Fixes
 - Soporte para exportar archivos DOCX con elementos personalizados (p. ej., citas, fuentes de conocimiento).
@@ -305,7 +305,7 @@ escribir consultas SQL.
   ## 💼 Workspace
   
   ### ✨ Funcionalidades
-  - 🔎 **Omnisearch**: Ahora capaz de buscar contenido dentro de Agent Flows y documentos de la Base de conocimiento
+  - 🔎 **Omnisearch**: Ahora capaz de buscar contenido dentro de Documentos IA y documentos de la Base de conocimiento
     - Sigue las [instrucciones para habilitarlo](/es/changelog/guides/1-43-0#post-update)
   - 📝 **Reporte de problemas**: Los usuarios ahora pueden reportar chats a organizaciones de administradores cuando encuentran problemas con las respuestas de Zylon.
 
@@ -326,7 +326,7 @@ escribir consultas SQL.
   - Se corrigió un problema con las migas de pan en Omnisearch que causaba problemas de accesibilidad
   - Se resolvió un problema donde el análisis numérico se deshabilitaba incorrectamente durante el procesamiento de documentos
   - Se corrigió la navegación a proyectos eliminados limpiando el último proyecto visitado si ya no existe
-  - Se impidió que los usuarios naveguen a agent flows eliminados vía Omnisearch
+  - Se impidió que los usuarios naveguen a documentos IA eliminados vía Omnisearch
   - Se corrigieron bloques de código rotos en streaming cuando el lenguaje de programación no se detectaba
  
   ## 🛠️ Platform
@@ -348,7 +348,7 @@ escribir consultas SQL.
   ![](/images/changelog/1.40.0/image1.png)
 
   - 💬 **Chats asíncronos**: Ahora puedes cerrar Zylon mientras tu chat continúa en segundo plano — ¡multitarea más fácil\!
-  - 🔎 **Omnisearch**: Busca instantáneamente en tu contenido para navegar rápidamente a tus recursos: Documentos, Chats, Agent Flows.
+  - 🔎 **Omnisearch**: Busca instantáneamente en tu contenido para navegar rápidamente a tus recursos: Documentos, Chats, Documentos IA.
 
   ![image.png](/images/image.png)
 
@@ -373,7 +373,7 @@ escribir consultas SQL.
 <Update label="1.38.0" description="August 8, 2025">
   ### ✨ Funcionalidades
 
-  - Nuevo Agent Flow. Leer y extraer.
+  - Nuevo Documento IA. Leer y extraer.
 
   ![](/images/changelog/1.38.0/image1.png)
 
@@ -383,7 +383,7 @@ escribir consultas SQL.
 <Update label="1.37.1" description="August 7, 2025">
   ### ✨ Funcionalidades
 
-  - Exportar Agent Flow a PDF/DOCX
+  - Exportar Documento IA a PDF/DOCX
 
   ![CleanShot 2025-07-15 at 15.46.03.png](https://i.imgur.com/r39V4S9.png)
 
@@ -549,7 +549,7 @@ escribir consultas SQL.
 
   **Bugfixes and improvements:**
 
-  - Cambiar contenido de Agent Flows lanzaba un error aunque el contenido se guardara correctamente
+  - Cambiar contenido de Documentos IA lanzaba un error aunque el contenido se guardara correctamente
   - Cambiar organización en diferentes pestañas ya no genera parpadeo
   - Navegar a configuración sin proyectos
   - La extensión de bloques de código dentro del editor ha sido mejorada
@@ -565,7 +565,7 @@ escribir consultas SQL.
 
   ### Nombre automático de chat
 
-  Similar a Agent Flows, ahora los chats obtienen un nombre automático basado en el mensaje inicial del usuario
+  Similar a los Documentos IA, ahora los chats obtienen un nombre automático basado en el mensaje inicial del usuario
 
 
   ### Marca blanca
@@ -615,11 +615,11 @@ escribir consultas SQL.
   **Bugfixes and improvements:**
 
   - Rendimiento de UI
-  - Mejorar legibilidad en columnas largas en tablas dentro de agent flows
+  - Mejorar legibilidad en columnas largas en tablas dentro de documentos IA
   - Añadido preset de IA para 32Gb (Mistral Small 3 2501)
   - GPUs Blackwell admitidas (RTX 5080, RTX 5090)
   - La UI de resumen de organización de proyectos ha sido mejorada. Ahora puedes comprobar fácilmente proyectos privados, compartidos y fijados.
-  - Las fuentes en Agent Flows de preguntas y respuestas masivas ahora apuntan a la referencia del documento en lugar de mostrar el nombre del archivo y la página.
+  - Las fuentes en Documentos IA de preguntas y respuestas masivas ahora apuntan a la referencia del documento en lugar de mostrar el nombre del archivo y la página.
   - Los chats largos ahora están admitidos, anteriormente cuando había un chat largo, los nuevos mensajes desaparecían después de la respuesta de Zylon.
   - Los archivos PPT ahora se ingieren correctamente.
   - Recuperación de documentos mejorada.
@@ -733,7 +733,7 @@ escribir consultas SQL.
 <Update label="1.23.1" description="April 7, 2025">
   ## **Editor de IA mejorado**
 
-  Hemos renovado completamente el editor de texto en Agent Flows, enfocándonos en funcionalidad mejorada y una mejor experiencia de usuario:
+  Hemos renovado completamente el editor de texto en Documentos IA, enfocándonos en funcionalidad mejorada y una mejor experiencia de usuario:
 
   - **IA en línea**: Ahora puedes hacer prompts en línea dentro de un documento para incluir más información o modificar texto existente.
     Simplemente comienza a escribir `/zylon`.
@@ -747,7 +747,7 @@ escribir consultas SQL.
 
   ## **Soporte EML**
 
-  La plataforma ahora admite el formato de correo electrónico EML popular. Sube tus archivos .eml y úsalos en Chats y Agent Flows
+  La plataforma ahora admite el formato de correo electrónico EML popular. Sube tus archivos .eml y úsalos en Chats y Documentos IA
   para resumir hilos largos, consultar información específica y más.
 
   ## **Exportación CSV en chat**

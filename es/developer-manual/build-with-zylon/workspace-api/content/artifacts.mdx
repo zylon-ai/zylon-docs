@@ -3,7 +3,7 @@ title: "Artefactos"
 description: "Artefactos de Workspace para documentos, flujos y conectores."
 ---
 
-Un artefacto es una pieza de información **o herramienta** que le entregas a Zylon para usarla como contexto en consultas y operaciones. La Workspace API agrupa los artefactos en **documentos**, **agent flows** y **otros artefactos**.
+Un artefacto es una pieza de información **o herramienta** que le entregas a Zylon para usarla como contexto en consultas y operaciones. La Workspace API agrupa los artefactos en **documentos**, **documentos IA** y **otros artefactos**.
 
 ## Requisitos previos
 
@@ -16,7 +16,7 @@ Un artefacto es una pieza de información **o herramienta** que le entregas a Zy
 | Categoría | Incluye | Cuándo usar |
 | --- | --- | --- |
 | **Artefactos de documento** | Documentos, carpetas, enlaces | Guardar u organizar contenido en un proyecto. |
-| **Agent flows** | `Summary`, composición, extracción | Ejecutar flujos sobre artefactos para producir resultados. |
+| **Documentos IA** | `Summary`, composición, extracción | Ejecutar flujos sobre artefactos para producir resultados. |
 | **Otros artefactos** | Servidores MCP, bases de datos SQL | Conectar herramientas o fuentes externas. |
 
 ### Artefactos de documento
@@ -138,9 +138,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 </Tabs>
 
-### Agent flows
+### Documentos IA
 
-Los agent flows ejecutan un flujo de trabajo de Zylon sobre uno o más artefactos para producir un resultado estructurado.
+Los documentos IA ejecutan un flujo de trabajo de Zylon sobre uno o más artefactos para producir un resultado estructurado.
 
 <Tabs>
   <Tab title="Summary">

@@ -7,6 +7,8 @@ The Backoffice Logging endpoints let authorized Backoffice users retrieve stored
 
 This page covers manual retrieval only. For external syslog or HTTP delivery, see [Log Delivery and Storage configuration](/en/operator-manual/configuration/features/log-delivery-storage).
 
+These endpoints are read-only. The documented API exposes `GET` operations for listing stored logs and usage data; it does not expose per-record update, patch, or delete operations.
+
 ## Authentication and permissions
 
 | Requirement | Value |
@@ -20,6 +22,8 @@ curl "https://{BASE_URL}/v1/platform/logs?page=0&page_size=50" \
 ```
 
 <Note>Workspace-only tokens are not enough for these endpoints.</Note>
+
+For operator-facing guidance on governance, evidence preservation, and SIEM delivery, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage).
 
 ## Endpoints
 
@@ -81,9 +85,15 @@ Logs are ordered by `start_timestamp` descending. The backend adds log ID orderi
 Without `include`, `input_payload` and `payload` are returned as empty objects and `data` is omitted. Use `include=Data` for structured per-event data. Add chat-specific include values only when needed.
 </Note>
 
+<Note>
+The `include` parameter controls retrieval shape only. It does not enable or disable collection. If request messages or responses are present in stored chat logs, they are returned only when the caller requests the corresponding include value.
+</Note>
+
 <Warning>
 Retrieving very large chat logs can take time, especially when the requested scope is large or when messages and responses are included.
 </Warning>
+
+## Event families and actions
 
 <Accordion title="Supported events">
 | Event | Description |
@@ -94,7 +104,7 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `zylon.gateway.ingest` | Gateway ingestion usage logs. |
 | `zylon.workspace` | Workspace audit logs for projects, users, files, chats, integrations, and hard delete activity. |
 | `zylon.security` | Authentication and authorization security logs. |
-| `zylon.backoffice` | Backoffice account and API token audit logs. |
+| `zylon.backoffice` | Backoffice account, API token, and log retrieval audit logs. |
 </Accordion>
 
 <Accordion title="Supported actions">
@@ -132,6 +142,8 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `backoffice.account.pwd.change` | Backoffice | Account password changed. |
 | `backoffice.api_token.create` | Backoffice | API token created. |
 | `backoffice.api_token.delete` | Backoffice | API token deleted. |
+| `backoffice.gateway_logs.read` | Backoffice | Gateway-scoped logs retrieved. |
+| `backoffice.logs.read` | Backoffice | Platform logs retrieved. |
 | `security.auth.no_credentials` | Security | Authentication attempted without credentials. |
 | `security.auth.failed_login` | Security | Login failed. |
 | `security.auth.invalid_token` | Security | Invalid token used. |
@@ -139,6 +151,10 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `security.auth.invalid_session` | Security | Invalid session used. |
 | `security.auth.malformed_header` | Security | Malformed authentication header received. |
 </Accordion>
+
+<Note>
+This event list covers documented application events. Helm-level logging configuration changes, such as changing retention or delivery destinations, should also be captured through customer change-management, GitOps, Kubernetes audit, or infrastructure audit controls.
+</Note>
 
 ## Log record schema
 
@@ -164,6 +180,8 @@ Each item returned by the log list endpoints is a `ZylonLogDTO`.
 | `data` | Included only with `include=Data`; shape depends on `event`. |
 
 Structured `data` can include workspace, HTTP, security, chat, embed, or ingest fields. Chat data can include model, token counts, request metadata, optional request messages, optional response, latency metrics, and `tools_used`.
+
+Sensitive request keys such as passwords, tokens, API keys, secrets, credentials, cookies, and connection strings are masked before request input payloads are stored. Do not build export workflows that require recovering masked values from logs.
 
 ## List platform logs
 
@@ -310,9 +328,22 @@ curl "https://{BASE_URL}/v1/platform/usage?gatewayId={GATEWAY_ID}&tokenId={TOKEN
 | Authenticated account without at least the `operator` role | Request is rejected by the permission check. |
 | Invalid UUID, enum value, or pagination combination | Request is rejected before logs are returned. |
 | Internal storage disabled | New logs are not persisted to Zylon log storage. Manual retrieval returns only already stored records. |
+| Per-record modification or deletion | Not supported by the documented Logging API. Stored log retention is controlled by cleanup configuration. |
+
+## Export chain of custody
+
+When using these endpoints for a manual export, preserve evidence outside the response body:
+
+- operator account or token identity;
+- request timestamp, source IP, and request ID when available;
+- exact URL filters, pagination values, and `include` values;
+- number of records exported;
+- incident, ticket, or legal hold reference.
+
+Log retrieval calls are also logged as Backoffice actions: `/v1/platform/gateway/{gatewayId}/logs` emits `backoffice.gateway_logs.read`, and `/v1/platform/logs` emits `backoffice.logs.read`. Preserve those events together with the exported response when a review, incident, or legal hold requires evidence of who accessed log records.
 
 ## Related documentation
 
 - [Backoffice API overview](/en/developer-manual/build-with-zylon/backoffice-api/overview)
-- [Operator Manual: Log Delivery and Storage](/en/operator-manual/backoffice/log-delivery-storage)
+- [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage)
 - [Configuration: Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage)

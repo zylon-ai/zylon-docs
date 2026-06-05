@@ -315,8 +315,7 @@
                   "en/operator-manual/backoffice/introduction",
                   "en/operator-manual/backoffice/roles-and-permissions",
                   "en/operator-manual/backoffice/accessing-the-backoffice",
-                  "en/operator-manual/backoffice/platform-backoffice",
-                  "en/operator-manual/backoffice/log-delivery-storage"
+                  "en/operator-manual/backoffice/platform-backoffice"
                 ]
               },
               {
@@ -414,6 +413,13 @@
                   "en/operator-manual/instance-hardening/index",
                   "en/operator-manual/instance-hardening/airgap-your-server",
                   "en/operator-manual/instance-hardening/disk-encryption"
+                ]
+              },
+              {
+                "group": "Auditability & AI Governance",
+                "pages": [
+                  "en/operator-manual/auditability-ai-safety/index",
+                  "en/operator-manual/backoffice/log-delivery-storage"
                 ]
               }
             ]
@@ -704,8 +710,7 @@
                   "es/operator-manual/backoffice/introduction",
                   "es/operator-manual/backoffice/roles-and-permissions",
                   "es/operator-manual/backoffice/accessing-the-backoffice",
-                  "es/operator-manual/backoffice/platform-backoffice",
-                  "es/operator-manual/backoffice/log-delivery-storage"
+                  "es/operator-manual/backoffice/platform-backoffice"
                 ]
               },
               {
@@ -803,6 +808,13 @@
                   "es/operator-manual/instance-hardening/index",
                   "es/operator-manual/instance-hardening/airgap-your-server",
                   "es/operator-manual/instance-hardening/disk-encryption"
+                ]
+              },
+              {
+                "group": "Auditabilidad y gobernanza de IA",
+                "pages": [
+                  "es/operator-manual/auditability-ai-safety/index",
+                  "es/operator-manual/backoffice/log-delivery-storage"
                 ]
               }
             ]

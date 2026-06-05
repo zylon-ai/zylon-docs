@@ -1,6 +1,6 @@
 ---
-title: "Entrega y almacenamiento de logs"
-description: "Guia operativa de logging, almacenamiento, auditabilidad y trazabilidad en Zylon."
+title: "Logging, evidencia y entrega a SIEM"
+description: "Guia de gobernanza para logging, preservacion de evidencia, auditabilidad, trazabilidad y entrega a SIEM en Zylon."
 icon: list
 ---
 
@@ -13,7 +13,9 @@ Zylon puede:
 - Almacenar logs estructurados internamente cuando `logging.storage.enabled` esta habilitado.
 - Enviar logs a SIEMs y colectores mediante syslog, incluidos RFC 5424 JSON y CEF.
 - Enviar logs JSON estructurados a destinos HTTP.
-- Permitir que usuarios autorizados de Backoffice recuperen logs almacenados mediante API.
+- Permitir que usuarios autorizados de Backoffice recuperen logs almacenados manualmente.
+
+**El comportamiento predeterminado de almacenamiento de logs conserva los logs almacenados dentro del despliegue Zylon del cliente salvo que se configure entrega externa de logs.** Los operadores deben confirmar por separado la configuracion especifica del despliegue para observabilidad, telemetria y crash reporting.
 
 La configuracion de entrega externa esta documentada en [Configuracion: Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).
 
@@ -24,26 +26,51 @@ La entrega externa es asincrona. Con `failurePolicy=drop`, la entrega evita bloq
 ## Antes de configurar la entrega
 
 - Confirme que logs deben almacenarse en Zylon y que logs deben entregarse a sistemas controlados por el cliente.
-- Confirme el host y puerto del colector syslog, o la URL del colector HTTP, desde la red del backend de Zylon.
+- Confirme el host y puerto del colector syslog, o la URL del colector HTTP, desde la red del despliegue Zylon.
 - Seleccione syslog `rfc5424_json`, syslog `cef` o HTTP `canonical_json` segun el input del colector.
 - Decida si se requiere verificacion de certificados TLS y prepare una ruta CA confiable si hace falta.
 - Decida la retencion en el almacenamiento interno de Zylon y en sistemas externos.
 - Revise filtros de accion y organizacion para no excluir eventos de auditoria requeridos.
+- Confirme que los nodos de Zylon usan una fuente horaria confiable como NTP. La correlacion forense depende de relojes sincronizados y revision en UTC.
 
 ## Que registra Zylon
 
-El backend almacena un sobre de log compartido y datos estructurados especificos del evento. Los campos exactos dependen de la familia de evento y de los valores `include` usados al recuperar logs.
+Zylon almacena un sobre de log compartido y datos estructurados especificos del evento. Los campos exactos dependen de la familia de evento y de los ajustes de logging habilitados.
 
-| Categoria | Ejemplos | Por que importa |
+| Categoria | Ejemplos de campos almacenados | Por que importa |
 | --- | --- | --- |
-| Contexto de actor | `user_id`, `account_id`, `account_email`, `token_id`, actor `user`, `api_token`, `system` o `unknown` | Ayuda a determinar quien o que inicio una accion. |
-| Contexto de organizacion y proyecto | `organization_id`, `gateway_id`, `project_id` | Ayuda a acotar la investigacion a un workspace, gateway o proyecto. |
-| Contexto de chat de IA | Modelo, longitud de request, tokens, mensajes opcionales, respuesta opcional, latencia y herramientas usadas | Ayuda a reconstruir el ciclo de vida observable del chat. |
-| Eventos de seguridad y auditoria | Fallos de autenticacion, tokens invalidos o expirados, creacion de cuentas, login, reset de password, creacion o borrado de tokens API | Soporta revision de seguridad y monitoreo de acceso. |
-| Tiempo y resultado | `start_timestamp`, `end_timestamp`, `error`, outcome y severity normalizados | Ayuda a correlacionar eventos e identificar fallos. |
+| Contexto de actor | Identificadores de usuario, cuenta, token y tipo de actor | Ayuda a determinar quien o que inicio una accion. |
+| Contexto de organizacion y proyecto | Identificadores de organizacion, gateway y proyecto | Ayuda a acotar la investigacion a un workspace, gateway o proyecto. |
+| Contexto de chat de IA | Metadatos de request, respuesta, tokens, latencia y uso de herramientas cuando auditoria los captura | Ayuda a reconstruir el ciclo de vida observable del chat. |
+| Eventos de seguridad y auditoria | Fallos de autenticacion, tokens invalidos o expirados, creacion de cuentas, login, reset de password, creacion o borrado de tokens API, recuperacion de logs | Soporta revision de seguridad y monitoreo de acceso. |
+| Tiempo y resultado | Inicio, fin, error, resultado y severidad | Ayuda a correlacionar eventos e identificar fallos. |
 | Metadatos de entrega | Esquema externo, severity, outcome, actor y entorno para syslog | Ayuda a clasificar eventos en SIEM y colectores. |
 
-Campos sensibles como passwords, tokens, API keys, secretos, credenciales, cookies y connection strings se enmascaran antes de almacenar payloads de entrada.
+<Warning>
+Sensitive request keys are masked before request input payloads are stored. Masked values are stored as `***`; they are not hashed, tokenized, or preserved as last-four characters in Zylon logs. URI user information in primitive string values is also redacted before storage.
+</Warning>
+
+<Accordion title="Claves de request enmascaradas">
+Zylon enmascara estos nombres exactos de clave de request antes de almacenar: `password`, `new_password`, `current_password`, `secret`, `api_key`, `apikey`, `private_key`, `privatekey`, `token`, `id_token`, `access_token`, `refresh_token`, `session_token`, `bearer_token`, `client_secret`, `secret_key`, `credentials`, `connection_string`, `cookie`, `set_cookie` y `authorization`.
+
+Zylon tambien enmascara claves que terminan en `_token`, `_password`, `_secret`, `_credential`, `_credentials`, `_connection_string` o `_cookie`.
+</Accordion>
+
+## Confianza e integridad
+
+Los logs almacenados deben tratarse como registros operativos con una superficie de recuperacion Backoffice de solo lectura:
+
+- El acceso documentado a logs de Backoffice es solo para recuperacion.
+- La recuperacion de logs mediante Backoffice tambien queda registrada, para que los operadores puedan revisar quien accedio a registros de plataforma o gateway.
+- No hay flujo documentado de UI o API de Backoffice para que un operador modifique o borre un registro individual.
+- La ruta documentada de borrado de logs almacenados es la limpieza de retencion configurada.
+- La limpieza esta deshabilitada por defecto. Cuando se habilita, el umbral predeterminado es `180` dias.
+
+Zylon no documenta una cadena criptografica de hashes, una cadena de firmas o un almacenamiento interno de logs con evidencia anti-manipulacion. Para mayor evidencia anti-manipulacion, entregue logs a un SIEM o archivo append-only controlado por el cliente, restrinja acceso de administradores de base de datos, conserve backups y monitorice auditoria de Kubernetes/base de datos. El acceso directo a base de datos por administradores de infraestructura queda fuera del modelo de permisos de Backoffice.
+
+### Administracion del sistema de logging
+
+El almacenamiento, retencion y entrega de logs son configuracion del despliegue. Cambios como deshabilitar almacenamiento, reducir retencion o cambiar destinos de entrega deben capturarse en change management, historial GitOps, auditoria Kubernetes o logs de infraestructura del cliente.
 
 ## Auditabilidad de IA
 
@@ -52,23 +79,23 @@ Zylon proporciona auditabilidad del ciclo de vida observable del chat y de accio
 - quien inicio un chat;
 - que organizacion, gateway o proyecto participo;
 - que metadatos de request se almacenaron;
-- que respuesta del modelo se almaceno, cuando se incluye;
+- que respuesta se almaceno cuando auditoria la capturo;
 - que herramientas fueron visibles en el payload de respuesta;
 - que acciones, integraciones, archivos, chats y proyectos se usaron.
 
 <Note>
-Zylon registra entradas, salidas, acciones, herramientas, rutas de datos, actores y eventos de sistema observables. No expone razonamiento interno privado o propietario de ZylonGPT salvo que ese razonamiento se haya emitido y almacenado explicitamente como parte de la respuesta.
+Zylon registra entradas, salidas, acciones, herramientas, rutas de datos, actores y eventos de sistema observables. No expone razonamiento interno privado o propietario salvo que ese razonamiento se haya emitido y almacenado explicitamente como parte de la respuesta.
 </Note>
 
 ## Logging y trazabilidad para EU AI Act
 
-El logging de Zylon esta diseñado para apoyar flujos de trazabilidad y logging alineados con EU AI Act, segun la configuracion y el despliegue. Debe tratarse como un control dentro de un programa mas amplio de gobierno, monitoreo y retencion.
+El logging de Zylon puede apoyar flujos de trazabilidad y record-keeping para EU AI Act, segun la configuracion y el despliegue. Debe tratarse como una fuente tecnica de evidencia dentro de un programa mas amplio de gobierno, monitoreo y retencion.
 
 | Tema relacionado | Como ayuda Zylon | Responsabilidad del cliente |
 | --- | --- | --- |
 | Logging automatico | Zylon registra eventos configurados de auditoria, seguridad, aplicacion y ciclo de vida de chats. | Habilitar almacenamiento o entrega para los eventos requeridos y confirmar cobertura. |
 | Trazabilidad | Los logs ayudan a reconstruir actores, timestamps, prompts o datos de request, respuestas, herramientas y contexto de organizacion/proyecto. | Mantener controles de acceso y decidir que campos se conservan. |
-| Monitoreo | Los logs pueden revisarse por API o entregarse a SIEM/syslog/HTTP. | Configurar monitoreo, alertas, revisiones y escalado. |
+| Monitoreo | Los logs pueden revisarse mediante recuperacion de logs en Backoffice o entregarse a SIEM/syslog/HTTP. La actividad de recuperacion de logs tambien queda registrada para revision posterior. | Configurar monitoreo, alertas, revisiones y escalado. |
 | Investigacion | Los logs soportan revision de incidentes en usuarios, tokens, workspace, seguridad y ciclo de vida de IA. | Correlacionar logs de Zylon con infraestructura, identidad, red y SIEM del cliente. |
 | Retencion | Zylon puede limpiar logs almacenados tras una ventana configurada. El predeterminado de aplicacion es `180` dias cuando la limpieza de logs esta habilitada. | Mantener retencion alineada con requisitos legales, de seguridad y operativos. |
 
@@ -76,11 +103,26 @@ El logging de Zylon esta diseñado para apoyar flujos de trazabilidad y logging 
 Esta documentacion no es asesoramiento legal. Los clientes son responsables de determinar si su despliegue esta sujeto al EU AI Act u otras leyes, que rol ocupan y que controles de logging, monitoreo y retencion requieren.
 </Note>
 
+## Mapeo de evidencia de control
+
+Esta tabla ayuda en procurement y mapeo de evidencia de control; no es una declaracion de certificacion ni una afirmacion de cumplimiento. La aplicabilidad final depende del despliegue, politicas, procedimientos, monitoreo, retencion y caso de uso del cliente.
+
+| Marco o regla | Expectativa de logging | Zylon soporta |
+| --- | --- | --- |
+| ISO/IEC 27001:2022 A.8.15 | Registrar eventos relevantes de actividad de usuario, excepciones, fallos y seguridad. | Logs estructurados de workspace, seguridad, backoffice, gateway y ciclo de vida de IA. |
+| ISO/IEC 27001:2022 A.8.16 | Monitorizar actividades y logs para detectar comportamiento anomalo e incidentes. | Entrega syslog y HTTP para SIEM, alertas y monitoreo del cliente. |
+| SOC 2 CC7.2 | Monitorizar componentes y detectar anomalias que puedan indicar actividad maliciosa. | Eventos de seguridad/auth, tokens, cuentas y uso de gateway. |
+| DORA Articulo 17 | Registrar, clasificar y gestionar incidentes TIC. | Inputs para reconstruccion de incidentes: actor, organizacion, proyecto, request, respuesta, tiempo y resultado. |
+| NIS2 | Apoyar deteccion, respuesta y preservacion de evidencia. | Entrega y retencion controladas por el cliente para operaciones de seguridad y reporting. |
+| GDPR Articulo 30 | Mantener registros de actividades de tratamiento. | Los logs pueden ayudar a identificar actores, sistemas y contexto; el cliente mantiene responsabilidad del registro. |
+| GDPR Articulo 32 | Proteger confidencialidad, integridad, disponibilidad y resiliencia. | Control de acceso, masking, retencion, TLS y forwarding a SIEM apoyan controles de seguridad. |
+| GDPR Articulo 33 | Notificar brechas de datos personales cuando aplique. | Logs apoyan timeline de investigacion, sistemas afectados y recopilacion de evidencia. |
+
 ## Almacenamiento y retencion de logs
 
 Cuando el almacenamiento esta habilitado, Zylon persiste logs estructurados internamente. Cuando esta deshabilitado, los logs nuevos no se persisten internamente.
 
-Zylon puede limpiar logs almacenados tras una ventana configurada. El predeterminado confirmado de aplicacion es `180` dias cuando la limpieza de logs esta habilitada.
+Zylon puede limpiar logs almacenados tras una ventana configurada. La limpieza de logs almacenados esta deshabilitada por defecto. El valor predeterminado de retencion es `180` dias cuando la limpieza de logs esta habilitada.
 
 Los colectores externos mantienen sus propias politicas de retencion fuera de Zylon.
 
@@ -89,6 +131,18 @@ Los colectores externos mantienen sus propias politicas de retencion fuera de Zy
 | Almacenamiento interno de Zylon | Operador y configuracion de limpieza | El almacenamiento esta habilitado por defecto. La limpieza de logs usa `180` dias por defecto cuando se habilita. |
 | SIEM o colector syslog del cliente | Cliente | Controlado por input, indice, archivo y politica de borrado del colector. |
 | Colector HTTP o data lake del cliente | Cliente | Controlado por ingesta, transformacion y almacenamiento downstream. |
+
+### Derecho de supresion y retencion
+
+Los logs de auditoria y seguridad pueden contener identificadores de usuario, cuenta, organizacion, IP, prompts, respuestas u otro contexto que puede ser dato personal segun el despliegue. Una solicitud de borrado de usuario no implica necesariamente borrado inmediato de todo registro historico de auditoria; muchos entornos regulados retienen logs de seguridad durante un periodo definido para preservar evidencia de fraude, abuso e incidentes.
+
+Configure retencion, filtros de entrega externa y retencion downstream segun base legal y politica de minimizacion. Si su politica exige pseudonimizacion o borrado anticipado de campos vinculados a usuarios, implemente esa obligacion en el colector/SIEM controlado por el cliente o valide el comportamiento de producto de la version desplegada.
+
+## Tiempo y marcadores de esquema
+
+Los registros exponen timestamps ISO como `start_timestamp` y `end_timestamp`. Use UTC para investigaciones entre sistemas y mantenga todos los nodos de Zylon sincronizados con NTP o fuente horaria equivalente.
+
+Los payloads entregados incluyen marcadores de esquema como `zylon.rfc5424_json.v1` y `zylon.canonical_json.v1`. Estos marcadores permiten que los parsers SIEM enruten e identifiquen formas de payload. No imponen por si mismos una politica de deprecacion o migracion; valide la compatibilidad de parsers al actualizar.
 
 ## Formas de consumir logs
 

@@ -12,10 +12,11 @@ Zylon admite almacenamiento interno de logs y entrega externa por syslog y HTTP.
 - La entrega es asincrona.
 - Con `failurePolicy: "drop"`, la entrega evita bloquear el camino critico cuando las colas estan llenas.
 - Los eventos entregados se pueden filtrar por patrones de accion e IDs de organizacion.
+- Los logs almacenados permanecen en el despliegue Zylon del cliente salvo que se habilite entrega externa de logs por syslog o HTTP.
 
 Configure estos ajustes en el YAML de valores de Helm de Zylon. El chart mapea estos valores a la configuracion interna del backend; la configuracion de cliente debe usar las claves YAML mostradas aqui.
 
-Para conceptos operativos, auditabilidad, trazabilidad y retencion, consulte [Backoffice: Entrega y almacenamiento de logs](/es/operator-manual/backoffice/log-delivery-storage).
+Para gobernanza, auditabilidad, soporte de trazabilidad para EU AI Act, preservacion de evidencia y retencion, consulte [Auditabilidad y gobernanza de IA: Logging, evidencia y entrega a SIEM](/es/operator-manual/backoffice/log-delivery-storage).
 
 ## Vista rapida
 
@@ -59,7 +60,7 @@ Configuracion del programador:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Habilita el programador de limpieza. |
 | `cron` | `0 3 * * *` | expresion cron | Programacion de limpieza. Compartida con el borrado permanente. |
-| `timezone` | `UTC` | zona horaria | Zona horaria usada por la programacion. Compartida con el borrado permanente. |
+| `timezone` | `UTC` | zona horaria | Zona horaria usada por la programacion. Compartida con el borrado permanente. Si el ajuste runtime se omite fuera de Helm, el backend usa la zona horaria JVM del servidor. |
 
 Bajo `logging`:
 
@@ -67,6 +68,10 @@ Bajo `logging`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Habilita la limpieza de logs almacenados. |
 | `deleteAfterDays` | `180` | dias enteros | Elimina logs almacenados con mas antiguedad que este umbral. |
+
+<Note>
+La limpieza de logs almacenados esta deshabilitada por defecto. El valor `180` dias aplica solo despues de habilitar tanto el programador de limpieza como la limpieza de logs almacenados.
+</Note>
 
 <Warning>
 La limpieza de logs usa el mismo cron y la misma zona horaria que el borrado permanente. Revise [Borrado permanente](/es/operator-manual/configuration/cron-tasks/hard-delete) antes de cambiar la programacion compartida.
@@ -309,6 +314,14 @@ Orden de evaluacion:
 1. Patrones de exclusion de accion.
 2. Patrones de inclusion de accion.
 3. IDs de organizacion incluidos.
+
+## Controles operativos
+
+Mantenga todos los nodos backend de Zylon sincronizados con una fuente horaria confiable como NTP. El chart Helm configura `UTC` por defecto para el programador de limpieza; si el ajuste runtime se omite fuera de Helm, el backend usa la zona horaria JVM del servidor. Los registros deben revisarse en UTC para correlacion forense entre sistemas.
+
+Trate cambios en `logging.storage`, `logging.delivery`, filtros, retencion y destinos de colector como cambios de despliegue auditables. Capture aprobaciones y diffs en GitOps, change management, auditoria Kubernetes o el sistema de auditoria de infraestructura usado por el cliente.
+
+Los esquemas entregados usan marcadores como `zylon.rfc5424_json.v1` y `zylon.canonical_json.v1`. Los parsers SIEM deben enrutar por marcador y validar compatibilidad al actualizar.
 
 ## Politicas de fallo
 

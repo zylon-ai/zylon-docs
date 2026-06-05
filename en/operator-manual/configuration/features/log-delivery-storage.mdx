@@ -12,10 +12,11 @@ Zylon supports internal log storage and external log delivery through syslog and
 - Delivery is asynchronous.
 - With `failurePolicy: "drop"`, delivery is designed to stay off the critical request path when queues are full.
 - Delivered events can be filtered by action patterns and organization IDs.
+- Stored logs stay in the customer's Zylon deployment unless external log delivery through syslog or HTTP is enabled.
 
 Configure these settings through the Zylon Helm values YAML. The chart maps values to backend runtime settings internally; customer configuration should use the YAML keys shown here.
 
-For conceptual logging, auditability, EU AI Act-aligned traceability, and retention guidance, see [Operator Manual: Log Delivery and Storage](/en/operator-manual/backoffice/log-delivery-storage). For manual log retrieval, see [Backoffice API: Logging](/en/developer-manual/build-with-zylon/backoffice-api/logging).
+For governance, auditability, EU AI Act traceability support, evidence preservation, and retention guidance, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage). For manual log retrieval, see [Backoffice API: Logging](/en/developer-manual/build-with-zylon/backoffice-api/logging).
 
 ## At a glance
 
@@ -69,7 +70,7 @@ Scheduler settings:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables the cleanup scheduler. |
 | `cron` | `0 3 * * *` | cron expression | Cleanup schedule. Shared with hard delete cleanup. |
-| `timezone` | `UTC` | time zone | Time zone used by the cleanup schedule. Shared with hard delete cleanup. |
+| `timezone` | `UTC` | time zone | Time zone used by the cleanup schedule. Shared with hard delete cleanup. If the runtime setting is omitted outside Helm, the backend uses the server JVM time zone. |
 
 Under `logging`:
 
@@ -80,6 +81,10 @@ Under `logging`:
 
 <Note>
 External collectors such as SIEM platforms, syslog receivers, HTTP collectors, and data lakes have independent retention settings.
+</Note>
+
+<Note>
+Stored log cleanup is off by default. The `180` day value applies only after both the cleanup scheduler and stored log cleanup are enabled.
 </Note>
 
 <Warning>
@@ -383,6 +388,14 @@ The delivery pipeline is:
 5. The formatted payload is placed on the async delivery queue.
 6. The delivery worker sends the event to the configured destination.
 7. Reconnect or retry behavior applies when delivery fails.
+
+## Operational controls
+
+Keep all Zylon backend nodes synchronized to a trusted time source such as NTP. The Helm chart sets the cleanup scheduler timezone to `UTC` by default; if the runtime setting is omitted outside Helm, the backend uses the server JVM time zone. Log records should be reviewed in UTC for cross-system forensic correlation.
+
+Treat changes to `logging.storage`, `logging.delivery`, filters, retention, and collector destinations as auditable deployment changes. Capture approvals and diffs in GitOps, change management, Kubernetes audit logs, or the infrastructure audit system used by the customer.
+
+Delivered payload schemas use markers such as `zylon.rfc5424_json.v1` and `zylon.canonical_json.v1`. SIEM parsers should route by schema marker and validate parser compatibility during upgrades.
 
 ## Failure policies
 

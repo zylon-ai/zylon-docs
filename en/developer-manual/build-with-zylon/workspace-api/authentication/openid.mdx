@@ -1,11 +1,11 @@
 ---
 title: "OpenID & OAuth"
-description: "Start SSO logins and integration OAuth flows for Confluence and SharePoint."
+description: "Start SSO logins and integration OAuth flows for Confluence and Sharepoint."
 ---
 
 Use these endpoints to initiate OAuth/OpenID flows. Login endpoints are browser-oriented and return redirects; callback endpoints receive the provider response.
 
-> Integrations must be enabled before you use their OAuth endpoints. See the operator guides for [Confluence](/en/operator-manual/knowledge-base/confluence) and [SharePoint](/en/operator-manual/knowledge-base/sharepoint).
+> Integrations must be enabled before you use their OAuth endpoints. See the operator guides for [Confluence](/en/operator-manual/knowledge-base/confluence) and [Sharepoint](/en/operator-manual/knowledge-base/sharepoint).
 
 ## Basic request and response
 
@@ -55,7 +55,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint login">
+  <Tab title="Sharepoint login">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/login"
 ```
@@ -84,7 +84,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint instance">
+  <Tab title="Sharepoint instance">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/login"
 ```
@@ -113,7 +113,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationI
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint refresh">
+  <Tab title="Sharepoint refresh">
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -154,7 +154,7 @@ Location: https://{BASE_URL}/app/integrations/confluence
 ```
 </Accordion>
   </Tab>
-  <Tab title="SharePoint callback">
+  <Tab title="Sharepoint callback">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/callback?code=...&state=..."
 ```

@@ -1,10 +1,10 @@
 ---
-title: SharePoint
+title: Sharepoint
 ---
 
-Para integrar con SharePoint, necesitas **crear una aplicación de Microsof Entra** que actúa como un puente entre Zylon ↔ SharePoint y **configurar Zylon** para usar esta aplicación de Microsoft.
+Para integrar con Sharepoint, necesitas **crear una aplicación de Microsof Entra** que actúa como un puente entre Zylon ↔ Sharepoint y **configurar Zylon** para usar esta aplicación de Microsoft.
 
-Esta guía te guía a través de la integración de SharePoint con Zylon usando el flujo OAuth 2.0 de Microsoft. Esto permite a Zylon acceder de forma segura a tus recursos de SharePoint usando permisos delegados.
+Esta guía te guía a través de la integración de Sharepoint con Zylon usando el flujo OAuth 2.0 de Microsoft. Esto permite a Zylon acceder de forma segura a tus recursos de Sharepoint usando permisos delegados.
 
 ## Crear una aplicación de Microsoft Entra
 
@@ -98,7 +98,7 @@ integration:
     redirectUri: "" //Del paso 4
     domain: "" //Tu dominio de sharepoint. ej: https://zylonai.sharepoint.com
     tenantId: "" //Del paso 10 - Directory tenant Id
-    entrySite: "" //Opcional: URL del sitio de SharePoint por defecto
+    entrySite: "" //Opcional: URL del sitio de Sharepoint por defecto
     entryList: "" //Opcional: Nombre de la lista por defecto (ej: "Documents")
     entryFolder: "" //Opcional: Nombre de la carpeta por defecto
 ```
@@ -108,9 +108,9 @@ Y completa las propiedades con los valores generados previamente:
 - clientId → valor generado en el paso 10
 - clientSecret → valor generado en el paso 11
 - redirectUri → mismo valor que en el paso 4
-- domain → Tu URL de SharePoint
+- domain → Tu URL de Sharepoint
 - tenantId → mismo valor que en el paso 10
-- entrySite → (Opcional) URL del sitio de SharePoint por defecto. Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
+- entrySite → (Opcional) URL del sitio de Sharepoint por defecto. Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
 - entryList → (Opcional) Nombre de la lista por defecto, ej: "Documents". Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
 - entryFolder → (Opcional) Nombre de la carpeta por defecto. Ver sección [Configurar Carpeta de Apertura por Defecto](#configurar-carpeta-de-apertura-por-defecto) más abajo
 
@@ -126,15 +126,15 @@ sudo zylon-cli sync
 
 ## Configurar Carpeta de Apertura por Defecto
 
-Puedes configurar una carpeta de apertura por defecto para la integración de SharePoint. Esto permite que la integración se abra directamente en una carpeta específica cuando los usuarios acceden a SharePoint a través de Zylon, mejorando la experiencia del usuario al omitir pasos de navegación.
+Puedes configurar una carpeta de apertura por defecto para la integración de Sharepoint. Esto permite que la integración se abra directamente en una carpeta específica cuando los usuarios acceden a Sharepoint a través de Zylon, mejorando la experiencia del usuario al omitir pasos de navegación.
 
 Los tres campos opcionales controlan el punto de entrada para la integración:
 
-- `entrySite`: La URL absoluta del sitio de SharePoint (funciona tanto para SharePoint como para OneDrive)
-- `entryList`: El nombre de la lista dentro del sitio (ej: "Documents" es el predeterminado para SharePoint)
+- `entrySite`: La URL absoluta del sitio de Sharepoint (funciona tanto para Sharepoint como para OneDrive)
+- `entryList`: El nombre de la lista dentro del sitio (ej: "Documents" es el predeterminado para Sharepoint)
 - `entryFolder`: El nombre de la carpeta dentro de la lista
 
-**Importante:** Debes usar rutas absolutas de SharePoint para el campo `entrySite`, incluso para OneDrive. El formato de la ruta debe ser como:
+**Importante:** Debes usar rutas absolutas de Sharepoint para el campo `entrySite`, incluso para OneDrive. El formato de la ruta debe ser como:
 ```
 https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
 ```
@@ -145,11 +145,11 @@ Si deseas que la integración se abra por defecto en la carpeta "Defense and Sec
 
 ```bash
 entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
-entryList: "Documents" //Predeterminado en SharePoint
+entryList: "Documents" //Predeterminado en Sharepoint
 entryFolder: "Defense and Security"
 ```
 
-Esta configuración hará que la integración se abra directamente en la carpeta "Defense and Security" cuando los usuarios accedan a SharePoint a través de Zylon.
+Esta configuración hará que la integración se abra directamente en la carpeta "Defense and Security" cuando los usuarios accedan a Sharepoint a través de Zylon.
 
 **Nota:** Los tres campos son opcionales. Si no se configuran o se dejan vacíos, serán ignorados y la integración usará el comportamiento predeterminado (abriendo en el nivel raíz).
 

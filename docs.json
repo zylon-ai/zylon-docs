@@ -300,6 +300,7 @@
                 "group": "Maintenance & Operations",
                 "pages": [
                   "en/operator-manual/operations/backup",
+                  "en/operator-manual/operations/data-disk",
                   "en/operator-manual/operations/sys-admin-dashboard"
                 ]
               },
@@ -688,6 +689,7 @@
                 "group": "Mantenimiento y Operaciones",
                 "pages": [
                   "es/operator-manual/operations/backup",
+                  "es/operator-manual/operations/data-disk",
                   "es/operator-manual/operations/sys-admin-dashboard"
                 ]
               },

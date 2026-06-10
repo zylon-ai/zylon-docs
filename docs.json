@@ -723,10 +723,11 @@
                     ]
                   },
                   {
-                    "group": "Autenticaci\u00f3n",
+                    "group": "Autenticación",
                     "pages": [
                       "es/operator-manual/openid/google",
-                      "es/operator-manual/openid/microsoft"
+                      "es/operator-manual/openid/microsoft",
+                      "es/operator-manual/authentication/ldap"
                     ]
                   },
                   {

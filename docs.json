@@ -300,6 +300,7 @@
                 "group": "Maintenance & Operations",
                 "pages": [
                   "en/operator-manual/operations/backup",
+                  "en/operator-manual/operations/data-disk",
                   "en/operator-manual/operations/sys-admin-dashboard"
                 ]
               },

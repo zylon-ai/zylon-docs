@@ -1,0 +1,264 @@
+---
+title: "Store Zylon Data on a Separate Disk"
+description: "Move Zylon's data directory to a dedicated disk or partition for additional storage capacity."
+---
+
+Zylon stores its application data under `/var/zylon`. By default, this directory lives on the same disk as the operating system. As your deployment grows, you may need to move that data to a larger or dedicated disk.
+
+This guide walks through relocating Zylon data to a separate disk or partition without reinstalling the platform.
+
+## When to use this guide
+
+Use this procedure when:
+
+- The OS disk is running low on space but you have an additional disk available.
+- You want to isolate Zylon data on dedicated storage for performance or operational reasons.
+- You are preparing the server for a storage layout change (for example, before enabling [disk encryption](/en/operator-manual/instance-hardening/disk-encryption)).
+
+## What gets moved
+
+Zylon's persistent state is stored under `/var/zylon`, including:
+
+- Uploaded documents and knowledge-base content
+- Databases
+- Dependencies (drivers, binaries), stored in `artifacts`
+- AI models
+- Kubernetes persistent volumes managed by Zylon
+
+You can choose which directories under `/var/zylon` to move based on what is consuming the most space on your server. The same bind-mount approach works for any path listed above.
+
+<Warning>
+  **Back up before you begin.** This is a high-risk operation; data loss is possible if anything goes wrong.
+
+  Create a backup and verify you can restore it before continuing:
+
+  ```bash
+  sudo zylon-cli backup
+  ```
+
+  Copy the resulting backup file to a safe external location and confirm you can access it.
+  See the [Backup guide](/en/operator-manual/operations/backup) for details.
+</Warning>
+
+---
+
+## Overview
+
+This procedure moves selected data directories to a dedicated disk while keeping the rest of `/var/zylon` on the OS volume. Zylon continues to use the same paths (for example, `/var/zylon/artifacts` and `/var/zylon/ai-models`). **Bind mounts** in `/etc/fstab` redirect those paths to the new disk, so no application configuration changes are required.
+
+At a high level, you will:
+
+1. **Identify the target disk**: find an unused disk or partition with enough space for current and future data.
+2. **Prepare the disk**: partition it (if needed), format it with ext4, and mount it at `/mnt/data`.
+3. **Stop Zylon**: shut down the Kubernetes cluster with `sudo k0s stop` so files are not in use during the copy.
+4. **Migrate the data**: copy the chosen directories from `/var/zylon` to the new disk.
+5. **Configure bind mounts**: add entries to `/etc/fstab` so the new disk paths are mounted back at their original locations under `/var/zylon` on every boot.
+6. **Start Zylon and verify**: bring the cluster back up and confirm Zylon is healthy.
+7. **Remove old data**: once verified, delete the original copies on the OS disk and remount the bind mounts.
+
+<Note>
+  **Expect downtime during the migration.** Zylon must be stopped while data is copied and mounts are reconfigured. The duration depends on how much data you are moving.
+</Note>
+
+---
+
+## Step 1: Identify the target disk
+
+Run `lsblk` to see which disks are attached to the server. You need a device that is not already in use (no mount points listed) and has enough space for your Zylon data:
+
+```bash
+lsblk
+```
+
+In our example, the output looks like this:
+
+```
+NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0          7:0    0  27.6M  1 loop /snap/amazon-ssm-agent/11797
+loop1          7:1    0  28.2M  1 loop /snap/amazon-ssm-agent/13009
+loop2          7:2    0  73.9M  1 loop /snap/core22/2045
+loop3          7:3    0    74M  1 loop /snap/core22/2411
+loop4          7:4    0  49.3M  1 loop /snap/snapd/24792
+loop5          7:5    0  49.3M  1 loop /snap/snapd/26865
+nvme1n1      259:0    0   300G  0 disk /
+nvme0n1      259:1    0   300G  0 disk 
+```
+In this example, we use `nvme0n1` as the target. Replace `/dev/nvme0n1` with your actual device in every command below.
+
+---
+
+## Step 2: Prepare the target disk
+
+Create a mount point and configure the target disk to mount automatically at boot. If the disk is already partitioned and formatted, skip the partitioning and formatting commands below and go straight to creating the mount point.
+
+<Warning>
+  Partitioning and formatting **erase all data** on the target disk. Only run these commands on a blank disk, or when you are certain the device has no data you need to keep. Double-check you have selected the correct device before proceeding.
+</Warning>
+
+If the disk is not already partitioned and formatted, run the following to set it up with ext4:
+
+```bash
+sudo parted /dev/nvme0n1 mklabel gpt
+sudo parted /dev/nvme0n1 mkpart primary 0% 100%
+sudo mkfs.ext4 /dev/nvme0n1
+```
+
+
+Create the mount point on the new disk:
+
+```bash
+sudo mkdir -p /mnt/data
+```
+
+Get the disk UUID so the mount survives reboots:
+
+```bash
+sudo blkid /dev/nvme0n1
+```
+
+The output will look similar to:
+
+```
+/dev/nvme0n1: UUID="2c2f893d-6ce5-4eb5-8e0a-3b85b4894814" BLOCK_SIZE="4096" TYPE="ext4"
+```
+
+Add an entry to `/etc/fstab` using your UUID (replace the value below with the one from your output):
+
+```bash
+echo 'UUID=2c2f893d-6ce5-4eb5-8e0a-3b85b4894814  /mnt/data  ext4  defaults  0  2' | sudo tee -a /etc/fstab
+```
+
+Reload systemd and mount the disk:
+
+```bash
+sudo systemctl daemon-reload
+sudo mount -a
+```
+
+Confirm the disk is mounted:
+
+```bash
+df -h /mnt/data
+```
+
+---
+
+## Step 3: Stop Zylon
+
+Stop the Kubernetes cluster so no processes are reading or writing the directories you are about to migrate:
+
+```bash
+sudo k0s stop
+```
+
+Wait until the command completes before continuing.
+
+---
+
+## Step 4: Migrate data to the new disk
+
+You can decide which directories under `/var/zylon` to move to the new disk. Choose the paths that are using the most space or that you want to keep separate from the OS volume. In this example, we move Zylon dependencies and AI models. Dependencies are stored in the `artifacts` directory.
+
+```bash
+sudo cp -a /var/zylon/artifacts/. /mnt/data/zylon/artifacts/
+sudo cp -a /var/zylon/ai-models/. /mnt/data/zylon/ai-models/
+```
+
+Verify the copy completed and the file counts look reasonable:
+
+```bash
+du -sh /var/zylon/artifacts /mnt/data/zylon/artifacts
+du -sh /var/zylon/ai-models /mnt/data/zylon/ai-models
+```
+
+The sizes on the source and destination should match.
+
+---
+
+## Step 5: Point Zylon to the new location
+
+Add bind mount entries to `/etc/fstab`. These make Linux present the data on the new disk at the original paths Zylon expects:
+
+```bash
+echo '/mnt/data/zylon/artifacts /var/zylon/artifacts none bind 0 0' | sudo tee -a /etc/fstab
+echo '/mnt/data/zylon/ai-models  /var/zylon/ai-models none bind 0 0' | sudo tee -a /etc/fstab
+sudo systemctl daemon-reload
+sudo mount -a
+```
+
+Confirm both bind mounts are active:
+
+```bash
+sudo findmnt /var/zylon/artifacts
+sudo findmnt /var/zylon/ai-models
+```
+
+Each command should show the mount source pointing to `/mnt/data/zylon/...`.
+
+---
+
+## Step 6: Start Zylon and verify
+
+Start the cluster and confirm Zylon is working normally:
+
+```bash
+sudo k0s start
+```
+
+Log in to the workspace and run a query that uses AI models to confirm both directories are being served from the new disk.
+
+---
+
+## Step 7: Remove old data
+
+Once you have verified Zylon is healthy, remove the original copies from the OS disk to reclaim space. This step requires stopping Zylon again and temporarily unmounting the bind mounts.
+
+Stop Zylon:
+
+```bash
+sudo k0s stop
+```
+
+Unmount the bind mounts (this does not affect the data on `/mnt/data`):
+
+```bash
+sudo umount /var/zylon/ai-models
+sudo umount /var/zylon/artifacts
+```
+
+Confirm they are no longer mounted:
+
+```bash
+sudo findmnt /var/zylon/ai-models
+sudo findmnt /var/zylon/artifacts
+```
+
+Both commands should return no results.
+
+Remove the old data and recreate the empty mount-point directories:
+
+```bash
+sudo rm -rf /var/zylon/ai-models
+sudo rm -rf /var/zylon/artifacts
+sudo mkdir /var/zylon/ai-models
+sudo mkdir /var/zylon/artifacts
+```
+
+Reapply the bind mounts from `/etc/fstab`:
+
+```bash
+sudo mount -a
+```
+
+Confirm the bind mounts are back:
+
+```bash
+sudo findmnt /var/zylon/ai-models
+sudo findmnt /var/zylon/artifacts
+```
+
+Start Zylon:
+
+```bash
+sudo k0s start
+```

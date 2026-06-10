@@ -14,15 +14,15 @@ Habilita el procesamiento de archivos con visión para documentos y presentacion
 
 | Modo   | Descripción |
 | ------ | ----------- |
-| `none` | Desactiva el procesamiento con visión |
-| `lite` | Activa el procesamiento de imágenes usando modelos con visión |
+| `none` | Desactiva el procesamiento con visión. Los archivos se procesan únicamente mediante extracción de texto. |
+| `lite` | Combina la extracción de texto y visual para mejorar la comprensión de la estructura, imágenes, gráficos y diagramas. Diseñado para equilibrar calidad y eficiencia. |
 
 ### Configuración
 
 | Clave                                  | Por Defecto | Valores        | Descripción                                         |
 | -------------------------------------- | ----------- | -------------- | --------------------------------------------------- |
-| `transformation.pptx.vision.mode`      | `none`      | `none \| lite` | Controla el modo de visión para diapositivas PPTX   |
-| `transformation.docling.vision.mode`   | `none`      | `none \| lite` | Controla el modo de visión para documentos Docling  |
+| `transformation.pptx.vision.mode`      | `none`      | `none \| lite` | Controla el modo de visión para archivos PPTX (`.pptx`).   |
+| `transformation.docling.vision.mode`   | `none`      | `none \| lite` | Controla el modo de visión para archivos procesados con Docling (`.pdf`, `.docx`, `.xlsx`).  |
 
 ### Recomendaciones
 

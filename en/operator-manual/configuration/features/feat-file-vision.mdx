@@ -14,15 +14,15 @@ Enable vision-based file processing for documents and slides.
 
 | Mode   | Description |
 | ------ | ----------- |
-| `none` | Disables vision processing |
-| `lite` | Enables image processing using vision-capable models |
+| `none` | Disables vision processing. Files are processed using text extraction only. |
+| `lite` | Combines text and visual extraction to improve understanding of structure, images, charts, and diagrams. Designed to balance quality and efficiency. |
 
 ### Configuration
 
 | Key                             | Default | Values           | Description                                       |
 | ------------------------------- | ------- | ---------------- | ------------------------------------------------- |
-| `transformation.pptx.vision.mode`    | `none`  | `none \| lite` | Controls vision processing mode for PPTX slides   |
-| `transformation.docling.vision.mode` | `none`  | `none \| lite` | Controls vision processing mode for Docling files |
+| `transformation.pptx.vision.mode`    | `none`  | `none \| lite` | Controls vision processing mode for PPTX files (`.pptx`).   |
+| `transformation.docling.vision.mode` | `none`  | `none \| lite` | Controls vision processing mode for Docling-processed files (`.pdf`, `.docx`, `.xlsx`). |
 
 ### Recommendations
 

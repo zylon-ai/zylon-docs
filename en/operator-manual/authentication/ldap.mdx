@@ -61,7 +61,10 @@ auth:
     enabled: true
     host: "ldap.company.local"
     port: "389"
-    useTls: false
+    tls:
+      enabled: false
+      caCrt: ""
+      caFile: ""
     bindDn: "cn=LDAP Bind,ou=service,dc=company,dc=local"
     bindPassword: "CHANGE_ME"
     baseDn: "dc=company,dc=local"
@@ -93,7 +96,9 @@ The table below lists every LDAP setting, its chart default, and whether it is r
 | `enabled` | `false` | - | Set to `true` to activate LDAP authentication. The application will not start if enabled with an invalid configuration. |
 | `host` | `""` | Yes | Hostname or IP address of the LDAP or Active Directory server. |
 | `port` | `"389"` | Yes | Port as a string. Must match the port your LDAP server is listening on. Common values are `389` for plain LDAP and `636` for LDAPS, but your server may be configured differently. |
-| `useTls` | `false` | No | Set to `true` to open an LDAPS connection (TLS from the first byte). |
+| `tls.enabled` | `false` | No | Set to `true` to open an LDAPS connection|
+| `tls.caCrt` | `""` | No | CA certificate as an inline string. Used to verify the LDAP server's TLS certificate. Takes precedence over `tls.caFile` if both are set. |
+| `tls.caFile` | `""` | No | Path CA certificate file on the host. Used when the certificate is mounted as a file rather than passed inline. Ignored if `tls.caCrt` is set. |
 | `bindDn` | `""` | Yes | Full Distinguished Name of the service account used to search the directory. Example: `cn=LDAP Bind,ou=service,dc=company,dc=local`. |
 | `bindPassword` | `""` | Yes | Password for the bind account. |
 | `baseDn` | `""` | Yes | Root of the directory subtree where user and group searches are performed. Example: `dc=company,dc=local`. |
@@ -190,6 +195,7 @@ After applying the configuration, follow these steps to confirm LDAP is working 
 ## Security considerations
 
 - Use a **read-only, least-privilege** service account for the bind credentials. The account needs search permission on users and groups under `baseDn`, nothing more.
+- Enable `tls.enabled: true` to encrypt credentials in transit. Provide `tls.caCrt` or `tls.caFile` to pin your CA.
 - Directory group membership changes are not reflected in Zylon after account creation. Operators must update roles manually in the Backoffice if group membership changes.
 
 For air-gapped deployments, LDAP requires no outbound internet access. See [Airgap Your Server](/en/operator-manual/instance-hardening/airgap-your-server) for firewall configuration guidance.

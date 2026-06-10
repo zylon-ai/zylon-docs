@@ -1,14 +1,14 @@
 ---
-title: Sharepoint
+title: SharePoint
 ---
 
-To integrate with Sharepoint, you need to **create a Microsoft Entra application** that acts as a bridge between Zylon ↔ Sharepoint and **configure Zylon** to use this Microsoft application.
+To integrate with SharePoint, you need to **create a Microsoft Entra application** that acts as a bridge between Zylon ↔ SharePoint and **configure Zylon** to use this Microsoft application.
 
-This guide walks you through integrating Sharepoint with Zylon using Microsoft’s OAuth 2.0. This enables Zylon to securely access your Sharepoint resources using delegated permissions.
+This guide walks you through integrating SharePoint with Zylon using Microsoft’s OAuth 2.0. This enables Zylon to securely access your SharePoint resources using delegated permissions.
 
 ## Create a Microsoft Entra app
 
-First you need a Microsoft Entra application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on Sharepoint but has the right permissions to setup the app that will serve as a bridge between Zylon and Sharepoint.
+First you need a Microsoft Entra application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on SharePoint but has the right permissions to setup the app that will serve as a bridge between Zylon and SharePoint.
 
 1. Go to [https://entra.microsoft.com](https://entra.microsoft.com/).
 
@@ -69,7 +69,7 @@ Navigate to `API Permissions` → `+ Add a permission` → `Microsoft Graph` →
 - `Sites.Read.All`
 - `User.Read`
 
-Navigate to `API Permissions` → `+ Add a permission` → `Sharepoint` → `Delegated permissions` and include the permissions below then click on `Add permissions`
+Navigate to `API Permissions` → `+ Add a permission` → `SharePoint` → `Delegated permissions` and include the permissions below then click on `Add permissions`
 
 - `AllSites.Read`
 - `EnterpriseResource.Read`
@@ -99,7 +99,7 @@ integration:
     redirectUri: "" //From step 4
     domain: "" //Your sharepoint domain. ex: https://zylonai.sharepoint.com
     tenantId: "" //From step 10 - Directory tenant Id
-    entrySite: "" //Optional: Default Entry Sharepoint site URL
+    entrySite: "" //Optional: Default Entry SharePoint site URL
     entryList: "" //Optional: Default Entry list name (e.g., "Documents")
     entryFolder: "" //Optional: Default Entry folder name
 ```
@@ -111,7 +111,7 @@ And fill the properties with the values generated previously:
 - redirectUri → same value as step 4
 - domain → Your sharepoint url
 - tenantId → same value as step 10
-- entrySite → (Optional) Default Sharepoint site URL. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entrySite → (Optional) Default SharePoint site URL. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
 - entryList → (Optional) Default list name, e.g., "Documents". See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
 - entryFolder → (Optional) Default folder name. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
 Save and close `/etc/zylon/zylon-conf.yaml` file
@@ -126,15 +126,15 @@ You are all set 🎉
 
 ## Configuring Default Opening Folder
 
-You can configure a default opening folder for the Sharepoint integration. This allows the integration to open directly to a specific folder when users access Sharepoint through Zylon, improving the user experience by skipping navigation steps.
+You can configure a default opening folder for the SharePoint integration. This allows the integration to open directly to a specific folder when users access SharePoint through Zylon, improving the user experience by skipping navigation steps.
 
 The three optional fields control the entry point for the integration:
 
-- `entrySite`: The absolute Sharepoint site URL (works for both Sharepoint and OneDrive)
-- `entryList`: The list name within the site (e.g., "Documents" is the default for Sharepoint)
+- `entrySite`: The absolute SharePoint site URL (works for both SharePoint and OneDrive)
+- `entryList`: The list name within the site (e.g., "Documents" is the default for SharePoint)
 - `entryFolder`: The folder name within the list
 
-**Important:** You must use absolute Sharepoint paths for the `entrySite` field, even for OneDrive. The path format should be like:
+**Important:** You must use absolute SharePoint paths for the `entrySite` field, even for OneDrive. The path format should be like:
 ```
 https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
 ```
@@ -145,21 +145,21 @@ If you want the integration to open by default to the "Defense and Security" fol
 
 ```bash
 entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
-entryList: "Documents" //Default on Sharepoint
+entryList: "Documents" //Default on SharePoint
 entryFolder: "Defense and Security"
 ```
 
-This configuration will make the integration open directly to the "Defense and Security" folder when users access Sharepoint through Zylon.
+This configuration will make the integration open directly to the "Defense and Security" folder when users access SharePoint through Zylon.
 
 **Note:** All three fields are optional. If they are not set or left empty, they will be ignored and the integration will use the default behavior (opening at the root level).
 
 ## Troubleshooting
 
-### I tried to upload files to the knowledge base but the Sharepoint button is greyed out
+### I tried to upload files to the knowledge base but the SharePoint button is greyed out
 
 Clear the browser cache and try again.
 
-### When I click on `Upload files -> From Sharepoint` the log in is not working
+### When I click on `Upload files -> From SharePoint` the log in is not working
 
 - Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
 - Check that `redirectUri` is the same as step 4 and that your domain from sharepoint is right

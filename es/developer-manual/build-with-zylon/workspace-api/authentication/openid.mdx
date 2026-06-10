@@ -1,11 +1,11 @@
 ---
 title: "OpenID y OAuth"
-description: "Inicia sesiones SSO y flujos OAuth para Confluence y Sharepoint."
+description: "Inicia sesiones SSO y flujos OAuth para Confluence y SharePoint."
 ---
 
 Usa estos endpoints para iniciar flujos OpenID/OAuth. Los endpoints de inicio de sesión están pensados para el navegador y devuelven redirecciones; los callbacks reciben la respuesta del proveedor.
 
-> Las integraciones deben estar habilitadas antes de usar OAuth. Consulta las guías del operador para [Confluence](/es/operator-manual/knowledge-base/confluence) y [Sharepoint](/es/operator-manual/knowledge-base/sharepoint).
+> Las integraciones deben estar habilitadas antes de usar OAuth. Consulta las guías del operador para [Confluence](/es/operator-manual/knowledge-base/confluence) y [SharePoint](/es/operator-manual/knowledge-base/sharepoint).
 
 ## Solicitud básica y respuesta
 
@@ -55,7 +55,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
 ```
 </Accordion>
   </Tab>
-  <Tab title="Inicio de sesión Sharepoint">
+  <Tab title="Inicio de sesión SharePoint">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/login"
 ```
@@ -84,7 +84,7 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
 ```
 </Accordion>
   </Tab>
-  <Tab title="Instancia Sharepoint">
+  <Tab title="Instancia SharePoint">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/login"
 ```
@@ -113,7 +113,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationI
 ```
 </Accordion>
   </Tab>
-  <Tab title="Renovar token Sharepoint">
+  <Tab title="Renovar token SharePoint">
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/refresh_token" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -154,7 +154,7 @@ Location: https://{BASE_URL}/app/integrations/confluence
 ```
 </Accordion>
   </Tab>
-  <Tab title="Sharepoint callback">
+  <Tab title="SharePoint callback">
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/callback?code=...&state=..."
 ```

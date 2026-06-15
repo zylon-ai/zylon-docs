@@ -9,6 +9,20 @@ Use project member endpoints to control who can access a project and what role t
 
 List current members with `GET /api/v1/app/project/{projectId}/member`.
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. Default is `20`. |
+| Query | `page_order` | No | `ASC` or `DESC`. Default is `ASC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include total count in the response. |
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -43,6 +57,15 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=
 </Accordion>
 
 ## Add members
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `members` | Yes | Array of members to add. |
+| Body | `members[].user_id` | Yes | User identifier. |
+| Body | `members[].role` | Yes | `Viewer`, `Commenter`, `Editor`, `Admin`, or `Owner`. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
@@ -79,6 +102,16 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 </Accordion>
 
 ## Update member roles
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `members` | Yes | Array of members to update. |
+| Body | `members[].user_id` | Yes | User identifier. |
+| Body | `members[].role` | No | `Viewer`, `Commenter`, `Editor`, `Admin`, or `Owner`. |
+| Body | `members[].is_pinned` | No | Pins or unpins the project for that member. |
+</Accordion>
 
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \

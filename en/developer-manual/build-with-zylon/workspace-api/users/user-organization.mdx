@@ -1,29 +1,37 @@
 ---
 title: "Organizations"
-description: "List and update organizations within your workspace."
+description: "Read and update the current Workspace organization."
 ---
 
-Organizations are the top-level container for users and projects. Use these endpoints to list orgs visible to your account and update org-level settings.
+Organizations are the top-level container for users and projects. These endpoints operate on the organization selected by the `x-org` header.
 
 ## Basic request and response
 
-List organizations visible to your account with `GET /api/v1/app/organization`.
+Get the current organization with `GET /api/v1/app/organization`.
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
-[
-  {
-    "name": "Aurora Labs",
-    "context": "Enterprise R&D and analytics.",
-    "email_regex": ".*@auroralabs.com"
-  }
-]
+{
+  "id": "org_2f3a9d1c7b5e4a8f",
+  "name": "Aurora Labs",
+  "slug": "aurora-labs",
+  "state": "Active",
+  "display_name": "Aurora Labs",
+  "context": "Enterprise R&D and analytics.",
+  "logo": "https://{BASE_URL}/files/org-logo.png",
+  "auto_join_enabled": true,
+  "default_role": "Viewer",
+  "email_regex": ".*@auroralabs.com",
+  "gateway_id": "gw_4b7c2a1d9e5f",
+  "created_at": "2026-02-08T14:12:45Z",
+  "member_count": null
+}
 ```
 </Accordion>
 
@@ -37,17 +45,44 @@ curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
   -d '{
     "name": "Aurora Labs",
     "context": "Private AI platform for product and support teams.",
+    "clear_context": false,
     "email_regex": ".*@auroralabs.com"
   }'
 ```
 
+<Accordion title="Endpoint parameters">
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | No | Organization display name. Maximum 60 characters. |
+| `context` | string | No | Organization context used by Workspace features. |
+| `clear_context` | boolean | No | Set to `true` to remove the existing context. Defaults to `false`. |
+| `logo_file_name` | string | No | Multipart logo file name. Required when uploading a logo file. |
+| `logo_content_type` | string | No | Multipart logo content type. Must be PNG or JPEG. |
+| `logo_content_length` | integer | No | Multipart logo size in bytes. Maximum 5 MB. |
+| `fileData` | file | No | Multipart-only logo binary. |
+</Accordion>
+
 <Accordion title="Example response">
-```text
-HTTP/1.1 200 OK
+```json
+{
+  "id": "org_2f3a9d1c7b5e4a8f",
+  "name": "Aurora Labs",
+  "slug": "aurora-labs",
+  "state": "Active",
+  "display_name": "Aurora Labs",
+  "context": "Private AI platform for product and support teams.",
+  "logo": "https://{BASE_URL}/files/org-logo.png",
+  "auto_join_enabled": true,
+  "default_role": "Viewer",
+  "email_regex": ".*@auroralabs.com",
+  "gateway_id": "gw_4b7c2a1d9e5f",
+  "created_at": "2026-02-08T14:12:45Z",
+  "member_count": null
+}
 ```
 </Accordion>
 
 ## Errors and edge cases
 
 - **401/403**: missing or invalid API token.
-- **400**: invalid regex or payload shape.
+- **400**: invalid regex, organization name over 60 characters, unsupported logo content type, or logo larger than 5 MB.

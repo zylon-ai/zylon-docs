@@ -34,6 +34,21 @@ curl "https://{BASE_URL}/api/v1/app/me" \
 
 ## List users
 
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. |
+| Query | `page_order` | No | `ASC` or `DESC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include total count in the response. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -122,6 +137,14 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}" \
 </Accordion>
   </Tab>
   <Tab title="Update user">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `userID` | Yes | User identifier. |
+| Body | `name` | No | User display name. |
+| Body | `role` | No | Workspace role to assign. |
+</Accordion>
+
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -237,7 +260,7 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/latest-artifacts" \
     "name": "Q1 Support Summary",
     "type": "Document",
     "source": "User",
-    "state": "Ready",
+    "state": "Published",
     "ingest_status": "Done",
     "has_content": true,
     "created_at": "2026-02-08T14:30:12Z"

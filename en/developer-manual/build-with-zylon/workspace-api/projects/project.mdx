@@ -9,6 +9,15 @@ Projects are the workspace unit that holds threads, artifacts, and team context.
 
 Create a project with `POST /api/v1/app/project`.
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `name` | Yes | Project name. |
+| Body | `goal` | No | Project goal or description. |
+| Body | `deadline` | No | Project deadline as a Unix timestamp. |
+| Body | `visibility` | No | `Public` or `Private`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -63,6 +72,20 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 
 <Tabs>
   <Tab title="PUT">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `name` | No | Project name. |
+| Body | `goal` | No | Project goal or description. |
+| Body | `deadline` | No | Project deadline as an ISO timestamp. |
+| Body | `visibility` | No | `Public` or `Private`. |
+| Body | `project_context` | No | Project-level context. |
+| Body | `answer_context` | No | Default answer guidance. |
+| Body | `default_member_role` | No | `Viewer`, `Commenter`, `Editor`, `Admin`, or `Owner`. |
+| Body | `default_role_enabled` | No | Enables the default member role. |
+</Accordion>
+
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -99,6 +122,13 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 </Accordion>
   </Tab>
   <Tab title="PATCH">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | Any `UpdateProjectDTO` field | No | Partial update; send only fields to change. |
+</Accordion>
+
 ```bash
 curl -X PATCH "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -131,7 +161,29 @@ HTTP/1.1 204 No Content
 ```
 </Accordion>
 
+## Leave a project
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/leave" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response">
+```text
+HTTP/1.1 200 OK
+```
+</Accordion>
+
 ## Transfer project ownership
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `old_owner_id` | Yes | Current owner user ID. |
+| Body | `new_owner_id` | Yes | New owner user ID; must be a project member. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/transfer" \
@@ -167,6 +219,13 @@ HTTP/1.1 200 OK
 </Accordion>
   </Tab>
   <Tab title="Update info">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `is_pinned` | No | Pins or unpins the project for the current user. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/info" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -186,6 +245,15 @@ HTTP/1.1 200 OK
 </Tabs>
 
 ## Project-scoped chat
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `pgpt` | Yes | Chat request body. |
+| Body | `artifact_ids` | No | Limits context to selected artifact IDs. |
+| Body | `all_artifacts` | No | Includes all project artifacts when `true`. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \

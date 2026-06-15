@@ -9,6 +9,17 @@ Las interacciones son intercambios individuales dentro de un hilo. Puedes crearl
 
 Crea una interacción con `POST /api/v1/app/thread/{threadId}/interaction`.
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `thread_id` | Si | Identificador del hilo. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos del hilo/proyecto si es `true`. |
+| Body | `agent` | No | Preset de agente a usar. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \

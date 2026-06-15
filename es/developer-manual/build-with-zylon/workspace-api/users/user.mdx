@@ -34,6 +34,21 @@ curl "https://{BASE_URL}/api/v1/app/me" \
 
 ## Listar usuarios
 
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -122,6 +137,14 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}" \
 </Accordion>
   </Tab>
   <Tab title="Actualizar usuario">
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `userID` | Si | Identificador del usuario. |
+| Body | `name` | No | Nombre visible del usuario. |
+| Body | `role` | No | Rol de Workspace a asignar. |
+</Accordion>
+
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -237,7 +260,7 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/latest-artifacts" \
     "name": "Q1 Support Summary",
     "type": "Document",
     "source": "User",
-    "state": "Ready",
+    "state": "Published",
     "ingest_status": "Done",
     "has_content": true,
     "created_at": "2026-02-08T14:30:12Z"

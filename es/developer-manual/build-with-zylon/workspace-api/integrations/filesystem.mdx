@@ -35,6 +35,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
 
 ## Actualizar credenciales
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationID` | Si | Identificador de la integración. |
+| Body | `username` | Si | Usuario de Filesystem. |
+| Body | `password` | Si | Contraseña de Filesystem. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -77,6 +85,13 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/confi
 
 ## Validar credenciales
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `username` | Si | Usuario de Filesystem a validar. |
+| Query | `password` | Si | Contraseña de Filesystem a validar. |
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username={file_system_username}&password={file_system_password}" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -90,6 +105,12 @@ true
 </Accordion>
 
 ## Listar archivos
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `integrationId` | Si | Identificador de la integración Filesystem. |
+</Accordion>
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={integrationID}" \

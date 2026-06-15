@@ -5,13 +5,26 @@ description: "Crea y gestiona incidencias comunicadas por usuarios."
 
 Las incidencias (`issues`) permiten comunicar problemas con respuestas o contenido. Usa estos endpoints para listar, crear, actualizar y cerrar incidencias.
 
-## Solicitud básica y respuesta
+## Listar incidencias
 
 Lista incidencias con `GET /api/v1/app/issue` antes de crear o actualizar.
 
+<Accordion title="Parametros del endpoint">
+| Parámetro de consulta | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `include` | string | No | Lista separada por comas de `User` y `Project` para incluir objetos relacionados. |
+| `type` | string | No | Tipos de incidencia separados por comas: `NoAnswer`, `Inaccurate`, `NoContextUsed`, `Format`, `Other`. |
+| `states` | string | No | Estados separados por comas: `NotReviewed`, `InReview`, `Closed`, `Deleted`. |
+| `start_date` / `end_date` | integer | No | Filtro de creación en epoch milliseconds. |
+| `filter_by_text` | string | No | Filtro de texto sobre el contenido de la incidencia. |
+| `created_by` | string | No | IDs de usuario separados por comas. |
+| `projects` | string | No | IDs de proyecto separados por comas. |
+| `page`, `page_size`, `after`, `before` | mixed | No | Controles de paginación. |
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20&include=User,Project&states=NotReviewed,InReview" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -27,6 +40,10 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
       "type": "NoContextUsed",
       "state": "NotReviewed",
       "is_read": false,
+      "data": {
+        "thread_id": "thread_3f2a1c4d5b6e7f8a",
+        "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+      },
       "created_at": "2026-02-08T14:55:10Z",
       "updated_at": "2026-02-08T14:55:10Z",
       "created_by": {
@@ -34,13 +51,19 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
         "org_id": "org_2f3a9d1c7b5e4a8f",
         "account_id": "acct_6c8a1f3b2d4e5f7a",
         "name": "Sasha Patel",
-        "email": "sasha@auroralabs.com",
+        "email": "sasha@example.com",
         "state": "Active",
         "roles": ["AppAdmin"],
         "created_at": "2026-02-08T14:12:45Z"
+      },
+      "project": {
+        "id": "proj_7a5c3e1b9d2f4a6c",
+        "name": "Customer Insights"
       }
     }
   ],
+  "next_cursor": null,
+  "previous_cursor": null,
   "has_next_page": false,
   "has_previous_page": false,
   "total_count": 1
@@ -50,17 +73,67 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
 
 ## Crear una incidencia
 
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `project_id` | Si | Proyecto donde vive el recurso reportado. |
+| Body | `description` | No | Descripción introducida por el usuario. |
+| Body | `resource_type` | Si | Actualmente `Thread`. |
+| Body | `type` | Si | Uno de `NoAnswer`, `Inaccurate`, `NoContextUsed`, `Format`, `Other`. |
+| Body | `config` | Si | Payload específico del recurso. Para incidencias de hilo, usa `thread_id` y `reported_interaction_id`. |
+| Body | `anonymous` | Si | Indica si se oculta el usuario que reporta la incidencia. |
+
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
+    "project_id": "proj_7a5c3e1b9d2f4a6c",
     "description": "Response missed the attached policy details.",
     "resource_type": "Thread",
     "type": "NoContextUsed",
+    "config": {
+      "thread_id": "thread_3f2a1c4d5b6e7f8a",
+      "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+    },
     "anonymous": false
   }'
+```
+
+La petición de creación usa `config`. Las respuestas exponen el payload almacenado como `data`.
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "NotReviewed",
+  "is_read": false,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T14:55:10Z"
+}
+```
+</Accordion>
+
+## Obtener o actualizar una incidencia
+
+<Tabs>
+  <Tab title="Obtener incidencia">
+```bash
+curl "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -73,50 +146,37 @@ curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   "type": "NoContextUsed",
   "state": "NotReviewed",
   "is_read": false,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
   "created_at": "2026-02-08T14:55:10Z",
-  "updated_at": "2026-02-08T14:55:10Z",
-  "created_by": {
-    "id": "user_4b7c2a1d9e5f3c8b",
-    "org_id": "org_2f3a9d1c7b5e4a8f",
-    "account_id": "acct_6c8a1f3b2d4e5f7a",
-    "name": "Sasha Patel",
-    "email": "sasha@auroralabs.com",
-    "state": "Active",
-    "roles": ["AppAdmin"],
-    "created_at": "2026-02-08T14:12:45Z"
-  }
-}
-```
-</Accordion>
-
-## Obtener o actualizar una incidencia
-
-<Tabs>
-  <Tab title="Obtener incidencia">
-```bash
-curl "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "issue_5c4b3a2d1e0f9a8b",
-  "issue_number": 1842,
-  "description": "Response missed the attached policy details.",
-  "state": "NotReviewed"
+  "updated_at": "2026-02-08T14:55:10Z"
 }
 ```
 </Accordion>
   </Tab>
   <Tab title="Actualizar incidencia">
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `issueID` | Si | Identificador de la incidencia. |
+| Body | `description` | No | Descripción actualizada. |
+| Body | `type` | No | Tipo de incidencia actualizado. |
+| Body | `state` | No | Estado actualizado. |
+| Body | `is_read` | No | Marca de lectura. Por defecto es `false` si se omite, así que incluye el valor deseado al actualizar otros campos. |
+
+</Accordion>
+
 ```bash
-curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
+    "description": "Reviewed by support.",
+    "type": "NoContextUsed",
     "state": "InReview",
     "is_read": true
   }'
@@ -126,8 +186,18 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ```json
 {
   "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Reviewed by support.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
   "state": "InReview",
-  "is_read": true
+  "is_read": true,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T15:05:10Z"
 }
 ```
 </Accordion>
@@ -136,19 +206,34 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 
 ## Eliminar una incidencia
 
+La eliminación marca la incidencia como eliminada y devuelve el objeto actualizado.
+
 ```bash
-curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
-```text
-HTTP/1.1 204 No Content
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "Deleted",
+  "is_read": true,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T15:10:00Z"
+}
 ```
 </Accordion>
 
 ## Errores y casos límite
 
 - **404**: incidencia no encontrada.
-- **400**: estado inválido.
+- **400**: estado, tipo o config de hilo inválidos.

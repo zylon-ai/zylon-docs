@@ -9,6 +9,15 @@ Los proyectos son la unidad del espacio de trabajo que contiene hilos, artefacto
 
 Crea un proyecto con `POST /api/v1/app/project`.
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Body | `name` | Si | Nombre del proyecto. |
+| Body | `goal` | No | Objetivo o descripcion del proyecto. |
+| Body | `deadline` | No | Fecha limite como timestamp Unix. |
+| Body | `visibility` | No | `Public` o `Private`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -63,6 +72,20 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 
 <Tabs>
   <Tab title="PUT">
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `name` | No | Nombre del proyecto. |
+| Body | `goal` | No | Objetivo o descripcion del proyecto. |
+| Body | `deadline` | No | Fecha limite como timestamp ISO. |
+| Body | `visibility` | No | `Public` o `Private`. |
+| Body | `project_context` | No | Contexto del proyecto. |
+| Body | `answer_context` | No | Guia predeterminada de respuesta. |
+| Body | `default_member_role` | No | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
+| Body | `default_role_enabled` | No | Habilita el rol predeterminado. |
+</Accordion>
+
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -99,6 +122,13 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 </Accordion>
   </Tab>
   <Tab title="PATCH">
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | Cualquier campo de `UpdateProjectDTO` | No | Actualizacion parcial; envia solo los campos a cambiar. |
+</Accordion>
+
 ```bash
 curl -X PATCH "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -131,7 +161,29 @@ HTTP/1.1 204 No Content
 ```
 </Accordion>
 
+## Salir de un proyecto
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/leave" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+HTTP/1.1 200 OK
+```
+</Accordion>
+
 ## Transferir la propiedad de un proyecto
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `old_owner_id` | Si | ID de usuario del propietario actual. |
+| Body | `new_owner_id` | Si | ID de usuario del nuevo propietario; debe ser miembro del proyecto. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/transfer" \
@@ -167,6 +219,13 @@ HTTP/1.1 200 OK
 </Accordion>
   </Tab>
   <Tab title="Actualizar información">
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `is_pinned` | No | Fija o desfija el proyecto para el usuario actual. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/info" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -186,6 +245,15 @@ HTTP/1.1 200 OK
 </Tabs>
 
 ## Chat con alcance de proyecto
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | Limita el contexto a artefactos seleccionados. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos del proyecto si es `true`. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \

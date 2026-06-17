@@ -2,6 +2,42 @@
 title: "Changelog"
 ---
 
+<Update label="1.56.0" description="June 17, 2026">
+  ## 💼 Workspace
+  ### ✨ Features
+
+  - **Full enterprise redesign**: The Workspace has been fully redesigned with a new look and feel tailored for enterprise environments.
+  - **Knowledge Base redesign**: The Knowledge Base has been fully redesigned to be far more flexible.
+    - Drop entire folders from your system into the Knowledge Base.
+    - Navigate inside folders with a macOS-style double-click interaction.
+    - Upload documents or folders directly into a specific folder.
+    - Select multiple documents or folders and move them.
+    - Use a context menu with right click support.
+  - **Agent Flows renamed to AI Documents**: Agent Flows are now called AI Documents across the product.
+  - **Improved support for smaller screens**: Although Zylon is not a mobile app, the new redesign significantly improves the experience on smaller screens.
+
+  ## 🛠️ Backoffice
+  ### ✨ Features
+
+  - **Usage dashboard for token consumption**: Backoffice now includes a usage dashboard to track token consumption. This feature requires [audit logging](/en/operator-manual/configuration/features/feat-audit) to be enabled.
+
+  ## 🛠️ Platform
+  ### ✨ Features
+
+  - **Audit logs for SIEM and security workflows**: Zylon now provides stronger auditability and security log workflows for SIEM integrations and operational reviews. See [Auditability & AI Governance](/en/operator-manual/auditability-ai-safety/), [log delivery and storage](/en/operator-manual/backoffice/log-delivery-storage), and the [Backoffice logging API](/en/developer-manual/build-with-zylon/backoffice-api/logging).
+  - **Log retention policy controls**: Added retention policy support for stored logs. See [hard delete configuration](/en/operator-manual/configuration/cron-tasks/hard-delete).
+  - **Active Directory / LDAP support**: Zylon now supports enterprise directory integration through [Active Directory / LDAP](/en/operator-manual/authentication/ldap).
+  - **One-time password for root admin after every CLI login**: Root administrator access through the CLI now requires a one-time password after every login. See [CLI configuration](/en/operator-manual/configuration/cli).
+  - **Vision-based PPTX extraction pipeline**: Added a new pipeline for PPTX files that leverages vision models to improve the accuracy and quality of information extraction. See [vision-based file processing](/en/operator-manual/configuration/features/feat-file-vision).
+
+  ### 🐛 Bug Fixes
+
+  - Fixed a bug that could sometimes cause MCPs to fail a chat even when they were not selected.
+  - **Improved memory management in Web Search**: Improved memory management in the [Web Search tool](/en/user-manual/tools/web-search).
+  - Delivered multiple UI fixes and polish updates as part of the redesign rollout.
+
+</Update>
+
 <Update label="1.55.0" description="April 15, 2026">
   <Danger>
     **⚠️ Action required before updating to version 1.55.X**

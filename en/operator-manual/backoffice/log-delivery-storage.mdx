@@ -1,0 +1,175 @@
+---
+title: "Logging, Evidence, and SIEM Delivery"
+description: "Governance guide to Zylon logging, evidence preservation, auditability, traceability, and SIEM delivery."
+icon: list
+---
+
+## Overview
+
+Zylon records structured audit, security, application, and AI chat lifecycle events when logging storage or delivery is enabled. Operators can use these logs to investigate what happened, who initiated it, what was requested, what was answered, and which observable tools or data paths were used.
+
+Zylon can:
+
+- Store structured logs internally when logging storage is enabled.
+- Send logs to SIEM applications and log collectors using supported syslog formats, including RFC 5424 JSON and CEF.
+- Send structured JSON logs to HTTP destinations, including cloud-based ingestion endpoints and customer-managed collectors.
+- Let authorized Backoffice users retrieve stored logs manually.
+
+**Default log-storage behavior keeps stored logs inside the customer's Zylon deployment unless external log delivery is configured.** Operators should confirm deployment-specific observability, telemetry, and crash-reporting settings separately.
+
+External delivery configuration is documented in [Configuration: Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage).
+
+<Note>
+External delivery is asynchronous. With the default `failurePolicy=drop`, delivery is designed to stay off the critical request path when queues are under pressure.
+</Note>
+
+## Before you configure delivery
+
+- Confirm which logs must be stored in Zylon and which logs must be delivered to customer-controlled systems.
+- Confirm the syslog collector host and port, or the HTTP collector URL, from the Zylon deployment network.
+- Select syslog `rfc5424_json`, syslog `cef`, or HTTP `canonical_json` according to the collector input.
+- Decide whether TLS certificate verification is required and prepare a trusted CA path when needed.
+- Decide retention in both Zylon internal storage and downstream systems.
+- Review action and organization filters so required audit events are not excluded.
+- Confirm all Zylon nodes use a trusted time source such as NTP. Log timestamps are most useful for forensic correlation when host clocks are synchronized and reviewed in UTC.
+
+## What Zylon logs
+
+Zylon stores a shared log envelope and event-specific structured data. Exact fields depend on the event family and enabled logging settings.
+
+| Category | Examples of fields stored | Why it matters |
+| --- | --- | --- |
+| Actor context | User, account, token, and actor type identifiers | Helps determine who or what initiated an action. |
+| Organization and project context | Organization, gateway, and project identifiers | Helps scope investigation to a workspace, gateway, or project. |
+| AI chat context | Request, response, token, latency, and tool-use metadata when audit logging captures it | Helps reconstruct observable chat lifecycle when stored. |
+| Agent-visible actions | Tools, integration actions, artifact actions, chat actions, and project actions | Helps understand what the agent or user-visible workflow used. |
+| Security and audit events | Authentication failures, invalid or expired tokens, malformed auth headers, account creation, login, password reset/change, API token create/delete, log retrieval | Supports security review and access monitoring. |
+| Timing and outcome | Start time, end time, error, outcome, and severity | Helps correlate events and identify failed or risky activity. |
+| Delivery metadata | External delivery schema, severity, outcome, actor, environment for syslog records | Helps SIEM and collector pipelines classify delivered events. |
+
+<Warning>
+Sensitive request keys are masked before request input payloads are stored. Masked values are stored as `***`; they are not hashed, tokenized, or preserved as last-four characters in Zylon logs. URI user information in primitive string values is also redacted before storage.
+</Warning>
+
+<Accordion title="Masked request keys">
+Zylon masks these exact request-key names before storage: `password`, `new_password`, `current_password`, `secret`, `api_key`, `apikey`, `private_key`, `privatekey`, `token`, `id_token`, `access_token`, `refresh_token`, `session_token`, `bearer_token`, `client_secret`, `secret_key`, `credentials`, `connection_string`, `cookie`, `set_cookie`, and `authorization`.
+
+Zylon also masks keys ending in `_token`, `_password`, `_secret`, `_credential`, `_credentials`, `_connection_string`, or `_cookie`.
+</Accordion>
+
+## Trust and integrity
+
+Stored logs should be treated as operational audit records with a read-only Backoffice retrieval surface:
+
+- Documented Backoffice log access is for retrieval only.
+- Log retrieval through Backoffice is itself logged, so operators can review who accessed platform or gateway log records.
+- No documented Backoffice UI or API flow permits an operator to modify or delete one stored log record.
+- The documented deletion path for stored log records is the configured retention cleanup task.
+- Cleanup is disabled by default. When cleanup is enabled, the default stored log retention threshold is `180` days.
+
+Zylon does not document a cryptographic hash chain, signature chain, or tamper-evident log store for internal records. For stronger tamper-evidence, deliver logs to a customer-controlled SIEM or append-only archive, restrict database administrator access, retain backups, and monitor Kubernetes/database audit trails. Direct database access by infrastructure administrators is outside the Backoffice permission model and should be governed by the customer's platform controls.
+
+### Logging-system administration
+
+Logging storage, retention, syslog delivery, and HTTP delivery are deployment configuration settings. Changes such as disabling storage, reducing retention, or changing delivery destinations should be captured in the customer's change-management system, GitOps history, Kubernetes audit trail, or infrastructure audit logs.
+
+## AI auditability
+
+Zylon provides auditability of the observable chat lifecycle and agent-visible actions. Logs can support reconstruction of:
+
+- who initiated a chat;
+- which organization, gateway, or project was involved;
+- what request metadata was stored;
+- what response was stored when audit logging captured it;
+- which tools were visible in the response payload;
+- which actions, integrations, files, chats, and projects were used.
+
+<Note>
+Zylon logs observable inputs, outputs, actions, tools, data paths, actors, and system events. It does not expose proprietary or private internal reasoning unless that reasoning was explicitly emitted and stored as part of the response.
+</Note>
+
+## EU AI Act-supporting logging and traceability
+
+Zylon logging can support EU AI Act traceability and record-keeping workflows, depending on configuration and deployment. It should be treated as one technical evidence source inside a broader governance, monitoring, and retention program.
+
+Relevant official EU AI Act Service Desk pages:
+
+- [Article 12: Record-keeping](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-12)
+- [Article 19: Automatically generated logs](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-19)
+- [Article 26: Obligations of deployers of high-risk AI systems](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-26)
+
+| EU AI Act-related theme | How Zylon logging can support it | Customer responsibility |
+| --- | --- | --- |
+| Automatic event logging | Zylon records configured audit, security, application, and AI chat lifecycle events. | Enable storage or delivery for the required events and confirm coverage for the deployed use case. |
+| Traceability | Logs help reconstruct actors, timestamps, prompts or request data when stored, responses when included, tools, gateway, organization, and project context. | Maintain access controls, preserve downstream correlation IDs, and decide which fields must be retained. |
+| Operation monitoring | Logs can be reviewed through Backoffice log retrieval or delivered to SIEM/syslog/HTTP collectors. Log retrieval activity is also logged for follow-up review. | Configure monitoring, alerts, reviews, and escalation processes. |
+| Investigation | Logs support incident review and reconstruction across user, token, workspace, security, and AI lifecycle events. | Preserve and correlate Zylon logs with customer infrastructure, identity, network, and SIEM records. |
+| Retention | Zylon can clean up stored logs after a configured retention window. The application default is `180` days when logging cleanup is enabled. | Keep retention aligned with legal, security, and operational requirements, and confirm downstream collector retention separately. |
+
+<Note>
+This documentation is not legal advice. Customers are responsible for determining whether their deployment is subject to the EU AI Act or other laws, which role they occupy, and what logging, monitoring, and retention controls are required.
+</Note>
+
+## Control evidence mapping
+
+This table is a procurement and control-evidence aid, not a certification statement or compliance claim. Final applicability depends on the customer's deployment, policies, procedures, monitoring, retention, and use case.
+
+| Framework or rule | Logging expectation | Zylon supports |
+| --- | --- | --- |
+| ISO/IEC 27001:2022 A.8.15 | Log events relevant to user activity, exceptions, faults, and information security events. | Structured workspace, security, backoffice, gateway, and AI lifecycle logs can be stored internally or delivered externally. |
+| ISO/IEC 27001:2022 A.8.16 | Monitor activities and logs to detect anomalous behavior and incidents. | Syslog and HTTP delivery support SIEM ingestion, alerting, and customer monitoring workflows. |
+| SOC 2 CC7.2 | Monitor system components and detect anomalies that may indicate malicious activity. | Security/auth events, token events, account events, and gateway usage logs can feed detection and investigation processes. |
+| DORA Article 17 | Record, classify, and manage ICT-related incidents. | Logs provide incident reconstruction inputs across actor, organization, project, request, response, timing, and outcome fields when configured. |
+| NIS2 | Support incident detection, response, and evidence preservation. | Customer-controlled delivery and retention can preserve logs for security operations and reporting workflows. |
+| GDPR Article 30 | Maintain records of processing activities. | Logs can help identify actors, systems, and processing context, but the customer remains responsible for records of processing. |
+| GDPR Article 32 | Protect confidentiality, integrity, availability, and resilience. | Access control, masking, retention, TLS delivery, and SIEM forwarding can support security-of-processing controls. |
+| GDPR Article 33 | Notify supervisory authority after qualifying personal data breaches. | Logs can support breach investigation timelines, affected systems, and evidence gathering. |
+
+## Log storage and retention
+
+When logging storage is enabled, Zylon persists structured logs in internal storage. When logging storage is disabled, new logs are not persisted internally.
+
+Zylon can clean up stored logs after a configured retention window. Stored log cleanup is disabled by default. The default retention value is `180` days once logging cleanup is enabled. The cleanup task deletes stored log records older than the configured threshold.
+
+External collectors keep their own retention policies outside Zylon.
+
+| Storage location | Who controls retention | Notes |
+| --- | --- | --- |
+| Zylon internal log storage | Deployment operator and cleanup configuration | Storage is enabled by default. Logging cleanup default is `180` days when enabled. |
+| Customer SIEM or syslog collector | Customer | Controlled by collector input, index, archive, and deletion policy. |
+| Customer HTTP collector or data lake | Customer | Controlled by downstream ingestion, transformation, and storage policy. |
+
+<Note>
+Confirm downstream retention separately from Zylon storage. Zylon cannot guarantee retention in customer-managed SIEM, syslog, HTTP collector, or data lake systems.
+</Note>
+
+### Right to erasure and retention
+
+Audit and security logs may contain user identifiers, account identifiers, organization identifiers, IP addresses, prompts, responses, or other context that can be personal data depending on the deployment. A user deletion or erasure workflow does not automatically imply immediate deletion of every historical audit record; many regulated environments retain security logs for a defined period to preserve fraud, abuse, and incident evidence.
+
+Set stored-log retention, external delivery filters, and downstream collector retention according to your legal basis and data-minimization policy. If your policy requires pseudonymization or earlier deletion of user-linked log fields, implement that requirement in the customer-controlled collector/SIEM or validate product behavior for the deployed version before enabling long retention.
+
+## Time and schema markers
+
+Backoffice log records expose ISO timestamps such as `start_timestamp` and `end_timestamp`. Use UTC for cross-system investigation and keep all Zylon nodes synchronized with NTP or an equivalent trusted time source.
+
+Delivered payloads include schema markers such as `zylon.rfc5424_json.v1` and `zylon.canonical_json.v1`. These markers let SIEM parsers route and identify payload shapes. They do not, by themselves, enforce a deprecation or migration policy; validate parser compatibility when upgrading.
+
+## Ways to consume logs
+
+| Access method | Use when | Documentation |
+| --- | --- | --- |
+| Backoffice UI | Operators need interactive usage review. The Backoffice UI shows data exposed through the `/usage` endpoint. | [Platform Backoffice](/en/operator-manual/backoffice/platform-backoffice) |
+| Backoffice API: Logging | Authorized users need manual retrieval, export scripts, or integration jobs. | [Logging](/en/developer-manual/build-with-zylon/backoffice-api/logging) |
+| Syslog delivery | Customer SIEM or syslog collector should receive events. | [Log Delivery and Storage configuration](/en/operator-manual/configuration/features/log-delivery-storage#syslog-delivery) |
+| HTTP delivery | Customer ingestion gateway or custom pipeline should receive structured JSON. | [Log Delivery and Storage configuration](/en/operator-manual/configuration/features/log-delivery-storage#http-delivery) |
+
+## Operational recommendations
+
+- Keep internal log storage enabled unless security, legal, and operations teams approve disabling it.
+- Deliver logs to a customer-controlled SIEM or collector where long-term monitoring or independent retention is required.
+- Prefer TLS for syslog where supported by the collector.
+- Enable certificate verification in production when the collector has a trusted certificate path.
+- Use filters carefully so required investigation events are not excluded.
+- Confirm retention in downstream systems separately from Zylon internal storage.
+- Test retrieval and delivery after changing logging configuration.

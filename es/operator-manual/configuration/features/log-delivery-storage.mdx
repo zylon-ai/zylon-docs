@@ -1,0 +1,353 @@
+---
+title: "Entrega y almacenamiento de logs"
+description: "Configure el almacenamiento de logs de Zylon, la entrega por syslog y la entrega por HTTP."
+---
+
+## Resumen
+
+Zylon admite almacenamiento interno de logs y entrega externa por syslog y HTTP.
+
+- La entrega por syslog esta pensada para SIEMs y colectores que aceptan eventos syslog o CEF.
+- La entrega por HTTP esta pensada para endpoints de ingesta estructurada, destinos cloud y pipelines gestionados por el cliente.
+- La entrega es asincrona.
+- Con `failurePolicy: "drop"`, la entrega evita bloquear el camino critico cuando las colas estan llenas.
+- Los eventos entregados se pueden filtrar por patrones de accion e IDs de organizacion.
+- Los logs almacenados permanecen en el despliegue Zylon del cliente salvo que se habilite entrega externa de logs por syslog o HTTP.
+
+Configure estos ajustes en el YAML de valores de Helm de Zylon. El chart mapea estos valores a la configuracion interna del backend; la configuracion de cliente debe usar las claves YAML mostradas aqui.
+
+Para gobernanza, auditabilidad, soporte de trazabilidad para EU AI Act, preservacion de evidencia y retencion, consulte [Auditabilidad y gobernanza de IA: Logging, evidencia y entrega a SIEM](/es/operator-manual/backoffice/log-delivery-storage).
+
+## Vista rapida
+
+| Canal | Se habilita con | Formatos | Uso recomendado |
+| --- | --- | --- | --- |
+| Almacenamiento interno | `logging.storage.enabled: true` | Registros estructurados de Zylon | Revision en Backoffice y recuperacion manual |
+| Syslog | `logging.delivery.syslog.enabled: true` | `rfc5424_json`, `cef` | SIEMs, colectores syslog y colectores CEF |
+| HTTP | `logging.delivery.http.enabled: true` | `canonical_json` | Colectores HTTP, gateways de ingesta y destinos cloud |
+
+<Note>
+Syslog y HTTP pueden habilitarse al mismo tiempo. Cuando ambos estan habilitados, Zylon envia los logs coincidentes a ambos destinos.
+</Note>
+
+## Antes de configurar la entrega
+
+- Confirme que el endpoint del colector es accesible desde el backend de Zylon.
+- Confirme host o URL y puerto.
+- Seleccione transporte y formato.
+- Decida el comportamiento de verificacion de certificados TLS.
+- Configure el input, indice, parser o ruta de ingesta en el colector.
+- Revise los requisitos de retencion en Zylon y en los sistemas externos.
+- Revise filtros para no excluir eventos de auditoria requeridos.
+
+## Almacenamiento y retencion
+
+El almacenamiento interno se controla bajo `logging.storage`.
+
+### Claves de almacenamiento
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `true` | `true`, `false` | Habilita la persistencia interna de logs estructurados. |
+
+### Claves de retencion
+
+La limpieza de logs internos se controla bajo `zylonBackend.scheduler.cleanup`.
+
+Configuracion del programador:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `false` | `true`, `false` | Habilita el programador de limpieza. |
+| `cron` | `0 3 * * *` | expresion cron | Programacion de limpieza. Compartida con el borrado permanente. |
+| `timezone` | `UTC` | zona horaria | Zona horaria usada por la programacion. Compartida con el borrado permanente. Si el ajuste runtime se omite fuera de Helm, el backend usa la zona horaria JVM del servidor. |
+
+Bajo `logging`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `false` | `true`, `false` | Habilita la limpieza de logs almacenados. |
+| `deleteAfterDays` | `180` | dias enteros | Elimina logs almacenados con mas antiguedad que este umbral. |
+
+<Note>
+La limpieza de logs almacenados esta deshabilitada por defecto. El valor `180` dias aplica solo despues de habilitar tanto el programador de limpieza como la limpieza de logs almacenados.
+</Note>
+
+<Warning>
+La limpieza de logs usa el mismo cron y la misma zona horaria que el borrado permanente. Revise [Borrado permanente](/es/operator-manual/configuration/cron-tasks/hard-delete) antes de cambiar la programacion compartida.
+</Warning>
+
+## Entrega por syslog
+
+La entrega por syslog envia registros formateados a un colector por TCP, TLS o UDP.
+
+Use `rfc5424_json` para pipelines syslog estructurados. Use `cef` cuando el colector tenga un input CEF nativo.
+
+| Formato | Descripcion | Uso |
+| --- | --- | --- |
+| `rfc5424_json` | Syslog RFC 5424 con un sobre JSON en el cuerpo. El esquema es `zylon.rfc5424_json.v1`. | Eventos estructurados para SIEM o busqueda. |
+| `cef` | Formato CEF bruto. La extension CEF incluye el registro estructurado bajo `cs1`. | Colectores con input CEF nativo. |
+
+| Transporte | Comportamiento |
+| --- | --- |
+| `tls` | Socket TLS persistente. Admite verificacion de certificado y CA personalizada. |
+| `tcp` | Socket TCP persistente sin TLS. |
+| `udp` | Entrega por datagrama. Un evento por datagrama; el framing se ignora. |
+
+### Claves de syslog
+
+Bajo `logging.delivery.syslog`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `false` | `true`, `false` | Habilita entrega por syslog. |
+| `format` | `rfc5424_json` | `rfc5424_json`, `cef` | Formato del payload syslog. |
+| `host` | vacio | hostname o IP | Host del colector. Requerido cuando syslog esta habilitado. |
+| `port` | `6514` | puerto TCP/UDP valido | Puerto del colector. |
+| `transport` | `tls` | `tls`, `tcp`, `udp` | Transporte del socket. |
+| `framing` | `newline` | `newline`, `octet_counting` | Framing para TCP/TLS. Ignorado para UDP. |
+
+<Accordion title="Claves opcionales de syslog">
+Los filtros y ajustes opcionales de entrega, cola, lotes y TLS se configuran bajo sus bloques anidados correspondientes en `logging.delivery.syslog`.
+
+Bajo `filters`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `includeActionPatterns` | `[]` | lista wildcard | Si no esta vacia, solo se entregan acciones coincidentes. |
+| `excludeActionPatterns` | `[]` | lista wildcard | Las acciones coincidentes se excluyen antes de evaluar inclusiones. |
+| `includeOrgIds` | `[]` | lista de UUIDs | Si no esta vacia, solo se entregan logs de esas organizaciones. |
+
+Bajo `delivery`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `timeoutSeconds` | `10` | entero positivo | Timeout de conexion y escritura. |
+| `failurePolicy` | `drop` | `drop`, `block` | Comportamiento cuando la cola asincrona esta llena. |
+
+Bajo `delivery.reconnect`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `true` | `true`, `false` | Habilita reconexion tras fallo. |
+| `backoffSeconds` | `5` | entero no negativo | Espera antes de reconectar. |
+
+Bajo `delivery.queue`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `maxEvents` | `10000` | entero positivo | Capacidad de la cola asincrona. |
+
+Bajo `delivery.batch`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `maxEvents` | `25` | entero positivo | Eventos maximos por lote. Forzado a `1` en UDP. |
+| `maxDelayMillis` | `250` | entero positivo | Espera maxima antes de enviar un lote parcial. |
+| `drainTimeoutMillis` | `1000` | entero positivo | Tiempo de drenaje durante apagado. |
+
+Bajo `tls`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `verifyCertificate` | `false` | `true`, `false` | Habilita verificacion de certificado y hostname TLS. |
+| `caCrt` | vacio | datos PEM | Certificado CA inline. Si se define y `caFile` esta vacio, el chart lo monta para el backend. |
+| `caFile` | vacio | ruta legible | Bundle CA personalizado usado cuando la verificacion esta habilitada. |
+</Accordion>
+
+### Ejemplo completo de syslog
+
+```yaml
+logging:
+  storage:
+    enabled: true
+  delivery:
+    syslog:
+      enabled: true
+      format: "rfc5424_json"
+      endpoint:
+        host: "syslog.example.com"
+        port: 6514
+        transport: "tls"
+        framing: "newline"
+      filters:
+        includeActionPatterns:
+          - "ws.*"
+          - "backoffice.*"
+        excludeActionPatterns:
+          - "ws.user.enable"
+        includeOrgIds:
+          - "01985a4d-3c21-7000-8003-0e10dd81d901"
+      delivery:
+        timeoutSeconds: 10
+        failurePolicy: "drop"
+        reconnect:
+          enabled: true
+          backoffSeconds: 5
+        queue:
+          maxEvents: 10000
+        batch:
+          maxEvents: 25
+          maxDelayMillis: 250
+          drainTimeoutMillis: 1000
+      tls:
+        verifyCertificate: true
+        caFile: "/etc/zylon/certs/syslog-ca.pem"
+```
+
+## Entrega por HTTP
+
+La entrega por HTTP envia registros JSON estructurados a un colector HTTP. El formato admitido es `canonical_json`; el esquema es `zylon.canonical_json.v1`.
+
+HTTP admite `POST`, autenticacion bearer opcional, cabeceras estaticas con `Header=Value` o `Header: Value`, reintentos para errores de red y respuestas `5xx`, y no reintenta respuestas `4xx`.
+
+### Claves de HTTP
+
+Bajo `logging.delivery.http`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `false` | `true`, `false` | Habilita entrega por HTTP. |
+| `format` | `canonical_json` | `canonical_json` | Formato del payload HTTP. |
+| `url` | vacio | URL | Requerido cuando HTTP esta habilitado. |
+| `method` | `POST` | `POST` | Metodo HTTP. |
+| `headers` | `[]` | lista YAML | Cabeceras salientes estaticas. |
+
+<Accordion title="Claves opcionales de HTTP">
+La autenticacion y los ajustes opcionales de filtros, entrega, cola y lotes se configuran bajo sus bloques anidados correspondientes en `logging.delivery.http`.
+
+Bajo `auth`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `type` | `none` | `none`, `bearer` | Modo de autenticacion. |
+| `token` | vacio | string | Requerido cuando `type` es `bearer`. |
+
+Bajo `filters`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `includeActionPatterns` | `[]` | lista wildcard | Si no esta vacia, solo se entregan acciones coincidentes. |
+| `excludeActionPatterns` | `[]` | lista wildcard | Las acciones coincidentes se excluyen antes de evaluar inclusiones. |
+| `includeOrgIds` | `[]` | lista de UUIDs | Si no esta vacia, solo se entregan logs de esas organizaciones. |
+
+Bajo `delivery`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `timeoutSeconds` | `10` | entero positivo | Timeout HTTP de conexion, lectura y escritura. |
+| `failurePolicy` | `drop` | `drop`, `block` | Comportamiento cuando la cola asincrona esta llena. |
+
+Bajo `delivery.retry`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `enabled` | `true` | `true`, `false` | Habilita reintentos HTTP. |
+| `maxAttempts` | `3` | entero positivo | Intentos maximos cuando los reintentos estan habilitados. |
+| `backoffSeconds` | `3` | entero no negativo | Espera entre reintentos. |
+
+Bajo `delivery.queue`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `maxEvents` | `10000` | entero positivo | Capacidad de la cola asincrona. |
+
+Bajo `delivery.batch`:
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `maxEvents` | `25` | entero positivo | Eventos maximos por peticion HTTP. Los lotes se envian como array JSON. |
+| `maxDelayMillis` | `250` | entero positivo | Espera maxima antes de enviar un lote parcial. |
+| `drainTimeoutMillis` | `1000` | entero positivo | Tiempo de drenaje durante apagado. |
+</Accordion>
+
+### Ejemplo completo de HTTP
+
+```yaml
+logging:
+  delivery:
+    http:
+      enabled: true
+      format: "canonical_json"
+      endpoint:
+        url: "https://collector.example.com/logs"
+        method: "POST"
+      auth:
+        type: "bearer"
+        token: "replace-me"
+      headers:
+        - "X-Collector-Token=replace-me"
+        - "X-Customer: default"
+      filters:
+        includeActionPatterns:
+          - "zylon.gateway.*"
+          - "ws.*"
+        excludeActionPatterns: []
+        includeOrgIds: []
+      delivery:
+        timeoutSeconds: 10
+        failurePolicy: "drop"
+        retry:
+          enabled: true
+          maxAttempts: 3
+          backoffSeconds: 3
+        queue:
+          maxEvents: 10000
+        batch:
+          maxEvents: 25
+          maxDelayMillis: 250
+          drainTimeoutMillis: 1000
+```
+
+## Filtrado de eventos entregados
+
+Syslog y HTTP usan el mismo comportamiento bajo `filters`.
+
+| Clave | Predeterminado | Valores | Descripcion |
+| --- | --- | --- | --- |
+| `includeActionPatterns` | `[]` | lista wildcard | Si no esta vacia, solo se entregan acciones coincidentes. `*` coincide con cualquier numero de caracteres. |
+| `excludeActionPatterns` | `[]` | lista wildcard | Las acciones coincidentes se excluyen antes de evaluar inclusiones. |
+| `includeOrgIds` | `[]` | lista de UUIDs | Si no esta vacia, solo se entregan logs de esas organizaciones. Los logs sin `organization_id` no se entregan. |
+
+Orden de evaluacion:
+
+1. Patrones de exclusion de accion.
+2. Patrones de inclusion de accion.
+3. IDs de organizacion incluidos.
+
+## Controles operativos
+
+Mantenga todos los nodos backend de Zylon sincronizados con una fuente horaria confiable como NTP. El chart Helm configura `UTC` por defecto para el programador de limpieza; si el ajuste runtime se omite fuera de Helm, el backend usa la zona horaria JVM del servidor. Los registros deben revisarse en UTC para correlacion forense entre sistemas.
+
+Trate cambios en `logging.storage`, `logging.delivery`, filtros, retencion y destinos de colector como cambios de despliegue auditables. Capture aprobaciones y diffs en GitOps, change management, auditoria Kubernetes o el sistema de auditoria de infraestructura usado por el cliente.
+
+Los esquemas entregados usan marcadores como `zylon.rfc5424_json.v1` y `zylon.canonical_json.v1`. Los parsers SIEM deben enrutar por marcador y validar compatibilidad al actualizar.
+
+## Politicas de fallo
+
+| Politica | Comportamiento | Uso |
+| --- | --- | --- |
+| `drop` | Descarta eventos cuando la cola esta llena y evita bloquear requests. | Predeterminado recomendado para produccion. |
+| `block` | Aplica backpressure cuando la cola esta llena. | Use solo si la completitud de entrega es mas importante que la latencia. |
+
+<Warning>
+`failurePolicy: "block"` puede ralentizar requests cuando la cola de entrega esta llena. Uselo solo despues de dimensionar colas y confirmar disponibilidad del colector.
+</Warning>
+
+El spooling de entrega externa respaldado por disco no esta implementado.
+
+## Validacion local
+
+1. Habilite un canal de entrega.
+2. Aplique la configuracion.
+3. Ejecute una accion de API que emita un log, como crear un proyecto o un token de API.
+4. Consulte el colector.
+5. Confirme que aparecen `event`, `action`, `log.id` y campos de actor esperados.
+6. Revise logs del backend si la entrega no llega.
+
+Marcadores utiles:
+
+- `zylon.rfc5424_json.v1` para syslog RFC 5424 JSON.
+- `CEF:0|Zylon` para CEF.
+- `zylon.canonical_json.v1` para HTTP.
+- Una accion conocida como `ws.project.create`.

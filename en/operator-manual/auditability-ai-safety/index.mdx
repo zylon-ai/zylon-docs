@@ -1,0 +1,55 @@
+---
+title: "Auditability & AI Governance"
+description: "Auditability, traceability, evidence preservation, governance, and AI accountability capabilities in Zylon."
+icon: shield-check
+---
+
+## Overview
+
+Auditability & AI Governance covers transparency, accountability, audit readiness, and evidence sources for Zylon deployments. It is separate from platform security: security protects the platform; auditability explains how customers can show what happened, preserve evidence, govern AI usage, and support assurance workflows.
+
+Use this section when security, risk, compliance, legal, works-council, or audit teams need to understand what Zylon records, how evidence can be preserved, which controls are customer-configurable, and how Zylon can provide evidence for customer governance programs.
+
+## Capability areas
+
+| Area | What Zylon provides | Customer use |
+| --- | --- | --- |
+| Auditability and traceability | Structured audit, security, backoffice, gateway, and AI lifecycle logs. | Reconstruct who acted, what was requested, what was answered, what tools were visible, and which organization or project was involved. |
+| Evidence preservation | Internal log storage, retention cleanup controls, and external delivery to customer-controlled collectors. | Preserve logs for investigations, audits, legal holds, and incident response according to policy. |
+| AI accountability | Chat lifecycle metadata, optional prompt/response retrieval, token usage, tools used, latency, and outcome fields. | Review AI usage, explain operational behavior, and support human oversight. |
+| Operational transparency | Backoffice API retrieval, usage views, syslog delivery, HTTP delivery, and observability links. | Feed SIEM, data lake, monitoring, and audit workflows. |
+| Data residency | Default log-storage behavior keeps stored logs in the customer's Zylon deployment unless external delivery is configured. | Support sovereign, on-premise, and regulated deployment requirements. |
+| User rights and retention | Configurable retention and guidance for personal-data handling in logs. | Align audit retention with GDPR, works-council, legal, and data-minimization requirements. |
+| Control mapping | EU AI Act, ISO 27001, SOC 2, DORA, NIS2, and GDPR evidence-mapping guidance. | Prepare procurement, risk review, and control-evidence conversations without treating Zylon logs as standalone compliance. |
+
+## Start here
+
+<CardGroup cols={2}>
+  <Card title="Logging, Evidence, and SIEM Delivery" icon="list-check" href="/en/operator-manual/backoffice/log-delivery-storage">
+    Governance view of Zylon logs, evidence preservation, data residency, control mappings, retention, and SIEM delivery.
+  </Card>
+  <Card title="Log Delivery Configuration" icon="gear" href="/en/operator-manual/configuration/features/log-delivery-storage">
+    Technical settings for internal storage, syslog delivery, HTTP delivery, filtering, queues, TLS, and retention cleanup.
+  </Card>
+  <Card title="Backoffice Logging API" icon="code" href="/en/developer-manual/build-with-zylon/backoffice-api/logging">
+    Read-only retrieval endpoints for stored platform, gateway, security, workspace, backoffice, and AI usage logs.
+  </Card>
+  <Card title="Hard Delete and Retention" icon="trash" href="/en/operator-manual/configuration/cron-tasks/hard-delete">
+    Configure permanent deletion windows and stored-log cleanup behavior.
+  </Card>
+</CardGroup>
+
+## Suggested governance workflow
+
+1. Classify your AI use cases and decide which events, prompts, responses, usage metrics, and operational records must be retained.
+2. Enable the required audit and logging capabilities, then configure retention windows and external delivery.
+3. Send logs to a customer-controlled SIEM, archive, or data lake when independent retention or tamper-evidence is required.
+4. Define who may retrieve logs with the operator role and how and when they were exported.
+5. Map collected evidence to your control framework, such as EU AI Act, ISO 27001, SOC 2, DORA, NIS2, or GDPR.
+6. Review retention, masking, prompt/response handling, and user-rights processes before production rollout.
+
+## Security boundary
+
+Security documentation remains focused on hardening the deployment: network isolation, airgap operation, encryption, access controls, and platform protection.
+
+Auditability & AI Governance focuses on proof and accountability: traceability, evidence, monitoring, control mapping, AI usage review, and regulatory readiness. Many programs need both sections during procurement and production assurance.

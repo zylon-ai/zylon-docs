@@ -1,0 +1,349 @@
+---
+title: "Logging"
+description: "Retrieve Zylon platform logs manually from the Backoffice API."
+---
+
+The Backoffice Logging endpoints let authorized Backoffice users retrieve stored Zylon logs for investigation, review, export, or integration jobs.
+
+This page covers manual retrieval only. For external syslog or HTTP delivery, see [Log Delivery and Storage configuration](/en/operator-manual/configuration/features/log-delivery-storage).
+
+These endpoints are read-only. The documented API exposes `GET` operations for listing stored logs and usage data; it does not expose per-record update, patch, or delete operations.
+
+## Authentication and permissions
+
+| Requirement | Value |
+| --- | --- |
+| Authentication | Account token or account session |
+| Role | At least the `operator` role |
+
+```bash
+curl "https://{BASE_URL}/v1/platform/logs?page=0&page_size=50" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Note>Workspace-only tokens are not enough for these endpoints.</Note>
+
+For operator-facing guidance on governance, evidence preservation, and SIEM delivery, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage).
+
+## Endpoints
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /v1/platform/logs` | List stored platform logs across gateway, workspace, security, and backoffice event families. |
+| `GET /v1/platform/gateway/{gatewayId}/logs` | List stored logs for one gateway. |
+| `GET /v1/platform/usage` | Return limited AI usage data for usage charts and token/tool analysis. |
+
+## Pagination
+
+The two log list endpoints return a page envelope:
+
+<Accordion title="Page envelope">
+```json
+{
+  "data": [],
+  "next_cursor": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
+  "previous_cursor": null,
+  "has_next_page": true,
+  "has_previous_page": false,
+  "total_count": null
+}
+```
+</Accordion>
+
+Supported page parameters:
+
+| Parameter | Description |
+| --- | --- |
+| `page` | Zero-based absolute page index. Cannot be combined with cursor pagination. |
+| `page_size` | Absolute page size. Default is `50`. |
+| `page_order` | ID tie-breaker order used by pagination. |
+| `after` | Cursor for forward pagination. |
+| `before` | Cursor for backward pagination. |
+| `first` | Forward cursor page size. Default is `50`. |
+| `last` | Backward cursor page size. |
+| `total_count` | Set to `true` to include `total_count`. |
+
+Logs are ordered by `start_timestamp` descending. The backend adds log ID ordering as a stable tie-breaker.
+
+## Shared log filters
+
+`GET /v1/platform/logs` and `GET /v1/platform/gateway/{gatewayId}/logs` support these query parameters:
+
+| Parameter | Description |
+| --- | --- |
+| `gatewayId` | Match logs for one gateway. On the gateway route, the path value overrides this query value. |
+| `tokenId` or `token_id` | Match logs created through one API token. |
+| `event` | Match one event family: `zylon.gateway.http`, `zylon.gateway.chat`, `zylon.gateway.embed`, `zylon.gateway.ingest`, `zylon.workspace`, `zylon.security`, or `zylon.backoffice`. |
+| `action` | Match one action, such as `ws.project.create`, `ws.interaction.create`, `backoffice.api_token.create`, or `security.auth.invalid_token`. |
+| `organizationId` | Match one organization. |
+| `projectId` | Match project-linked workspace or security logs. |
+| `start_date` | Unix epoch milliseconds. Matches logs with `start_timestamp >= start_date`. |
+| `end_date` | Unix epoch milliseconds. Matches logs with `end_timestamp <= end_date`. |
+| `include` | Comma-separated list of heavier fields: `InputPayload`, `Payload`, `Data`, `ChatRequestParameters`, `ChatRequestMessages`, `ChatResponse`. |
+
+<Note>
+Without `include`, `input_payload` and `payload` are returned as empty objects and `data` is omitted. Use `include=Data` for structured per-event data. Add chat-specific include values only when needed.
+</Note>
+
+<Note>
+The `include` parameter controls retrieval shape only. It does not enable or disable collection. If request messages or responses are present in stored chat logs, they are returned only when the caller requests the corresponding include value.
+</Note>
+
+<Warning>
+Retrieving very large chat logs can take time, especially when the requested scope is large or when messages and responses are included.
+</Warning>
+
+## Event families and actions
+
+<Accordion title="Supported events">
+| Event | Description |
+| --- | --- |
+| `zylon.gateway.http` | Gateway HTTP request logs. |
+| `zylon.gateway.chat` | Gateway chat usage logs. |
+| `zylon.gateway.embed` | Gateway embedding usage logs. |
+| `zylon.gateway.ingest` | Gateway ingestion usage logs. |
+| `zylon.workspace` | Workspace audit logs for projects, users, files, chats, integrations, and hard delete activity. |
+| `zylon.security` | Authentication and authorization security logs. |
+| `zylon.backoffice` | Backoffice account, API token, and log retrieval audit logs. |
+</Accordion>
+
+<Accordion title="Supported actions">
+| Action | Category | Description |
+| --- | --- | --- |
+| `ws.project.create` | Workspace | Project created. |
+| `ws.project.update` | Workspace | Project updated. |
+| `ws.project.delete` | Workspace | Project deleted. |
+| `ws.project.member.add` | Workspace | Project member added. |
+| `ws.project.member.leave` | Workspace | Project member left. |
+| `ws.project.member.remove` | Workspace | Project member removed. |
+| `ws.project.member.role.update` | Workspace | Project member role updated. |
+| `ws.project.ownership.transfer` | Workspace | Project ownership transferred. |
+| `ws.hard_delete` | Workspace | Hard delete cleanup action. |
+| `ws.artifact.create` | Workspace | File or artifact created. |
+| `ws.artifact.update` | Workspace | File or artifact updated. |
+| `ws.artifact.delete` | Workspace | File or artifact deleted. |
+| `ws.artifact.download` | Workspace | File or artifact downloaded. |
+| `ws.thread.create` | Workspace | Chat created. |
+| `ws.thread.update` | Workspace | Chat updated. |
+| `ws.thread.delete` | Workspace | Chat deleted. |
+| `ws.interaction.create` | Workspace | Chat message or response created. |
+| `ws.org.update` | Workspace | Organization settings updated. |
+| `ws.user.create` | Workspace | User created. |
+| `ws.user.enable` | Workspace | User enabled. |
+| `ws.user.disable` | Workspace | User disabled. |
+| `ws.user.role.update` | Workspace | User role updated. |
+| `ws.integration.create` | Workspace | Integration created. |
+| `ws.integration.configure` | Workspace | Integration configured. |
+| `ws.integration.sync.complete` | Workspace | Integration sync completed. |
+| `ws.integration.sync.failed` | Workspace | Integration sync failed. |
+| `backoffice.account.create` | Backoffice | Account created. |
+| `backoffice.account.login` | Backoffice | Account login. |
+| `backoffice.account.pwd.reset` | Backoffice | Account password reset. |
+| `backoffice.account.pwd.change` | Backoffice | Account password changed. |
+| `backoffice.api_token.create` | Backoffice | API token created. |
+| `backoffice.api_token.delete` | Backoffice | API token deleted. |
+| `backoffice.gateway_logs.read` | Backoffice | Gateway-scoped logs retrieved. |
+| `backoffice.logs.read` | Backoffice | Platform logs retrieved. |
+| `security.auth.no_credentials` | Security | Authentication attempted without credentials. |
+| `security.auth.failed_login` | Security | Login failed. |
+| `security.auth.invalid_token` | Security | Invalid token used. |
+| `security.auth.expired_token` | Security | Expired token used. |
+| `security.auth.invalid_session` | Security | Invalid session used. |
+| `security.auth.malformed_header` | Security | Malformed authentication header received. |
+</Accordion>
+
+<Note>
+This event list covers documented application events. Helm-level logging configuration changes, such as changing retention or delivery destinations, should also be captured through customer change-management, GitOps, Kubernetes audit, or infrastructure audit controls.
+</Note>
+
+## Log record schema
+
+Each item returned by the log list endpoints is a `ZylonLogDTO`.
+
+| Field | Notes |
+| --- | --- |
+| `id` | Log ID. |
+| `gateway_id` | Gateway context when available. |
+| `system_event` | Whether the backend marked the event as system-originated. |
+| `request_id` | Request or generated correlation ID. |
+| `event` | Event family. |
+| `action` | Action name when available. |
+| `organization_id` | Organization context when available. |
+| `user_id` | Workspace user context when available. |
+| `account_id`, `account_email` | Account context when available. |
+| `token_id` | API token context when available. |
+| `start_timestamp`, `end_timestamp` | ISO timestamps. |
+| `ip_address` | Source IP when available. |
+| `metadata` | Additional backend metadata. |
+| `input_payload`, `payload` | Included only when requested. Sensitive request keys are masked before storage. |
+| `error` | Error message or class name when logged. |
+| `data` | Included only with `include=Data`; shape depends on `event`. |
+
+Structured `data` can include workspace, HTTP, security, chat, embed, or ingest fields. Chat data can include model, token counts, request metadata, optional request messages, optional response, latency metrics, and `tools_used`.
+
+Sensitive request keys such as passwords, tokens, API keys, secrets, credentials, cookies, and connection strings are masked before request input payloads are stored. Do not build export workflows that require recovering masked values from logs.
+
+## List platform logs
+
+```http
+GET /v1/platform/logs
+```
+
+Retrieves stored logs across gateway, workspace, backoffice, and security event families.
+
+### Example request
+
+```bash
+curl "https://{BASE_URL}/v1/platform/logs?event=zylon.workspace&action=ws.project.create&organizationId={ORG_ID}&page=0&page_size=50&total_count=true&include=Data,Payload" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+### Example response
+
+<Accordion title="Example response">
+```json
+{
+  "data": [
+    {
+      "id": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
+      "gateway_id": "01985a50-6a8f-7000-8002-2149efc07b20",
+      "system_event": false,
+      "request_id": "req-01HZX9P6J8P5E2V0XQW7C9A2M4",
+      "event": "zylon.workspace",
+      "action": "ws.project.create",
+      "organization_id": "01985a4d-3c21-7000-8003-0e10dd81d901",
+      "user_id": "01985a4e-9811-7000-8004-d8f56e017c11",
+      "account_id": "01985a4f-a802-7000-8005-cd0c96f1a221",
+      "account_email": "operator@example.com",
+      "token_id": null,
+      "start_timestamp": "2026-05-19T09:21:43.120Z",
+      "end_timestamp": "2026-05-19T09:21:43.120Z",
+      "ip_address": "203.0.113.10",
+      "metadata": {},
+      "input_payload": {},
+      "payload": {
+        "project_id": "01985a55-d4e5-7000-8006-41ce955b14a0",
+        "name": "Customer Insights"
+      },
+      "error": null,
+      "data": {
+        "type": "workspace",
+        "id": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
+        "node_id": "01985a55-d4e5-7000-8006-41ce955b14a0",
+        "project_id": "01985a55-d4e5-7000-8006-41ce955b14a0"
+      }
+    }
+  ],
+  "next_cursor": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
+  "previous_cursor": null,
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+## List gateway logs
+
+```http
+GET /v1/platform/gateway/{gatewayId}/logs
+```
+
+Retrieves stored logs for one gateway. The `{gatewayId}` path parameter is applied by the backend and overrides any `gatewayId` query parameter.
+
+| Path parameter | Description |
+| --- | --- |
+| `gatewayId` | Gateway whose logs should be returned. |
+
+### Example request
+
+```bash
+curl "https://{BASE_URL}/v1/platform/gateway/{GATEWAY_ID}/logs?event=zylon.gateway.chat&tokenId={TOKEN_ID}&first=25&include=Data,ChatRequestMessages,ChatResponse" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+## List AI usage logs
+
+```http
+GET /v1/platform/usage
+```
+
+Returns a non-paginated list of limited AI usage records. This endpoint is optimized for usage charts. It returns data related to AI usage only: token consumption, tools used, and usage events for chat, embedding, and ingestion activity.
+
+It does not return full log payloads, request prompts, full responses, security events, workspace audit records, or backoffice events. Use the log list endpoints with `include` when you need full stored log records.
+
+### Usage filters
+
+| Parameter | Description |
+| --- | --- |
+| `gatewayId` | Comma-separated gateway IDs. |
+| `tokenId` | Match one API token. |
+
+### Usage response schema
+
+| Field | Notes |
+| --- | --- |
+| `id` | Log ID. |
+| `gateway_id` | Gateway ID. |
+| `token_id` | API token ID when available. |
+| `start_timestamp` | ISO timestamp. |
+| `event` | Usage event family. |
+| `data` | Usage payload. Chat data includes request tokens, response tokens, and tools used. Ingest data includes artifact ID. Embed records currently return usage event metadata without an extra data payload. |
+
+### Example request
+
+```bash
+curl "https://{BASE_URL}/v1/platform/usage?gatewayId={GATEWAY_ID}&tokenId={TOKEN_ID}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+### Example response
+
+<Accordion title="Example response">
+```json
+[
+  {
+    "id": "01985a64-7e31-7000-8001-4f52b1dd2a89",
+    "gateway_id": "01985a50-6a8f-7000-8002-2149efc07b20",
+    "token_id": "01985a62-bbe7-7000-8007-828344268abc",
+    "start_timestamp": "2026-05-19T09:30:12.004Z",
+    "event": "zylon.gateway.chat",
+    "data": {
+      "type": "chat",
+      "id": "01985a64-7e31-7000-8001-4f52b1dd2a89",
+      "request_tokens": 14,
+      "response_tokens": 5,
+      "tools_used": []
+    }
+  }
+]
+```
+</Accordion>
+
+## Errors and limitations
+
+| Case | Result |
+| --- | --- |
+| Missing or invalid authentication | Request is rejected by authentication middleware. |
+| Authenticated account without at least the `operator` role | Request is rejected by the permission check. |
+| Invalid UUID, enum value, or pagination combination | Request is rejected before logs are returned. |
+| Internal storage disabled | New logs are not persisted to Zylon log storage. Manual retrieval returns only already stored records. |
+| Per-record modification or deletion | Not supported by the documented Logging API. Stored log retention is controlled by cleanup configuration. |
+
+## Export chain of custody
+
+When using these endpoints for a manual export, preserve evidence outside the response body:
+
+- operator account or token identity;
+- request timestamp, source IP, and request ID when available;
+- exact URL filters, pagination values, and `include` values;
+- number of records exported;
+- incident, ticket, or legal hold reference.
+
+Log retrieval calls are also logged as Backoffice actions: `/v1/platform/gateway/{gatewayId}/logs` emits `backoffice.gateway_logs.read`, and `/v1/platform/logs` emits `backoffice.logs.read`. Preserve those events together with the exported response when a review, incident, or legal hold requires evidence of who accessed log records.
+
+## Related documentation
+
+- [Backoffice API overview](/en/developer-manual/build-with-zylon/backoffice-api/overview)
+- [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage)
+- [Configuration: Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage)

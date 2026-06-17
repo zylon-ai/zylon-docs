@@ -1,0 +1,55 @@
+---
+title: "Auditabilidad y gobernanza de IA"
+description: "Auditabilidad, trazabilidad, preservacion de evidencia, gobernanza y capacidades de responsabilidad de IA en Zylon."
+icon: shield-check
+---
+
+## Resumen
+
+Auditabilidad y gobernanza de IA cubre transparencia, responsabilidad, preparacion de auditoria y fuentes de evidencia para despliegues Zylon. Es distinto de seguridad de plataforma: seguridad protege la plataforma; auditabilidad explica como los clientes pueden demostrar que ocurrio, preservar evidencia, gobernar el uso de IA y apoyar flujos de assurance.
+
+Use esta seccion cuando equipos de seguridad, riesgo, cumplimiento, legal, works council o auditoria necesiten entender que registra Zylon, como puede preservarse evidencia, que controles son configurables por el cliente y como Zylon puede aportar evidencia para programas de gobernanza del cliente.
+
+## Areas de capacidad
+
+| Area | Que proporciona Zylon | Uso del cliente |
+| --- | --- | --- |
+| Auditabilidad y trazabilidad | Logs estructurados de auditoria, seguridad, backoffice, gateway y ciclo de vida de IA. | Reconstruir quien actuo, que se solicito, que se respondio, que herramientas fueron visibles y que organizacion o proyecto participo. |
+| Preservacion de evidencia | Almacenamiento interno, controles de limpieza por retencion y entrega externa a colectores controlados por el cliente. | Preservar logs para investigaciones, auditorias, legal hold y respuesta a incidentes segun politica. |
+| Responsabilidad de IA | Metadatos de ciclo de vida de chat, recuperacion opcional de prompts/respuestas, uso de tokens, herramientas usadas, latencia y resultado. | Revisar uso de IA, explicar comportamiento operativo y apoyar supervision humana. |
+| Transparencia operativa | Recuperacion por API de Backoffice, vistas de uso, entrega syslog, entrega HTTP y enlaces de observabilidad. | Alimentar SIEM, data lake, monitoreo y flujos de auditoria. |
+| Residencia de datos | El comportamiento predeterminado de almacenamiento conserva los logs almacenados en el despliegue Zylon del cliente salvo que se configure entrega externa. | Apoyar requisitos soberanos, on-premise y regulados. |
+| Derechos de usuario y retencion | Retencion configurable y guia para tratar datos personales en logs. | Alinear retencion de auditoria con GDPR, works council, legal y minimizacion de datos. |
+| Mapeo de controles | Guia de mapeo de evidencia para EU AI Act, ISO 27001, SOC 2, DORA, NIS2 y GDPR. | Preparar procurement, revision de riesgo y conversaciones de evidencia de control sin tratar los logs de Zylon como cumplimiento independiente. |
+
+## Empezar aqui
+
+<CardGroup cols={2}>
+  <Card title="Logging, evidencia y entrega a SIEM" icon="list-check" href="/es/operator-manual/backoffice/log-delivery-storage">
+    Vista de gobernanza de logs, preservacion de evidencia, residencia de datos, mapeo de controles, retencion y entrega a SIEM.
+  </Card>
+  <Card title="Configuracion de entrega de logs" icon="gear" href="/es/operator-manual/configuration/features/log-delivery-storage">
+    Ajustes tecnicos de almacenamiento interno, entrega syslog, entrega HTTP, filtros, colas, TLS y limpieza por retencion.
+  </Card>
+  <Card title="Borrado permanente y retencion" icon="trash" href="/es/operator-manual/configuration/cron-tasks/hard-delete">
+    Configure ventanas de borrado permanente y comportamiento de limpieza de logs almacenados.
+  </Card>
+  <Card title="Registro de auditoria" icon="list" href="/es/operator-manual/configuration/features/feat-audit">
+    Habilite eventos y trazas de auditoria y conectelos con almacenamiento interno de logs.
+  </Card>
+</CardGroup>
+
+## Flujo de gobernanza sugerido
+
+1. Clasifique sus casos de uso de IA y decida que eventos, prompts, respuestas, metricas de uso y registros operativos deben retenerse.
+2. Habilite capacidades de auditoria y logging requeridas, luego configure ventanas de retencion y entrega externa.
+3. Envie logs a un SIEM, archivo o data lake controlado por el cliente cuando se requiera retencion independiente o evidencia anti-manipulacion.
+4. Defina quien puede recuperar logs, como se aprueban exportaciones y como se revisan los eventos registrados de recuperacion.
+5. Mapee la evidencia recopilada a su marco de control, como EU AI Act, ISO 27001, SOC 2, DORA, NIS2 o GDPR.
+6. Revise retencion, masking, tratamiento de prompts/respuestas y procesos de derechos de usuario antes de produccion.
+
+## Limite con seguridad
+
+La documentacion de seguridad sigue centrada en endurecer el despliegue: aislamiento de red, operacion airgap, cifrado, controles de acceso y proteccion de plataforma.
+
+Auditabilidad y gobernanza de IA se centra en prueba y responsabilidad: trazabilidad, evidencia, monitoreo, mapeo de controles, revision de uso de IA y preparacion regulatoria. Muchos programas necesitan ambas secciones durante procurement y assurance en produccion.

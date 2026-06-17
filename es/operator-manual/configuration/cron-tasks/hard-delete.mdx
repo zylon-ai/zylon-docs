@@ -11,13 +11,20 @@ Cuando se eliminan chats, proyectos, archivos u organizaciones en Zylon, siguen 
 
 Por defecto, la limpieza revisa elementos todos los dias a las `03:00`, y los elementos pasan a ser elegibles para borrado permanente despues de `14` dias. Si `timezone` no esta definido, Zylon usa la zona horaria predeterminada de la maquina servidor.
 
+La limpieza de logs almacenados usa el mismo programador de limpieza. Esta desactivada por defecto; cuando se activa, el umbral predeterminado de retencion de logs almacenados es `180` dias.
+
 ```yaml
 zylonBackend:
   scheduler:
     cleanup:
       enabled: true
       cron: "0 3 * * *"
+      workspace:
+        enabled: true
       deleteAfterDays: 14
+      logging:
+        enabled: false
+        deleteAfterDays: 180
 ```
 
 ## Ejemplo de configuracion
@@ -33,10 +40,15 @@ zylonBackend:
       enabled: true
       cron: "0 3 * * *"
       timezone: "Europe/Madrid"
+      workspace:
+        enabled: true
       deleteAfterDays: 365
+      logging:
+        enabled: true
+        deleteAfterDays: 180
 ```
 
-`enabled` activa o desactiva las revisiones programadas de borrado permanente. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o un elemento eliminado previamente se elimine de forma definitiva por la ejecucion del cron. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
+`enabled` activa o desactiva las revisiones programadas de limpieza. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos y logs almacenados, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `workspace.enabled` activa o desactiva el borrado permanente de datos de workspace. `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o un elemento eliminado previamente se elimine de forma definitiva por la ejecucion del cron. `logging.enabled` activa o desactiva la limpieza de logs almacenados, y `logging.deleteAfterDays` elimina registros de log almacenados con mas antiguedad que ese umbral. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
 
 <Tip>
   Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
@@ -86,6 +98,8 @@ Para una lista practica de identificadores de zona horaria IANA, consulte [IANA 
 ### Valores de retencion
 
 Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero positivo de dias como `14`, `30`, `90` o `365`, segun su politica de retencion.
+
+Para `zylonBackend.scheduler.cleanup.logging.deleteAfterDays`, use un numero entero positivo de dias. El valor predeterminado es `180` dias, aproximadamente seis meses.
 
 <Warning>
   El valor minimo admitido para `deleteAfterDays` es `1` dia. Configure este valor segun la politica de eliminacion o retencion de su empresa antes de habilitar el borrado permanente.

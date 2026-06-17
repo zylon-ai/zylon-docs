@@ -11,13 +11,20 @@ When chats, projects, files, or organizations are deleted in Zylon, they remain 
 
 By default, cleanup checks run daily at `03:00`, and items become eligible for hard delete after `14` days. If `timezone` is not set, Zylon uses the server machine's default timezone.
 
+Stored log cleanup uses the same cleanup scheduler. It is disabled by default; when enabled, the default stored log retention threshold is `180` days.
+
 ```yaml
 zylonBackend:
   scheduler:
     cleanup:
       enabled: true
       cron: "0 3 * * *"
+      workspace:
+        enabled: true
       deleteAfterDays: 14
+      logging:
+        enabled: false
+        deleteAfterDays: 180
 ```
 
 ## Configuration example
@@ -33,10 +40,15 @@ zylonBackend:
       enabled: true
       cron: "0 3 * * *"
       timezone: "Europe/Madrid"
+      workspace:
+        enabled: true
       deleteAfterDays: 365
+      logging:
+        enabled: true
+        deleteAfterDays: 180
 ```
 
-`enabled` turns scheduled hard delete checks on or off. `cron` determines how often the system checks inactive items, `timezone` optionally defines which timezone is used to interpret the cron expression, and `deleteAfterDays` is the number of days that must pass before an inactive item or a previously deleted item is permanently removed by the cron execution. If `timezone` is omitted, the server machine's default timezone is used.
+`enabled` turns scheduled cleanup checks on or off. `cron` determines how often the system checks inactive items and stored logs, `timezone` optionally defines which timezone is used to interpret the cron expression, and `workspace.enabled` turns hard delete cleanup for workspace data on or off. `deleteAfterDays` is the number of days that must pass before an inactive item or a previously deleted item is permanently removed by the cron execution. `logging.enabled` turns stored log cleanup on or off, and `logging.deleteAfterDays` deletes stored log records older than that threshold. If `timezone` is omitted, the server machine's default timezone is used.
 
 <Tip>
   We suggest setting an [IANA timezone](#timezone-values) that matches your company's timezone.
@@ -86,6 +98,8 @@ For a practical list of IANA timezone identifiers, see [IANA Time Zones](https:/
 ### Retention values
 
 For `zylonBackend.scheduler.cleanup.deleteAfterDays`, use a positive whole number of days such as `14`, `30`, `90`, or `365`, according to your retention policy.
+
+For `zylonBackend.scheduler.cleanup.logging.deleteAfterDays`, use a positive whole number of days. The default is `180` days, which is approximately six months.
 
 <Warning>
   The minimum supported value for `deleteAfterDays` is `1` day. Set this value according to your company's deletion or retention policy before enabling hard delete.

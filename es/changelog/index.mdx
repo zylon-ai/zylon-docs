@@ -1,6 +1,42 @@
 ---
 title: "Registro de cambios"
 ---
+<Update label="1.56.0" description="June 17, 2026">
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Rediseño completo empresarial**: Workspace se ha rediseñado por completo con una nueva apariencia y experiencia orientada a entornos empresariales.
+  - **Rediseño de la Base de conocimiento**: La Base de conocimiento se ha rediseñado por completo para ser mucho más flexible.
+    - Ahora puedes soltar carpetas completas desde tu sistema dentro de la Base de conocimiento.
+    - Puedes navegar por carpetas con una interacción de doble clic al estilo macOS.
+    - Puedes subir documentos o carpetas directamente dentro de una carpeta específica.
+    - Puedes seleccionar varios documentos o carpetas y moverlos.
+    - También se soporta menú contextual con clic derecho.
+  - **Agent Flows pasa a llamarse Documentos AI**: Agent Flows pasa a llamarse Documentos AI en todo el producto.
+  - **Mejor soporte para pantallas pequeñas**: Aunque Zylon no es una aplicación móvil, el nuevo rediseño mejora de forma notable la experiencia en pantallas más pequeñas.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Panel de uso para consumo de tokens**: Backoffice incluye ahora un panel de uso para hacer seguimiento del consumo de tokens. Esta funcionalidad requiere tener el [registro de auditoría](/es/operator-manual/configuration/features/feat-audit) habilitado.
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Logs de auditoría para flujos SIEM y seguridad**: Zylon ofrece ahora capacidades reforzadas de auditabilidad y logs de seguridad para integraciones SIEM y revisiones operativas. Consulta [Auditabilidad y gobernanza de IA](/es/operator-manual/auditability-ai-safety/), [entrega y almacenamiento de logs](/es/operator-manual/backoffice/log-delivery-storage) y [configuración de entrega de logs](/es/operator-manual/configuration/features/log-delivery-storage).
+  - **Controles de política de retención de logs**: Se añade soporte de política de retención para logs almacenados. Consulta la [configuración de hard delete](/es/operator-manual/configuration/cron-tasks/hard-delete).
+  - **Soporte para Active Directory / LDAP**: Zylon soporta ahora integración con directorio corporativo mediante [Active Directory / LDAP](/es/operator-manual/authentication/ldap).
+  - **Contraseña de un solo uso para root admin tras cada login por CLI**: El acceso de administrador root mediante CLI requiere ahora una contraseña de un solo uso después de cada inicio de sesión. Consulta la [configuración de CLI](/es/operator-manual/configuration/cli).
+  - **Pipeline de extracción de PPTX basado en visión**: Se añade un nuevo pipeline para archivos PPTX que aprovecha modelos de visión para mejorar la precisión y la calidad de la extracción de información. Consulta [procesamiento visual de archivos](/es/operator-manual/configuration/features/feat-file-vision).
+
+  ### 🐛 Correcciones de errores
+
+  - Se corrigió un error que podía hacer que los MCP fallaran en un chat aunque no estuvieran seleccionados.
+  - **Mejor gestión de memoria en Web Search**: Se mejora la gestión de memoria en la [herramienta de Web Search](/es/user-manual/tools/web-search).
+  - Se incluyen múltiples correcciones y mejoras de interfaz como parte del despliegue del rediseño.
+
+</Update>
+
 <Update label="1.55.0" description="April 15, 2026">
   <Danger>
     **⚠️ Acción requerida antes de actualizar a la versión 1.55.X**

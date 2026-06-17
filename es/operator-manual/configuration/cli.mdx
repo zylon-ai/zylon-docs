@@ -3,6 +3,13 @@ title: "CLI de Zylon"
 description: "Todos los comandos disponibles en la CLI"
 ---
 
+## admin-password
+Obtener una contraseña de un solo uso para el usuario administrador
+
+Uso: `sudo zylon-cli admin-password`
+
+Llama al backend para generar una contraseña temporal para `admin@zylon.ai` y la imprime en stdout. Úsalo después de ejecutar `seed` para obtener la contraseña de inicio de sesión inicial del administrador.
+
 ## backup
 Crear una copia de seguridad
 
@@ -182,9 +189,10 @@ Uso: `sudo zylon-cli seed --help`
 
 **Banderas:**
 
-- `-p, --admin-password`: Contraseña del administrador raíz
 - `-e, --email-regex`: Todos los correos electrónicos que coincidan con esta expresión regular podrán unirse a la organización. Normalmente esto sería .*@\.sudominio\.com
 - `-o, --org-name`: Nombre de la organización
+
+Después de hacer el seed, ejecuta `sudo zylon-cli admin-password` para obtener la contraseña de un solo uso para `admin@zylon.ai`.
 
 ## self-update
 Actualizar la CLI

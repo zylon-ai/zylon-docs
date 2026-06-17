@@ -3,6 +3,13 @@ title: "Zylon CLI"
 description: "All the commands available in the CLI"
 ---
 
+## admin-password
+Get a one-time login password for the admin user
+
+Usage: `sudo zylon-cli admin-password`
+
+Calls the backend to generate a temporary password for `admin@zylon.ai` and prints it to stdout. Use this after running `seed` to obtain the initial admin login password.
+
 ## backup
 Create a backup
 
@@ -182,9 +189,10 @@ Usage: `sudo zylon-cli seed --help`
 
 **Flags:**
 
-- `-p, --admin-password`: Root admin password
 - `-e, --email-regex`: All emails matching this regex will be allowed to join the organization. Usually this would be .*@\.yourdomain\.com
 - `-o, --org-name`: Organization name
+
+After seeding, run `sudo zylon-cli admin-password` to retrieve the one-time login password for `admin@zylon.ai`.
 
 ## self-update
 Update the CLI

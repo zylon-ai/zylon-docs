@@ -1,0 +1,201 @@
+---
+title: Autenticación con Directorio LDAP
+description: Configura Zylon para autenticar usuarios contra un directorio LDAP o Active Directory, permitiendo el inicio de sesión centralizado sin necesidad de un proveedor de identidad externo.
+---
+
+La autenticación LDAP permite a los usuarios iniciar sesión en Zylon con sus credenciales de directorio existentes, ya sea en un servidor LDAP estándar o en Microsoft Active Directory. Como LDAP no requiere conexión a proveedores de identidad externos como Google o Microsoft, es el método de autenticación recomendado para despliegues en air-gap y estrictamente en instalaciones locales.
+
+<Note>
+  Esta página cubre únicamente la configuración del operador. No hay configuración disponible a través de la interfaz de usuario; todos los ajustes se aplican mediante el archivo de configuración ubicado en `/etc/zylon/zylon-conf.yaml`.
+</Note>
+
+---
+
+## Prerrequisitos
+
+Antes de habilitar LDAP, confirma lo siguiente:
+
+- El host LDAP o Active Directory es accesible desde el clúster de Zylon en el puerto en el que tu servidor está configurado para escuchar.
+- Existe una **cuenta de servicio de solo lectura** en el directorio. Zylon utiliza esta cuenta (la cuenta de bind) para buscar usuarios y resolver la pertenencia a grupos. No necesita permisos de escritura.
+- Conoces el **Base DN** bajo el cual residen todos los usuarios y grupos (por ejemplo, `dc=empresa,dc=local`).
+- Tienes los **Distinguished Names (DNs)** de los grupos de directorio que deseas mapear a roles de Zylon.
+
+---
+
+## Cómo funciona el inicio de sesión
+
+Cuando LDAP está habilitado, los usuarios continúan usando el formulario de inicio de sesión estándar de Zylon. No hay una página de inicio de sesión LDAP separada.
+
+1. El usuario introduce su nombre de usuario del directorio en el campo de email y su contraseña de directorio.
+2. Zylon normaliza el nombre de usuario: el prefijo `DOMAIN\user` se convierte a `user`; una dirección de email (`user@empresa.com`) y un nombre de usuario simple (`user`) se usan tal cual.
+3. Zylon busca el usuario en el directorio y luego realiza un bind para verificar la contraseña.
+4. En caso de éxito, Zylon resuelve los grupos del directorio del usuario y los mapea a roles de Zylon usando la configuración de `roleMapping`.
+5. Si la cuenta no existe aún en Zylon, se **crea automáticamente** con los roles derivados de la pertenencia a grupos.
+
+<Note>
+  Los roles se asignan en el momento de la creación de la cuenta. Si la pertenencia a grupos del directorio de un usuario cambia después de su primer inicio de sesión, los roles de Zylon no se actualizan automáticamente. Para cambiar los roles de un usuario después de la creación, actualízalos a través del Backoffice. Consulta [Roles y Permisos](/es/operator-manual/backoffice/roles-and-permissions) para más detalles.
+</Note>
+
+<Note>
+  Si LDAP está habilitado y el directorio no está disponible temporalmente o devuelve un error, Zylon recurre a la autenticación con credenciales locales.
+</Note>
+
+---
+
+## Configuración
+
+
+Si LDAP está habilitado y falta algún campo requerido o es inválido, la aplicación **rechazará iniciarse** y registrará un error descriptivo. Esto evita que despliegues mal configurados fallen silenciosamente.
+
+### `/etc/zylon/zylon-conf.yaml`
+
+Añade el bloque `auth.ldap` al archivo de configuración:
+
+<Warning>
+  El archivo de configuración es un archivo `.yaml`, por lo que la indentación, los espacios y las comillas son importantes. Revisa cuidadosamente antes de guardar.
+</Warning>
+
+```yaml
+auth:
+  ldap:
+    enabled: true
+    host: "ldap.empresa.local"
+    port: "389"
+    tls:
+      enabled: false
+      caCrt: ""
+      caFile: ""
+    bindDn: "cn=LDAP Bind,ou=service,dc=empresa,dc=local"
+    bindPassword: "CAMBIA_ESTO"
+    baseDn: "dc=empresa,dc=local"
+    userFilter: "(|(sAMAccountName={username})(userPrincipalName={username})(mail={username}))"
+    groupFilter: "(member={userDn})"
+    attributes:
+      username: "sAMAccountName"
+      email: "mail"
+      group: "memberOf"
+    roleMapping:
+      defaultRole: "Workspace"
+      mappings: '[{"match":"CN=admins,OU=groups,DC=empresa,DC=local","role":"Operator"},{"match":"CN=developers,OU=groups,DC=empresa,DC=local","role":"Developer"},{"match":"CN=workspace-users,OU=groups,DC=empresa,DC=local","role":"Workspace"}]'
+```
+
+Aplica los cambios:
+
+```bash
+sudo zylon-cli sync
+```
+
+---
+
+## Referencia de configuración
+
+La tabla a continuación lista todos los ajustes de LDAP, su valor por defecto en el chart, y si son obligatorios cuando `enabled` es `true`.
+
+| Clave | Por defecto | Requerido | Descripción |
+|---|---|---|---|
+| `enabled` | `false` | - | Establece a `true` para activar la autenticación LDAP. La aplicación no iniciará si está habilitado con una configuración inválida. |
+| `host` | `""` | Sí | Nombre de host o dirección IP del servidor LDAP o Active Directory. |
+| `port` | `"389"` | Sí | Puerto como cadena de texto. Debe coincidir con el puerto en el que escucha tu servidor LDAP. Los valores comunes son `389` para LDAP simple y `636` para LDAPS, pero tu servidor puede estar configurado de forma diferente. |
+| `tls.enabled` | `false` | No | Establece a `true` para abrir una conexión LDAPS. |
+| `tls.caCrt` | `""` | No | Certificado CA como cadena de texto en línea. Se utiliza para verificar el certificado TLS del servidor LDAP. Tiene precedencia sobre `tls.caFile` si ambos están establecidos. |
+| `tls.caFile` | `""` | No | Ruta al archivo de certificado CA en el host. Se utiliza cuando el certificado está montado como archivo en lugar de pasarse en línea. Se ignora si `tls.caCrt` está establecido. |
+| `bindDn` | `""` | Sí | Distinguished Name completo de la cuenta de servicio utilizada para buscar en el directorio. Ejemplo: `cn=LDAP Bind,ou=service,dc=empresa,dc=local`. |
+| `bindPassword` | `""` | Sí | Contraseña de la cuenta de bind. |
+| `baseDn` | `""` | Sí | Raíz del subárbol del directorio donde se realizan las búsquedas de usuarios y grupos. Ejemplo: `dc=empresa,dc=local`. |
+| `userFilter` | `(\|(sAMAccountName={username})(userPrincipalName={username})(mail={username}))` | No | Filtro LDAP utilizado para localizar la entrada del usuario. Debe contener `{username}`, que se reemplaza con el nombre de inicio de sesión normalizado en tiempo de ejecución. El filtro por defecto apunta a Active Directory y admite los formatos `sAMAccountName`, UPN y mail. |
+| `groupFilter` | `(member={userDn})` | No | Filtro LDAP utilizado para encontrar grupos cuando `memberOf` no está poblado en la entrada del usuario. Debe contener `{userDn}`. |
+| `attributes.username` | `sAMAccountName` | No | Atributo del directorio a utilizar como nombre de visualización en Zylon. |
+| `attributes.email` | `mail` | No | Atributo del directorio a utilizar como email de la cuenta en Zylon. Este atributo debe estar presente en cada entrada de usuario; si falta, el inicio de sesión es rechazado. |
+| `attributes.group` | `memberOf` | No | Atributo del directorio en la entrada del usuario que lista la pertenencia a grupos. Si este atributo está ausente o vacío, Zylon recurre a una búsqueda de grupos separada usando `groupFilter`. |
+| `roleMapping.defaultRole` | `Workspace` | No | Rol asignado a un usuario cuando ningún mapeo de grupo coincide. Valores válidos: `Workspace`, `Developer`, `Operator`. |
+| `roleMapping.mappings` | `""` | No | Array JSON en formato de cadena de texto con los mapeos de grupo a rol. Ver [Mapeo de roles](#mapeo-de-roles) más abajo. Cuando está vacío, todos los usuarios reciben `defaultRole`. |
+
+
+## Mapeo de roles
+
+El mapeo de grupo a rol se define como un **array JSON en formato de cadena de texto** en el campo `roleMapping.mappings`. El valor siempre debe ser una cadena codificada en JSON, tanto en `values.yaml` como en `zylon-conf.yaml`. Zylon evalúa el mapeo en el momento del inicio de sesión y asigna roles basándose en los grupos del directorio a los que pertenece el usuario.
+
+```yaml
+roleMapping:
+  mappings: '[{"match":"CN=admins,OU=groups,DC=empresa,DC=local","role":"Operator"},{"match":"CN=developers,OU=groups,DC=empresa,DC=local","role":"Developer"},{"match":"CN=workspace-users,OU=groups,DC=empresa,DC=local","role":"Workspace"}]'
+```
+
+**Comportamiento de la coincidencia:**
+
+- Cada valor `match` se compara con todos los DN de grupo a los que pertenece el usuario. La comparación no distingue entre mayúsculas y minúsculas.
+- Si un usuario pertenece a varios grupos mapeados, recibe todos los roles coincidentes.
+- Si ningún mapeo coincide, el usuario recibe `defaultRole`.
+- Varios grupos pueden mapearse al mismo rol; los duplicados se eliminan.
+
+
+Para una descripción completa de lo que puede hacer cada rol, consulta [Roles y Permisos](/es/operator-manual/backoffice/roles-and-permissions).
+
+<Note>
+  Los roles se calculan una sola vez en la creación de la cuenta (primer inicio de sesión). Los cambios posteriores en la pertenencia a grupos del directorio no se reflejan automáticamente en Zylon. Actualiza los roles manualmente a través del Backoffice si es necesario.
+</Note>
+
+---
+
+## Notas sobre Active Directory
+
+La configuración por defecto apunta a Active Directory sin configuración adicional:
+
+- `userFilter` acepta inicios de sesión en tres formatos: nombre de usuario simple (`jdoe`), UPN (`jdoe@empresa.com`) y formato de dominio Windows (`DOMAIN\jdoe`, normalizado a `jdoe` antes de la búsqueda).
+- `attributes.username` tiene por defecto `sAMAccountName` y `attributes.email` tiene por defecto `mail`, coincidiendo con los esquemas estándar de AD.
+- La pertenencia a grupos se lee del atributo `memberOf` en la entrada del usuario.
+
+Para servidores LDAP estándar (OpenLDAP, 389 Directory Server, etc.) normalmente necesitarás ajustar `userFilter`, `groupFilter` y `attributes.*` para que coincidan con tu esquema. Un punto de partida habitual:
+
+```yaml
+userFilter: "(uid={username})"
+groupFilter: "(member={userDn})"
+attributes:
+  username: "uid"
+  email: "mail"
+  group: "memberOf"
+```
+
+---
+
+## Verificar la configuración
+
+Después de aplicar la configuración, sigue estos pasos para confirmar que LDAP funciona correctamente:
+
+<Steps>
+  <Step title="Confirma que la aplicación se inició correctamente">
+    Comprueba que el pod del backend está en ejecución. Si falta un campo requerido, el servicio no iniciará y registrará el campo específico que falló la validación.
+  </Step>
+  <Step title="Prueba el inicio de sesión con un usuario del directorio">
+    Inicia sesión en el workspace de Zylon con una cuenta de usuario del directorio. Usa el nombre de usuario o el formato de dirección de email que admite tu directorio.
+  </Step>
+  <Step title="Verifica los roles en el Backoffice">
+    Abre el Backoffice y localiza la cuenta recién creada. Confirma que tiene los roles esperados según la pertenencia a grupos del usuario y la configuración de `roleMapping`.
+  </Step>
+  <Step title="Prueba cada grupo de roles">
+    Repite la prueba para al menos un usuario por grupo mapeado (Operator, Developer, Workspace) para confirmar que el mapeo de roles funciona correctamente en todos los grupos.
+  </Step>
+</Steps>
+
+---
+
+## Resolución de problemas
+
+| Síntoma | Causa probable | Qué comprobar |
+|---------|----------------|---------------|
+| La aplicación no inicia | Falta un campo requerido o `port` no es un entero válido | Comprueba los logs para el error de validación específico; confirma que `host`, `baseDn`, `bindDn`, `bindPassword` y `port` están todos configurados |
+| El inicio de sesión falla para un usuario válido del directorio | Servidor inaccesible, `bindPassword` incorrecto, o `userFilter` no coincide con la entrada del usuario | Verifica la conectividad de red en el puerto configurado; prueba las credenciales de la cuenta de bind con un cliente LDAP; revisa `userFilter` |
+| Error "Ambiguous LDAP user" al iniciar sesión | `userFilter` devuelve más de una entrada de directorio para el nombre de usuario | Ajusta el filtro para apuntar a un atributo único, o elimina los matchers de formato de inicio de sesión que se solapan |
+| El inicio de sesión es exitoso pero el usuario tiene el rol incorrecto | El DN del grupo en `roleMapping.mappings` no coincide con el DN real del grupo (comprueba errores tipográficos, diferencias en la OU, o el formato del DN) | Compara los valores de `match` con los DN exactos de los grupos en tu directorio; la coincidencia no distingue mayúsculas/minúsculas pero la estructura del DN debe ser correcta |
+| El inicio de sesión es exitoso pero el usuario solo tiene `defaultRole` | Ningún mapeo de grupo coincidió, o `mappings` está vacío | Comprueba que `memberOf` está poblado en la entrada del usuario; verifica la sintaxis JSON de `mappings` |
+| El usuario LDAP no puede iniciar sesión - falta el email | El atributo `mail` (o el `attributes.email` configurado) está ausente en la entrada del directorio | Rellena el atributo de email para el usuario en el directorio, o actualiza `attributes.email` para que apunte a un atributo diferente que esté presente |
+| Los usuarios parecen iniciar sesión con credenciales locales a pesar de que LDAP está habilitado | LDAP devolvió un error (servidor inaccesible, contraseña de bind incorrecta), activando el fallback | Comprueba la conectividad del servidor y las credenciales de la cuenta de bind; revisa los logs del backend para el error LDAP que causó el fallback |
+
+---
+
+## Consideraciones de seguridad
+
+- Usa una cuenta de servicio **de solo lectura y con los mínimos privilegios** para las credenciales de bind. La cuenta necesita permiso de búsqueda en usuarios y grupos bajo `baseDn`, nada más.
+- Habilita `tls.enabled: true` para cifrar las credenciales en tránsito. Proporciona `tls.caCrt` o `tls.caFile` para fijar tu CA.
+- Los cambios en la pertenencia a grupos del directorio no se reflejan en Zylon después de la creación de la cuenta. Los operadores deben actualizar los roles manualmente en el Backoffice si cambia la pertenencia a grupos.
+
+Para despliegues en air-gap, LDAP no requiere acceso a internet saliente. Consulta [Aislar tu Servidor](/es/operator-manual/instance-hardening/airgap-your-server) para orientación sobre la configuración del firewall.

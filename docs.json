@@ -344,7 +344,8 @@
                     "group": "Authentication",
                     "pages": [
                       "en/operator-manual/openid/google",
-                      "en/operator-manual/openid/microsoft"
+                      "en/operator-manual/openid/microsoft",
+                      "en/operator-manual/authentication/ldap"
                     ]
                   },
                   {
@@ -737,10 +738,11 @@
                     ]
                   },
                   {
-                    "group": "Autenticaci\u00f3n",
+                    "group": "Autenticación",
                     "pages": [
                       "es/operator-manual/openid/google",
-                      "es/operator-manual/openid/microsoft"
+                      "es/operator-manual/openid/microsoft",
+                      "es/operator-manual/authentication/ldap"
                     ]
                   },
                   {

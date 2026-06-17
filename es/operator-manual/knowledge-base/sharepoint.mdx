@@ -8,7 +8,7 @@ Esta guía te guía a través de la integración de SharePoint con Zylon usando 
 
 ## Crear una aplicación de Microsoft Entra
 
-Primero necesitas una aplicación de Microsoft Entra. Recomendamos usar una cuenta no personal para crear esto desde el panel de Microsoft Entra. Esta cuenta no necesita tener acceso a ningún elemento en Sharepoint pero tiene los permisos correctos para configurar la aplicación que servirá como un puente entre Zylon y Sharepoint.
+Primero necesitas una aplicación de Microsoft Entra. Recomendamos usar una cuenta no personal para crear esto desde el panel de Microsoft Entra. Esta cuenta no necesita tener acceso a ningún elemento en SharePoint pero tiene los permisos correctos para configurar la aplicación que servirá como un puente entre Zylon y SharePoint.
 
 1. Ve a [https://entra.microsoft.com](https://entra.microsoft.com/).
 
@@ -69,7 +69,7 @@ Navega a `API Permissions` → `+ Add a permission` → `Microsoft Graph` → `D
 - `Sites.Read.All`
 - `User.Read`
 
-Navega a `API Permissions` → `+ Add a permission` → `Sharepoint` → `Delegated permissions` e incluye los permisos a continuación y luego haz clic en `Add permissions`
+Navega a `API Permissions` → `+ Add a permission` → `SharePoint` → `Delegated permissions` e incluye los permisos a continuación y luego haz clic en `Add permissions`
 
 - `AllSites.Read`
 - `EnterpriseResource.Read`
@@ -155,11 +155,11 @@ Esta configuración hará que la integración se abra directamente en la carpeta
 
 ## Solución de Problemas
 
-### Intenté cargar archivos a la base de conocimiento pero el botón de Sharepoint está deshabilitado
+### Intenté cargar archivos a la base de conocimiento pero el botón de SharePoint está deshabilitado
 
 Limpia la caché del navegador e intenta de nuevo.
 
-### Cuando hago clic en `Upload files -> From Sharepoint` el inicio de sesión no funciona
+### Cuando hago clic en `Upload files -> From SharePoint` el inicio de sesión no funciona
 
 - Verifica que el `clientId` `secretId` estén copiados y pegados correctamente en el archivo de configuración de Zylon
 - Verifica que `redirectUri` sea el mismo que en el paso 4 y que tu dominio de sharepoint sea correcto

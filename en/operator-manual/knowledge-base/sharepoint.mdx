@@ -8,7 +8,7 @@ This guide walks you through integrating SharePoint with Zylon using Microsoft�
 
 ## Create a Microsoft Entra app
 
-First you need a Microsoft Entra application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on Sharepoint but has the right permissions to setup the app that will serve as a bridge between Zylon and Sharepoint.
+First you need a Microsoft Entra application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on SharePoint but has the right permissions to setup the app that will serve as a bridge between Zylon and SharePoint.
 
 1. Go to [https://entra.microsoft.com](https://entra.microsoft.com/).
 
@@ -69,7 +69,7 @@ Navigate to `API Permissions` → `+ Add a permission` → `Microsoft Graph` →
 - `Sites.Read.All`
 - `User.Read`
 
-Navigate to `API Permissions` → `+ Add a permission` → `Sharepoint` → `Delegated permissions` and include the permissions below then click on `Add permissions`
+Navigate to `API Permissions` → `+ Add a permission` → `SharePoint` → `Delegated permissions` and include the permissions below then click on `Add permissions`
 
 - `AllSites.Read`
 - `EnterpriseResource.Read`
@@ -155,11 +155,11 @@ This configuration will make the integration open directly to the "Defense and S
 
 ## Troubleshooting
 
-### I tried to upload files to the knowledge base but the Sharepoint button is greyed out
+### I tried to upload files to the knowledge base but the SharePoint button is greyed out
 
 Clear the browser cache and try again.
 
-### When I click on `Upload files -> From Sharepoint` the log in is not working
+### When I click on `Upload files -> From SharePoint` the log in is not working
 
 - Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
 - Check that `redirectUri` is the same as step 4 and that your domain from sharepoint is right

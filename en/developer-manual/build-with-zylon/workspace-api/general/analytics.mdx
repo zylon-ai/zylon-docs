@@ -29,6 +29,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
 
 ## Active users ranking
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
+| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
+| Query | `limit` | No | Maximum number of ranked users to return. |
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -57,6 +65,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?
 </Accordion>
 
 ## Active projects ranking
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
+| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
+| Query | `limit` | No | Maximum number of ranked projects to return. |
+</Accordion>
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
@@ -89,6 +105,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projec
 </Accordion>
 
 ## Time series
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
+| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
+| Query | `type` | Yes | Metric type to return, such as `interactions`. |
+</Accordion>
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \

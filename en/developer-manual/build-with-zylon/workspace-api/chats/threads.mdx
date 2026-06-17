@@ -4,8 +4,6 @@ description: "Threads, interactions, and one-shot chat endpoints."
 ---
 
 Chats in the Workspace API are organized around **threads** and **interactions**:
-
-{/* <!-- RESTRUCTURED --> */}
 | Concept | Meaning |
 | --- | --- |
 | **Thread** | A conversation container within a project. |
@@ -17,6 +15,17 @@ Use threads when you want history and follow‑ups. Use interactions to send a n
 ## Basic request and response
 
 Create a thread interaction with `POST /api/v1/app/thread/{threadId}/interaction`.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `thread_id` | Yes | Thread identifier. |
+| Body | `pgpt` | Yes | Chat request body. |
+| Body | `artifact_ids` | No | Artifact IDs to use as context. |
+| Body | `all_artifacts` | No | Include all available artifacts when `true`. |
+| Body | `agent` | No | Agent preset to use. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
@@ -43,7 +52,6 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Example response (InteractionDTO)">
 ```json
 {
@@ -147,6 +155,17 @@ You can mix multiple content blocks in one message. Supported block types in the
 
 Example interaction request with image + text and runtime flags:
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `thread_id` | Yes | Thread identifier. |
+| Body | `pgpt` | Yes | Chat request body. |
+| Body | `artifact_ids` | No | Artifact IDs to use as context. |
+| Body | `all_artifacts` | No | Include all available artifacts when `true`. |
+| Body | `agent` | No | Agent preset to use. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -194,6 +213,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
 
 Create a new thread in a project:
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `name` | Yes | Thread name. |
+| Body | `visibility` | Yes | `Public` or `Private`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -207,13 +234,28 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
 
 List threads in a project:
 
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. |
+| Query | `page_order` | No | `ASC` or `DESC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include total count in the response. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
   -H "x-org: {org_slug}"
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Example response (schema not defined in OpenAPI)">
 ```json
 {
@@ -231,6 +273,29 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 }
 ```
 </Accordion>
+
+Create a thread and first interaction in one request:
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `projectID` | Yes | Project identifier. |
+| Body | `name` | Yes | New thread name. |
+| Body | `visibility` | Yes | `Public` or `Private`. |
+
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
 
 ## Update or delete a thread
 
@@ -257,6 +322,22 @@ curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
 
 List interactions for a thread:
 
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. |
+| Query | `page_order` | No | `ASC` or `DESC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include total count in the response. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -272,6 +353,14 @@ curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
 ```
 
 ## Delete or stream an interaction
+
+Cancel a running interaction:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
 
 Delete an interaction:
 
@@ -290,7 +379,6 @@ curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Accept: text/event-stream"
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Example stream">
 ```text
 event: message_start
@@ -327,7 +415,6 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Example response (schema not defined in OpenAPI)">
 ```json
 {

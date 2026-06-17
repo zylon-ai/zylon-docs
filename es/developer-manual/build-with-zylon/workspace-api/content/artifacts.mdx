@@ -12,12 +12,35 @@ Un artefacto es una pieza de información **o herramienta** que le entregas a Zy
 
 ## Artefactos
 
-{/* <!-- ADDED FOR CLARITY --> */}
 | Categoría | Incluye | Cuándo usar |
 | --- | --- | --- |
 | **Artefactos de documento** | Documentos, carpetas, enlaces | Guardar u organizar contenido en un proyecto. |
 | **Documentos IA** | `Summary`, composición, extracción | Ejecutar flujos sobre artefactos para producir resultados. |
 | **Otros artefactos** | Servidores MCP, bases de datos SQL | Conectar herramientas o fuentes externas. |
+
+### Campos de petición de artefacto
+
+Usa `POST /api/v1/app/project/{projectID}/artifact` para crear cualquier tipo de artefacto. La ruta indica el proyecto; el cuerpo incluye metadatos compartidos y un objeto `props` específico del tipo.
+
+<Accordion title="Campos de petición de artefacto">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `projectID` | path | Sí | Identificador del proyecto. |
+| `type` | string | Sí | Tipo de artefacto. Los tipos de creación expuestos a clientes incluyen `Document`, `Folder`, `Link`, `Summary`, `Composition`, `BulkQA`, `ReadAndExtract`, `Analysis`, `SmartDoc`, `SqlDatabase` y `McpServer`. |
+| `name` | string | Sí | Nombre visible del artefacto. |
+| `props` | object | Sí | Configuración específica del tipo. También se acepta el alias legado `config`. |
+| `source` | string | No | Fuente del artefacto. Por defecto es `User`. |
+| `description` | string | No | Descripción legible. |
+| `parent_id` | string | No | Artefacto padre para artefactos de árbol, como documentos, carpetas y enlaces. No lo uses para artefactos MCP o de base de datos. |
+| `integration_id` | string | No | ID de integración para artefactos respaldados por integraciones. |
+| `external_url` | string | No | URL externa para enlaces o artefactos respaldados por conectores. |
+| `raw_content` | string | No | Contenido bruto en línea para tipos que aceptan texto. |
+| `keep_file_after_ingestion` | boolean | No | Indica si se conserva el archivo subido tras la ingesta. Por defecto es `true`. |
+| `interaction_id` | string | No | Interacción que produjo el artefacto, si aplica. |
+| `private_props` | object | No | Configuración privada de conectores para artefactos MCP y SQL database. También se acepta el alias legado `private_config`. |
+| `ws_auto_select` | boolean | No | Indica si Workspace debe seleccionar automáticamente un artefacto MCP o SQL database como contexto de chat. Por defecto es `false`. |
+| `fileData` | file | No | Binario multipart para artefactos respaldados por subida, como `Document` y `Skill`. |
+</Accordion>
 
 ### Artefactos de documento
 
@@ -25,6 +48,15 @@ Los documentos contienen contenido, los enlaces referencian artefactos existente
 
 <Tabs>
   <Tab title="Document">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `file_name` | string | Sí | Nombre original del archivo. |
+| `content_type` | string | Sí | MIME type de `fileData`. |
+| `content_length` | integer | Sí | Tamaño del archivo en bytes. Debe coincidir con los bytes subidos. |
+| `metadata` | object | No | Metadatos del proveedor para documentos respaldados por integraciones. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -33,12 +65,12 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -F 'name=Q1 Support Summary' \
   -F 'props={
     "content_type":"text/plain",
-    "file_name":"q1-support-summary.txt"
+    "file_name":"q1-support-summary.txt",
+    "content_length":79
   };type=application/json' \
   -F 'fileData=@./q1-support-summary.txt;type=text/plain'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
@@ -47,7 +79,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "name": "Q1 Support Summary",
   "type": "Document",
   "source": "User",
-  "state": "Ready",
+  "state": "Published",
   "ingest_status": "Done",
   "has_content": true,
   "props": {
@@ -63,6 +95,12 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="Folder">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `metadata` | object | No | Metadatos del proveedor para carpetas respaldadas por integraciones. Usa `{}` para carpetas creadas por usuarios sin metadatos. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -73,20 +111,21 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
     "source": "User",
     "name": "Q1 Support",
     "description": "Artifacts for Q1 support work.",
+    "parent_id": null,
     "props": {}
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "artifact_folder_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support",
+  "parent_id": null,
   "type": "Folder",
   "source": "User",
-  "state": "Ready",
+  "state": "Published",
   "child_count": 0,
   "ingest_status": "NotApplicable",
   "props": {},
@@ -98,6 +137,15 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="Link">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `original_artifact_id` | string | Sí | Artefacto que se enlaza en este proyecto o carpeta. |
+| `source_artifact_id` | string | Solo respuesta | ID canónico del artefacto fuente. Lo asigna el servidor. |
+| `original_artifact_type` | string | Solo respuesta | Tipo del artefacto original. Lo asigna el servidor. |
+| `original_project_id` | string \| null | Solo respuesta | Proyecto propietario del artefacto original, si existe. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -108,27 +156,29 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
     "source": "User",
     "name": "Q1 Support Summary (link)",
     "description": "Reference to the canonical document.",
+    "parent_id": "artifact_folder_q1",
     "props": {
-      "source_artifact_id": "{artifactID}",
       "original_artifact_id": "{artifactID}"
     }
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
   "id": "artifact_link_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "name": "Q1 Support Summary (link)",
+  "parent_id": "artifact_folder_q1",
   "type": "Link",
   "source": "User",
-  "state": "Ready",
+  "state": "Published",
   "ingest_status": "NotApplicable",
   "props": {
     "source_artifact_id": "artifact_doc_q1",
-    "original_artifact_id": "artifact_doc_q1"
+    "original_artifact_id": "artifact_doc_q1",
+    "original_artifact_type": "Document",
+    "original_project_id": "proj_7a5c3e1b9d2f4a6c"
   },
   "created_at": "2026-02-08T14:33:22Z",
   "updated_at": "2026-02-08T14:33:22Z"
@@ -144,6 +194,15 @@ Los documentos IA ejecutan un flujo de trabajo de Zylon sobre uno o más artefac
 
 <Tabs>
   <Tab title="Summary">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `artifact_ids` | string[] | Sí | Artefactos de entrada a resumir. |
+| `style` | string | Sí | `Expert`, `Neutral` o `Simple`. Valores obsoletos aún pueden decodificar, pero no deben usarse. |
+| `detail` | string | Sí | `KeyPoints`, `ShortPieces` o `LongPieces`. Valores obsoletos aún pueden decodificar, pero no deben usarse. |
+| `instructions` | string[] \| null | No | Instrucciones adicionales para la generación del resumen. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -183,6 +242,15 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="Composition">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `artifact_ids` | string[] | Sí | Artefactos de entrada para el borrador. |
+| `instructions` | string | Sí | Prompt o instrucciones de redacción. |
+| `style` | string | Sí | `Expert`, `Neutral` o `Simple`. |
+| `detail` | string | Sí | `KeyPoints`, `ShortPieces` o `LongPieces`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -222,6 +290,17 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="BulkQA">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `questions` | string[] | Sí | Preguntas a responder. |
+| `artifact_ids` | string[] | Sí | Artefactos de entrada para responder. |
+| `instructions` | string[] | Sí | Restricciones o guía para las respuestas. |
+| `detail` | string | Sí | `Concise`, `Moderate` o `Comprehensive`. |
+| `style` | string | Sí | `Expert`, `Neutral` o `Simple`. |
+| `results` | object[] | No | Resultados de respuesta generados por el servidor. Por defecto es `[]`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -269,6 +348,18 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="ReadAndExtract">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `artifact_ids` | string[] | Sí | Artefactos de entrada a leer. |
+| `sections` | object[] | Sí | Objetivos de extracción. |
+| `sections[].id` | string | Sí | ID estable de la sección. |
+| `sections[].title` | string | Sí | Título de la sección. |
+| `sections[].description` | string | Sí | Qué extraer para esa sección. |
+| `results` | object[] | Solo respuesta | Resultados extraídos por sección. |
+| `organization_context` | string \| null | Solo respuesta | Contexto de organización usado por el servidor. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -309,7 +400,67 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
 </Accordion>
   </Tab>
 
+  <Tab title="Analysis">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `artifact_ids` | string[] | Sí | Artefactos de entrada a analizar. |
+| `instruction` | object \| null | No | Instrucción de análisis personalizada. Si se omite, el servidor usa su prompt de análisis por defecto. |
+| `instruction.id` | string | Sí si `instruction` está definido | ID estable de la instrucción. |
+| `instruction.prompt` | string | Sí si `instruction` está definido | Prompt usado para el análisis. |
+| `instruction.metadata` | object | No | Metadatos adicionales de la instrucción. Por defecto es `{}`. |
+| `result` | object \| null | Solo respuesta | Salida combinada del análisis. |
+| `organization_context` | string \| null | Solo respuesta | Contexto de organización usado por el servidor. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Analysis",
+    "source": "User",
+    "name": "Support trend analysis",
+    "props": {
+      "artifact_ids": ["{artifactID}"],
+      "instruction": {
+        "id": "support_trends",
+        "prompt": "Find the top support trends and risks.",
+        "metadata": { "audience": "leadership" }
+      }
+    }
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "artifact_analysis_q1",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "type": "Analysis",
+  "state": "Processing",
+  "ingest_status": "NotApplicable",
+  "props": {
+    "artifact_ids": ["artifact_doc_q1"],
+    "instruction": {
+      "id": "support_trends",
+      "prompt": "Find the top support trends and risks.",
+      "metadata": { "audience": "leadership" }
+    },
+    "result": null
+  },
+  "created_at": "2026-02-08T15:16:30Z"
+}
+```
+</Accordion>
+  </Tab>
+
   <Tab title="SmartDoc">
+<Accordion title="props body">
+La creación de SmartDoc acepta `props`, pero el servidor inicializa estos artefactos con un objeto vacío. Envía `{}`.
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -319,9 +470,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
     "type": "SmartDoc",
     "source": "User",
     "name": "Onboarding SmartDoc",
-    "props": {
-      "artifact_ids": ["{artifactID}"]
-    }
+    "props": {}
   }'
 ```
 
@@ -331,11 +480,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "id": "artifact_smartdoc_q1",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "type": "SmartDoc",
-  "state": "Processing",
-  "ingest_status": "Processing",
-  "props": {
-    "artifact_ids": ["artifact_doc_q1"]
-  },
+  "state": "Draft",
+  "ingest_status": "NotApplicable",
+  "props": {},
   "created_at": "2026-02-08T15:17:20Z"
 }
 ```
@@ -349,6 +496,19 @@ Los artefactos de conector almacenan integraciones para herramientas. `private_p
 
 <Tabs>
   <Tab title="SqlDatabase">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `schemas` | string[] \| null | No | Esquemas de base de datos a exponer. |
+| `tables` | string[] \| null | No | Tablas de base de datos a exponer. |
+| `ssl` | boolean \| null | No | Indica si la conexión usa SSL. |
+| `enable_tables` | boolean \| null | No | Habilita descubrimiento/uso de tablas. |
+| `enable_views` | boolean \| null | No | Habilita descubrimiento/uso de vistas. |
+| `enable_procedures` | boolean \| null | No | Habilita descubrimiento/uso de procedimientos almacenados. |
+| `enable_functions` | boolean \| null | No | Habilita descubrimiento/uso de funciones. |
+| `private_props.connection_string` | string | Sí | Cadena de conexión. En ejemplos y logs, enmascara secretos. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -380,7 +540,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "id": "artifact_db_sales",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "type": "SqlDatabase",
-  "state": "Ready",
+  "state": "Published",
   "ingest_status": "NotApplicable",
   "props": {
     "schemas": ["public", "analytics"],
@@ -398,6 +558,19 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   </Tab>
 
   <Tab title="McpServer">
+<Accordion title="props body">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `name` | string | Sí | Nombre del servidor MCP visible para herramientas. |
+| `tool_configuration` | object \| null | No | Configuración de allowlist de herramientas. |
+| `tool_configuration.enabled` | boolean | No | Indica si las herramientas están habilitadas. Por defecto es `true`. |
+| `tool_configuration.allowed_tools` | string[] \| null | No | Nombres de herramientas que los clientes pueden invocar a través de este MCP server. |
+| `private_props.url` | string | Sí | URL del servidor MCP. |
+| `private_props.use_bearer_auth` | boolean | No | Indica si se autentica con bearer auth. Por defecto es `false`. |
+| `private_props.authorization_token` | string \| null | No | Token de autorización cuando el servidor espera un token custom. Enmascara el valor. |
+| `private_props.bearer_token` | string \| null | No | Bearer token cuando bearer auth está habilitado. Enmascara el valor. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -427,7 +600,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
   "id": "artifact_mcp_internal",
   "project_id": "proj_7a5c3e1b9d2f4a6c",
   "type": "McpServer",
-  "state": "Ready",
+  "state": "Published",
   "ingest_status": "NotApplicable",
   "props": {
     "name": "internal_mcp",
@@ -453,8 +626,25 @@ Solo el creador del artefacto puede acceder a los detalles privados.
 
 ### Listar artefactos
 
+<Accordion title="Parametros del endpoint">
+| Parámetro de consulta | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `state` | string | No | Estados de artefacto separados por comas. Por defecto es `Published,Processing`. |
+| `source` | string | No | Orígenes separados por comas, como `User`, `SharePoint`, `Confluence`, `Claromentis` o `FileSystem`. |
+| `ingest_status` | string | No | Estados de ingesta separados por comas. Por defecto incluye todos los estados. |
+| `type` | string | No | Tipos de artefacto separados por comas. |
+| `parent_id` | string | No | Limita los resultados a hijos directos de un artefacto padre. |
+| `include_descendants` | boolean | No | Incluye todo el subárbol bajo `parent_id`; si no hay padre, incluye todos los descendientes del proyecto. |
+| `filter_by_text` | string | No | Búsqueda de texto sobre nombres y metadatos de contenido. |
+| `keep_ancestors` | boolean | No | Incluye ancestros de coincidencias de texto. |
+| `resolve_links` | boolean | No | Incluye descendientes de artefactos de tipo enlace. |
+| `sub_type` | string | No | Filtro de subtipos separados por comas. |
+| `include` | string | No | Usa `User` para incluir detalles del creador. |
+| `page`, `page_size`, `after`, `before` | mixed | No | Controles de paginación. |
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_size=20&parent_id={artifactID}&include_descendants=false" \
   -H "Authorization: Bearer {API_TOKEN}"
   -H "x-org: {org_slug}"
 ```
@@ -469,9 +659,13 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact?page=1&page_siz
       "name": "Q1 Support Summary",
       "type": "Document",
       "source": "User",
-      "state": "Ready",
+      "state": "Published",
       "ingest_status": "Done",
       "has_content": true,
+      "parent_id": "artifact_folder_q1",
+      "child_count": 0,
+      "keep_file_after_ingestion": true,
+      "ws_auto_select": false,
       "created_at": "2026-02-08T14:30:12Z",
       "updated_at": "2026-02-08T14:31:02Z"
     }
@@ -499,16 +693,66 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
   "name": "Q1 Support Summary",
   "type": "Document",
   "source": "User",
-  "state": "Ready",
+  "state": "Published",
   "ingest_status": "Done",
   "has_content": true,
+  "parent_id": "artifact_folder_q1",
+  "child_count": 0,
+  "keep_file_after_ingestion": true,
+  "ws_auto_select": false,
   "created_at": "2026-02-08T14:30:12Z",
   "updated_at": "2026-02-08T14:31:02Z"
 }
 ```
 </Accordion>
 
+| Campo de respuesta | Tipo | Descripción |
+| --- | --- | --- |
+| `id` | string | ID del artefacto. |
+| `parent_id` | string \| null | ID del artefacto padre cuando está anidado. |
+| `child_count` | integer | Número de hijos directos. |
+| `project_id` | string | ID del proyecto. |
+| `name` | string | Nombre del artefacto. |
+| `description` | string \| null | Descripción del artefacto. |
+| `type` | string | Tipo de artefacto. |
+| `source` | string | Origen del artefacto. |
+| `state` | string | Estado actual del artefacto. |
+| `error` | string \| null | Código de error de ingesta o procesamiento. |
+| `ingest_status` | string | Estado del ciclo de ingesta. |
+| `ingest_warnings` | string[] \| null | Advertencias no fatales de ingesta. |
+| `ingest_progress` | number \| null | Progreso de ingesta cuando está disponible. |
+| `has_content` | boolean | Indica si el artefacto almacena contenido. |
+| `raw_content` | string \| null | Contenido en bruto cuando se incluye explícitamente. |
+| `integration_id` | string \| null | ID de integración para artefactos respaldados por integraciones. |
+| `external_url` | string \| null | URL externa cuando existe. |
+| `props` | object | Configuración pública específica del tipo. |
+| `file_uri` | string \| null | URL pública temporal del archivo cuando está disponible. |
+| `artifact_references` | object[] \| null | Referencias cuando `include_references=true`. |
+| `artifact_relationships` | object[] \| null | Relaciones cuando `include_relationships=true`. |
+| `keep_file_after_ingestion` | boolean | Indica si se conserva el archivo subido. |
+| `created_by` | object \| null | Detalles del creador cuando `include=User`. |
+| `created_at` | timestamp | Fecha de creación. |
+| `updated_at` | timestamp | Fecha de última actualización. |
+| `ws_auto_select` | boolean | Indica si Workspace selecciona automáticamente el artefacto como contexto. Solo aplica a artefactos MCP y SQL database. |
+
 ### Actualizar un artefacto
+
+<Accordion title="Parametros del endpoint">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `projectID` | path | Si | Identificador del proyecto. |
+| `artifactID` | path | Si | Identificador del artefacto. |
+| `name` | string | No | Nuevo nombre del artefacto. |
+| `parent_id` | string | No | Mueve un artefacto de contenido o árbol bajo este artefacto padre. No lo uses en artefactos MCP o de base de datos. |
+| `reset_parent_id` | boolean | No | Ponlo a `true` para mover un artefacto de contenido o árbol a la raíz del proyecto. Por defecto es `false`. |
+| `external_url` | string | No | Sustituye la URL externa. |
+| `props` | object | No | Sustituye o actualiza la configuración pública específica del tipo. También se acepta el alias heredado `config`. |
+| `description` | string | No | Sustituye la descripción. |
+| `content` | string | No | Contenido binario codificado en Base64. |
+| `plain_text_content` | string | No | Texto plano para almacenar en el artefacto. |
+| `private_props` | object | No | Configuración privada para artefactos MCP y de base de datos SQL. También se acepta el alias heredado `private_config`. |
+| `ws_auto_select` | boolean | No | Indica si Workspace debe seleccionar automáticamente un artefacto MCP o SQL database como contexto de chat. No lo uses en artefactos de documento o agent-flow. |
+</Accordion>
 
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}" \
@@ -518,6 +762,8 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifac
   -d '{
     "name": "Q1 Support Summary (final)",
     "description": "Finalized weekly summary notes.",
+    "parent_id": "artifact_folder_q1",
+    "reset_parent_id": false,
     "plain_text_content": "Ticket volume rose 12% week-over-week..."
   }'
 ```
@@ -528,6 +774,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifac
   "id": "artifact_doc_q1",
   "name": "Q1 Support Summary (final)",
   "description": "Finalized weekly summary notes.",
+  "parent_id": "artifact_folder_q1",
   "type": "Document",
   "source": "User",
   "ingest_status": "Done",
@@ -535,6 +782,10 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifac
 }
 ```
 </Accordion>
+
+<Tip>
+  Usa `parent_id` para mover un artefacto dentro de una carpeta. Usa `reset_parent_id: true` para quitar el padre actual y moverlo a la raíz del proyecto.
+</Tip>
 
 ### Eliminar un artefacto
 
@@ -561,7 +812,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/pr
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Ejemplo de respuesta (props privadas MCP)">
+<Accordion title="Ejemplo de respuesta (props privadas de SQL database)">
 ```json
 {
   "connection_string": "postgresql://readonly:***@db.example.com:5432/sales"
@@ -588,9 +839,153 @@ Ticket volume rose 12% week-over-week. Billing issues drove 38% of cases.
 Este endpoint solo está disponible cuando el artefacto tiene un índice vectorial inicializado.
 En la práctica, esto suele implicar documentos de conectores o artefactos con indexación ya completada.
 
+```bash
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/parsed-content" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```text
+# Q1 Support Summary
+
+Billing issues drove 38% of support cases.
+```
+</Accordion>
+
 ### Sincronizar un artefacto
 
 Este endpoint se utiliza principalmente con artefactos de integración (SharePoint, Confluence, Claromentis o FileSystem).
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/{artifactID}/sync" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Accept: text/event-stream"
+```
+
+El cuerpo de la petición está vacío. La respuesta es un stream SSE emitido por el proceso de sincronización de la integración.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: sync_started
+data: {"current_artifact_count":12,"integration_item_count":40}
+
+event: sync_progress
+data: {"artifact_id":"artifact_doc_q1","op":"Updated","progress":0.42}
+
+event: sync_completed
+data: {}
+```
+</Accordion>
+
+### Actualizar artefactos en bloque
+
+Usa el endpoint de actualización en bloque para aplicar la misma forma de cuerpo de `PUT /artifact/{artifactID}` a varios artefactos.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `artifacts` | Si | Lista de actualizaciones de artefactos. |
+| Body | `artifacts[].artifactId` | Si | Identificador del artefacto a actualizar. |
+| Body | `artifacts[].update` | Si | Cuerpo de actualización con los mismos campos que `PUT /artifact/{artifactID}`. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/bulk" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "artifacts": [
+      {
+        "artifactId": "artifact_doc_q1",
+        "update": {
+          "parent_id": "artifact_folder_q1",
+          "reset_parent_id": false,
+          "description": "Moved into Q1 folder."
+        }
+      }
+    ]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "artifact_doc_q1",
+    "parent_id": "artifact_folder_q1",
+    "description": "Moved into Q1 folder.",
+    "type": "Document",
+    "state": "Published",
+    "ingest_status": "Done",
+    "updated_at": "2026-02-08T15:20:00Z"
+  }
+]
+```
+</Accordion>
+
+### Eliminar artefactos en bloque
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `artifact_ids` | Si | Identificadores de artefactos a eliminar. |
+</Accordion>
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact/bulk" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "artifact_ids": ["artifact_doc_q1", "artifact_link_q1"]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "artifact_doc_q1",
+    "state": "Deleted"
+  },
+  {
+    "id": "artifact_link_q1",
+    "state": "Deleted"
+  }
+]
+```
+</Accordion>
+
+## Comprobar artefactos enlazados antes de modificar
+
+Usa este endpoint antes de cambiar un artefacto cuando necesites comprobar si otros artefactos enlazados dependen de él.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `created_by` | No | ID del usuario que creó los artefactos a comprobar. |
+| Query | `project_id` | No | ID del proyecto donde comprobar artefactos enlazados. |
+| Query | `artifact_id` | No | ID del artefacto donde comprobar artefactos enlazados. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/resource/is-safe-to-modify?project_id={projectID}&artifact_id={artifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "has_linked_artifacts": false
+}
+```
+</Accordion>
 
 ## Errores y casos límite
 

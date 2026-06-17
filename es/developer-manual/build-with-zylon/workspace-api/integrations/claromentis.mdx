@@ -9,6 +9,13 @@ Las integraciones de Claromentis importan contenido de la base de conocimiento. 
 
 Crea una integración de Claromentis con `POST /api/v1/app/integration/claromentis`.
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `username` | Si | Usuario de Claromentis. |
+| Body | `password` | Si | Contraseña de Claromentis. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -34,6 +41,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
 </Accordion>
 
 ## Actualizar credenciales
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationID` | Si | Identificador de la integración. |
+| Body | `username` | Si | Usuario de Claromentis. |
+| Body | `password` | Si | Contraseña de Claromentis. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}" \

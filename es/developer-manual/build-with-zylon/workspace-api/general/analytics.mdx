@@ -29,6 +29,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
 
 ## Ranking de usuarios activos
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Inicio del periodo como timestamp Unix. |
+| Query | `end_date` | No | Fin del periodo como timestamp Unix. |
+| Query | `limit` | No | Número máximo de usuarios a devolver. |
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -57,6 +65,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?
 </Accordion>
 
 ## Ranking de proyectos activos
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Inicio del periodo como timestamp Unix. |
+| Query | `end_date` | No | Fin del periodo como timestamp Unix. |
+| Query | `limit` | No | Número máximo de proyectos a devolver. |
+</Accordion>
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
@@ -89,6 +105,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projec
 </Accordion>
 
 ## Serie de tiempo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `start_date` | No | Inicio del periodo como timestamp Unix. |
+| Query | `end_date` | No | Fin del periodo como timestamp Unix. |
+| Query | `type` | Si | Tipo de métrica a devolver, como `interactions`. |
+</Accordion>
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \

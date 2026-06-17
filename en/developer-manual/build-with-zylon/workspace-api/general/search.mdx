@@ -1,9 +1,9 @@
 ---
 title: "Search"
-description: "Search across projects, threads, artifacts, and interactions."
+description: "Search across projects, threads, artifacts, artifact content, and interactions."
 ---
 
-Use the Search API to query workspace content with a single text query. Limit search scope with the `type` filter.
+Use the Search API to query workspace content with a single text query. Limit search scope with the `types` filter.
 
 Search requests require a token with workspace access and a PrivateGPT gateway linked to your organization collection.
 
@@ -11,9 +11,17 @@ Search requests require a token with workspace access and a PrivateGPT gateway l
 
 Search across resources with `GET /api/v1/app/search`.
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `q` | Yes | Search text. Must be between 3 and 80 characters. |
+| Query | `types` | No | Comma-separated list of `Project`, `Artifact`, `ArtifactContent`, `Thread`, and `Interaction`. Defaults to all types. |
+| Query | `limit` | No | Maximum results. Defaults to `30` and must be greater than `1`. |
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,ArtifactContent&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -31,6 +39,18 @@ curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "project_name": "Customer Insights"
     }
+  },
+  {
+    "id": "content_8f1a3d5c7b9e",
+    "type": "ArtifactContent",
+    "match": "Billing issues drove 38% of support cases.",
+    "rank": 0.84,
+    "metadata": {
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
   }
 ]
 ```
@@ -38,9 +58,17 @@ curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&limit=5" \
 
 ## Search only threads
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `q` | Yes | Search text. Must be between 3 and 80 characters. |
+| Query | `types` | No | Use `Thread` to limit results to threads. |
+| Query | `limit` | No | Maximum results. Defaults to `30` and must be greater than `1`. |
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&type=Thread&limit=5" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&types=Thread&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -62,7 +90,17 @@ curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&type=Thread&limit=5"
 ```
 </Accordion>
 
+## Metadata by result type
+
+| Result type | Metadata shape |
+| --- | --- |
+| `Project` | `entity`, containing the project object. |
+| `Artifact` | `name`, `type`, `project_id`, `project_name`. |
+| `ArtifactContent` | `name`, `type`, `project_id`, `project_name`. |
+| `Thread` | `name`, `project_id`, `project_name`. |
+| `Interaction` | `content`, `thread_id`, `project_id`, `project_name`, `thread_name`. |
+
 ## Errors and edge cases
 
-- **400**: invalid `type` value.
+- **400**: missing `q`, blank query, query outside the 3-80 character range, invalid `types`, or `limit <= 1`.
 - **403**: insufficient permissions.

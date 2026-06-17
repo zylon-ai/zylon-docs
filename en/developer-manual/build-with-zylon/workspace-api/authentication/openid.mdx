@@ -131,6 +131,13 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationI
 
 <Tabs>
   <Tab title="Microsoft callback">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `code` | Yes | OAuth authorization code. |
+| Query | `state` | Yes | OAuth state value returned by the provider. |
+</Accordion>
+
 ```bash
 curl -i "https://{BASE_URL}/api/v1/auth/microsoft/callback?code=...&state=..."
 ```
@@ -143,6 +150,13 @@ Location: https://{BASE_URL}/app/login/success
 </Accordion>
   </Tab>
   <Tab title="Confluence callback">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `code` | Yes | OAuth authorization code. |
+| Query | `state` | Yes | OAuth state value returned by the provider. |
+</Accordion>
+
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/callback?code=...&state=..."
 ```
@@ -155,6 +169,13 @@ Location: https://{BASE_URL}/app/integrations/confluence
 </Accordion>
   </Tab>
   <Tab title="SharePoint callback">
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `code` | Yes | OAuth authorization code. |
+| Query | `state` | Yes | OAuth state value returned by the provider. |
+</Accordion>
+
 ```bash
 curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/callback?code=...&state=..."
 ```

@@ -9,6 +9,17 @@ Interactions are individual message exchanges within a thread. You can create th
 
 Create a thread interaction with `POST /api/v1/app/thread/{threadId}/interaction`.
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `thread_id` | Yes | Thread identifier. |
+| Body | `pgpt` | Yes | Chat request body. |
+| Body | `artifact_ids` | No | Artifact IDs to use as context. |
+| Body | `all_artifacts` | No | Include all thread/project artifacts when `true`. |
+| Body | `agent` | No | Agent preset to use. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \

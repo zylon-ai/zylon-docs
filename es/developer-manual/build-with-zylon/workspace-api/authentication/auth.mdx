@@ -14,6 +14,46 @@ Para usar esa cuenta en Workspace, necesitas al menos un usuario de workspace:
 - Crea un usuario de workspace con el account ID en [Usuarios - Crear un usuario](/es/developer-manual/build-with-zylon/workspace-api/users/user).
 - Añade membresías/roles adicionales con `POST /api/v1/account/organization/{orgId}/join`.
 
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sasha Patel",
+    "email": "sasha@example.com",
+    "password": "{password}",
+    "roles": ["Admin"]
+  }'
+```
+
+<Accordion title="Parametros del endpoint">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `name` | string | No | Nombre visible de la cuenta. |
+| `email` | string | Sí | Email de la cuenta. |
+| `password` | string | Sí | Contraseña de credenciales. |
+| `roles` | string[] | Sí | Roles a nivel de cuenta. Se requiere al menos un rol válido. |
+</Accordion>
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "acct_6c8a1f3b2d4e5f7a",
+  "state": "Active",
+  "email": "sasha@example.com",
+  "name": "Sasha Patel",
+  "given_name": null,
+  "family_name": null,
+  "profile_picture": null,
+  "provider": "Credentials",
+  "users": null,
+  "roles": ["Admin"],
+  "created_at": "2026-02-08T14:12:45Z",
+  "updated_at": "2026-02-08T14:12:45Z"
+}
+```
+</Accordion>
+
 ## Iniciar sesión con credenciales
 
 ```bash
@@ -27,29 +67,11 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/login" \
 
 <Accordion title="Ejemplo de respuesta">
 ```json
-{
-  "id": "acct_6c8a1f3b2d4e5f7a",
-  "email": "sasha@auroralabs.com",
-  "name": "Sasha Patel",
-  "given_name": "Sasha",
-  "family_name": "Patel",
-  "provider": "Credentials",
-  "users": [
-    {
-      "id": "user_4b7c2a1d9e5f3c8b",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Sasha Patel",
-      "email": "sasha@auroralabs.com",
-      "state": "Active",
-      "roles": ["AppAdmin"],
-      "created_at": "2026-02-08T14:12:45Z"
-    }
-  ],
-  "roles": ["AppAdmin"]
-}
+"ok"
 ```
 </Accordion>
+
+Un inicio de sesión correcto crea una sesión de cuenta. Cuando LDAP está habilitado, el servidor intenta primero autenticación LDAP y después usa credenciales locales como fallback.
 
 ## Cerrar sesión
 
@@ -64,7 +86,113 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/logout" \
 ```
 </Accordion>
 
+## Gestionar tokens de API
+
+Usa estos endpoints para gestionar tokens de API de la cuenta autenticada. El secreto del token solo se devuelve al crearlo; después, las respuestas de listado incluyen metadatos y el hash del token.
+
+### Listar tokens
+
+<Accordion title="Parametros del endpoint">
+| Parámetro de consulta | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `page_size` | integer | No | Número máximo de tokens a devolver. |
+| `after` / `before` | string | No | Controles de paginación por cursor cuando estén disponibles. |
+| `gateway_id` | string | No | Filtra tokens por gateway ID. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/account/token?page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "id": "tok_7f1a9c2d4b6e",
+      "name": "workspace-sync",
+      "token": null,
+      "scopes": ["Workspace.ReadWrite.All"],
+      "gateway_id": null,
+      "hashed_token": "{token_hash}",
+      "token_email": "workspace-sync@example.com",
+      "last_used_at": "2026-05-10T08:31:12Z",
+      "created_at": "2026-05-01T10:00:00Z",
+      "valid_until": "2026-12-31T23:59:59Z"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+### Crear un token
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/account/token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "workspace-sync",
+    "revoke_existing": false,
+    "valid_until": "2026-12-31T23:59:59Z",
+    "scopes": ["Workspace.ReadWrite.All"]
+  }'
+```
+
+<Accordion title="Parametros del endpoint">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `name` | string | No | Nombre legible del token. |
+| `revoke_existing` | boolean | No | Si es `true`, revoca tokens existentes según la política del servidor. Por defecto es `false`. |
+| `valid_until` | timestamp | No | Fecha de expiración. Usa `null` u omítelo si no hay expiración explícita. |
+| `scopes` | string[] | No | Valores permitidos: `ReadWrite.All`, `Workspace.ReadWrite.All`, `PrivateGPT.ReadWrite.All`. Por defecto es `Workspace.ReadWrite.All`. |
+| `gateway_id` | string | No | Gateway ID al crear un token asociado a un gateway. |
+</Accordion>
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "tok_7f1a9c2d4b6e",
+  "name": "workspace-sync",
+  "token": "{API_TOKEN}",
+  "scopes": ["Workspace.ReadWrite.All"],
+  "gateway_id": null,
+  "hashed_token": "{token_hash}",
+  "token_email": "workspace-sync@example.com",
+  "last_used_at": null,
+  "created_at": "2026-05-01T10:00:00Z",
+  "valid_until": "2026-12-31T23:59:59Z"
+}
+```
+</Accordion>
+
+<Warning>
+  Copia el valor de `token` inmediatamente. Solo se devuelve una vez y no se puede recuperar después.
+</Warning>
+
+### Eliminar un token
+
+La eliminación usa el hash almacenado del token, no el secreto en claro.
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/account/token/{token_hash}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+"Token deleted"
+```
+</Accordion>
+
 ## Errores y casos límite
 
 - **401/403**: token inválido o ausente.
 - **429**: demasiados intentos de inicio de sesión.
+- **400**: el registro no incluye roles de cuenta, email o contraseña obligatorios.

@@ -5,13 +5,26 @@ description: "Create and manage user-reported issues."
 
 Issues let users report problems with responses or content. Use these endpoints to list, create, update, and close issues.
 
-## Basic request and response
+## List issues
 
 List issues with `GET /api/v1/app/issue` before creating or updating.
 
+<Accordion title="Endpoint parameters">
+| Query parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `include` | string | No | Comma-separated list of `User` and `Project` to include related objects. |
+| `type` | string | No | Comma-separated issue types: `NoAnswer`, `Inaccurate`, `NoContextUsed`, `Format`, `Other`. |
+| `states` | string | No | Comma-separated states: `NotReviewed`, `InReview`, `Closed`, `Deleted`. |
+| `start_date` / `end_date` | integer | No | Created-at filter as epoch milliseconds. |
+| `filter_by_text` | string | No | Text filter over issue content. |
+| `created_by` | string | No | Comma-separated user IDs. |
+| `projects` | string | No | Comma-separated project IDs. |
+| `page`, `page_size`, `after`, `before` | mixed | No | Pagination controls. |
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20&include=User,Project&states=NotReviewed,InReview" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -27,6 +40,10 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
       "type": "NoContextUsed",
       "state": "NotReviewed",
       "is_read": false,
+      "data": {
+        "thread_id": "thread_3f2a1c4d5b6e7f8a",
+        "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+      },
       "created_at": "2026-02-08T14:55:10Z",
       "updated_at": "2026-02-08T14:55:10Z",
       "created_by": {
@@ -34,13 +51,19 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
         "org_id": "org_2f3a9d1c7b5e4a8f",
         "account_id": "acct_6c8a1f3b2d4e5f7a",
         "name": "Sasha Patel",
-        "email": "sasha@auroralabs.com",
+        "email": "sasha@example.com",
         "state": "Active",
         "roles": ["AppAdmin"],
         "created_at": "2026-02-08T14:12:45Z"
+      },
+      "project": {
+        "id": "proj_7a5c3e1b9d2f4a6c",
+        "name": "Customer Insights"
       }
     }
   ],
+  "next_cursor": null,
+  "previous_cursor": null,
   "has_next_page": false,
   "has_previous_page": false,
   "total_count": 1
@@ -50,17 +73,67 @@ curl "https://{BASE_URL}/api/v1/app/issue?page=1&page_size=20" \
 
 ## Create an issue
 
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `project_id` | Yes | Project where the reported resource lives. |
+| Body | `description` | No | User-provided issue description. |
+| Body | `resource_type` | Yes | Currently `Thread`. |
+| Body | `type` | Yes | One of `NoAnswer`, `Inaccurate`, `NoContextUsed`, `Format`, `Other`. |
+| Body | `config` | Yes | Resource-specific payload. For thread issues, provide `thread_id` and `reported_interaction_id`. |
+| Body | `anonymous` | Yes | Whether to hide the reporter from the issue payload. |
+
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
+    "project_id": "proj_7a5c3e1b9d2f4a6c",
     "description": "Response missed the attached policy details.",
     "resource_type": "Thread",
     "type": "NoContextUsed",
+    "config": {
+      "thread_id": "thread_3f2a1c4d5b6e7f8a",
+      "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+    },
     "anonymous": false
   }'
+```
+
+The create request uses `config`. Responses expose the stored issue payload as `data`.
+
+<Accordion title="Example response">
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Response missed the attached policy details.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "NotReviewed",
+  "is_read": false,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T14:55:10Z"
+}
+```
+</Accordion>
+
+## Get or update an issue
+
+<Tabs>
+  <Tab title="Get issue">
+```bash
+curl "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -73,50 +146,37 @@ curl -X POST "https://{BASE_URL}/api/v1/app/issue" \
   "type": "NoContextUsed",
   "state": "NotReviewed",
   "is_read": false,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
   "created_at": "2026-02-08T14:55:10Z",
-  "updated_at": "2026-02-08T14:55:10Z",
-  "created_by": {
-    "id": "user_4b7c2a1d9e5f3c8b",
-    "org_id": "org_2f3a9d1c7b5e4a8f",
-    "account_id": "acct_6c8a1f3b2d4e5f7a",
-    "name": "Sasha Patel",
-    "email": "sasha@auroralabs.com",
-    "state": "Active",
-    "roles": ["AppAdmin"],
-    "created_at": "2026-02-08T14:12:45Z"
-  }
-}
-```
-</Accordion>
-
-## Get or update an issue
-
-<Tabs>
-  <Tab title="Get issue">
-```bash
-curl "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-<Accordion title="Example response">
-```json
-{
-  "id": "issue_5c4b3a2d1e0f9a8b",
-  "issue_number": 1842,
-  "description": "Response missed the attached policy details.",
-  "state": "NotReviewed"
+  "updated_at": "2026-02-08T14:55:10Z"
 }
 ```
 </Accordion>
   </Tab>
   <Tab title="Update issue">
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `issueID` | Yes | Issue identifier. |
+| Body | `description` | No | Updated issue description. |
+| Body | `type` | No | Updated issue type. |
+| Body | `state` | No | Updated issue state. |
+| Body | `is_read` | No | Read flag. Defaults to `false` if omitted, so include the intended value when updating other fields. |
+
+</Accordion>
+
 ```bash
-curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
+    "description": "Reviewed by support.",
+    "type": "NoContextUsed",
     "state": "InReview",
     "is_read": true
   }'
@@ -126,8 +186,18 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 ```json
 {
   "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "description": "Reviewed by support.",
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
   "state": "InReview",
-  "is_read": true
+  "is_read": true,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T15:05:10Z"
 }
 ```
 </Accordion>
@@ -136,19 +206,34 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
 
 ## Delete an issue
 
+Delete soft-deletes the issue and returns the updated issue object.
+
 ```bash
-curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/issue_5c4b3a2d1e0f9a8b" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X DELETE "https://{BASE_URL}/api/v1/app/issue/{issueID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
-```text
-HTTP/1.1 204 No Content
+```json
+{
+  "id": "issue_5c4b3a2d1e0f9a8b",
+  "issue_number": 1842,
+  "resource_type": "Thread",
+  "type": "NoContextUsed",
+  "state": "Deleted",
+  "is_read": true,
+  "data": {
+    "thread_id": "thread_3f2a1c4d5b6e7f8a",
+    "reported_interaction_id": "interaction_9b8a7c6d5e4f"
+  },
+  "created_at": "2026-02-08T14:55:10Z",
+  "updated_at": "2026-02-08T15:10:00Z"
+}
 ```
 </Accordion>
 
 ## Errors and edge cases
 
 - **404**: issue not found.
-- **400**: invalid issue state.
+- **400**: invalid issue state, issue type, or thread issue config.

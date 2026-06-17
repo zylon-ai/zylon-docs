@@ -64,6 +64,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy" \
 
 ### Actualizar una integración ConfluenceLocal
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationID` | Si | Identificador de la integración. |
+| Body | `username` | Si | Usuario de ConfluenceLocal. |
+| Body | `password` | Si | Contraseña de ConfluenceLocal. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}" \
   -H "Authorization: Bearer {API_TOKEN}" \

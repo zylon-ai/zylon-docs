@@ -9,6 +9,13 @@ Claromentis integrations import knowledge base content. **Enable Claromentis at 
 
 Create a Claromentis integration with `POST /api/v1/app/integration/claromentis`.
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `username` | Yes | Claromentis username. |
+| Body | `password` | Yes | Claromentis password. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -34,6 +41,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
 </Accordion>
 
 ## Update integration credentials
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationID` | Yes | Integration identifier. |
+| Body | `username` | Yes | Claromentis username. |
+| Body | `password` | Yes | Claromentis password. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}" \

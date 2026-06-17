@@ -4,8 +4,6 @@ description: "Hilos, interacciones y chat de una sola llamada."
 ---
 
 Los chats en la Workspace API se organizan alrededor de **hilos** e **interacciones**:
-
-{/* <!-- RESTRUCTURED --> */}
 | Concepto | Significado |
 | --- | --- |
 | **Thread** | Contenedor de conversación dentro de un proyecto. |
@@ -17,6 +15,17 @@ Usa hilos cuando necesitas historial y seguimiento. Usa interacciones para envia
 ## Solicitud básica y respuesta
 
 Crea una interacción en un hilo con `POST /api/v1/app/thread/{threadId}/interaction`.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `thread_id` | Si | Identificador del hilo. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
+| Body | `agent` | No | Preset de agente a usar. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
@@ -43,7 +52,6 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta (InteractionDTO)">
 ```json
 {
@@ -147,6 +155,17 @@ Puedes combinar múltiples bloques de contenido en un mismo mensaje. Tipos princ
 
 Ejemplo de interacción con imagen + texto y flags de ejecución:
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `thread_id` | Si | Identificador del hilo. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
+| Body | `agent` | No | Preset de agente a usar. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -194,6 +213,14 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
 
 Crear un hilo en un proyecto:
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `name` | Si | Nombre del hilo. |
+| Body | `visibility` | Si | `Public` o `Private`. |
+</Accordion>
+
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
   -H "Authorization: Bearer {API_TOKEN}" \
@@ -207,13 +234,28 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
 
 Listar hilos:
 
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
   -H "x-org: {org_slug}"
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
@@ -231,6 +273,29 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 }
 ```
 </Accordion>
+
+Crea un hilo y la primera interacción en una sola petición:
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `name` | Si | Nombre del nuevo hilo. |
+| Body | `visibility` | Si | `Public` o `Private`. |
+
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
 
 ## Actualizar o eliminar un hilo
 
@@ -257,6 +322,22 @@ curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
 
 Listar interacciones de un hilo:
 
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -272,6 +353,14 @@ curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
 ```
 
 ## Eliminar o hacer streaming de una interacción
+
+Cancelar una interacción en ejecución:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
 
 Eliminar una interacción:
 
@@ -290,7 +379,6 @@ curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Accept: text/event-stream"
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de stream">
 ```text
 event: message_start
@@ -327,7 +415,6 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
   }'
 ```
 
-{/* <!-- RESTRUCTURED --> */}
 <Accordion title="Ejemplo de respuesta">
 ```json
 {

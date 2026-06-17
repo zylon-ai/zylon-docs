@@ -9,6 +9,20 @@ Usa estos endpoints para controlar quién puede acceder a un proyecto y qué rol
 
 Lista miembros actuales con `GET /api/v1/app/project/{projectId}/member`.
 
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Query | `page` | No | Numero absoluto de pagina, empezando en 1. |
+| Query | `page_size` | No | Numero de elementos por pagina. Predeterminado `20`. |
+| Query | `page_order` | No | `ASC` o `DESC`. Predeterminado `ASC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atras. |
+| Query | `first` | No | Limita a los primeros N elementos tras un cursor. |
+| Query | `last` | No | Limita a los ultimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total en la respuesta. |
+</Accordion>
+
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
@@ -43,6 +57,15 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=
 </Accordion>
 
 ## Agregar miembros
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `members` | Si | Lista de miembros a agregar. |
+| Body | `members[].user_id` | Si | Identificador del usuario. |
+| Body | `members[].role` | Si | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
@@ -79,6 +102,16 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 </Accordion>
 
 ## Actualizar roles de miembros
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Requerido | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `members` | Si | Lista de miembros a actualizar. |
+| Body | `members[].user_id` | Si | Identificador del usuario. |
+| Body | `members[].role` | No | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
+| Body | `members[].is_pinned` | No | Fija o desfija el proyecto para ese miembro. |
+</Accordion>
 
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \

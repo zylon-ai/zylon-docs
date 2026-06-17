@@ -10,7 +10,11 @@ When given an URL, the AI has capabilities to extract and parse content.
 
 | Key      | Default | Values          | Description                              |
 | -------- | ------- | --------------- | ---------------------------------------- |
-| `enabled`| `true` | `true \| false` | Extract and parse content from web pages |
+| `enabled`| `false` | `true \| false` | Enable web page extraction and parsing |
+| `timeout` | `15` | Positive integer | Timeout in seconds for each web page fetch |
+| `poolSize` | `5` | Positive integer | Number of browser instances to keep in the pool |
+| `poolIdleTimeout` | `300` | Positive integer | Seconds before an idle browser instance is terminated |
+| `poolMaxPages` | `5` | Positive integer | Maximum concurrent pages per browser instance |
 
 ### Example
 
@@ -18,6 +22,10 @@ When given an URL, the AI has capabilities to extract and parse content.
 features:
     webExtract:
         enabled: true
+        timeout: 15
+        poolSize: 5
+        poolIdleTimeout: 300
+        poolMaxPages: 5
 ```
 
 

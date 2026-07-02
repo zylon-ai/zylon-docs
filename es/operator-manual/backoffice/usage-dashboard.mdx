@@ -1,0 +1,137 @@
+---
+title: Panel de uso
+description: Supervisa el uso de IA por gateways, tokens de API y actividad de Workspace.
+icon: chart-column
+---
+
+## Resumen
+
+El Panel de uso ofrece a los Operadores una vista centralizada del uso de IA en la plataforma Zylon. Ayuda a responder preguntas operativas como cuánto consumo de tokens hay, qué gateways tienen actividad y si se están usando búsquedas de conocimiento, archivos y web.
+
+Usa este panel cuando necesites:
+
+- Supervisar el uso de IA a lo largo del tiempo.
+- Comparar el uso total con el uso por gateway.
+- Revisar el uso de uno o varios gateways.
+- Inspeccionar actividad asociada a tokens de API.
+- Entender cómo la actividad de Workspace contribuye al uso de la plataforma.
+
+El panel está disponible en **Backoffice > Platform > Usage** para usuarios con acceso **Operator** o **Super Admin**. Las métricas de uso requieren que el almacenamiento de uso/auditoría esté habilitado en el despliegue.
+
+## Información disponible
+
+El panel muestra tarjetas de resumen y gráficos según los filtros seleccionados.
+
+### Total tokens in
+
+**Total tokens in** es el número total de tokens de entrada consumidos por solicitudes de chat dentro del rango de fechas y el alcance de gateways seleccionados.
+
+Usa esta métrica para entender la cantidad de entrada de usuario, sistema y contexto enviada a los proveedores de IA.
+
+### Total tokens out
+
+**Total tokens out** es el número total de tokens de salida generados por respuestas de chat dentro del rango de fechas y el alcance de gateways seleccionados.
+
+Usa esta métrica para entender cuánto contenido generado por IA se está produciendo.
+
+### Token usage
+
+El gráfico **Token usage** muestra el consumo total de tokens de chat a lo largo del tiempo. Combina tokens de entrada y salida para cada día del rango seleccionado.
+
+Cuando **Group by** está en **All Gateways**, el gráfico muestra una única serie total. Cuando **Group by** está en **Gateways**, el gráfico separa el mismo total en una serie por cada gateway seleccionado.
+
+### Files ingested
+
+El gráfico **Files ingested** muestra el número de archivos únicos ingeridos a lo largo del tiempo.
+
+Ayuda a los Operadores a confirmar si la ingestión de conocimiento está ocurriendo y cuándo ocurrió.
+
+### Embeddings
+
+El gráfico **Embeddings** muestra actividad de embeddings a lo largo del tiempo. Cada evento de embedding registrado cuenta una vez.
+
+Usa este gráfico para entender cuándo se producen cargas de trabajo de embeddings.
+
+### File searches
+
+El gráfico **File searches** muestra el uso de herramientas de búsqueda en archivos encontrado en la actividad de chat.
+
+Usa este gráfico para entender cuándo los usuarios o aplicaciones piden a Zylon buscar en conocimiento y archivos disponibles durante interacciones de IA.
+
+### Web searches
+
+El gráfico **Web searches** muestra el uso de herramientas de búsqueda web encontrado en la actividad de chat.
+
+Usa este gráfico para entender cuándo las interacciones de IA usan búsqueda web.
+
+## Filtros
+
+El estado de los filtros se mantiene en la URL de la página, por lo que una vista filtrada se puede refrescar o compartir con otro usuario autorizado de Backoffice.
+
+### Group by
+
+**Group by** controla cómo se muestran los gráficos.
+
+- **All Gateways** muestra una única serie total combinada.
+- **Gateways** divide los gráficos por gateway.
+
+Este filtro solo cambia la agrupación visual. No cambia qué registros de uso se incluyen.
+
+### Show
+
+**Show** controla el alcance de gateways.
+
+- **All** incluye todos los gateways disponibles.
+- Seleccionar uno o varios gateways limita el panel a esos gateways.
+
+Cuando **Show** cambia, **Keys** se restablece a **All tokens**. Esto evita que una selección de tokens de un alcance de gateway anterior siga activa después de cambiar el alcance.
+
+### Keys
+
+**Keys** filtra la actividad de tokens de API para los gateways seleccionados.
+
+- **All tokens** incluye todo el uso dentro del alcance de gateways seleccionado, incluida la actividad generada desde Workspace.
+- Seleccionar uno o varios tokens de API muestra solo el uso asociado a esos tokens.
+
+El uso generado desde Workspace no se asocia a un token de API. Por eso, la actividad de Workspace aparece cuando **Keys** está en **All tokens**, pero no aparece al filtrar por un token de API específico.
+
+### Date range
+
+**Date range** controla el periodo mostrado por el panel.
+
+Los presets disponibles son:
+
+- **Week to date**
+- **Month to date**
+- **Last 7 days**
+- **Last 14 days**
+- **Last 30 days**
+
+El rango predeterminado es **Last 14 days**. También puedes seleccionar un rango personalizado. Las fechas futuras no están disponibles y el calendario empieza el **1 de enero de 2026**.
+
+Si un rango personalizado se introduce con la fecha final antes de la fecha inicial, Zylon normaliza el rango.
+
+## Entender la recopilación de uso
+
+Cada Workspace está asociado a un Gateway predeterminado. Las solicitudes de IA realizadas por usuarios de Workspace, como Chat y otras interacciones de IA, se enrutan a través de ese Gateway.
+
+Estas interacciones consumen tokens de proveedores de IA de la misma forma que las solicitudes realizadas con tokens de API. Por eso, la actividad de Workspace contribuye al Panel de uso general del Gateway que gestionó la solicitud.
+
+Los usuarios de Workspace se autentican con sesiones de Workspace, no con tokens de API. Como resultado, el uso generado desde Workspace no se asocia a un token de API específico.
+
+Esto significa que:
+
+- **All tokens** incluye uso generado desde Workspace.
+- Seleccionar un token de API específico filtra solo la actividad de ese token.
+- El uso generado desde Workspace no puede filtrarse actualmente por token de API individual.
+- Este comportamiento es esperado y refleja cómo se recopila el uso.
+
+## Notas y limitaciones
+
+- El panel es de solo lectura. No crea, edita ni elimina datos de la plataforma.
+- No hay controles de exportación o descarga disponibles desde este panel.
+- No hay filtros por organización, proyecto, usuario o email de cuenta.
+- Si no hay gateways disponibles, el panel muestra un estado vacío.
+- Si existen gateways pero ningún uso coincide con los filtros seleccionados, los gráficos muestran un estado sin datos.
+- Las métricas de uso dependen del almacenamiento de uso/auditoría. Si está deshabilitado, el panel no puede mostrar métricas de uso.
+- El uso almacenado es más útil cuando los relojes del sistema están sincronizados en todo el despliegue.

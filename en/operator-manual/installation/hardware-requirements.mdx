@@ -2,7 +2,7 @@
 title: Hardware requirements
 ---
 
-Zylon only has one strict requirement regarding hardware: **it must have access to a GPU with NVIDIA CUDA capabilities and at least 96GB of total VRAM**. Depending on the hardware, some AI models might be restricted, so to ensure compatibility aim for newest compatible CUDA versions (12.6+).
+Zylon only has one strict requirement regarding hardware: **it must have access to a GPU with NVIDIA CUDA capabilities and enough VRAM to run the `baseline-96g` preset tier**. In practice, that means planning for **80GB to 96GB of VRAM or more**, depending on the GPU configuration. Depending on the hardware, some AI models might be restricted, so to ensure compatibility aim for newest compatible CUDA versions (12.6+).
 
 Our recommended specifications for the best experience are:
 
@@ -22,7 +22,7 @@ Our recommended specifications for the best experience are:
     - AWS
         - g6e.xlarge https://instances.vantage.sh/aws/ec2/g6e.xlarge
     - Azure Cloud
-        - Standard_NV36ads_A10_v5 (recommended) https://learn.microsoft.com/es-es/azure/virtual-machines/sizes/gpu-accelerated/nvadsa10v5-series?tabs=sizebasic
+        - Choose an Azure GPU SKU that provides enough total VRAM for the `baseline-96g` preset tier (typically 80GB to 96GB total VRAM or more).
         - NVv3 (Requires quantized models) https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nvv3-series?tabs=sizebasic
 
 
@@ -30,7 +30,7 @@ Our recommended specifications for the best experience are:
 
 Finding the right GPU for your system can be a tricky process. For example, two GPUs with the same vRAM might not perform the same:
 
-- H100 (server) and A100 80GB are the current baseline references for sizing.
+- H100 (server) and A100 80GB are representative options for the `baseline-96g` preset tier.
 
 On the other hand, depending on the GPU you chose, other features that might impact AI quality will be enabled, if any of them is relevant for your uses cases factor that in for your decision:
 
@@ -57,7 +57,7 @@ Another important factor would be the investment, specially regarding the GPU. T
 | NVIDIA A100 (SXM) | 80 | $20,000 - $25,000 |
 | NVIDIA H200 | 141 | $30,000 - $32,000 |
 
-In any case, as a direct answer to the question of which GPU should you buy, our current baseline recommendation is a configuration with **at least 96GB of total VRAM**.
+In any case, as a direct answer to the question of which GPU should you buy, our current baseline recommendation is a configuration that supports the **`baseline-96g` preset tier**, which in practice typically means **80GB to 96GB of total VRAM or more**.
 
 ## Reference hardware for mid-size organization
 
@@ -65,7 +65,7 @@ If you need to acquired your AI-capable equipment from scratch, as of July 29, 2
 
 ![image.png](/images/operator-manual/hardware-requirements-images/basic.png)
 
-This reference configuration should be adapted to meet the current minimum GPU baseline of **96GB of total VRAM**. In practice, that means using a GPU such as the **NVIDIA RTX PRO 6000 (Workstation) (96 GB)** or a multi-GPU setup that reaches the same total VRAM, together with a powerful CPU (16 cores), 128 GB of RAM, enough storage capacity to operate Zylon with margin to grow, a robust cooling solution, and a motherboard sized for the selected GPU layout.
+This reference configuration should be adapted to meet the current GPU baseline for the **`baseline-96g` preset tier**. In practice, that means using a GPU such as the **NVIDIA RTX PRO 6000 (Workstation) (96 GB)**, an **A100 80GB**, an **H100**, or a multi-GPU setup that reaches a similar tier, together with a powerful CPU (16 cores), 128 GB of RAM, enough storage capacity to operate Zylon with margin to grow, a robust cooling solution, and a motherboard sized for the selected GPU layout.
 
 Keep in mind that this is just a recommendation, so feel free to adapt it to your preferences while keeping similar capabilities for ideal performance. We have used Amazon as a provider considering that you can assemble all the parts together by yourself, but any provider that you usually work with should be able to get a similar hardware and assemble it for you.
 

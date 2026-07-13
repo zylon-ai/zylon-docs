@@ -2,7 +2,7 @@
 title: Requisitos de hardware
 ---
 
-Zylon solo tiene un requisito estricto con respecto al hardware: **debe tener acceso a una GPU con capacidades NVIDIA CUDA y al menos 96GB de VRAM total**. Dependiendo del hardware, algunos modelos de IA pueden estar restringidos, por lo que para asegurar la compatibilidad apunta a las versiones de CUDA más nuevas compatibles (12.6+).
+Zylon solo tiene un requisito estricto con respecto al hardware: **debe tener acceso a una GPU con capacidades NVIDIA CUDA y suficiente VRAM para ejecutar el nivel de preset `baseline-96g`**. En la práctica, eso significa planificar **80GB a 96GB de VRAM o más**, según la configuración de GPU. Dependiendo del hardware, algunos modelos de IA pueden estar restringidos, por lo que para asegurar la compatibilidad apunta a las versiones de CUDA más nuevas compatibles (12.6+).
 
 Nuestras especificaciones recomendadas para la mejor experiencia son:
 
@@ -22,7 +22,7 @@ Nuestras especificaciones recomendadas para la mejor experiencia son:
     - AWS
         - g6e.xlarge https://instances.vantage.sh/aws/ec2/g6e.xlarge
     - Azure Cloud
-        - Standard_NV36ads_A10_v5 (recomendado) https://learn.microsoft.com/es-es/azure/virtual-machines/sizes/gpu-accelerated/nvadsa10v5-series?tabs=sizebasic
+        - Elige una SKU de GPU de Azure que proporcione suficiente VRAM total para el nivel de preset `baseline-96g` (normalmente 80GB a 96GB de VRAM total o más).
         - NVv3 (Requiere modelos cuantizados) https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nvv3-series?tabs=sizebasic
 
 
@@ -30,7 +30,7 @@ Nuestras especificaciones recomendadas para la mejor experiencia son:
 
 Encontrar la GPU adecuada para tu sistema puede ser un proceso complicado. Por ejemplo, dos GPUs con la misma vRAM pueden no tener el mismo rendimiento:
 
-- H100 (servidor) y A100 80GB son las referencias base actuales para dimensionamiento.
+- H100 (servidor) y A100 80GB son opciones representativas del nivel de preset `baseline-96g`.
 
 Por otro lado, dependiendo de la GPU que elijas, se habilitarán otras características que pueden afectar la calidad de la IA, si alguna de ellas es relevante para tus casos de uso, tenlo en cuenta para tu decisión:
 
@@ -57,7 +57,7 @@ Otro factor importante sería la inversión, especialmente con respecto a la GPU
 | NVIDIA A100 (SXM) | 80 | $20,000 - $25,000 |
 | NVIDIA H200 | 141 | $30,000 - $32,000 |
 
-En cualquier caso, como respuesta directa a la pregunta de qué GPU debes comprar, nuestra recomendación base actual es una configuración con **al menos 96GB de VRAM total**.
+En cualquier caso, como respuesta directa a la pregunta de qué GPU debes comprar, nuestra recomendación base actual es una configuración que soporte el nivel de preset **`baseline-96g`**, lo que en la práctica normalmente significa **80GB a 96GB de VRAM total o más**.
 
 ## Hardware de referencia para organización de tamaño medio
 
@@ -65,7 +65,7 @@ Si necesitas adquirir tu equipo con capacidad de IA desde cero, a partir del 29 
 
 ![image.png](/images/operator-manual/hardware-requirements-images/basic.png)
 
-Esta configuración de referencia debe adaptarse para cumplir con la base mínima actual de GPU de **96GB de VRAM total**. En la práctica, esto significa usar una GPU como la **NVIDIA RTX PRO 6000 (Workstation) (96 GB)** o una configuración multi-GPU que alcance esa misma VRAM total, junto con una CPU potente (16 núcleos), 128 GB de RAM, suficiente capacidad de almacenamiento para operar Zylon con margen para crecer, una solución de refrigeración robusta y una placa base adecuada para la disposición de GPU elegida.
+Esta configuración de referencia debe adaptarse para cumplir con la base actual de GPU del nivel de preset **`baseline-96g`**. En la práctica, esto significa usar una GPU como la **NVIDIA RTX PRO 6000 (Workstation) (96 GB)**, una **A100 80GB**, una **H100** o una configuración multi-GPU que alcance un nivel similar, junto con una CPU potente (16 núcleos), 128 GB de RAM, suficiente capacidad de almacenamiento para operar Zylon con margen para crecer, una solución de refrigeración robusta y una placa base adecuada para la disposición de GPU elegida.
 
 Ten en cuenta que esto es solo una recomendación, así que siéntete libre de adaptarla a tus preferencias mientras mantienes capacidades similares para un rendimiento ideal. Hemos usado Amazon como proveedor considerando que puedes ensamblar todas las partes tú mismo, pero cualquier proveedor con el que normalmente trabajes debería poder obtener un hardware similar y ensamblarlo para ti.
 

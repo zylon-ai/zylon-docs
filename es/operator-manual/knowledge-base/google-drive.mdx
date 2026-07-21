@@ -24,7 +24,7 @@ Para integrar Google Drive, crea una aplicación OAuth en Google Cloud y configu
 2. Busca y habilita **Google Drive API**.
 3. Busca y habilita **Google Picker API**.
 
-[Placeholder: Añadir una captura que muestre las dos APIs habilitadas.]
+![Resultados de búsqueda de la biblioteca de APIs de Google Cloud](/images/operator-manual/knowledge-base/google-drive-images/api-list.png)
 
 ## Crear y restringir una clave de API
 
@@ -38,7 +38,7 @@ Google Picker requiere una clave de API además de las credenciales del cliente 
 
 Si la política de Google Cloud exige restricciones de aplicación, restringe la clave al origen público de Zylon Workspace, por ejemplo `https://zylon.company.com`.
 
-[Placeholder: Añadir una captura que muestre la clave de API restringida a Google Drive API y Google Picker API.]
+![Clave de API restringida a Google Drive API y Google Picker API](/images/operator-manual/knowledge-base/google-drive-images/credentials-permissions.png)
 
 ## Configurar la pantalla de consentimiento OAuth y el acceso a datos
 
@@ -57,7 +57,7 @@ Si la política de Google Cloud exige restricciones de aplicación, restringe la
 
 Zylon solicita todos estos scopes al iniciar sesión. El scope de metadatos de Drive también es necesario para la implementación del conector.
 
-[Placeholder: Añadir una captura de los scopes en Data Access de Google Auth platform.]
+![Scopes de Data Access en Google Auth platform](/images/operator-manual/knowledge-base/google-drive-images/data-access.png)
 
 ## Crear un cliente OAuth
 
@@ -77,7 +77,7 @@ https://{your-zylon-domain}/api/app/integration/googledrive/callback
 La URI de redirección de Google Cloud y Zylon debe coincidir exactamente, incluidos `https`, el dominio, la ruta y las barras finales.
 </Warning>
 
-[Placeholder: Añadir una captura de la URI de redirección y las credenciales del cliente OAuth.]
+![Configuración del cliente OAuth de Google](/images/operator-manual/knowledge-base/google-drive-images/client-config.png)
 
 ## Configurar Zylon
 

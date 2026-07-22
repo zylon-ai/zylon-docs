@@ -65,7 +65,8 @@
                 "pages": [
                   "en/user-manual/workspace-look-and-feel",
                   "en/user-manual/adding-company-context",
-                  "en/user-manual/engagement-analytics"
+                  "en/user-manual/engagement-analytics",
+                  "en/user-manual/credential-registry"
                 ]
               },
               {
@@ -470,7 +471,8 @@
                 "pages": [
                   "es/user-manual/workspace-look-and-feel",
                   "es/user-manual/adding-company-context",
-                  "es/user-manual/engagement-analytics"
+                  "es/user-manual/engagement-analytics",
+                  "es/user-manual/credential-registry"
                 ]
               },
               {

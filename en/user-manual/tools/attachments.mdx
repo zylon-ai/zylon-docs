@@ -1,39 +1,59 @@
 ---
-title: Chat attachments
-description: Attach images to your messages so Zylon can see and reason about visual content.
+title: Attach files in chat
+description: Drop images and documents straight into a chat message so Zylon can read and use them.
 ---
 
-Attach image files directly in your chat messages. When a file is attached, Zylon can analyze its content, and use it as context when responding.
+Attach files directly to your chat messages — images, spreadsheets, PDFs, Word documents, presentations, and more — so Zylon can read them and use them as context when responding.
 
 <Warning>
-    Ask your IT administrator to enable the Multimodal capabilities in your system configuration [with the Operator Manual](/en/operator-manual/configuration/features).
+Ask your IT administrator to enable file attachments in your system configuration [with the Operator Manual](/en/operator-manual/configuration/features) if you don't see this option.
 </Warning>
 
 ---
 
 ## What you can do with attachments
 
-- Ask questions about what’s shown in an image
-- Get explanations, summaries, or descriptions of visual content
-- Use files as context for problem-solving or decision-making
-- Combine files with text prompts for richer instructions
+- Ask questions about a document, spreadsheet, or image you've just attached
+- Get a summary, explanation, or analysis of its content
+- Use a file as context for problem-solving or decision-making
+- Attach more than one file to the same message
+- Combine attachments with a text prompt for more specific instructions
 
 ---
 
 ## How to attach a file
 
-1. In the chat input, click the **attachment (paperclip) icon**. You can also drag & drop it.
-2. Select an image from your device
-3. Add your message(It is limited to 1 file per message)
-4. Send your message
+There are two ways to attach a file to a message:
 
-The attachment button is located **to the left of the source selector menu**.
+1. Click the **+** button in the chat box, then choose **Add images & files**, and pick one or more files from your device.
+2. Or simply **drag and drop** files straight onto the chat box.
+
+![The Add images & files option in the chat message box](/images/user-manual/attachments/chat-plus-menu.png)
+
+Once attached, each file shows up as a chip above the message box — add your question or instructions and send.
+
+![A file attached and ready to send with a chat message](/images/user-manual/attachments/chat-attachment-chip.png)
+
+Your message keeps the attachment alongside it in the conversation, so you can always see what Zylon was looking at.
+
+![A sent chat message showing the attached file](/images/user-manual/attachments/chat-message-with-attachment.png)
+
+---
+
+## Supported file types
+
+- **Images** — JPG, PNG, GIF, WebP, SVG, BMP
+- **Documents** — PDF, Word, PowerPoint, Excel, CSV/TSV, plain text, HTML, RTF, ODT, EPUB, Outlook email (`.msg`, `.eml`)
+
+<Info>
+Exactly which file types and how many files you can attach depends on how your admin has configured Zylon for your organization.
+</Info>
 
 ---
 
 ## Limitations
 
-- Image understanding depends on clarity and resolution
-- Very large or complex images may produce less detailed results
-- Your model has to support image capabilities
-- Only one image is allowed per chat request
+- The number of files per message and the maximum file size are set by your admin, and may vary by file type.
+- If a file is larger than usual, Zylon warns you before continuing — you can still send it, or add it to the project's Knowledge Base instead, which handles large files better.
+- Understanding an image depends on its clarity and resolution; very large or complex files may produce less detailed results.
+- Your organization's selected AI model has to support the type of file you're attaching (for example, image understanding).

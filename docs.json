@@ -148,13 +148,13 @@
               {
                 "group": "n8n",
                 "pages": [
-                  "en/user-manual/n8n",
-                  {
-                    "group": "Security",
-                    "pages": [
-                      "en/user-manual/n8n/security/authentication-for-sensitive-actions"
-                    ]
-                  }
+                  "en/user-manual/n8n"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "en/user-manual/security/authentication-for-sensitive-actions"
                 ]
               }
             ]
@@ -561,13 +561,13 @@
               {
                 "group": "n8n",
                 "pages": [
-                  "es/user-manual/n8n",
-                  {
-                    "group": "Seguridad",
-                    "pages": [
-                      "es/user-manual/n8n/security/authentication-for-sensitive-actions"
-                    ]
-                  }
+                  "es/user-manual/n8n"
+                ]
+              },
+              {
+                "group": "Seguridad",
+                "pages": [
+                  "es/user-manual/security/authentication-for-sensitive-actions"
                 ]
               }
             ]

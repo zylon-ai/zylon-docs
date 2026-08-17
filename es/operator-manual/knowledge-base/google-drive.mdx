@@ -1,0 +1,123 @@
+---
+title: Google Drive
+---
+
+Para integrar Google Drive, crea una aplicación OAuth en Google Cloud y configura Zylon con sus credenciales. Esto permite que los usuarios inicien sesión con Google, seleccionen archivos o carpetas con Google Picker y los importen a una base de conocimiento.
+
+## Antes de empezar
+
+- Usa una cuenta de Google que pueda administrar el proyecto de Google Cloud. No necesita acceso al contenido de Drive que importarán los usuarios.
+- Conoce la URL pública de tu instancia de Zylon, por ejemplo `https://zylon.company.com`.
+- Guarda el secreto del cliente OAuth en un gestor de secretos seguro. No lo incluyas en el control de versiones. La clave de API de Picker se usa en el navegador, así que restríngela a las APIs requeridas y, cuando corresponda, al origen de Zylon.
+
+## Crear o seleccionar un proyecto de Google Cloud
+
+1. Abre la [consola de Google Cloud](https://console.cloud.google.com/).
+2. Selecciona un proyecto existente o crea uno nuevo para la integración.
+3. Anota el **número de proyecto** en el panel del proyecto. Zylon lo usa como **App ID** de Picker.
+
+[Placeholder: Añadir una captura que muestre el número de proyecto de Google Cloud.]
+
+## Habilitar las APIs de Google
+
+1. En la consola de Google Cloud, ve a **APIs y servicios** → **Biblioteca**.
+2. Busca y habilita **Google Drive API**.
+3. Busca y habilita **Google Picker API**.
+
+![Resultados de búsqueda de la biblioteca de APIs de Google Cloud](/images/operator-manual/knowledge-base/google-drive-images/api-list.png)
+
+## Crear y restringir una clave de API
+
+Google Picker requiere una clave de API además de las credenciales del cliente OAuth.
+
+1. Ve a **APIs y servicios** → **Credenciales**.
+2. Selecciona **Crear credenciales** → **Clave de API**.
+3. Copia la clave; será el valor de `apiKey` en Zylon.
+4. Abre la nueva clave y, en **Restricciones de API**, selecciona **Restringir clave**.
+5. Selecciona **Google Drive API** y **Google Picker API** y guarda la clave.
+
+Si la política de Google Cloud exige restricciones de aplicación, restringe la clave al origen público de Zylon Workspace, por ejemplo `https://zylon.company.com`.
+
+![Clave de API restringida a Google Drive API y Google Picker API](/images/operator-manual/knowledge-base/google-drive-images/credentials-permissions.png)
+
+## Configurar la pantalla de consentimiento OAuth y el acceso a datos
+
+1. En la consola de Google Cloud, abre **Google Auth platform**. Completa la configuración obligatoria de **Branding** y **Audience** de tu organización.
+2. Abre **Data Access** y selecciona **Add or remove scopes**.
+3. Añade los siguientes scopes y guarda los cambios.
+
+| Scope | Descripción para el usuario |
+| --- | --- |
+| `https://www.googleapis.com/auth/drive.metadata.readonly` | Ver metadatos de archivos en Google Drive. |
+| `https://www.googleapis.com/auth/drive.readonly` | Ver y descargar archivos de Google Drive. |
+| `https://www.googleapis.com/auth/userinfo.email` | Ver tu dirección de correo principal de Google Account. |
+| `https://www.googleapis.com/auth/userinfo.profile` | Ver tu información personal, incluida la información que has hecho pública. |
+| `openid` | Asociarte con tu información personal en Google. |
+| `https://www.googleapis.com/auth/drive.file` | Ver, editar, crear y eliminar solo los archivos específicos de Google Drive que usas con esta aplicación. |
+
+Zylon solicita todos estos scopes al iniciar sesión. El scope de metadatos de Drive también es necesario para la implementación del conector.
+
+![Scopes de Data Access en Google Auth platform](/images/operator-manual/knowledge-base/google-drive-images/data-access.png)
+
+## Crear un cliente OAuth
+
+1. En **Google Auth platform**, abre **Clients**.
+2. Selecciona **Create client** y elige **Web application** como tipo de aplicación.
+3. Asigna un nombre significativo al cliente, por ejemplo `Zylon Google Drive`.
+4. En **Authorized redirect URIs**, añade la siguiente URL; sustituye el dominio por la URL de tu instancia de Zylon:
+
+```text
+https://{your-zylon-domain}/api/app/integration/googledrive/callback
+```
+
+5. Crea el cliente.
+6. Copia el **Client ID** y el **Client secret**. Los usarás como `clientId` y `clientSecret` en la configuración de Zylon.
+
+<Warning>
+La URI de redirección de Google Cloud y Zylon debe coincidir exactamente, incluidos `https`, el dominio, la ruta y las barras finales.
+</Warning>
+
+![Configuración del cliente OAuth de Google](/images/operator-manual/knowledge-base/google-drive-images/client-config.png)
+
+## Configurar Zylon
+
+Añade los siguientes valores a la configuración de Zylon. Los valores `apiKey` y `appId` también se proporcionan al frontend de Workspace para Google Picker.
+
+```yaml
+integration:
+  googleDrive:
+    enabled: true
+    clientId: "{Google OAuth client ID}"
+    clientSecret: "{Google OAuth client secret}"
+    redirectUri: "https://{your-zylon-domain}/api/app/integration/googledrive/callback"
+    apiKey: "{Google API key}"
+    appId: "{Google Cloud project number}"
+```
+
+Para instalaciones con Helm, configura los valores equivalentes en tu archivo de valores bajo `integration.googleDrive`.
+
+Aplica la configuración mediante tu proceso habitual de despliegue de Zylon. En instalaciones gestionadas con Zylon CLI, ejecuta:
+
+```bash
+sudo zylon-cli sync
+```
+
+Ya puedes conectar Google Drive desde una base de conocimiento de un proyecto.
+
+## Solución de problemas
+
+### La opción de Google Drive no está disponible o el selector se cierra inmediatamente
+
+- Confirma que `integration.googleDrive.enabled` es `true`.
+- Confirma que `apiKey` y `appId` están configurados. Google Picker necesita ambos valores.
+- Confirma que Google Drive API y Google Picker API están habilitadas en el mismo proyecto de Google Cloud.
+
+### Google muestra un error de URI de redirección
+
+- Comprueba que la **Authorized redirect URI** sea exactamente igual a `redirectUri` en la configuración de Zylon.
+- Confirma que el dominio sea el dominio HTTPS público con el que se accede a Zylon.
+
+### Un usuario no puede ver o importar un elemento de Drive
+
+- Confirma que el usuario inicia sesión con la cuenta de Google que puede acceder al elemento.
+- Confirma que la pantalla de consentimiento incluya todos los scopes de [Configurar la pantalla de consentimiento OAuth y el acceso a datos](#configurar-la-pantalla-de-consentimiento-oauth-y-el-acceso-a-datos).

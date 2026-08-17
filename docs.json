@@ -66,7 +66,8 @@
                   "en/user-manual/workspace-look-and-feel",
                   "en/user-manual/adding-company-context",
                   "en/user-manual/block-resource-downloads",
-                  "en/user-manual/engagement-analytics"
+                  "en/user-manual/engagement-analytics",
+                  "en/user-manual/managing-organization-skills"
                 ]
               },
               {
@@ -94,6 +95,15 @@
                       "en/user-manual/connectors/claromentis"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Skills",
+                "pages": [
+                  "en/user-manual/skills/introduction-to-skills",
+                  "en/user-manual/skills/creating-a-skill",
+                  "en/user-manual/skills/installing-from-organization",
+                  "en/user-manual/skills/using-skills-in-chat"
                 ]
               },
               {
@@ -482,7 +492,8 @@
                 "pages": [
                   "es/user-manual/workspace-look-and-feel",
                   "es/user-manual/adding-company-context",
-                  "es/user-manual/engagement-analytics"
+                  "es/user-manual/engagement-analytics",
+                  "es/user-manual/managing-organization-skills"
                 ]
               },
               {
@@ -510,6 +521,15 @@
                       "es/user-manual/connectors/claromentis"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Habilidades",
+                "pages": [
+                  "es/user-manual/skills/introduction-to-skills",
+                  "es/user-manual/skills/creating-a-skill",
+                  "es/user-manual/skills/installing-from-organization",
+                  "es/user-manual/skills/using-skills-in-chat"
                 ]
               },
               {

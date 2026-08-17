@@ -1,39 +1,59 @@
 ---
-title: Adjuntos de chat
-description: Adjunta imágenes a tus mensajes para que Zylon pueda ver y razonar sobre contenido visual.
+title: Adjuntar archivos en el chat
+description: Suelta imágenes y documentos directamente en un mensaje de chat para que Zylon pueda leerlos y usarlos.
 ---
 
-Adjunta archivos de imagen directamente en tus mensajes de chat. Cuando se adjunta un archivo, Zylon puede analizar su contenido y usarlo como contexto al responder.
+Adjunta archivos directamente a tus mensajes de chat — imágenes, hojas de cálculo, PDF, documentos de Word, presentaciones y más — para que Zylon pueda leerlos y usarlos como contexto al responder.
 
 <Warning>
-    Pide a tu administrador de TI que habilite las capacidades multimodales en la configuración del sistema [con el Manual del operador](/es/operator-manual/configuration/features).
+Pide a tu administrador de TI que habilite los archivos adjuntos en la configuración del sistema [con el Manual del operador](/es/operator-manual/configuration/features) si no ves esta opción.
 </Warning>
 
 ---
 
-## Lo que puedes hacer con adjuntos
+## Qué puedes hacer con los archivos adjuntos
 
-- Haz preguntas sobre lo que se muestra en una imagen
-- Obtén explicaciones, resúmenes o descripciones de contenido visual
-- Usa archivos como contexto para resolver problemas o tomar decisiones
-- Combina archivos con prompts de texto para instrucciones más ricas
+- Hacer preguntas sobre un documento, hoja de cálculo o imagen que acabas de adjuntar
+- Obtener un resumen, explicación o análisis de su contenido
+- Usar un archivo como contexto para resolver problemas o tomar decisiones
+- Adjuntar más de un archivo al mismo mensaje
+- Combinar los archivos adjuntos con un prompt de texto para instrucciones más precisas
 
 ---
 
 ## Cómo adjuntar un archivo
 
-1. En la entrada del chat, haz clic en el **icono de adjunto (clip)**. También puedes arrastrarlo y soltarlo.
-2. Selecciona una imagen de tu dispositivo
-3. Añade tu mensaje (está limitado a 1 archivo por mensaje)
-4. Envía tu mensaje
+Hay dos formas de adjuntar un archivo a un mensaje:
 
-El botón de adjunto está ubicado **a la izquierda del menú selector de fuentes**.
+1. Haz clic en el botón **+** de la caja de chat, elige **Add images & files** y selecciona uno o varios archivos desde tu dispositivo.
+2. O simplemente **arrastra y suelta** los archivos directamente sobre la caja de chat.
+
+![La opción Add images & files en la caja de mensajes del chat](/images/user-manual/attachments/chat-plus-menu.png)
+
+Una vez adjuntado, cada archivo aparece como un chip encima de la caja de mensajes — añade tu pregunta o instrucciones y envía.
+
+![Un archivo adjuntado y listo para enviar con un mensaje de chat](/images/user-manual/attachments/chat-attachment-chip.png)
+
+Tu mensaje conserva el archivo adjunto junto a él en la conversación, así que siempre puedes ver qué estaba viendo Zylon.
+
+![Un mensaje de chat enviado mostrando el archivo adjunto](/images/user-manual/attachments/chat-message-with-attachment.png)
+
+---
+
+## Tipos de archivo admitidos
+
+- **Imágenes** — JPG, PNG, GIF, WebP, SVG, BMP
+- **Documentos** — PDF, Word, PowerPoint, Excel, CSV/TSV, texto plano, HTML, RTF, ODT, EPUB, correo de Outlook (`.msg`, `.eml`)
+
+<Info>
+Los tipos de archivo exactos y cuántos archivos puedes adjuntar dependen de cómo tu administrador haya configurado Zylon para tu organización.
+</Info>
 
 ---
 
 ## Limitaciones
 
-- La comprensión de imágenes depende de la claridad y resolución
-- Imágenes muy grandes o complejas pueden producir resultados menos detallados
-- Tu modelo debe admitir capacidades de imagen
-- Solo se permite una imagen por solicitud de chat
+- El número de archivos por mensaje y el tamaño máximo de archivo los establece tu administrador, y pueden variar según el tipo de archivo.
+- Si un archivo es más grande de lo habitual, Zylon te avisa antes de continuar — puedes enviarlo igualmente, o añadirlo a la Base de Conocimiento del proyecto, que gestiona mejor los archivos grandes.
+- La comprensión de una imagen depende de su claridad y resolución; los archivos muy grandes o complejos pueden producir resultados menos detallados.
+- El modelo de IA seleccionado por tu organización debe admitir el tipo de archivo que estás adjuntando (por ejemplo, comprensión de imágenes).

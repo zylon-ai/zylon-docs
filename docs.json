@@ -148,7 +148,13 @@
               {
                 "group": "n8n",
                 "pages": [
-                  "en/user-manual/n8n"
+                  "en/user-manual/n8n",
+                  {
+                    "group": "Security",
+                    "pages": [
+                      "en/user-manual/n8n/security/authentication-for-sensitive-actions"
+                    ]
+                  }
                 ]
               }
             ]
@@ -370,7 +376,8 @@
                       "en/operator-manual/configuration/features/feat-project-custom-instructions",
                       "en/operator-manual/configuration/features/feat-webextract",
                       "en/operator-manual/configuration/features/feat-websearch",
-                      "en/operator-manual/configuration/features/feat-multimodal"
+                      "en/operator-manual/configuration/features/feat-multimodal",
+                      "en/operator-manual/configuration/features/authentication-freshness"
                     ]
                   },
                   {
@@ -415,7 +422,8 @@
                 "pages": [
                   "en/operator-manual/instance-hardening/index",
                   "en/operator-manual/instance-hardening/airgap-your-server",
-                  "en/operator-manual/instance-hardening/disk-encryption"
+                  "en/operator-manual/instance-hardening/disk-encryption",
+                  "en/operator-manual/security/authentication-for-sensitive-actions"
                 ]
               },
               {
@@ -553,7 +561,13 @@
               {
                 "group": "n8n",
                 "pages": [
-                  "es/user-manual/n8n"
+                  "es/user-manual/n8n",
+                  {
+                    "group": "Seguridad",
+                    "pages": [
+                      "es/user-manual/n8n/security/authentication-for-sensitive-actions"
+                    ]
+                  }
                 ]
               }
             ]
@@ -768,7 +782,8 @@
                       "es/operator-manual/configuration/features/feat-project-custom-instructions",
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",
-                      "es/operator-manual/configuration/features/feat-multimodal"
+                      "es/operator-manual/configuration/features/feat-multimodal",
+                      "es/operator-manual/configuration/features/authentication-freshness"
                     ]
                   },
                   {
@@ -813,7 +828,8 @@
                 "pages": [
                   "es/operator-manual/instance-hardening/index",
                   "es/operator-manual/instance-hardening/airgap-your-server",
-                  "es/operator-manual/instance-hardening/disk-encryption"
+                  "es/operator-manual/instance-hardening/disk-encryption",
+                  "es/operator-manual/security/authentication-for-sensitive-actions"
                 ]
               },
               {

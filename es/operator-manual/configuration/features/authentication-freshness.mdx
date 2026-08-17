@@ -1,0 +1,67 @@
+---
+title: "Vigencia de autenticación"
+description: "Configure la vigencia de autenticación para acciones sensibles del espacio de trabajo y del backoffice."
+---
+
+La vigencia de autenticación obliga a los usuarios a volver a autenticarse cuando su autenticación anterior es demasiado antigua para una acción sensible. Se controla mediante el bloque de configuración `features.authChallenge`.
+
+<Warning>
+La vigencia de autenticación no se aplica a las peticiones a la API autenticadas con tokens. Las integraciones basadas en tokens siguen funcionando sin cambios en sus flujos actuales.
+</Warning>
+
+## Activar o desactivar la vigencia de autenticación
+
+Establece `features.authChallenge.enabled` en `true` para activar la función o en `false` para desactivarla. La función está desactivada de forma predeterminada en los valores del chart.
+
+```yaml
+features:
+  authChallenge:
+    enabled: true
+```
+
+Después de cambiar la configuración, aplícala con:
+
+```bash
+sudo zylon-cli sync
+```
+
+Cuando la función está desactivada, las acciones protegidas siguen aplicando sus comprobaciones normales de autorización y permisos, pero no requieren una autenticación reciente.
+
+## Configurar los periodos de vigencia
+
+La vigencia de autenticación se configura por separado para cada nivel de riesgo. Los valores se expresan en segundos:
+
+| Nivel de riesgo | Clave del chart | Valor predeterminado | Duración predeterminada |
+| --- | --- | ---: | --- |
+| Bajo | `features.authChallenge.maxAgeSeconds.low` | `86400` | 24 horas |
+| Medio | `features.authChallenge.maxAgeSeconds.medium` | `3600` | 1 hora |
+| Alto | `features.authChallenge.maxAgeSeconds.high` | `900` | 15 minutos |
+
+Por ejemplo:
+
+```yaml
+features:
+  authChallenge:
+    enabled: true
+    maxAgeSeconds:
+      low: "86400"
+      medium: "3600"
+      high: "900"
+```
+
+En la configuración de la aplicación generada, el bloque equivalente se llama `maxAuthAgeSeconds`:
+
+```yaml
+features:
+  authChallenge:
+    maxAuthAgeSeconds:
+      low: "86400"
+      medium: "3600"
+      high: "900"
+```
+
+Utiliza el formato de clave correspondiente a la capa de configuración que estés editando: `maxAgeSeconds` es la clave de los valores de Helm, mientras que `maxAuthAgeSeconds` es la clave de configuración de la aplicación que genera el chart.
+
+## Niveles de riesgo y acciones protegidas
+
+El nivel de riesgo determina qué periodo de vigencia se utiliza; no sustituye los permisos del usuario. Consulta las acciones actuales que activan esta comprobación en [Autenticación para acciones sensibles](/es/operator-manual/security/authentication-for-sensitive-actions).

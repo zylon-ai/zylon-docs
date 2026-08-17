@@ -1,0 +1,55 @@
+---
+title: "Authentication for Sensitive Actions"
+description: "Compliance reference for actions protected by authentication freshness."
+---
+
+Zylon can require a recent authentication challenge before a principal performs a sensitive workspace or backoffice action. This control adds a time-bound reauthentication requirement on top of the user's existing permissions and authorization checks.
+
+<Warning>
+Authentication freshness is not applied to API requests authenticated with tokens. Token-based integrations do not need additional reauthentication steps or changes to their existing flows.
+</Warning>
+
+The feature can be [enabled and configured by risk level](/en/operator-manual/configuration/features/authentication-freshness). When enabled, the action-specific challenge is valid only for the configured freshness window. The low, medium, and high windows are independent.
+
+## Protected actions
+
+The following table reflects the current backend call sites of `assertPrincipalAuthChallengeIsValid`. The list is a code-level reference and should be reviewed after changes to sensitive authorization paths.
+
+| Area | Protected action | Backend method | Risk level |
+| --- | --- | --- | --- |
+| Organization | Create an organization | `createOrganization` | Medium |
+| Organization | Delete an organization, including its content | `deleteOrganization` | High |
+| Organization | Update organization settings | `updateOrganization` | Low |
+| Gateway | Create a gateway | `createGateway` | High |
+| Gateway | Delete a gateway | `deleteGateway` | High |
+| Gateway users | Add a user to a gateway | `addUserToGateway` | Medium |
+| Gateway users | Change a gateway user's role | `updateUserRole` | Medium |
+| Gateway users | Activate a gateway user | `setGatewayUserState` | Low |
+| Gateway users | Deactivate a gateway user | `setGatewayUserState` | High |
+| Gateway users | Remove a user from a gateway | `removeGatewayUser` | Medium |
+| Project | Transfer project ownership | `transferProjectOwnership` | Medium |
+| Project | Update project settings | `updateProject` | Low |
+| Project | Add project members | `addMembersToProject` | Medium |
+| Project | Update project member roles | `updateMemberRoles` | Medium |
+| Project | Remove a project member | `removeMemberFromProject` | Medium |
+| Project | Soft-delete a project | `deleteProject` | High |
+| Project | Hard-delete a project | `hardDeleteProject` | High |
+| API tokens | Create an API token | `createApiToken` | High |
+| API tokens | Delete an API token | `deleteTokenByHash` | High |
+| Artifacts | Create connector artifacts | `createArtifact` | Low |
+| Artifacts | Delete artifacts | `deleteArtifactsById` | High |
+| Artifacts | Delete an ingested document and its entity | `scheduleDeleteVectorsAndEntity` | High |
+| Users | Change a user's role | `updateUser` | Medium when retaining or reducing privilege; High when granting a higher role |
+| Users | Add a user to an organization | `addUserToOrganization` | High |
+| Users | Activate a user | `setUserState` | High |
+| Users | Deactivate a user | `setUserState` | Medium |
+| Accounts | Activate an account | `updateAccount` | High |
+| Accounts | Deactivate an account | `updateAccount` | Low |
+
+API-token principals are exempt from this freshness check by design. This does not bypass the endpoint's normal permission, scope, or ownership checks.
+
+## Authentication methods and failure handling
+
+For interactive users, the frontend can answer an authentication challenge with the configured password or SSO flow. A missing or expired challenge prevents the protected action from proceeding until the user authenticates again. Google and Microsoft SSO may redirect the browser away from the original request; operators should account for the possibility that the user needs to repeat the action after returning.
+
+For configuration details and the exact freshness windows, see [Authentication Freshness](/en/operator-manual/configuration/features/authentication-freshness).

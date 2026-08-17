@@ -1,0 +1,67 @@
+---
+title: "Authentication Freshness"
+description: "Configure authentication freshness for sensitive workspace and backoffice actions."
+---
+
+Authentication freshness requires users to authenticate again when their previous authentication is too old for a sensitive action. It is controlled by the `features.authChallenge` configuration block.
+
+<Warning>
+Authentication freshness is not applied to API requests authenticated with tokens. Token-based integrations continue to work without any changes to their existing flows.
+</Warning>
+
+## Enable or disable authentication freshness
+
+Set `features.authChallenge.enabled` to `true` to enable the feature or `false` to disable it. The feature is disabled by default in the chart values.
+
+```yaml
+features:
+  authChallenge:
+    enabled: true
+```
+
+After changing the configuration, apply it with:
+
+```bash
+sudo zylon-cli sync
+```
+
+When the feature is disabled, the protected actions continue to enforce their normal authorization and permission checks, but they do not require a recent authentication challenge.
+
+## Configure freshness windows
+
+Authentication freshness is configured separately for each risk level. Values are expressed in seconds:
+
+| Risk level | Chart key | Default | Default duration |
+| --- | --- | ---: | --- |
+| Low | `features.authChallenge.maxAgeSeconds.low` | `86400` | 24 hours |
+| Medium | `features.authChallenge.maxAgeSeconds.medium` | `3600` | 1 hour |
+| High | `features.authChallenge.maxAgeSeconds.high` | `900` | 15 minutes |
+
+For example:
+
+```yaml
+features:
+  authChallenge:
+    enabled: true
+    maxAgeSeconds:
+      low: "86400"
+      medium: "3600"
+      high: "900"
+```
+
+In the generated application configuration, the corresponding block is named `maxAuthAgeSeconds`:
+
+```yaml
+features:
+  authChallenge:
+    maxAuthAgeSeconds:
+      low: "86400"
+      medium: "3600"
+      high: "900"
+```
+
+Use the key format appropriate to the configuration layer you are editing: `maxAgeSeconds` is the Helm chart values key, while `maxAuthAgeSeconds` is the application configuration key rendered by the chart.
+
+## Risk levels and protected actions
+
+The risk level determines which freshness window is used; it does not replace the user's permissions. The current actions that trigger this check are listed in [Authentication for Sensitive Actions](/en/operator-manual/security/authentication-for-sensitive-actions).

@@ -1,0 +1,246 @@
+---
+title: "Notas"
+description: "Notas propiedad de la cuenta, vinculables opcionalmente a un proyecto y a artefactos."
+---
+
+Una nota es un texto propiedad de la **cuenta que hace la llamada**. Una nota puede vincularse opcionalmente a un proyecto y puede tener artefactos adjuntos como referencia.
+
+Las notas son privadas: solo la cuenta propietaria (o un propietario de la organización) puede leer, actualizar o eliminar una nota.
+
+## Requisitos previos
+
+- Un token de API. Ver [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+## Crear una nota
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `title` | Si | Título de la nota, no vacío, máximo 256 caracteres. |
+| Body | `content` | No | Texto de la nota, máximo 100.000 caracteres. Por defecto `""`. |
+| Body | `project_id` | No | Proyecto al que vincular la nota. El llamador debe ser al menos Viewer del proyecto. |
+| Body | `artifact_ids` | No | Artefactos a adjuntar a la nota. Por defecto `[]`. Los duplicados se eliminan. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/note" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Notas de la llamada de renovación",
+    "content": "El cliente quiere una llamada de renovación en Q3.",
+    "project_id": "{projectID}",
+    "artifact_ids": ["{artifactID}"]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Notas de la llamada de renovación",
+  "content": "El cliente quiere una llamada de renovación en Q3.",
+  "state": "Active",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:30:12Z"
+}
+```
+</Accordion>
+
+## Listar notas
+
+Devuelve una lista paginada de las notas propias de la cuenta que hace la llamada. `state` filtra por defecto solo `Active`; pasa `state=Deleted` explícitamente para recuperar notas eliminadas.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `project_id` | No | Filtra las notas por proyecto. |
+| Query | `state` | No | Estados de nota separados por comas (`Active`, `Deleted`). Por defecto `Active`. |
+| Query | `include` | No | Campos adicionales a incluir, separados por comas. Solo se admite `artifacts`. |
+| Query | `page` | No | Número de página absoluto a obtener, base 1. |
+| Query | `page_size` | No | Elementos por página. Por defecto 20. |
+| Query | `page_order` | No | `ASC` o `DESC`. Por defecto `ASC`. |
+| Query | `after` | No | Cursor o valor para paginar después. |
+| Query | `before` | No | Cursor o valor para paginar antes. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total en la respuesta. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/note?project_id={projectID}&include=artifacts&page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "id": "note_5a7b9c1d3e5f7a9b",
+      "account_id": "account_2b4d6f8a1c3e5a7b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "title": "Notas de la llamada de renovación",
+      "content": "El cliente quiere una llamada de renovación en Q3.",
+      "state": "Active",
+      "artifacts": [
+        {
+          "id": "artifact_doc_q1",
+          "name": "Q1 Support Summary",
+          "type": "Document"
+        }
+      ],
+      "created_at": "2026-02-08T14:30:12Z",
+      "updated_at": "2026-02-08T14:30:12Z"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+## Obtener una nota
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `noteId` | Si | Identificador de la nota. |
+| Query | `include` | No | Campos adicionales a incluir, separados por comas. Solo se admite `artifacts`. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/note/{noteID}?include=artifacts" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Notas de la llamada de renovación",
+  "content": "El cliente quiere una llamada de renovación en Q3.",
+  "state": "Active",
+  "artifacts": [
+    {
+      "id": "artifact_doc_q1",
+      "name": "Q1 Support Summary",
+      "type": "Document"
+    }
+  ],
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:30:12Z"
+}
+```
+</Accordion>
+
+| Campo de respuesta | Tipo | Descripción |
+| --- | --- | --- |
+| `id` | string | ID de la nota. |
+| `account_id` | string | Cuenta propietaria de la nota. |
+| `project_id` | string \| null | Proyecto vinculado, cuando la nota está asociada a uno. |
+| `title` | string | Título de la nota. |
+| `content` | string | Texto de la nota. |
+| `state` | string | `Active` o `Deleted`. |
+| `artifacts` | object[] \| null | Artefactos adjuntos, presente solo cuando se pasa `include=artifacts`. Cada elemento usa la misma forma de artefacto documentada en [Contenido: Artefactos](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts). |
+| `created_at` | timestamp | Fecha de creación. |
+| `updated_at` | timestamp | Fecha de última actualización. |
+
+## Actualizar una nota
+
+`title`, `content` y `project_id` solo se cambian cuando están presentes en el cuerpo de la petición. `artifact_ids`, cuando está presente, **reemplaza por completo** los artefactos adjuntos de la nota — no es una fusión, así que envía el conjunto completo deseado en cada actualización.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `noteId` | Si | Identificador de la nota. |
+| Body | `title` | No | Nuevo título, no vacío, máximo 256 caracteres. |
+| Body | `content` | No | Nuevo texto, máximo 100.000 caracteres. |
+| Body | `project_id` | No | Nuevo vínculo de proyecto. El llamador debe ser al menos Viewer del proyecto. Se ignora si `clear_project_id` es `true`. |
+| Body | `clear_project_id` | No | Pon `true` para desvincular la nota de su proyecto. Por defecto `false`. |
+| Body | `artifact_ids` | No | Conjunto completo de reemplazo de artefactos adjuntos. Omite el campo para dejar los adjuntos sin cambios. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/note/{noteID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Notas de la llamada de renovación (actualizado)",
+    "artifact_ids": ["{artifactID}"]
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Notas de la llamada de renovación (actualizado)",
+  "content": "El cliente quiere una llamada de renovación en Q3.",
+  "state": "Active",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:45:21Z"
+}
+```
+</Accordion>
+
+<Tip>
+  Desvincular un artefacto de una nota solo elimina el enlace (reemplazo completo de `artifact_ids`, u omitiendo un id del nuevo conjunto) — nunca elimina el artefacto en sí.
+</Tip>
+
+<Tip>
+  Para quitar el vínculo de proyecto de una nota sin fijar uno nuevo, envía `"clear_project_id": true`. Enviar `project_id` sin `clear_project_id` establece (o mantiene) el vínculo en su lugar.
+</Tip>
+
+## Eliminar una nota
+
+Elimina la nota de forma lógica (`state` pasa a `Deleted`) y desvincula los artefactos que tuviera adjuntos.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `noteId` | Si | Identificador de la nota. |
+</Accordion>
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/note/{noteID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Notas de la llamada de renovación (actualizado)",
+  "content": "El cliente quiere una llamada de renovación en Q3.",
+  "state": "Deleted",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:50:00Z"
+}
+```
+</Accordion>
+
+## Errores y casos especiales
+
+- **400**: `title` está vacío o supera los 256 caracteres, o `content` supera los 100.000 caracteres.
+- **401/403**: falta el token o los permisos son insuficientes.
+- **403**: la nota existe pero el llamador no es su propietario. Solo la cuenta propietaria, o un propietario de la organización, puede leer o modificar una nota.
+- **404**: nota no encontrada, ya eliminada, o algún elemento de `artifact_ids` no corresponde a un artefacto accesible para el llamador.
+- Listar y obtener notas devuelve por defecto solo notas `Active` — pasa `state=Deleted` para recuperar las eliminadas explícitamente.

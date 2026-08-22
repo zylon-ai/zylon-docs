@@ -258,6 +258,12 @@
                         "pages": [
                           "en/developer-manual/build-with-zylon/workspace-api/chats/threads"
                         ]
+                      },
+                      {
+                        "group": "Notes",
+                        "pages": [
+                          "en/developer-manual/build-with-zylon/workspace-api/notes/notes"
+                        ]
                       }
                     ]
                   },
@@ -662,6 +668,12 @@
                         "group": "Chats",
                         "pages": [
                           "es/developer-manual/build-with-zylon/workspace-api/chats/threads"
+                        ]
+                      },
+                      {
+                        "group": "Notes",
+                        "pages": [
+                          "es/developer-manual/build-with-zylon/workspace-api/notes/notes"
                         ]
                       }
                     ]

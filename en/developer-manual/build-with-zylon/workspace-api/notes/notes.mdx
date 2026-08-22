@@ -1,0 +1,246 @@
+---
+title: "Notes"
+description: "Account-owned notes, optionally linked to a project and artifacts."
+---
+
+A note is a piece of text owned by the **calling account**. A note can optionally link to a project and can have artifacts attached to it for reference.
+
+Notes are private: only the owning account (or an organization owner) can read, update, or delete a note.
+
+## Prerequisites
+
+- An API token. See [Workspace Token Management](/en/developer-manual/get-started/token-management).
+- Your Zylon hostname (replace `{BASE_URL}` in the examples).
+
+## Create a note
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `title` | Yes | Note title, non-blank, at most 256 characters. |
+| Body | `content` | No | Note body text, at most 100,000 characters. Defaults to `""`. |
+| Body | `project_id` | No | Project to link the note to. The caller must be at least a Viewer on the project. |
+| Body | `artifact_ids` | No | Artifacts to attach to the note. Defaults to `[]`. Duplicates are de-duplicated. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/note" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Renewal call notes",
+    "content": "Customer wants a Q3 renewal call.",
+    "project_id": "{projectID}",
+    "artifact_ids": ["{artifactID}"]
+  }'
+```
+
+<Accordion title="Example response (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Renewal call notes",
+  "content": "Customer wants a Q3 renewal call.",
+  "state": "Active",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:30:12Z"
+}
+```
+</Accordion>
+
+## List notes
+
+Returns a paginated list of the calling account's own notes. `state` defaults to `Active` only; pass `state=Deleted` explicitly to retrieve deleted notes.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `project_id` | No | Filter notes by project. |
+| Query | `state` | No | Comma-separated note states (`Active`, `Deleted`). Defaults to `Active`. |
+| Query | `include` | No | Comma-separated extra fields to include. Only `artifacts` is supported. |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. Default is 20. |
+| Query | `page_order` | No | `ASC` or `DESC`. Default is `ASC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include total count in the response. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/note?project_id={projectID}&include=artifacts&page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "data": [
+    {
+      "id": "note_5a7b9c1d3e5f7a9b",
+      "account_id": "account_2b4d6f8a1c3e5a7b",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "title": "Renewal call notes",
+      "content": "Customer wants a Q3 renewal call.",
+      "state": "Active",
+      "artifacts": [
+        {
+          "id": "artifact_doc_q1",
+          "name": "Q1 Support Summary",
+          "type": "Document"
+        }
+      ],
+      "created_at": "2026-02-08T14:30:12Z",
+      "updated_at": "2026-02-08T14:30:12Z"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+## Get a note
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `noteId` | Yes | Note identifier. |
+| Query | `include` | No | Comma-separated extra fields to include. Only `artifacts` is supported. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/note/{noteID}?include=artifacts" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Renewal call notes",
+  "content": "Customer wants a Q3 renewal call.",
+  "state": "Active",
+  "artifacts": [
+    {
+      "id": "artifact_doc_q1",
+      "name": "Q1 Support Summary",
+      "type": "Document"
+    }
+  ],
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:30:12Z"
+}
+```
+</Accordion>
+
+| Response field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Note ID. |
+| `account_id` | string | Account that owns the note. |
+| `project_id` | string \| null | Linked project, when the note is attached to one. |
+| `title` | string | Note title. |
+| `content` | string | Note body text. |
+| `state` | string | `Active` or `Deleted`. |
+| `artifacts` | object[] \| null | Attached artifacts, only present when `include=artifacts` is passed. Each entry uses the same artifact shape documented in [Content: Artifacts](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts). |
+| `created_at` | timestamp | Creation timestamp. |
+| `updated_at` | timestamp | Last update timestamp. |
+
+## Update a note
+
+`title`, `content`, and `project_id` are only changed when present in the request body. `artifact_ids`, when present, **fully replaces** the note's attached artifacts — it is not a merge, so send the complete desired set on every update.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `noteId` | Yes | Note identifier. |
+| Body | `title` | No | New title, non-blank, at most 256 characters. |
+| Body | `content` | No | New body text, at most 100,000 characters. |
+| Body | `project_id` | No | New project link. The caller must be at least a Viewer on the project. Ignored when `clear_project_id` is `true`. |
+| Body | `clear_project_id` | No | Set to `true` to detach the note from its project. Defaults to `false`. |
+| Body | `artifact_ids` | No | Full replacement set of attached artifacts. Omit the field to leave attachments unchanged. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/note/{noteID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Renewal call notes (updated)",
+    "artifact_ids": ["{artifactID}"]
+  }'
+```
+
+<Accordion title="Example response (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Renewal call notes (updated)",
+  "content": "Customer wants a Q3 renewal call.",
+  "state": "Active",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:45:21Z"
+}
+```
+</Accordion>
+
+<Tip>
+  Detaching an artifact from a note only removes the link (`artifact_ids` full replace, or by omitting an id from the new set) — it never deletes the artifact itself.
+</Tip>
+
+<Tip>
+  To remove a note's project link without setting a new one, send `"clear_project_id": true`. Sending `project_id` without `clear_project_id` sets (or keeps) the link instead.
+</Tip>
+
+## Delete a note
+
+Soft-deletes the note (`state` becomes `Deleted`) and detaches any artifacts that were linked to it.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `noteId` | Yes | Note identifier. |
+</Accordion>
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/note/{noteID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response (NoteDTO)">
+```json
+{
+  "id": "note_5a7b9c1d3e5f7a9b",
+  "account_id": "account_2b4d6f8a1c3e5a7b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "title": "Renewal call notes (updated)",
+  "content": "Customer wants a Q3 renewal call.",
+  "state": "Deleted",
+  "created_at": "2026-02-08T14:30:12Z",
+  "updated_at": "2026-02-08T14:50:00Z"
+}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **400**: `title` is blank or over 256 characters, or `content` is over 100,000 characters.
+- **401/403**: token missing or insufficient permissions.
+- **403**: the note exists but the caller does not own it. Only the owning account, or an organization owner, can read or write a note.
+- **404**: note not found, already deleted, or an `artifact_ids` entry does not resolve to an artifact the caller can access.
+- List and get calls default to `Active` notes only — pass `state=Deleted` to retrieve deleted ones explicitly.

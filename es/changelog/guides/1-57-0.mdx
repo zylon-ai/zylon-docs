@@ -1,0 +1,186 @@
+---
+title: "Actualización a 1.57"
+description: "Pasos para actualizar tu instalación de Zylon a la versión 1.57."
+---
+
+### Paso 1: Descarga el modelo y actualiza
+
+Sigue los pasos según tu tipo de instalación.
+
+<Tabs>
+  <Tab title="Online">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version
+        ```
+      </Step>
+      <Step title="Descarga el modelo">
+        Reemplaza `<model_id>` por el valor de la tabla anterior.
+
+        ```bash
+        sudo zylon-cli models download <model_id>
+        ```
+
+      </Step>
+      <Step title="Instala 1.57">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.57.X
+        ```
+      </Step>
+    </Steps>
+
+    Para detalles completos del entorno y troubleshooting, consulta la [guía de actualización online](/es/operator-manual/installation/online#updating-zylon).
+
+  </Tab>
+  <Tab title="Semi-Airgap">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version
+        ```
+      </Step>
+      <Step title="Rehabilita acceso a internet">
+        Permite temporalmente operaciones online en la configuración y aplícalo:
+
+        ```yaml
+        airgap:
+          offlineOperation: false
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+      <Step title="Verifica conectividad">
+        ```bash
+        sudo zylon-cli preflight --network -v
+        ```
+      </Step>
+      <Step title="Descarga el modelo">
+        ```bash
+        sudo zylon-cli models download <model_id>
+        ```
+
+      </Step>
+      <Step title="Instala 1.57">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.57.X
+        ```
+      </Step>
+      <Step title="Vuelve a activar modo offline">
+        ```yaml
+        airgap:
+          offlineOperation: true
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+    </Steps>
+
+    Para red/proxy y más detalle operativo, consulta la [guía de actualización semi-airgap](/es/operator-manual/installation/semi-airgap#updating-zylon).
+
+  </Tab>
+  <Tab title="Airgap Completo">
+
+    Estos pasos se ejecutan en dos máquinas: una con internet para descarga y la máquina destino offline.
+
+    <Steps>
+      <Step title="Máquina online: actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version
+        ```
+      </Step>
+      <Step title="Máquina online: descarga y exporta el modelo">
+        ```bash
+        sudo zylon-cli models download --no-install <model_id>
+        sudo zylon-cli models export
+        ```
+      </Step>
+      <Step title="Máquina online: prepara el paquete de transferencia de la CLI">
+        ```bash
+        sudo tar -czf zylon-update.tar.gz \
+          /usr/local/bin/zylon-cli \
+          /usr/local/bin/zylon-forge-cli
+        ```
+      </Step>
+      <Step title="Máquina online: exporta el bundle de plataforma 1.57">
+        ```bash
+        sudo zylon-cli list-versions
+
+        # Usa --from si conoces tu versión actual (bundle más pequeño)
+        sudo zylon-cli export 1.57.X --from CURRENT_VERSION
+
+        # Si no, exporta un bundle completo
+        sudo zylon-cli export 1.57.X
+        ```
+      </Step>
+      <Step title="Transfiere artefactos a la máquina offline">
+        Transfiere los archivos necesarios:
+
+        - `zylon-models-*.tar`
+        - `zylon-*.tar`
+        - `zylon-update.tar.gz`
+      </Step>
+      <Step title="Máquina offline: extrae el paquete de actualización CLI">
+        ```bash
+        cd /tmp
+        sudo tar -xzf zylon-update.tar.gz -C /
+        sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+        sudo zylon-cli version  # Debería mostrar 2.6.3 o posterior
+        ```
+      </Step>
+      <Step title="Máquina offline: importa e instala">
+        ```bash
+        # Importa el modelo y luego instálalo en runtime offline
+        sudo zylon-cli models import zylon-models-*.tar
+        sudo zylon-cli models download --offline <model_id>
+
+        # Importa el bundle de Zylon, verifica la versión y luego instala
+        sudo zylon-cli import zylon-*.tar
+        sudo zylon-cli list-versions --offline
+        sudo zylon-cli install 1.57.X --airgap
+        ```
+      </Step>
+    </Steps>
+
+    Para bundles diferenciales y transferencia, consulta la [guía de actualización airgap](/es/operator-manual/installation/airgap#updating-zylon).
+
+  </Tab>
+</Tabs>

@@ -21,7 +21,7 @@ curl "https://{BASE_URL}/v1/platform/logs?page=0&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-<Note>`Read.All` permits these read-only endpoints only when the owner role also grants the corresponding Backoffice permission. It does not elevate its owner, including a SuperAdmin token. Workspace-only and gateway-scoped ZylonGPT tokens are not enough for these endpoints; interactive sessions are unaffected by token scopes.</Note>
+<Note>`Read.All` permits these read-only endpoints only when the owner role also grants the corresponding Backoffice permission. It does not elevate its owner, including a SuperAdmin token. Workspace-only tokens are not enough for these endpoints; interactive sessions are unaffected by token scopes.</Note>
 
 See [Token Management](/en/developer-manual/get-started/token-management) for the complete scope model.
 

@@ -7,7 +7,7 @@ Messages es el núcleo de ZylonGPT: envías un historial de conversación y Zylo
 
 ## Requisitos previos
 
-- Un token de API de ZylonGPT asociado a un gateway. Consulta [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
+- Un token de API. Consulta [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
 - El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
 
 `PrivateGPT.Read.All` permite `POST /messages` síncrono, `POST /messages/validate` y los demás endpoints de la [allowlist de solo lectura de ZylonGPT](/es/developer-manual/build-with-zylon/zylon-gpt-api/overview). `Read.All` permite las mismas llamadas solo cuando el token de cuenta incluye `gateway_id`; sin contexto de gateway, no puede llamar a ZylonGPT. El acceso efectivo también depende de los permisos de rol del propietario del token.

@@ -4,13 +4,7 @@ description: Gestión de tokens de API para desarrolladores.
 ---
 
 ## Resumen
-Developer Console es el área del Backoffice para flujos de trabajo de tokens de API.
-
-Los tokens generados en Developer Console son la opción recomendada cuando necesitas un solo token que funcione en:
-
-- Workspace API
-- ZylonGPT API
-- Backoffice API
+Developer Console es el área del Backoffice para gestionar tokens de la API de ZylonGPT asociados a un gateway. Estos tokens llaman a `/api/gpt/v1/*` a través del gateway seleccionado; no son tokens generales para las APIs de Workspace o Backoffice.
 
 Está disponible para:
 
@@ -18,6 +12,8 @@ Está disponible para:
 - cuentas con permisos **Operator** cuando también participan en un gateway
 
 Los tokens de API se crean dentro de gateways y quedan asociados tanto al gateway como a la cuenta que los crea.
+
+La creación de tokens de gateway acepta `PrivateGPT.Read.All` y `PrivateGPT.ReadWrite.All`. Una lista de scopes legacy vacía explícita se convierte en `PrivateGPT.ReadWrite.All`; cualquier otro scope solicitado devuelve `400`. Consulta [Gestión de tokens](/es/developer-manual/get-started/token-management) para ver el modelo de scopes y la allowlist de solo lectura.
 
 <Info>
 Si solo necesitas acceso a Workspace API, puedes usar el flujo de [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management).

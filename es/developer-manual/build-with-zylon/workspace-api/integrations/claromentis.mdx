@@ -5,112 +5,177 @@ description: "Sincroniza contenido de Claromentis al espacio de trabajo."
 
 Las integraciones de Claromentis importan contenido de la base de conocimiento. **Habilita Claromentis a nivel de instancia primero**—consulta la guía del operador: [Configuración de Claromentis](/es/operator-manual/knowledge-base/claromentis).
 
-## Solicitud básica y respuesta
+## Requisitos previos
 
-Crea una integración de Claromentis con `POST /api/v1/app/integration/claromentis`.
+- Un token de Workspace API y el slug de la organización.
+- Un proyecto de destino.
+- Un usuario y una contraseña de Claromentis.
+
+## Crear la integración
+
+Crea la integración como un artefacto de tipo `Integration`. Las credenciales se guardan en `private_props` y no se devuelven en el `ArtifactDTO` público.
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Body | `username` | Si | Usuario de Claromentis. |
-| Body | `password` | Si | Contraseña de Claromentis. |
+| Body | `project_id` | No | Proyecto propietario de la integración. Omítelo para una integración de organización; esa operación requiere `AppAdmin` o superior. |
+| Body | `type` | Si | Debe ser `Integration`. |
+| Body | `source` | Si | Debe ser `Claromentis`. |
+| Body | `name` | Si | Nombre visible de la integración. |
+| Body | `props` | Si | Usa `{}`. |
+| Body | `props.metadata` | No | Metadatos opcionales del proveedor. |
+| Body | `private_props.username` | Si | Usuario de Claromentis. |
+| Body | `private_props.password` | Si | Contraseña de Claromentis. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{username}",
-    "password": "{password}"
+    "project_id": "{projectID}",
+    "type": "Integration",
+    "source": "Claromentis",
+    "name": "Base de conocimiento de Claromentis",
+    "props": {},
+    "private_props": {
+      "username": "{claromentis_username}",
+      "password": "{claromentis_password}"
+    }
   }'
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "clar_3c2d1b4a5f6e7d8c",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "Claromentis",
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Base de conocimiento de Claromentis",
+  "type": "Integration",
+  "source": "Claromentis",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
   "created_at": "2026-02-08T14:05:00Z",
   "updated_at": "2026-02-08T14:05:00Z"
 }
 ```
 </Accordion>
 
-## Actualizar credenciales
+## Actualizar las credenciales
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `integrationID` | Si | Identificador de la integración. |
-| Body | `username` | Si | Usuario de Claromentis. |
-| Body | `password` | Si | Contraseña de Claromentis. |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración. |
+| Body | `private_props.username` | Si | Nuevo usuario de Claromentis. |
+| Body | `private_props.password` | Si | Nueva contraseña de Claromentis. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{username}",
-    "password": "{password}"
+    "private_props": {
+      "username": "{claromentis_username}",
+      "password": "{claromentis_password}"
+    }
   }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "clar_3c2d1b4a5f6e7d8c",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "Claromentis",
-  "created_at": "2026-02-08T14:05:00Z",
-  "updated_at": "2026-02-08T15:10:00Z"
-}
-```
-</Accordion>
+La respuesta es el `ArtifactDTO` actualizado y no incluye `private_props`.
 
-## Obtener configuración
+## Obtener la integración
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "base_url": "https://claromentis.auroralabs.com",
-  "site": "Knowledge Base"
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Base de conocimiento de Claromentis",
+  "type": "Integration",
+  "source": "Claromentis",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
+  "created_by": {
+    "id": "{accountID}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-02-08T14:12:45Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  },
+  "created_at": "2026-02-08T14:05:00Z",
+  "updated_at": "2026-02-08T15:10:00Z",
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
-## Iniciar sincronización
+## Iniciar la ingesta
+
+Indica el proyecto de destino, los IDs de carpeta y los IDs de documento que quieres importar. Envía ambos arrays, aunque uno de ellos esté vacío. La respuesta es un stream SSE.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración Claromentis. |
+| Body | `project_id` | Si | Proyecto de destino. |
+| Body | `folder_ids` | Si | IDs de carpetas que se importarán. |
+| Body | `docs_ids` | Si | IDs de documentos que se importarán. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "folder_ids": ["42"],
+    "docs_ids": ["314"]
+  }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 6,
-  "integration_item_count": 24
-}
+<Accordion title="Ejemplo de stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":0,"integration_item_count":2}
+
+event: SyncEvent
+data: {"type":"sync_progress","artifact_id":"{artifactID}","op":"Added","progress":0.5}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errores y casos límite
 
-- **403**: conector no habilitado o sin permisos.
-- **404**: integración no encontrada.
+- **400**: faltan campos obligatorios o las credenciales no son válidas.
+- **403**: conector no habilitado o permisos insuficientes.
+- **404**: proyecto o artefacto de integración no encontrado.

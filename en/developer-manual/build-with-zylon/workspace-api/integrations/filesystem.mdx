@@ -1,101 +1,152 @@
 ---
 title: "Filesystem Integration"
-description: "Sync files from a shared filesystem into your workspace."
+description: "Create, validate, browse, and ingest filesystem integration artifacts."
 ---
 
-The filesystem integration connects a shared directory to your workspace. **Enable the filesystem connector first** in the operator guide: [Filesystem integration setup](/en/operator-manual/knowledge-base/file-system).
+Filesystem integrations are stored as artifacts. The integration identifier used by these endpoints is the integration artifact ID.
 
-## Basic request and response
+## Prerequisites
 
-Create a filesystem integration with `POST /api/v1/app/integration/filesystem`.
+Enable the filesystem connector first. See [Filesystem integration setup](/en/operator-manual/knowledge-base/file-system).
+
+## Create a filesystem integration
+
+Send credentials only in `private_props`; artifact responses do not return them.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Project that owns the integration artifact. Omit it for an organization integration; that requires `AppAdmin` or higher. |
+| Body | `type` | Yes | Must be `Integration`. |
+| Body | `source` | Yes | Must be `FileSystem`. |
+| Body | `name` | Yes | Display name for the integration. |
+| Body | `props` | Yes | Public provider properties; use an empty object. |
+| Body | `props.metadata` | No | Optional provider metadata. |
+| Body | `private_props.username` | Yes | Filesystem username. |
+| Body | `private_props.password` | Yes | Filesystem password. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{file_system_username}",
-    "password": "{file_system_password}"
+    "project_id": "{projectID}",
+    "type": "Integration",
+    "source": "FileSystem",
+    "name": "Shared filesystem",
+    "props": {},
+    "private_props": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
   }'
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "fs_9f8e7d6c5b4a3c2d",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "FileSystem",
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Shared filesystem",
+  "type": "Integration",
+  "source": "FileSystem",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
   "created_at": "2026-02-08T14:10:00Z",
   "updated_at": "2026-02-08T14:10:00Z"
 }
 ```
 </Accordion>
 
-## Update integration credentials
+## Update filesystem credentials
+
+Only the integration creator or an administrator can update private properties.
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Path | `integrationID` | Yes | Integration identifier. |
-| Body | `username` | Yes | Filesystem username. |
-| Body | `password` | Yes | Filesystem password. |
+| Path | `integrationArtifactID` | Yes | Filesystem integration artifact identifier. |
+| Body | `private_props.username` | Yes | Replacement username. |
+| Body | `private_props.password` | Yes | Replacement password. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{file_system_username}",
-    "password": "{file_system_password}"
+    "private_props": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
   }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "id": "fs_9f8e7d6c5b4a3c2d",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "FileSystem",
-  "created_at": "2026-02-08T14:10:00Z",
-  "updated_at": "2026-02-08T15:02:00Z"
-}
-```
+The response is the updated public artifact object. It does not contain `private_props`.
+
+## Get the integration artifact
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | Filesystem integration artifact identifier. |
 </Accordion>
 
-## Get integration config
-
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Example response">
+The response uses the public artifact shape shown above and includes the persisted default project scope.
+
+<Accordion title="Default scope in the GET response">
 ```json
 {
-  "path": "/mnt/shared/support"
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
 ## Validate credentials
 
+Validation does not create or update an integration artifact. `project_id` may be `null` for an organization-scoped validation; that form requires an organization administrator. Project-scoped validation requires project administrator access.
+
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Query | `username` | Yes | Filesystem username to validate. |
-| Query | `password` | Yes | Filesystem password to validate. |
+| Body | `organization_id` | Yes | Organization identifier selected by `x-org`. |
+| Body | `project_id` | No | Project identifier, or `null` for organization scope. |
+| Body | `credentials.username` | Yes | Filesystem username to validate. |
+| Body | `credentials.password` | Yes | Filesystem password to validate. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username={file_system_username}&password={file_system_password}" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact/integration/filesystem/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "organization_id": "{organizationID}",
+    "project_id": "{projectID}",
+    "credentials": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
+  }'
 ```
 
 <Accordion title="Example response">
@@ -104,17 +155,17 @@ true
 ```
 </Accordion>
 
-## List files
+## List root files
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Query | `integrationId` | Yes | Filesystem integration identifier. |
+| Path | `integrationArtifactID` | Yes | Filesystem integration artifact identifier. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={integrationID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/files" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -122,10 +173,16 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={
 ```json
 [
   {
-    "path": "/mnt/shared/support/weekly-brief.pdf",
+    "id": "/shared/support/weekly-brief.pdf",
+    "parentId": "/shared/support",
     "name": "weekly-brief.pdf",
-    "size": 287104,
-    "updated_at": "2026-02-07T19:22:10Z"
+    "path": "/shared/support/weekly-brief.pdf",
+    "url": "smb://example.com/shared/support/weekly-brief.pdf",
+    "parent": "support",
+    "isFile": true,
+    "isDirectory": false,
+    "isHidden": false,
+    "lastModified": 1770482530000
   }
 ]
 ```
@@ -133,25 +190,40 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={
 
 ## Start an ingest sync
 
+The endpoint returns a server-sent event (SSE) stream.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | Filesystem integration artifact identifier. |
+| Body | `project_id` | Yes | Destination project identifier. |
+| Body | `item_paths` | Yes | File or directory paths to ingest. |
+</Accordion>
+
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "item_paths": ["/shared/support"]
+  }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 12,
-  "integration_item_count": 48
-}
+<Accordion title="Example stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":12,"integration_item_count":48}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errors and edge cases
 
-- **403**: connector not enabled or missing permissions.
-- **400**: invalid credentials.
-- **404**: integration ID not found.
+- **400**: invalid credentials or provider fields.
+- **403**: connector not enabled or missing project, organization, or private-property permission.
+- **404**: integration artifact or project not found, or the artifact is not a filesystem integration.

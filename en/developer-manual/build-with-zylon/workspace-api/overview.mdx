@@ -3,7 +3,7 @@ title: "Overview"
 description: "API for automating and managing Zylon Workspace."
 ---
 
-The Workspace API lets you programmatically manage **everything in Zylon Workspace**—organizations, users, projects, chats, artifacts, integrations, and reporting. Use it to automate admin workflows or integrate Zylon into your internal systems.
+The Workspace API lets you programmatically manage **everything in Zylon Workspace**—organizations, workspace members, projects, chats, artifacts, integrations, and reporting. Use it to automate admin workflows or integrate Zylon into your internal systems.
 
 ## Base URL
 
@@ -28,12 +28,18 @@ Use this in requests:
 -H "x-org: {org_slug}"
 ```
 
+## Read-only token scopes
+
+`Workspace.Read.All` permits Workspace reads and search, including organizations, workspace members, projects, artifacts, threads, interactions, issues, feedback, and integrations. It does not permit Workspace mutations; create, update, delete, join, and other write operations return `403`.
+
+`Read.All` includes the same Workspace read/search permissions and also grants account/token/gateway inventory and Backoffice/meta reads. Its [ZylonGPT read-only allowlist](/en/developer-manual/build-with-zylon/zylon-gpt-api/overview) is usable only when the account token carries `gateway_id`; a `Read.All` token created without gateway context cannot call ZylonGPT. Effective access is always limited by the token owner's role permissions. Multiple scopes combine their grants. See [Token Management](/en/developer-manual/get-started/token-management) for all six scopes and creation rules.
+
 ## Core concepts
 
 | Concept | Meaning |
 | --- | --- |
 | **Account** | The identity record that authenticates into Zylon. One account can belong to multiple organizations. |
-| **User** | The org-specific representation of an account. An account can have **multiple users**, one per organization. |
+| **Workspace member** | The organization-specific membership for an account. An account can have **multiple workspace members**, one per organization. |
 | **Artifact** | A persisted piece of knowledge that can be retrieved in chats and tools. |
 
 This model supports multi‑org setups where the same person can be a member of multiple workspaces with different roles.
@@ -68,8 +74,8 @@ Use `page`, `page_size`, `after`, `before`, `first`, `last`, and `total_count` w
     SSO login flows and workspace login/auth callbacks.
   </Card>
 
-  <Card title="Users" icon="users" href="/en/developer-manual/build-with-zylon/workspace-api/users/user">
-    Create, update, and manage user access and org membership.
+  <Card title="Workspace Members" icon="users" href="/en/developer-manual/build-with-zylon/workspace-api/users/user">
+    Create, update, and manage workspace-member access and organization membership.
   </Card>
 
   <Card title="Projects" icon="folder" href="/en/developer-manual/build-with-zylon/workspace-api/projects/project">
@@ -82,10 +88,6 @@ Use `page`, `page_size`, `after`, `before`, `first`, `last`, and `total_count` w
 
   <Card title="Content" icon="file" href="/en/developer-manual/build-with-zylon/workspace-api/content/artifacts">
     Manage artifacts and integrations like Confluence, SharePoint, Filesystem, and Claromentis.
-  </Card>
-
-  <Card title="Notes" icon="note-sticky" href="/en/developer-manual/build-with-zylon/workspace-api/notes/notes">
-    Create and manage account-owned notes, optionally linked to a project and artifacts.
   </Card>
 </CardGroup>
 

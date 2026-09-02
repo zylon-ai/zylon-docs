@@ -5,97 +5,166 @@ description: "Sincroniza archivos desde un sistema de archivos compartido al esp
 
 La integración de Filesystem conecta un directorio compartido con el espacio de trabajo. **Habilita el conector primero** en la guía del operador: [Configuración de Filesystem](/es/operator-manual/knowledge-base/file-system).
 
-## Solicitud básica y respuesta
+## Requisitos previos
 
-Crea una integración de Filesystem con `POST /api/v1/app/integration/filesystem`.
+- Un token de Workspace API y el slug de la organización.
+- Un proyecto de destino.
+- Las credenciales de Filesystem configuradas para la instancia.
+
+## Crear la integración
+
+Crea la integración como un artefacto de tipo `Integration`. Las credenciales se envían en `private_props` y no se devuelven en las respuestas públicas.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Proyecto propietario de la integración. Omítelo para una integración de organización; esa operación requiere `AppAdmin` o superior. |
+| Body | `type` | Si | Debe ser `Integration`. |
+| Body | `source` | Si | Debe ser `FileSystem`. |
+| Body | `name` | Si | Nombre visible de la integración. |
+| Body | `props` | Si | Usa `{}`. |
+| Body | `props.metadata` | No | Metadatos opcionales del proveedor. |
+| Body | `private_props.username` | Si | Usuario de Filesystem. |
+| Body | `private_props.password` | Si | Contraseña de Filesystem. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem" \
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{file_system_username}",
-    "password": "{file_system_password}"
+    "project_id": "{projectID}",
+    "type": "Integration",
+    "source": "FileSystem",
+    "name": "Filesystem compartido",
+    "props": {},
+    "private_props": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
   }'
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "fs_9f8e7d6c5b4a3c2d",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "FileSystem",
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Filesystem compartido",
+  "type": "Integration",
+  "source": "FileSystem",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
   "created_at": "2026-02-08T14:10:00Z",
   "updated_at": "2026-02-08T14:10:00Z"
 }
 ```
 </Accordion>
 
-## Actualizar credenciales
+## Actualizar las credenciales
+
+Usa la operación general de actualización de artefactos. Envía solo los campos que quieras sustituir.
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `integrationID` | Si | Identificador de la integración. |
-| Body | `username` | Si | Usuario de Filesystem. |
-| Body | `password` | Si | Contraseña de Filesystem. |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración. |
+| Body | `private_props.username` | Si | Nuevo usuario de Filesystem. |
+| Body | `private_props.password` | Si | Nueva contraseña de Filesystem. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{file_system_username}",
-    "password": "{file_system_password}"
+    "private_props": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
   }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "fs_9f8e7d6c5b4a3c2d",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "FileSystem",
-  "created_at": "2026-02-08T14:10:00Z",
-  "updated_at": "2026-02-08T15:02:00Z"
-}
-```
-</Accordion>
+La respuesta es el `ArtifactDTO` actualizado y nunca incluye `private_props`.
 
-## Obtener configuración
+## Obtener la integración
+
+Usa el endpoint público del artefacto. No hay que recuperar las credenciales para consultar o iniciar una ingesta.
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "path": "/mnt/shared/support"
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Filesystem compartido",
+  "type": "Integration",
+  "source": "FileSystem",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
+  "created_by": {
+    "id": "{accountID}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-02-08T14:12:45Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  },
+  "created_at": "2026-02-08T14:10:00Z",
+  "updated_at": "2026-02-08T15:02:00Z",
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
 ## Validar credenciales
 
+La validación acepta la organización, un proyecto opcional y las credenciales en el cuerpo. Si omites `project_id`, necesitas el rol `AppAdmin` o superior; si lo envías, necesitas como mínimo el rol `Admin` del proyecto.
+
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Query | `username` | Si | Usuario de Filesystem a validar. |
-| Query | `password` | Si | Contraseña de Filesystem a validar. |
+| Body | `organization_id` | Si | ID de la organización seleccionada mediante `x-org`. |
+| Body | `project_id` | No | Proyecto donde se usarán las credenciales. |
+| Body | `credentials.username` | Si | Usuario de Filesystem. |
+| Body | `credentials.password` | Si | Contraseña de Filesystem. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/validate?username={file_system_username}&password={file_system_password}" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact/integration/filesystem/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "organization_id": "{organizationID}",
+    "project_id": "{projectID}",
+    "credentials": {
+      "username": "{file_system_username}",
+      "password": "{file_system_password}"
+    }
+  }'
 ```
 
 <Accordion title="Ejemplo de respuesta">
@@ -109,12 +178,12 @@ true
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Query | `integrationId` | Si | Identificador de la integración Filesystem. |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración Filesystem. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={integrationID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/files" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -122,36 +191,63 @@ curl "https://{BASE_URL}/api/v1/app/integration/filesystem/files?integrationId={
 ```json
 [
   {
-    "path": "/mnt/shared/support/weekly-brief.pdf",
+    "id": "/support/weekly-brief.pdf",
+    "parentId": "/support",
     "name": "weekly-brief.pdf",
-    "size": 287104,
-    "updated_at": "2026-02-07T19:22:10Z"
+    "path": "/support/weekly-brief.pdf",
+    "url": "file:///support/weekly-brief.pdf",
+    "parent": "support",
+    "isFile": true,
+    "isDirectory": false,
+    "isHidden": false,
+    "lastModified": 1770488530000
   }
 ]
 ```
 </Accordion>
 
-## Iniciar sincronización
+## Iniciar la ingesta
+
+Indica el proyecto de destino y las rutas que quieres importar. La respuesta es un stream de Server-Sent Events (SSE).
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración Filesystem. |
+| Body | `project_id` | Si | Proyecto de destino. |
+| Body | `item_paths` | Si | Rutas de archivos o directorios que se importarán. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/filesystem/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "item_paths": [
+      "/support/weekly-brief.pdf",
+      "/support/runbooks"
+    ]
+  }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 12,
-  "integration_item_count": 48
-}
+<Accordion title="Ejemplo de stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":0,"integration_item_count":2}
+
+event: SyncEvent
+data: {"type":"sync_progress","artifact_id":"{artifactID}","op":"Added","progress":0.5}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errores y casos límite
 
-- **403**: conector no habilitado o sin permisos.
-- **400**: credenciales inválidas.
-- **404**: integración no encontrada.
+- **400**: faltan campos obligatorios o `project_id` no es válido.
+- **403**: conector no habilitado o permisos insuficientes.
+- **404**: organización, proyecto o artefacto de integración no encontrado.

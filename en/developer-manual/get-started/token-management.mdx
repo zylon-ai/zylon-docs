@@ -1,6 +1,6 @@
 ---
 title: "Token Management"
-description: "Choose the right token flow: Backoffice cross-API token or Workspace-only token."
+description: "Choose the right token flow and API token scopes."
 ---
 
 Use this page to pick the right token flow for your integration.
@@ -71,7 +71,7 @@ Use this page to pick the right token flow for your integration.
   </Tab>
 
   <Tab title="Gateway Token (ZylonGPT)">
-    This flow grants access to the **ZylonGPT API** under `/api/gpt/v1/*`, as well as Workspace and Backoffice APIs.
+    This flow grants gateway-scoped access to the **ZylonGPT API** under `/api/gpt/v1/*`. It does not create a token for Workspace or Backoffice APIs.
 
     ### Create a Gateway token
 
@@ -98,3 +98,28 @@ Use this page to pick the right token flow for your integration.
     </Warning>
   </Tab>
 </Tabs>
+
+## API token scopes
+
+Account token creation accepts these six serialized scope values:
+
+| Scope | Access |
+| --- | --- |
+| `Read.All` | Account, token, gateway, Backoffice/meta, Workspace read/search, and the ZylonGPT read-only allowlist when the token carries `gateway_id`. |
+| `ReadWrite.All` | Read and write access across the APIs, subject to the owner account's roles. |
+| `Workspace.Read.All` | Workspace reads and search; Workspace mutations return `403`. |
+| `Workspace.ReadWrite.All` | Workspace read and write operations. |
+| `PrivateGPT.Read.All` | Only the ZylonGPT read-only allowlist for the selected gateway. |
+| `PrivateGPT.ReadWrite.All` | ZylonGPT read and write operations for the selected gateway. |
+
+When a token has multiple scopes, their grants are combined. The effective permissions are then limited to the permissions of the account and role that owns the token. A broad scope cannot elevate its owner, and a read-only API token remains restricted even when its owner is a SuperAdmin. These scope restrictions apply to API tokens only; interactive sessions are unchanged.
+
+<Note>
+  When an account token request omits `scopes`, it defaults to `Workspace.ReadWrite.All`. Sending an explicit empty `scopes` array returns `400`. Both `PrivateGPT.Read.All` and `PrivateGPT.ReadWrite.All` require `gateway_id`.
+</Note>
+
+`Read.All` does not require `gateway_id` at creation. Without that gateway context, the token can use its other read grants but cannot call ZylonGPT.
+
+Gateway token creation accepts only `PrivateGPT.Read.All` and `PrivateGPT.ReadWrite.All`; requesting another scope returns `400`. For backward compatibility, the gateway token endpoint maps an explicit empty legacy scope list to `PrivateGPT.ReadWrite.All`.
+
+For the ZylonGPT read-only endpoint list and read-write requirements, see the [ZylonGPT API overview](/en/developer-manual/build-with-zylon/zylon-gpt-api/overview).

@@ -1,116 +1,164 @@
 ---
 title: "Claromentis Integration"
-description: "Sync Claromentis content into your workspace."
+description: "Create and ingest Claromentis integration artifacts."
 ---
 
-Claromentis integrations import knowledge base content. **Enable Claromentis at the instance level first**—see the operator guide: [Claromentis integration setup](/en/operator-manual/knowledge-base/claromentis).
+Claromentis integrations are stored as artifacts. The integration identifier used by these endpoints is the integration artifact ID.
 
-## Basic request and response
+## Prerequisites
 
-Create a Claromentis integration with `POST /api/v1/app/integration/claromentis`.
+Enable Claromentis at the instance level first. See [Claromentis integration setup](/en/operator-manual/knowledge-base/claromentis).
+
+## Create a Claromentis integration
+
+Send credentials only in `private_props`; artifact responses do not return them.
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Body | `username` | Yes | Claromentis username. |
-| Body | `password` | Yes | Claromentis password. |
+| Body | `project_id` | No | Project that owns the integration artifact. Omit it for an organization integration; that requires `AppAdmin` or higher. |
+| Body | `type` | Yes | Must be `Integration`. |
+| Body | `source` | Yes | Must be `Claromentis`. |
+| Body | `name` | Yes | Display name for the integration. |
+| Body | `props` | Yes | Public provider properties; use an empty object. |
+| Body | `props.metadata` | No | Optional provider metadata. |
+| Body | `private_props.username` | Yes | Claromentis username. |
+| Body | `private_props.password` | Yes | Claromentis password. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis" \
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{username}",
-    "password": "{password}"
+    "project_id": "{projectID}",
+    "type": "Integration",
+    "source": "Claromentis",
+    "name": "Claromentis",
+    "props": {},
+    "private_props": {
+      "username": "{claromentis_username}",
+      "password": "{claromentis_password}"
+    }
   }'
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "clar_3c2d1b4a5f6e7d8c",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "Claromentis",
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Claromentis",
+  "type": "Integration",
+  "source": "Claromentis",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
   "created_at": "2026-02-08T14:05:00Z",
   "updated_at": "2026-02-08T14:05:00Z"
 }
 ```
 </Accordion>
 
-## Update integration credentials
+## Update Claromentis credentials
+
+Only the integration creator or an administrator can update private properties.
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Path | `integrationID` | Yes | Integration identifier. |
-| Body | `username` | Yes | Claromentis username. |
-| Body | `password` | Yes | Claromentis password. |
+| Path | `integrationArtifactID` | Yes | Claromentis integration artifact identifier. |
+| Body | `private_props.username` | Yes | Replacement username. |
+| Body | `private_props.password` | Yes | Replacement password. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{username}",
-    "password": "{password}"
+    "private_props": {
+      "username": "{claromentis_username}",
+      "password": "{claromentis_password}"
+    }
   }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "id": "clar_3c2d1b4a5f6e7d8c",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "Claromentis",
-  "created_at": "2026-02-08T14:05:00Z",
-  "updated_at": "2026-02-08T15:10:00Z"
-}
-```
+The response is the updated public artifact object. It does not contain `private_props`.
+
+## Get the integration artifact
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | Claromentis integration artifact identifier. |
 </Accordion>
 
-## Get integration config
-
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Example response">
+The response uses the public artifact shape shown above and includes the persisted default project scope.
+
+<Accordion title="Default scope in the GET response">
 ```json
 {
-  "base_url": "https://claromentis.auroralabs.com",
-  "site": "Knowledge Base"
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
 ## Start an ingest sync
 
+The endpoint returns a server-sent event (SSE) stream.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | Claromentis integration artifact identifier. |
+| Body | `project_id` | Yes | Destination project identifier. |
+| Body | `folder_ids` | Yes | Claromentis folder identifiers to ingest. |
+| Body | `docs_ids` | Yes | Claromentis document identifiers to ingest. |
+</Accordion>
+
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/claromentis/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "folder_ids": ["knowledge-base"],
+    "docs_ids": ["getting-started"]
+  }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 6,
-  "integration_item_count": 24
-}
+<Accordion title="Example stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":6,"integration_item_count":24}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errors and edge cases
 
-- **403**: connector not enabled or missing permissions.
-- **404**: integration ID not found.
+- **400**: invalid provider fields or ingest parameters.
+- **403**: connector not enabled, missing permission, or caller cannot update private properties.
+- **404**: integration artifact or project not found, or they do not belong together.

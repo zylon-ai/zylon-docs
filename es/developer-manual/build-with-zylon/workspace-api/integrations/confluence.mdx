@@ -5,124 +5,181 @@ description: "Lee y sincroniza contenido de Confluence en el espacio de trabajo.
 
 Las integraciones de Confluence importan páginas y espacios para usarlos como artefactos. **Debes habilitar Confluence a nivel de instancia primero**—consulta la guía del operador: [Configuración de Confluence](/es/operator-manual/knowledge-base/confluence).
 
-Si la integración requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+Para crear o volver a autenticar una integración de Confluence Cloud, usa el flujo descrito en [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid). Ese flujo crea o actualiza el artefacto de integración sin exponer los tokens.
 
-## Solicitud básica y respuesta
+## Obtener la integración
 
-Obtén la configuración con `GET /api/v1/app/integration/confluence/{integrationId}/config`.
-
-```bash
-curl "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "space_key": "SUP",
-  "base_url": "https://confluence.auroralabs.com"
-}
-```
-</Accordion>
-
-## Iniciar sincronización
-
-```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json" \
-```
-
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 42,
-  "integration_item_count": 120
-}
-```
-</Accordion>
-
-## Endpoints ConfluenceLocal
-
-Usa estos endpoints cuando tu despliegue utilice el proveedor `confluencelocal` con credenciales basic-auth.
-
-### Crear una integración ConfluenceLocal
-
-```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "{user}",
-    "password": "{password}"
-  }'
-```
-
-### Actualizar una integración ConfluenceLocal
+Consulta la configuración pública con el endpoint general de artefactos. La respuesta no incluye `private_props` ni tokens OAuth.
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `integrationID` | Si | Identificador de la integración. |
-| Body | `username` | Si | Usuario de ConfluenceLocal. |
-| Body | `password` | Si | Contraseña de ConfluenceLocal. |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración Confluence. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}" \
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "Confluence de soporte",
+  "type": "Integration",
+  "source": "Confluence",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
+  "created_by": {
+    "id": "{accountID}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-02-08T14:12:45Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  },
+  "created_at": "2026-03-01T11:00:00Z",
+  "updated_at": "2026-03-01T11:00:00Z",
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
+}
+```
+</Accordion>
+
+## Iniciar la ingesta
+
+Indica el proyecto de destino y los espacios que quieres importar. Esta operación sirve para integraciones de Confluence Cloud y ConfluenceLocal. La respuesta es un stream de Server-Sent Events (SSE).
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración. |
+| Body | `project_id` | Si | Proyecto de destino. |
+| Body | `space_ids` | Si | IDs de los espacios de Confluence que se importarán. |
+</Accordion>
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "space_ids": ["{spaceID}"]
+  }'
+```
+
+<Accordion title="Ejemplo de stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":0,"integration_item_count":120}
+
+event: SyncEvent
+data: {"type":"sync_progress","artifact_id":"{artifactID}","op":"Added","progress":0.42}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
+```
+</Accordion>
+
+## ConfluenceLocal con autenticación básica
+
+Los despliegues que usan el proveedor local guardan un artefacto con `source: ConfluenceLocalLegacy`. Las credenciales viajan en `private_props` y nunca se devuelven en respuestas públicas.
+
+### Crear una integración ConfluenceLocal
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Proyecto propietario de la integración. Omítelo para una integración de organización; esa operación requiere `AppAdmin` o superior. |
+| Body | `type` | Si | Debe ser `Integration`. |
+| Body | `source` | Si | Debe ser `ConfluenceLocalLegacy`. |
+| Body | `name` | Si | Nombre visible de la integración. |
+| Body | `props` | Si | Usa `{}`. |
+| Body | `props.metadata` | No | Metadatos opcionales del proveedor. |
+| Body | `private_props.username` | Si | Usuario de ConfluenceLocal. |
+| Body | `private_props.password` | Si | Contraseña de ConfluenceLocal. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "{user}",
-    "password": "{password}"
+    "project_id": "{projectID}",
+    "type": "Integration",
+    "source": "ConfluenceLocalLegacy",
+    "name": "ConfluenceLocal de soporte",
+    "props": {},
+    "private_props": {
+      "username": "{confluence_username}",
+      "password": "{confluence_password}"
+    }
   }'
 ```
 
-### Obtener la configuración ConfluenceLocal
-
-```bash
-curl "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-### Iniciar ingest de ConfluenceLocal
-
-```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluencelocallegacy/{integrationID}/ingest" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json" \
-```
-
-<Accordion title="Ejemplo de respuesta de integración">
+<Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "int_6d9a2b4c5e7f",
-  "user_id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "type": "ConfluenceLocalLegacy",
-  "provider_data": {
-    "username": "confluence_service"
-  },
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "ConfluenceLocal de soporte",
+  "type": "Integration",
+  "source": "ConfluenceLocalLegacy",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
   "created_at": "2026-03-01T11:00:00Z",
   "updated_at": "2026-03-01T11:00:00Z"
 }
 ```
 </Accordion>
 
-## Errores comunes
+### Actualizar las credenciales de ConfluenceLocal
 
-- Usar endpoints de Confluence con OAuth sobre IDs de integración `confluencelocal`.
-- Omitir campos JSON (`username`, `password`) en crear/actualizar.
-- Lanzar la ingestión antes de guardar la configuración de la integración.
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración ConfluenceLocal. |
+| Body | `private_props.username` | Si | Nuevo usuario de ConfluenceLocal. |
+| Body | `private_props.password` | Si | Nueva contraseña de ConfluenceLocal. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "private_props": {
+      "username": "{confluence_username}",
+      "password": "{confluence_password}"
+    }
+  }'
+```
+
+La respuesta es el `ArtifactDTO` actualizado. Usa el mismo `GET /api/v1/app/artifact/{integrationArtifactID}` para consultar sus campos públicos.
 
 ## Errores y casos límite
 
-- **403**: integración no habilitada o sin permisos.
-- **404**: integración no encontrada.
+- **400**: faltan `project_id`, `space_ids` o las credenciales obligatorias.
+- **403**: integración no habilitada o permisos insuficientes.
+- **404**: proyecto o artefacto de integración no encontrado.

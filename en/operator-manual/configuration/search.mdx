@@ -1,50 +1,78 @@
 ---
-title: "Search"
+title: "Omnisearch"
+description: "Configure Omnisearch languages and query length."
 ---
 
-To get a better experience during search it's recommended to enable what are the languages you plan to use in Zylon for content (Chats, documents, AI Documents), the default language is `english` but multiple languages can be enabled.
+Omnisearch combines keyword and semantic search across projects, chats, artifacts, and artifact content.
+
+## Configuration
+
+```yaml
+omnisearch:
+  languages: "en,es,de"
+  maxQueryCharacters: 80
+```
+
+| Key | Backend default | Values | Description |
+| --- | --- | --- | --- |
+| `omnisearch.languages` | `en,es,de` | Comma-separated supported language codes | Selects the PostgreSQL text-search dictionaries used to index and rank keyword matches. |
+| `omnisearch.maxQueryCharacters` | `80` | Integer greater than or equal to `3` | Sets the maximum length accepted for a search query after leading and trailing whitespace is removed. |
+
+In standard Zylon deployment values, `languages.keywordSearch` supplies `omnisearch.languages`:
 
 ```yaml
 languages:
-  keywordSearch: ['en', 'es', 'de']
+  keywordSearch: ["en", "es", "de"]
 ```
 
+The standard deployment default is `["en"]`, which overrides the backend fallback.
 
-The list of available languages is the following:
+After changing the configuration, run `sudo zylon-cli sync`.
 
-| Language   | ISO 639-1 Code |
-| ---------- | -------------- |
-| Arabic     | ar             |
-| Armenian   | hy             |
-| Basque     | eu             |
-| Catalan    | ca             |
-| Danish     | da             |
-| Dutch      | nl             |
-| English    | en             |
-| Finnish    | fi             |
-| French     | fr             |
-| German     | de             |
-| Greek      | el             |
-| Hindi      | hi             |
-| Hungarian  | hu             |
-| Indonesian | id             |
-| Irish      | ga             |
-| Italian    | it             |
-| Lithuanian | lt             |
-| Nepali     | ne             |
-| Norwegian  | no             |
-| Portuguese | pt             |
-| Romanian   | ro             |
-| Russian    | ru             |
-| Serbian    | sr             |
-| Spanish    | es             |
-| Swedish    | sv             |
-| Tamil      | ta             |
-| Turkish    | tr             |
-| Yiddish    | yi             |
+## How language configuration works
 
-<Tip>
-  Check if your desired language is supported by [ISO-639-1](https://localizely.com/iso-639-1-list/).
-</Tip>
+`omnisearch.languages` affects keyword search only. For every configured language, Zylon builds and queries a language-specific PostgreSQL full-text index. Configure every language used by your projects, chats, and documents so stemming and keyword ranking use the appropriate dictionaries.
 
-You can enable/disable languages in any moment, just change the configuration and restart Zylon
+Semantic artifact-content search follows a separate path: it sends the query to PrivateGPT and uses the enabled embedding model. Therefore, semantic language coverage depends on that embedding model, not on `omnisearch.languages` or the multimodal chat model.
+
+For multilingual semantic retrieval, enable the multilingual capability for your selected AI preset:
+
+```yaml
+ai:
+  preset: "baseline-48g,capabilities.multilingual"
+```
+
+This capability selects the `multilingual-e5-large` embedding model. See [AI preset capabilities](/en/operator-manual/ai-presets/configuration).
+
+<Warning>
+  Do not leave `omnisearch.languages` empty. Omnisearch rejects requests when no keyword-search language is configured. Unsupported language codes also cause an error.
+</Warning>
+
+### Supported keyword-search languages
+
+| Language | Code | Language | Code |
+| --- | --- | --- | --- |
+| Arabic | `ar` | Armenian | `hy` |
+| Basque | `eu` | Catalan | `ca` |
+| Danish | `da` | Dutch | `nl` |
+| English | `en` | Finnish | `fi` |
+| French | `fr` | German | `de` |
+| Greek | `el` | Hindi | `hi` |
+| Hungarian | `hu` | Indonesian | `id` |
+| Irish | `ga` | Italian | `it` |
+| Lithuanian | `lt` | Nepali | `ne` |
+| Norwegian | `no` | Portuguese | `pt` |
+| Romanian | `ro` | Russian | `ru` |
+| Serbian | `sr` | Spanish | `es` |
+| Swedish | `sv` | Tamil | `ta` |
+| Turkish | `tr` | Yiddish | `yi` |
+
+Language codes are case-insensitive. Duplicate entries are removed.
+
+## Query-length behavior
+
+Search queries must contain at least three characters. `omnisearch.maxQueryCharacters` changes the upper limit enforced by the backend and the Workspace API.
+
+<Note>
+  The Workspace search field currently accepts at most 80 characters. Increasing `omnisearch.maxQueryCharacters` allows longer API queries but does not increase that Workspace UI limit.
+</Note>

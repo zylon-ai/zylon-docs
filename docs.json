@@ -368,6 +368,7 @@
                       "en/operator-manual/configuration/features/feat-audit",
                       "en/operator-manual/configuration/features/log-delivery-storage",
                       "en/operator-manual/configuration/features/feat-project-custom-instructions",
+                      "en/operator-manual/configuration/search",
                       "en/operator-manual/configuration/features/feat-webextract",
                       "en/operator-manual/configuration/features/feat-websearch",
                       "en/operator-manual/configuration/features/feat-multimodal"
@@ -392,7 +393,6 @@
                           "en/operator-manual/configuration/observability/external-grafana-dashboard"
                         ]
                       },
-                      "en/operator-manual/configuration/search",
                       "en/operator-manual/configuration/performance",
                       "en/operator-manual/configuration/whitelabel",
                       "en/operator-manual/configuration/n8n"
@@ -766,6 +766,7 @@
                       "es/operator-manual/configuration/features/feat-audit",
                       "es/operator-manual/configuration/features/log-delivery-storage",
                       "es/operator-manual/configuration/features/feat-project-custom-instructions",
+                      "es/operator-manual/configuration/search",
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",
                       "es/operator-manual/configuration/features/feat-multimodal"
@@ -790,7 +791,6 @@
                           "es/operator-manual/configuration/observability/external-grafana-dashboard"
                         ]
                       },
-                      "es/operator-manual/configuration/search",
                       "es/operator-manual/configuration/performance",
                       "es/operator-manual/configuration/whitelabel",
                       "es/operator-manual/configuration/n8n"

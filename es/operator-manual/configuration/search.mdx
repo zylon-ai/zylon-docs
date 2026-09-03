@@ -8,32 +8,25 @@ Omnisearch combina búsqueda por palabras clave y búsqueda semántica en proyec
 ## Configuración
 
 ```yaml
+languages:
+  keywordSearch: ["en", "es", "de"]
+
 omnisearch:
-  languages: "en,es,de"
   maxQueryCharacters: 80
 ```
 
-| Clave | Valor predeterminado del backend | Valores | Descripción |
+| Clave | Valor predeterminado | Valores | Descripción |
 | --- | --- | --- | --- |
-| `omnisearch.languages` | `en,es,de` | Códigos de idioma compatibles separados por comas | Selecciona los diccionarios de búsqueda de texto de PostgreSQL usados para indexar y ordenar las coincidencias por palabras clave. |
+| `languages.keywordSearch` | `["en"]` | Lista de códigos de idioma compatibles | Selecciona los diccionarios de búsqueda de texto de PostgreSQL usados para indexar y ordenar las coincidencias por palabras clave. |
 | `omnisearch.maxQueryCharacters` | `80` | Entero mayor o igual que `3` | Establece la longitud máxima admitida para una consulta después de eliminar los espacios iniciales y finales. |
-
-En los valores de despliegue estándar de Zylon, `languages.keywordSearch` proporciona el valor de `omnisearch.languages`:
-
-```yaml
-languages:
-  keywordSearch: ["en", "es", "de"]
-```
-
-El valor predeterminado del despliegue estándar es `["en"]`, que sustituye al valor por defecto del backend.
 
 Después de cambiar la configuración, ejecuta `sudo zylon-cli sync`.
 
 ## Cómo funciona la configuración de idiomas
 
-`omnisearch.languages` solo afecta a la búsqueda por palabras clave. Para cada idioma configurado, Zylon crea y consulta un índice de texto completo de PostgreSQL específico del idioma. Configura todos los idiomas usados en tus proyectos, chats y documentos para que la lematización y el ranking por palabras clave utilicen los diccionarios adecuados.
+`languages.keywordSearch` solo afecta a la búsqueda por palabras clave. Para cada idioma configurado, Zylon crea y consulta un índice de texto completo de PostgreSQL específico del idioma. Configura todos los idiomas usados en tus proyectos, chats y documentos para que la lematización y el ranking por palabras clave utilicen los diccionarios adecuados.
 
-La búsqueda semántica en el contenido de artefactos sigue una ruta distinta: envía la consulta a PrivateGPT y usa el modelo de embeddings habilitado. Por tanto, la cobertura semántica de idiomas depende de ese modelo de embeddings, no de `omnisearch.languages` ni del modelo de chat multimodal.
+La búsqueda semántica en el contenido de artefactos sigue una ruta distinta: envía la consulta a PrivateGPT y usa el modelo de embeddings habilitado. Por tanto, la cobertura semántica de idiomas depende de ese modelo de embeddings, no de `languages.keywordSearch` ni del modelo de chat multimodal.
 
 Para la recuperación semántica multilingüe, habilita la capacidad multilingüe en el preset de IA seleccionado:
 
@@ -45,7 +38,7 @@ ai:
 Esta capacidad selecciona el modelo de embeddings `multilingual-e5-large`. Consulta [capacidades de los presets de IA](/es/operator-manual/ai-presets/configuration).
 
 <Warning>
-  No dejes `omnisearch.languages` vacío. Omnisearch rechaza las solicitudes cuando no hay ningún idioma de búsqueda por palabras clave configurado. Los códigos de idioma no compatibles también provocan un error.
+  No dejes `languages.keywordSearch` vacío. Omnisearch rechaza las solicitudes cuando no hay ningún idioma de búsqueda por palabras clave configurado. Los códigos de idioma no compatibles también provocan un error.
 </Warning>
 
 ### Idiomas compatibles con la búsqueda por palabras clave
@@ -71,8 +64,8 @@ Los códigos de idioma no distinguen mayúsculas de minúsculas. Las entradas du
 
 ## Comportamiento de la longitud de consulta
 
-Las consultas deben contener al menos tres caracteres. `omnisearch.maxQueryCharacters` cambia el límite superior aplicado por el backend y la API de Workspace.
+Las consultas deben contener al menos tres caracteres. `omnisearch.maxQueryCharacters` cambia el límite superior aplicado por el backend, la API de Workspace y el campo de búsqueda de Workspace.
 
 <Note>
-  El campo de búsqueda de Workspace admite actualmente un máximo de 80 caracteres. Aumentar `omnisearch.maxQueryCharacters` permite consultas más largas mediante la API, pero no aumenta ese límite de la interfaz.
+  Mantén el valor predeterminado de `80` salvo que los usuarios necesiten consultas más largas. El mismo límite configurado se aplica a las solicitudes de API y al campo de búsqueda de Workspace.
 </Note>

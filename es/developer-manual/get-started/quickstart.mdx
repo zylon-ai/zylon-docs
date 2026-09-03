@@ -112,7 +112,7 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
     ```json
     {
       "id": "acct_6c8a1f3b2d4e5f7a",
-      "email": "sasha@auroralabs.com",
+      "email": "sasha@example.com",
       "provider": "Credentials",
       "roles": ["AppAdmin"]
     }
@@ -146,16 +146,20 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
 
   <Step title="Sube un artefacto">
     ```bash
-    curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
+    printf 'Q1 support summary.\n' > q1-support-summary.txt
+
+    curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "x-org: {org_slug}" \
+      -F 'project_id={projectID}' \
       -F 'type=Document' \
       -F 'name=Q1 Support Summary' \
       -F 'props={
         "content_type":"text/plain",
-        "file_name":"q1-support-summary.txt"
+        "file_name":"q1-support-summary.txt",
+        "content_length":20
       };type=application/json' \
-      -F 'fileData=@./q1-support-summary.txt;type=text/plain'
+      -F 'file_data=@./q1-support-summary.txt;type=text/plain'
     ```
 
     Ejemplo de respuesta:
@@ -166,9 +170,10 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
       "type": "Document",
-      "state": "Ready",
-      "ingest_status": "Done",
-      "has_content": true
+      "source": "User",
+      "state": "Published",
+      "ingest_status": "NotStarted",
+      "keep_file_after_ingestion": true
     }
     ```
   </Step>
@@ -235,7 +240,7 @@ Las solicitudes de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` 
 
 ## Solución de problemas
 
-- **401/403**: token inválido, caducado o emitido para el flujo incorrecto. Usa [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management) para acceso solo a Workspace, o [Backoffice Developer Console](/es/developer-manual/get-started/developer-console) para un token multi-API.
+- **401/403**: token inválido, caducado, sin el scope necesario o emitido para el flujo incorrecto. Usa [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management) para acceder a Workspace, o [Backoffice Developer Console](/es/developer-manual/get-started/developer-console) para un token que funcione en las APIs de Workspace, ZylonGPT y Backoffice.
 - **404**: revisa tu base URL. Para ZylonGPT usa `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: usa `"model": "default"`.
 - **405**: método incorrecto. `/messages` es `POST`.

@@ -13,15 +13,17 @@ These endpoints are read-only. The documented API exposes `GET` operations for l
 
 | Requirement | Value |
 | --- | --- |
-| Authentication | Account token or account session |
-| Role | At least the `operator` role |
+| Authentication | Account token with `Read.All` or `ReadWrite.All`, or an account session |
+| Role | The token or session owner must have at least the `operator` role |
 
 ```bash
 curl "https://{BASE_URL}/v1/platform/logs?page=0&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-<Note>Workspace-only tokens are not enough for these endpoints.</Note>
+<Note>`Read.All` permits these read-only endpoints only when the owner role also grants the corresponding Backoffice permission. It does not elevate its owner, including a SuperAdmin token. Workspace-only tokens are not enough for these endpoints; interactive sessions are unaffected by token scopes.</Note>
+
+See [Token Management](/en/developer-manual/get-started/token-management) for the complete scope model.
 
 For operator-facing guidance on governance, evidence preservation, and SIEM delivery, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage).
 
@@ -128,6 +130,7 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `ws.thread.delete` | Workspace | Chat deleted. |
 | `ws.interaction.create` | Workspace | Chat message or response created. |
 | `ws.org.update` | Workspace | Organization settings updated. |
+| `ws.member.create` | Workspace | Workspace member created. |
 | `ws.user.create` | Workspace | User created. |
 | `ws.user.enable` | Workspace | User enabled. |
 | `ws.user.disable` | Workspace | User disabled. |
@@ -169,7 +172,7 @@ Each item returned by the log list endpoints is a `ZylonLogDTO`.
 | `event` | Event family. |
 | `action` | Action name when available. |
 | `organization_id` | Organization context when available. |
-| `user_id` | Workspace user context when available. |
+| `ws_member_id` | Workspace-member context when available. |
 | `account_id`, `account_email` | Account context when available. |
 | `token_id` | API token context when available. |
 | `start_timestamp`, `end_timestamp` | ISO timestamps. |
@@ -212,7 +215,7 @@ curl "https://{BASE_URL}/v1/platform/logs?event=zylon.workspace&action=ws.projec
       "event": "zylon.workspace",
       "action": "ws.project.create",
       "organization_id": "01985a4d-3c21-7000-8003-0e10dd81d901",
-      "user_id": "01985a4e-9811-7000-8004-d8f56e017c11",
+      "ws_member_id": "01985a4e-9811-7000-8004-d8f56e017c11",
       "account_id": "01985a4f-a802-7000-8005-cd0c96f1a221",
       "account_email": "operator@example.com",
       "token_id": null,

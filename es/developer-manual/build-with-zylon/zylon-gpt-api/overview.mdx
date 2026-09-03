@@ -5,13 +5,27 @@ description: "La API de ZylonGPT te permite generar respuestas, ingestar conocim
 
 ZylonGPT es la API orientada al modelo. La mayoría de aplicaciones siguen un ciclo sencillo: enviar mensajes, adjuntar o referenciar artefactos, generar embeddings para búsquedas y permitir que el asistente invoque herramientas cuando necesite recuperación de información o datos estructurados.
 
+## Autenticación y scopes
+
+Usa un token asociado a un gateway desde [Developer Console](/es/developer-manual/get-started/developer-console). `PrivateGPT.Read.All` permite los endpoints siguientes. Un token de cuenta con `Read.All` accede a la misma allowlist solo cuando incluye contexto de gateway mediante `gateway_id`; `Read.All` puede crearse sin `gateway_id`, pero ese token no puede llamar a ZylonGPT.
+
+- `POST /api/gpt/v1/messages`
+- `POST /api/gpt/v1/complete`
+- `POST /api/gpt/v1/messages/count_tokens`
+- `POST /api/gpt/v1/messages/validate`
+- `POST /api/gpt/v1/embeddings`
+- solicitudes `GET` y `HEAD` bajo `/api/gpt/v1/skills`
+- `POST /api/gpt/v1/skills/validate`
+
+Las rutas del ciclo de vida de mensajes asíncronos, todas las rutas de artefactos, las mutaciones de skills y las rutas fallback no reconocidas requieren un scope de lectura y escritura y devuelven `403` para un token de solo lectura. Usa `PrivateGPT.ReadWrite.All` para un token asociado a un gateway o `ReadWrite.All` cuando corresponda un token de cuenta. Los scopes múltiples combinan sus permisos, pero los permisos efectivos siguen limitados por los roles del propietario del token. Consulta [Gestión de tokens](/es/developer-manual/get-started/token-management) para ver los valores por defecto y las reglas de validación al crear tokens.
+
 <CardGroup cols={2}>
   <Card title="Mensajes" icon="message" href="/es/developer-manual/build-with-zylon/working-with-messages">
-    Envía el historial de conversación y recibe respuestas estructuradas.
+    Envía mensajes síncronos con acceso de lectura; el ciclo de vida asíncrono requiere acceso de lectura y escritura.
   </Card>
 
   <Card title="Artefactos" icon="file" href="/es/developer-manual/build-with-zylon/working-with-artifacts">
-    Ingiere texto, archivos o URLs en colecciones reutilizables.
+    Ingiere, recupera, lista o elimina contenido de colecciones con acceso de lectura y escritura.
   </Card>
 
   <Card title="Embeddings" icon="database" href="/es/developer-manual/build-with-zylon/zylon-gpt-api/embeddings">

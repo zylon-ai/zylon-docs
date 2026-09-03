@@ -5,47 +5,105 @@ description: "Sincroniza documentos de SharePoint en el espacio de trabajo."
 
 Las integraciones de SharePoint importan bibliotecas y documentos. **Habilita SharePoint a nivel de instancia primero**—consulta la guía del operador: [Configuración de SharePoint](/es/operator-manual/knowledge-base/sharepoint).
 
-Si se requiere OAuth, usa los endpoints de [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+Usa el flujo de [OpenID y OAuth](/es/developer-manual/build-with-zylon/workspace-api/authentication/openid) para crear o volver a autenticar el artefacto de integración. Los tokens se guardan como propiedades privadas y no se devuelven en la API pública de artefactos.
 
-## Solicitud básica y respuesta
+## Obtener la integración
 
-Obtén la configuración con `GET /api/v1/app/integration/sharepoint/{integrationId}/config`.
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración SharePoint. |
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "site_url": "https://auroralabs.sharepoint.com/sites/support",
-  "library": "Shared Documents"
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "SharePoint de soporte",
+  "type": "Integration",
+  "source": "SharePoint",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
+  "created_by": {
+    "id": "{accountID}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-02-08T14:12:45Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  },
+  "created_at": "2026-03-01T11:00:00Z",
+  "updated_at": "2026-03-01T11:00:00Z",
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
-## Iniciar sincronización
+## Iniciar la ingesta
+
+Indica el proyecto de destino y los elementos que quieres importar. Cada elemento necesita el ID de la unidad y el ID del archivo o carpeta. La respuesta es un stream de Server-Sent Events (SSE).
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Si | ID del artefacto de integración SharePoint. |
+| Body | `project_id` | Si | Proyecto de destino. |
+| Body | `items` | Si | Elementos de SharePoint que se importarán. |
+| Body | `items[].drive_id` | Si | ID de la unidad de SharePoint. |
+| Body | `items[].id` | Si | ID del archivo o carpeta. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "items": [
+      {
+        "drive_id": "{driveID}",
+        "id": "{itemID}"
+      }
+    ]
+  }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 18,
-  "integration_item_count": 64
-}
+<Accordion title="Ejemplo de stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":0,"integration_item_count":1}
+
+event: SyncEvent
+data: {"type":"sync_progress","artifact_id":"{artifactID}","op":"Added","progress":1.0}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errores y casos límite
 
-- **403**: integración no habilitada o sin permisos.
-- **404**: integración no encontrada.
+- **400**: faltan `project_id`, `items` o alguno de sus IDs.
+- **403**: integración no habilitada o permisos insuficientes.
+- **404**: proyecto, elemento o artefacto de integración no encontrado.

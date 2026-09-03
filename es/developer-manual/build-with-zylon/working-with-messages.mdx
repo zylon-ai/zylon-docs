@@ -7,8 +7,10 @@ Messages es el núcleo de ZylonGPT: envías un historial de conversación y Zylo
 
 ## Requisitos previos
 
-- Un token de API. Ver [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
+- Un token de API. Consulta [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
 - El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+`PrivateGPT.Read.All` permite `POST /messages` síncrono, `POST /messages/validate` y los demás endpoints de la [allowlist de solo lectura de ZylonGPT](/es/developer-manual/build-with-zylon/zylon-gpt-api/overview). `Read.All` permite las mismas llamadas solo cuando el token de cuenta incluye `gateway_id`; sin contexto de gateway, no puede llamar a ZylonGPT. El acceso efectivo también depende de los permisos de rol del propietario del token.
 
 ## Solicitud y respuesta básica
 
@@ -310,6 +312,10 @@ data: {"type":"message_stop"}
 </Accordion>
 
 ## Mensajes asíncronos
+
+<Warning>
+Las rutas de inicio, streaming, estado, cancelación y eliminación de mensajes asíncronos requieren `PrivateGPT.ReadWrite.All` o `ReadWrite.All`. Los tokens de solo lectura reciben `403` en todo el ciclo de vida asíncrono.
+</Warning>
 
 Los mensajes asíncronos usan **el mismo cuerpo** que los mensajes síncronos: solo cambia el endpoint. La diferencia principal está en la **respuesta**: los mensajes síncronos devuelven el mensaje completo, y los asíncronos devuelven un `message_id` para hacer streaming o consultar el estado.
 

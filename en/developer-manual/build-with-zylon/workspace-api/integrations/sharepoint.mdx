@@ -1,51 +1,112 @@
 ---
 title: "SharePoint Integration"
-description: "Sync SharePoint documents into your workspace."
+description: "Read and ingest SharePoint integration artifacts."
 ---
 
-SharePoint integrations ingest libraries and documents into your workspace. **Enable SharePoint at the instance level first**—see the operator guide: [SharePoint integration setup](/en/operator-manual/knowledge-base/sharepoint).
+SharePoint integrations are stored as artifacts. The integration identifier used by these endpoints is the integration artifact ID.
 
-If OAuth is required, use the login endpoints in [OpenID & OAuth](/en/developer-manual/build-with-zylon/workspace-api/authentication/openid).
+## Prerequisites
 
-## Basic request and response
+Enable SharePoint at the instance level first. See [SharePoint integration setup](/en/operator-manual/knowledge-base/sharepoint).
 
-Fetch integration configuration with `GET /api/v1/app/integration/sharepoint/{integrationId}/config`.
+Create or reconnect the integration through the login flow documented in [OpenID & OAuth](/en/developer-manual/build-with-zylon/workspace-api/authentication/openid). Use the artifact endpoints below after OAuth creates the integration artifact.
+
+## Get a SharePoint integration
+
+This endpoint returns public artifact metadata. It never returns access tokens, refresh tokens, or other private properties.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | SharePoint integration artifact identifier. |
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/config" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "site_url": "https://auroralabs.sharepoint.com/sites/support",
-  "library": "Shared Documents"
+  "id": "{integrationArtifactID}",
+  "child_count": 0,
+  "project_id": "{projectID}",
+  "name": "SharePoint",
+  "type": "Integration",
+  "source": "SharePoint",
+  "state": "Published",
+  "ingest_status": "NotApplicable",
+  "props": {},
+  "keep_file_after_ingestion": true,
+  "created_by": {
+    "id": "{accountID}",
+    "state": "Active",
+    "email": "operator@example.com",
+    "name": "API operator",
+    "provider": "Credentials",
+    "roles": [],
+    "created_at": "2026-03-01T10:55:00Z",
+    "updated_at": "2026-03-01T10:55:00Z"
+  },
+  "created_at": "2026-03-01T11:00:00Z",
+  "updated_at": "2026-03-01T11:00:00Z",
+  "scopes": [
+    {
+      "scope_type": "project",
+      "scope_id": "{projectID}",
+      "enabled": true,
+      "ws_auto_select": false
+    }
+  ]
 }
 ```
 </Accordion>
 
-## Start an ingest sync
+## Start a SharePoint ingest
+
+The endpoint returns a server-sent event (SSE) stream. Each selected item needs both its SharePoint drive ID and item ID.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | SharePoint integration artifact identifier. |
+| Body | `project_id` | Yes | Destination project identifier. |
+| Body | `items` | Yes | SharePoint items to ingest. |
+| Body | `items[].drive_id` | Yes | Drive identifier containing the item. |
+| Body | `items[].id` | Yes | SharePoint item identifier. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/ingest" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/ingest" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "items": [
+      {
+        "drive_id": "drive_b7e4c102",
+        "id": "item_9d2a50f1"
+      }
+    ]
+  }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "type": "sync_started",
-  "current_artifact_count": 18,
-  "integration_item_count": 64
-}
+<Accordion title="Example stream">
+```text
+event: SyncEvent
+data: {"type":"sync_started","current_artifact_count":18,"integration_item_count":64}
+
+event: SyncEvent
+data: {"type":"sync_completed"}
 ```
 </Accordion>
 
 ## Errors and edge cases
 
-- **403**: integration not enabled or missing permissions.
-- **404**: integration ID not found.
+- **400**: invalid SharePoint item or ingest parameters.
+- **403**: integration not enabled or missing permission.
+- **404**: integration artifact or project not found, or they do not belong together.

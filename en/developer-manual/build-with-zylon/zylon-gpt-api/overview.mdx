@@ -5,13 +5,27 @@ description: "The ZylonGPT API lets you generate responses, ingest knowledge, cr
 
 ZylonGPT is the model-facing API. Most apps follow a simple loop: send messages, attach or reference artifacts, generate embeddings for search, and let the assistant call tools when it needs structured data or retrieval.
 
+## Authentication and scopes
+
+Use a gateway-scoped token from [Developer Console](/en/developer-manual/get-started/developer-console). `PrivateGPT.Read.All` allows the endpoints below. An account token with `Read.All` reaches the same allowlist only when it carries gateway context through `gateway_id`; `Read.All` can be created without `gateway_id`, but that token cannot call ZylonGPT.
+
+- `POST /api/gpt/v1/messages`
+- `POST /api/gpt/v1/complete`
+- `POST /api/gpt/v1/messages/count_tokens`
+- `POST /api/gpt/v1/messages/validate`
+- `POST /api/gpt/v1/embeddings`
+- `GET` and `HEAD` requests under `/api/gpt/v1/skills`
+- `POST /api/gpt/v1/skills/validate`
+
+Async message lifecycle routes, every artifact route, skill mutations, and unmatched fallback routes require a read-write scope and return `403` for a read-only token. Use `PrivateGPT.ReadWrite.All` for a gateway-scoped token or `ReadWrite.All` where account-token access is appropriate. Multiple scopes combine their grants, but effective permissions remain limited by the token owner's roles. See [Token Management](/en/developer-manual/get-started/token-management) for creation defaults and validation rules.
+
 <CardGroup cols={2}>
   <Card title="Messages" icon="message" href="/en/developer-manual/build-with-zylon/working-with-messages">
-    Send conversation history and get structured assistant replies.
+    Send synchronous messages with read access; async lifecycle operations require read-write access.
   </Card>
 
   <Card title="Artifacts" icon="file" href="/en/developer-manual/build-with-zylon/working-with-artifacts">
-    Ingest text, files, or URLs into collections for reuse.
+    Ingest, retrieve, list, or delete collection content with read-write access.
   </Card>
 
   <Card title="Embeddings" icon="database" href="/en/developer-manual/build-with-zylon/zylon-gpt-api/embeddings">

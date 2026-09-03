@@ -3,24 +3,43 @@ title: "Búsqueda"
 description: "Busca en proyectos, hilos, artefactos, contenido de artefactos e interacciones."
 ---
 
-Usa el endpoint de búsqueda para consultar contenido del espacio de trabajo mediante texto. Limita el alcance con el filtro `types`.
+Usa la API de búsqueda para consultar contenido visible para el miembro autenticado del espacio de trabajo. Puedes combinar filtros de texto, recurso, proyecto, tipo de artefacto y fecha de creación en una sola solicitud.
 
-Las consultas de Search requieren un token con acceso a Workspace y un gateway de PrivateGPT vinculado a la colección de tu organización.
+## Requisitos previos
 
-## Solicitud básica y respuesta
+- Envía un token de API cuyos permisos efectivos incluyan la búsqueda en Workspace.
+- Envía el slug de la organización en la cabecera `x-org`.
+- La búsqueda semántica de `ArtifactContent` requiere un gateway de PrivateGPT vinculado a la colección de la organización. Las búsquedas solo por palabras clave no usan el motor semántico.
 
-Busca en todos los recursos con `GET /api/v1/app/search`.
+## Buscar contenido de Workspace
+
+Busca con `GET /api/v1/app/search`.
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Query | `q` | Si | Texto de búsqueda. Debe tener entre 3 y 80 caracteres. |
-| Query | `types` | No | Lista separada por comas de `Project`, `Artifact`, `ArtifactContent`, `Thread` e `Interaction`. Por defecto busca en todos los tipos. |
-| Query | `limit` | No | Número máximo de resultados. Por defecto es `30` y debe ser mayor que `1`. |
+| Query | `q` | Si | Texto de búsqueda. Los espacios iniciales y finales se eliminan antes de validar el rango configurado: de 3 a 80 caracteres de forma predeterminada. |
+| Query | `types` | No | Tipos de resultado. Acepta valores separados por comas o repetidos: `Project`, `Artifact`, `Thread`, `Interaction` y `ArtifactContent`. Por defecto incluye todos los tipos. |
+| Query | `type` | No | Alternativa a `types`. Solo se usa cuando `types` está ausente. |
+| Query | `project_ids` | No | Lista de UUID de proyectos que se incluirán. Acepta valores separados por comas o repetidos y busca únicamente en proyectos que también sean visibles para quien realiza la llamada. |
+| Query | `exclude_project_ids` | No | Lista de UUID de proyectos que se excluirán. Acepta valores separados por comas o repetidos. La exclusión prevalece cuando un ID aparece en ambos filtros de proyecto. |
+| Query | `artifact_types` | No | Tipos de artefacto para resultados `Artifact` y `ArtifactContent`. Acepta valores separados por comas o repetidos. |
+| Query | `start_date` | No | Límite inferior inclusivo de la fecha de creación, en milisegundos desde la época Unix. |
+| Query | `end_date` | No | Límite superior inclusivo de la fecha de creación, en milisegundos desde la época Unix. No puede ser anterior a `start_date`. |
+| Query | `limit` | No | Límite positivo aplicado por separado a cada tipo de resultado. El valor predeterminado es `30`. |
 </Accordion>
 
+Los parámetros de lista distinguen mayúsculas de minúsculas, eliminan espacios y duplicados, y admiten ambos formatos:
+
+```text
+types=Artifact,ArtifactContent
+types=Artifact&types=ArtifactContent
+```
+
+`artifact_types` acepta `InlineText`, `Document`, `Folder`, `Summary`, `Composition`, `SmartDoc`, `Link`, `BulkQA`, `ReadAndExtract`, `SqlDatabase`, `McpServer`, `Integration`, `Analysis` y `Skill`. El contenido que se puede buscar actualmente incluye artefactos de la familia de documentos, enlaces visibles a ellos y flujos de agentes. Otros tipos de artefacto válidos pueden no producir resultados de artefactos o contenido.
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,ArtifactContent&limit=5" \
+curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,ArtifactContent&project_ids={projectID}&artifact_types=Document,InlineText&limit=5" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
@@ -29,26 +48,28 @@ curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,Ar
 ```json
 [
   {
-    "id": "artifact_2b4d6f8a1c3e5a7b",
+    "id": "0198cc5a-4411-7000-8000-000000000001",
     "type": "Artifact",
     "match": "Q1 Support Summary",
-    "rank": 0.91,
+    "rank": 0.0241,
+    "keyword_score": 0.76,
     "metadata": {
       "name": "Q1 Support Summary",
       "type": "Document",
-      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_id": "0198cc5a-4411-7000-8000-000000000010",
       "project_name": "Customer Insights"
     }
   },
   {
-    "id": "content_8f1a3d5c7b9e",
+    "id": "0198cc5a-4411-7000-8000-000000000002",
     "type": "ArtifactContent",
-    "match": "Billing issues drove 38% of support cases.",
-    "rank": 0.84,
+    "match": "Billing issues drove a significant share of support cases.",
+    "rank": 0.0014,
+    "semantic_score": 0.84,
     "metadata": {
-      "name": "Q1 Support Summary",
+      "name": "Support Analysis",
       "type": "Document",
-      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_id": "0198cc5a-4411-7000-8000-000000000010",
       "project_name": "Customer Insights"
     }
   }
@@ -56,51 +77,53 @@ curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,Ar
 ```
 </Accordion>
 
-## Buscar solo hilos
+## Comportamiento de los filtros
 
-<Accordion title="Parametros del endpoint">
-| Tipo | Nombre | Obligatorio | Notas |
-| --- | --- | --- | --- |
-| Query | `q` | Si | Texto de búsqueda. Debe tener entre 3 y 80 caracteres. |
-| Query | `types` | No | Usa `Thread` para limitar resultados a hilos. |
-| Query | `limit` | No | Número máximo de resultados. Por defecto es `30` y debe ser mayor que `1`. |
-</Accordion>
+- Si `types` y `type` están presentes, `types` tiene prioridad y `type` se ignora.
+- Si omites `project_ids`, la búsqueda incluye todos los proyectos visibles. Los ID válidos de proyectos no accesibles se excluyen sin devolver un error.
+- `exclude_project_ids` se aplica después de `project_ids`. Si no queda ningún proyecto, la respuesta es `[]`.
+- Los límites de fecha usan la fecha de creación de cada entidad. En resultados de contenido semántico, usan la fecha de creación del artefacto.
+- El filtro de tipo de artefacto solo afecta a resultados `Artifact` y `ArtifactContent`.
+- La búsqueda solo devuelve proyectos visibles, hilos activos visibles y sus interacciones, y artefactos disponibles y listos para usar.
 
-```bash
-curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&types=Thread&limit=5" \
-  -H "Authorization: Bearer {API_TOKEN}" \
-  -H "x-org: {org_slug}"
-```
+## Campos de respuesta
 
-<Accordion title="Ejemplo de respuesta">
-```json
-[
-  {
-    "id": "thread_3f2a1c4d5b6e7f8a",
-    "type": "Thread",
-    "match": "Weekly Support Brief",
-    "rank": 0.86,
-    "metadata": {
-      "name": "Weekly Support Brief",
-      "project_id": "proj_7a5c3e1b9d2f4a6c",
-      "project_name": "Customer Insights"
-    }
-  }
-]
-```
-</Accordion>
+| Campo | Tipo | Descripción |
+| --- | --- | --- |
+| `id` | string | Identificador del resultado. Un resultado creado a partir de un enlace usa el ID del enlace. |
+| `type` | string | `Project`, `Artifact`, `Thread`, `Interaction` o `ArtifactContent`. |
+| `match` | string | Nombre o fragmento de contenido coincidente. En los fragmentos semánticos se elimina el formato Markdown. |
+| `rank` | number | Puntuación combinada y ponderada usada para ordenar la respuesta. Siempre está presente. |
+| `keyword_score` | number, opcional | Puntuación original de búsqueda por palabras clave. Se omite en resultados solo semánticos. |
+| `semantic_score` | number, opcional | Puntuación original de búsqueda semántica. Se omite en resultados solo por palabras clave. |
+| `metadata` | object | Detalles específicos del tipo de resultado. |
+
+### Cómo interpretar las puntuaciones
+
+- **`rank`** combina la puntuación de origen, su posición en la lista de resultados léxicos o semánticos y una ponderación dinámica del origen. No es una probabilidad ni un porcentaje de confianza y no tiene un rango fijo. Usa el orden devuelto en vez de aplicar un umbral fijo.
+- **`keyword_score`** es la puntuación original de relevancia de búsqueda de texto completo de PostgreSQL. Los valores más altos se tratan como coincidencias léxicas más fuertes. Un nombre encontrado fuera del ranking de texto completo puede tener una puntuación de `0`.
+- **`semantic_score`** es la puntuación original de recuperación semántica para el fragmento de contenido seleccionado. No es una confianza normalizada.
+- Compara puntuaciones originales solo entre resultados producidos por el mismo motor y para la misma consulta. No compares `keyword_score` con `semantic_score` ni puntuaciones de solicitudes distintas.
+- Los campos opcionales de puntuación se omiten del JSON en lugar de devolverse como `null`.
+
+<Note>
+  Los resultados se agrupan en este orden: `Project`, `Artifact`, `Thread`, `Interaction` y `ArtifactContent`. Dentro de cada grupo, los valores de `rank` más altos aparecen primero. Como `limit` se aplica por tipo de resultado, una respuesta con varios tipos puede contener más de `limit` elementos en total. Las entradas devueltas por ambos motores de búsqueda no se deduplican.
+</Note>
 
 ## Metadatos por tipo de resultado
 
 | Tipo de resultado | Forma de `metadata` |
 | --- | --- |
-| `Project` | `entity`, con el objeto de proyecto. |
-| `Artifact` | `name`, `type`, `project_id`, `project_name`. |
-| `ArtifactContent` | `name`, `type`, `project_id`, `project_name`. |
-| `Thread` | `name`, `project_id`, `project_name`. |
-| `Interaction` | `content`, `thread_id`, `project_id`, `project_name`, `thread_name`. |
+| `Project` | `entity`, que contiene `id`, `name`, `goal`, `default_member_role`, `default_role_enabled`, `visibility`, `member_count`, `members`, `project_context`, `use_citations`, `use_system_prompt` e `is_pinned`. Cada miembro contiene `id`, `role`, `account` e `is_project_member`. |
+| `Artifact` | `name`, `type`, `project_id` y `project_name`. Los campos del proyecto pueden ser `null`. |
+| `ArtifactContent` | `name`, `type`, `project_id` y `project_name`. Un resultado de enlace conserva la identidad del enlace y los metadatos del proyecto de destino, mientras que `type` identifica el tipo del artefacto original. |
+| `Thread` | `name`, `project_id` y `project_name`. |
+| `Interaction` | `content`, `thread_id`, `project_id`, `project_name` y `thread_name`. |
 
 ## Errores y casos límite
 
-- **400**: falta `q`, consulta vacía, consulta fuera del rango de 3-80 caracteres, `types` inválido o `limit <= 1`.
-- **403**: permisos insuficientes.
+- **400**: falta `q` o está vacío; consulta fuera del rango configurado; valores de lista vacíos o no válidos; UUID de proyecto no válido; fecha o límite no válidos; `start_date` posterior a `end_date`; `limit` menor que `1`; o falta el contexto de organización.
+- **401**: autenticación ausente o no válida.
+- **403**: el token o la cuenta no tienen permiso de búsqueda en Workspace.
+- **500**: el despliegue no tiene idiomas de búsqueda configurados.
+- Una búsqueda válida sin coincidencias visibles devuelve `[]`.

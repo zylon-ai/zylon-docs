@@ -1,0 +1,32 @@
+---
+title: "Monitor del sistema"
+description: "Habilita métricas en vivo de infraestructura y servicio de modelos en Backoffice."
+---
+
+Habilita la página Monitor del sistema en Backoffice para consultar métricas en vivo de los recursos del host y del servicio de inferencia.
+
+### Configuración
+
+| Clave | Valor predeterminado | Valores | Descripción |
+| --- | --- | --- | --- |
+| `features.systemMonitor.enabled` | `false` | `true`, `false` | Muestra u oculta **Backoffice > Platform > System Monitor**. |
+
+### Ejemplo
+
+```yaml
+features:
+  systemMonitor:
+    enabled: true
+```
+
+Ejecuta `sudo zylon-cli sync` después de cambiar la configuración.
+
+Cuando el ajuste está habilitado, Backoffice muestra el elemento de navegación e inicia el flujo de métricas en vivo al abrir la página. Cuando está deshabilitado, el elemento de navegación se oculta y el acceso directo a la página muestra un estado no disponible.
+
+<Note>
+  Este ajuste controla la disponibilidad en Backoffice; no inicia ni detiene el recolector de métricas del backend. Es independiente de `observability.platformMetrics` y `observability.usageMetrics`, que configuran la observabilidad externa y la telemetría de producto.
+</Note>
+
+El chart proporciona al backend los endpoints de métricas del nodo de Kubernetes y de Triton que usa el monitor. Si las métricas de Triton no están disponibles, la información de GPU y por modelo puede estar vacía o mostrar valores a cero. La CPU y la RAM usan las métricas del nodo de Kubernetes cuando están disponibles y, en caso contrario, recurren a lecturas del host.
+
+Consulta [Monitor del sistema](/es/operator-manual/backoffice/system-monitor) para conocer las métricas que muestra Backoffice.

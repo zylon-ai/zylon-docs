@@ -153,7 +153,24 @@ El mismo formato se aplica a la validación de actualizaciones y a cada entrada 
 
 ### Respuestas y selección de artefactos
 
-Las respuestas ya no incluyen `has_content`, `content` ni `raw_content`, tampoco en las URLs antiguas. Usa `/app/artifact/{artifactID}/download` para obtener el contenido almacenado. `/app/artifact/{artifactID}/parsed-content` devuelve texto extraído y requiere un índice vectorial inicializado. La descarga devuelve una URL prefirmada por defecto; con `Content-Disposition: attachment` devuelve los bytes del archivo. Las URLs antiguas de descarga también admiten ambos modos.
+Las respuestas antiguas conservan `has_content`, siempre `false`: este campo describía el contenido binario del editor, no la existencia de un archivo. Los bytes originales del editor no se pueden reconstruir, por lo que `content` es nulo/se omite.
+
+En las consultas de detalle de artefactos por la URL antigua, añade `include_content=true` para recibir el texto UTF-8 disponible como `raw_content`. El valor por defecto es `false`; los listados y las respuestas de escritura no incluyen texto. Se conservan los espacios y el texto vacío. Los archivos no textuales y el UTF-8 inválido no generan `raw_content`. Se aplican los permisos actuales de descarga: si están desactivadas, devuelve `403`; si falta el archivo almacenado, devuelve el error actual de descarga.
+
+<Accordion title="Campos de contenido antiguos (respuesta parcial)">
+
+```json
+{
+  "has_content": false,
+  "raw_content": "# Documento actual"
+}
+```
+
+Los campos nulos se omiten. No se genera `content` binario del editor en Base64 a partir del texto.
+
+</Accordion>
+
+Las respuestas actuales de artefactos omiten estos campos de contenido antiguos. Usa `/app/artifact/{artifactID}/download` para obtener el contenido almacenado. `/app/artifact/{artifactID}/parsed-content` devuelve texto extraído y requiere un índice vectorial inicializado. La descarga devuelve una URL prefirmada por defecto; con `Content-Disposition: attachment` devuelve los bytes del archivo. Las URLs antiguas de descarga también admiten ambos modos.
 
 `created_by` ahora representa una **cuenta**. Actualiza el código que lee los datos del creador o compara sus IDs; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
 
@@ -172,6 +189,8 @@ Sustituye `/app/user` por `/app/member`. Los IDs de estas rutas siguen siendo **
 | `POST` | `/app/user/{wsMemberId}/activate` o `/deactivate` | `/app/member/{wsMemberId}/activate` o `/deactivate` |
 | `GET` | `/app/user/{wsMemberId}/project` | `/app/member/{wsMemberId}/project` |
 | `GET` | `/app/user/{wsMemberId}/latest-artifacts` | `/app/member/{wsMemberId}/latest-artifacts` |
+
+Las respuestas antiguas de `/app/user` al listar, consultar, crear, cambiar el rol, activar o desactivar un miembro conservan `name`, `email` y `profile_picture` (si está disponible) en el primer nivel, tomados del perfil actual de la cuenta. Se mantienen `id`, `org_id`, `account_id`, `state`, `roles` y `created_at` de la membresía. Los datos eliminados del puesto de trabajo no se pueden recuperar y son nulos/se omiten. Estos campos de respuesta no restauran las actualizaciones de perfil mediante la ruta antigua del miembro.
 
 `GET /app/me` conserva su URL, pero también devuelve el nuevo modelo de miembro. El nombre, el correo y la imagen de perfil son datos de la cuenta y ya no son campos de primer nivel del miembro. Solicita `include=Account` al listar miembros, consultar un miembro o llamar a `/app/me` para recibir la cuenta anidada.
 
@@ -206,7 +225,7 @@ Actualiza los campos de perfil con `POST /account/{accountId}` (`me` permite act
 
 ## IDs de cuenta y campos renombrados
 
-Los alias de entrada facilitan la compatibilidad temporal; las respuestas usan los nombres y modelos actuales.
+Los alias de nombres siguientes son temporales. **Los IDs y objetos de creador ahora corresponden a cuentas, también en las URLs antiguas de artefactos.** Actualiza las comparaciones de IDs almacenados y los filtros `created_by`; no se convierten automáticamente los IDs de miembro. Las respuestas compartidas de proyectos, hilos, interacciones, incidencias y cuentas mantienen sus nombres de campo actuales.
 
 | Dónde | Anterior | Actual / acción necesaria |
 | --- | --- | --- |

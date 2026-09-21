@@ -153,7 +153,24 @@ The same update format applies to update-validation and each `artifacts[].update
 
 ### Artifact responses and selection
 
-Artifact responses no longer include `has_content`, `content`, or `raw_content`, including responses from legacy URLs. Use `/app/artifact/{artifactID}/download` for stored content. `/app/artifact/{artifactID}/parsed-content` returns extracted text and requires an initialized vector index. Download returns a presigned URL by default; `Content-Disposition: attachment` returns file bytes. Both modes are also supported on legacy download URLs.
+Legacy artifact responses keep `has_content`, always `false`: this field described the old binary editor content, not whether a file exists. Original editor bytes cannot be reconstructed, so `content` is null/omitted.
+
+On legacy artifact detail requests, add `include_content=true` to receive available UTF-8 text as `raw_content`. The default is `false`; lists and mutation responses do not include text. Whitespace and empty text are preserved. Non-text files and invalid UTF-8 have no `raw_content`. Current download permissions apply; disabled downloads return `403`, and missing stored files return the current download error.
+
+<Accordion title="Legacy content fields (partial response)">
+
+```json
+{
+  "has_content": false,
+  "raw_content": "# Current document"
+}
+```
+
+Null fields are omitted. No Base64 editor `content` is generated from the text.
+
+</Accordion>
+
+Current artifact responses omit these legacy content fields. Use `/app/artifact/{artifactID}/download` for stored content. `/app/artifact/{artifactID}/parsed-content` returns extracted text and requires an initialized vector index. Download returns a presigned URL by default; `Content-Disposition: attachment` returns file bytes. Both modes are also supported on legacy download URLs.
 
 Artifact `created_by` now represents an **account**. Update code that reads creator details or compares creator IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
 
@@ -172,6 +189,8 @@ Replace `/app/user` with `/app/member`. IDs in these paths remain **workspace-me
 | `POST` | `/app/user/{wsMemberId}/activate` or `/deactivate` | `/app/member/{wsMemberId}/activate` or `/deactivate` |
 | `GET` | `/app/user/{wsMemberId}/project` | `/app/member/{wsMemberId}/project` |
 | `GET` | `/app/user/{wsMemberId}/latest-artifacts` | `/app/member/{wsMemberId}/latest-artifacts` |
+
+Legacy `/app/user` list, detail, create, role-update, activate, and deactivate responses still expose top-level `name`, `email`, and available `profile_picture`, taken from the account's current profile. Membership `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at` remain available. Removed job-position data cannot be recovered and is null/omitted. These response fields do not restore profile updates through the old member route.
 
 `GET /app/me` keeps its URL but returns the new member model too. Names, email, and profile pictures are account data; they are no longer top-level member fields. Request `include=Account` on member list, member details, or `/app/me` to receive the nested account.
 
@@ -206,7 +225,7 @@ Update account profile fields with `POST /account/{accountId}` (`me` is accepted
 
 ## Account IDs and renamed fields
 
-Request aliases are temporary compatibility aids; responses use the current field names and models.
+The field-name aliases below are temporary. **Creator IDs and objects now refer to accounts, including on legacy artifact URLs.** Update stored ID comparisons and `created_by` filters; workspace-member IDs are not converted automatically. Shared project, thread, interaction, issue, and account responses retain their current field names.
 
 | Where | Old | Current / required action |
 | --- | --- | --- |

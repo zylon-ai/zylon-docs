@@ -1,0 +1,263 @@
+---
+title: "Migración de API 1.57 -> 1.58"
+description: "Adapta tus integraciones de la API de Workspace a las rutas, cuerpos y respuestas de la versión 1.58."
+noindex: true
+---
+
+Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace; la API de ZylonGPT queda fuera de esta migración.
+
+<Warning>
+Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Aceptan las peticiones antiguas compatibles descritas aquí, pero **devuelven los modelos de respuesta actuales**. Cambiar solo la URL no basta para el contenido de artefactos o los perfiles de miembros.
+</Warning>
+
+## Requisitos previos
+
+- Un token de API y el nombre de host de Zylon. Consulta [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management).
+- Envía `Authorization: Bearer {API_TOKEN}` y `x-org: {org_slug}` en las peticiones de Workspace.
+- Envía `Content-Type: application/json` para cuerpos JSON. Deja que tu cliente HTTP establezca el delimitador de las peticiones multipart.
+
+Las rutas de las tablas son relativas a `https://{BASE_URL}/api/v1`.
+
+## Rutas de artefactos
+
+Sustituye el prefijo de artefactos del proyecto o de la organización por `/app/artifact`. Indica explícitamente el proyecto para asignar la propiedad o filtrar cuando corresponda.
+
+| Método | Ruta obsoleta | Ruta actual |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/project/{projectID}/artifact` o `/app/organization/artifact` | `/app/artifact` |
+| `GET`, `PUT`, `DELETE` | Cualquiera de los prefijos antiguos + `/{artifactID}` | `/app/artifact/{artifactID}` |
+| `POST` | Cualquiera de los prefijos antiguos + `/validate` | `/app/artifact/validate` |
+| `POST` | Cualquiera de los prefijos antiguos + `/{artifactID}/validate` | `/app/artifact/{artifactID}/validate` |
+| `GET` | Cualquiera de los prefijos antiguos + `/{artifactID}/download` | `/app/artifact/{artifactID}/download` |
+| `GET` | `/app/project/{projectID}/artifact/{artifactID}/parsed-content` | `/app/artifact/{artifactID}/parsed-content` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/retry` | `/app/artifact/{artifactID}/retry` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/sync` | `/app/artifact/{artifactID}/sync` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/ingest` | `/app/artifact/{artifactID}/ingest` |
+| `PUT`, `DELETE` | `/app/project/{projectID}/artifact/bulk` | `/app/artifact/bulk` |
+
+<Accordion title="Parametros del endpoint">
+
+| Operación | Qué cambiar |
+| --- | --- |
+| Listar | Mueve el `projectID` de la ruta al parámetro de consulta `project_id`. Mantén `x-org` para seleccionar el espacio de trabajo. |
+| Crear, validar creación, reintentar | Mueve el `projectID` de la ruta al campo `project_id` del cuerpo. Omítelo o envía `null` para artefactos de organización. |
+| Ingerir | Envía `project_id` en el cuerpo JSON específico del proveedor. Conserva los parámetros existentes del proveedor. |
+| Otras operaciones por ID | El ID del artefacto identifica su propietario. Conserva los parámetros específicos de cada operación. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/artifact?project_id={projectID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+Si usas `x-org`, no envíes también `organization_id`. Sin `x-org`, especificar `organization_id` requiere Operator o SuperAdmin. Crear artefactos de organización requiere AppAdmin o superior; los artefactos `Link` requieren un proyecto.
+
+### Cuerpos de creación
+
+El campo JSON actual `content` contiene **bytes de archivo o texto codificados en Base64**. Sustituye al antiguo campo de texto `raw_content`. Por ejemplo, el texto UTF-8 `Hello` se convierte en `SGVsbG8=`.
+
+<Tabs>
+<Tab title="Petición 1.57">
+
+`POST /app/project/{projectID}/artifact`
+
+```json
+{
+  "type": "SmartDoc",
+  "name": "Draft",
+  "raw_content": "Hello",
+  "props": {}
+}
+```
+
+</Tab>
+<Tab title="Petición 1.58">
+
+`POST /app/artifact`
+
+```json
+{
+  "project_id": "{projectID}",
+  "type": "SmartDoc",
+  "name": "Draft",
+  "content": "SGVsbG8=",
+  "props": {}
+}
+```
+
+</Tab>
+</Tabs>
+
+<Accordion title="Cambios en el cuerpo">
+
+| Campo | Migración |
+| --- | --- |
+| `raw_content` | Sustitúyelo por `content` codificado en Base64 en las peticiones JSON actuales de creación, validación de creación y reintento. |
+| `file_data` | Conserva este campo de archivo multipart, también para subir skills. Añade `project_id` como campo del formulario para crear en un proyecto. |
+| `project_id` | Nueva ubicación del selector de la ruta antigua. Cadena opcional o `null`; necesario para asignar el artefacto a un proyecto. |
+| `organization_id` | Omítelo si envías `x-org`. Sin esa cabecera, está disponible para Operator/SuperAdmin autorizados. |
+| `props`, `private_props`, `integration_id` | Usa estos nombres canónicos. Siguen aceptándose los alias `config`, `private_config` (solo creación) e `integration_artifact_id`. |
+| `source` | Por defecto `User`. Los clientes no pueden establecer `Assistant` ni `System`. |
+
+</Accordion>
+
+Los demás campos específicos de cada tipo mantienen sus reglas actuales. Consulta los [campos y tipos de artefactos](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts#campos-de-petición-de-artefacto).
+
+### Cuerpos de actualización
+
+El antiguo `content` de actualización contenía **estado binario del editor codificado en Base64**. El `content` JSON actual contiene **texto UTF-8**, como Markdown. Exporta el documento del editor a Markdown; decodificar sus bytes Base64 no produce texto del documento.
+
+<Tabs>
+<Tab title="Petición 1.57">
+
+`PUT /app/project/{projectID}/artifact/{artifactID}`
+
+```json
+{
+  "content": "{BASE64_EDITOR_STATE}",
+  "plain_text_content": "Hello"
+}
+```
+
+`{BASE64_EDITOR_STATE}` representa tu documento del editor ya codificado.
+
+</Tab>
+<Tab title="Petición 1.58">
+
+`PUT /app/artifact/{artifactID}`
+
+```json
+{
+  "content": "Hello"
+}
+```
+
+</Tab>
+</Tabs>
+
+<Warning>
+Creación y actualización usan codificaciones distintas: **Base64 al crear con JSON, texto sin codificar al actualizar con JSON**. No envíes el antiguo estado del editor a la ruta actual de actualización: se trataría como texto literal.
+</Warning>
+
+El mismo formato se aplica a la validación de actualizaciones y a cada entrada `artifacts[].update` de las actualizaciones en lote. Las entradas siguen usando `artifactId` y `update`. Elimina `plain_text_content`: era un texto de búsqueda separado y ahora se deriva del documento. Para sustituir un archivo, usa `file_data` multipart en la ruta actual de actualización. Consulta [actualizar un artefacto](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts#actualizar-un-artefacto).
+
+### Qué peticiones antiguas siguen siendo compatibles
+
+- La creación, validación y reintento con JSON aceptan `raw_content`; la creación multipart también acepta bytes de archivo. La creación antigua obtiene el proyecto de la URL y rechaza `project_id`, `organization_id` y el nuevo `content` JSON en el cuerpo.
+- Las actualizaciones JSON antiguas convierten el estado del editor de Base64 a Markdown antes de guardar. El servicio de conversión de documentos de la instalación debe estar disponible. Se puede enviar contenido binario con o sin `plain_text_content`; este último campo por sí solo no sustituye el contenido.
+- La actualización, validación de actualización y actualización en lote antiguas solo aceptan JSON. Usa el endpoint actual para sustituir archivos con multipart.
+- Se rechaza una creación que combine `raw_content` y un archivo: no se pueden conservar ambos en el único campo de contenido actual. Envía una sola representación del contenido.
+- Se rechazan campos desconocidos y tipos de datos no válidos. La creación en una organización solo acepta ámbitos de esa organización.
+
+### Respuestas y selección de artefactos
+
+Las respuestas ya no incluyen `has_content`, `content` ni `raw_content`, tampoco en las URLs antiguas. Usa `/app/artifact/{artifactID}/download` para obtener el contenido almacenado. `/app/artifact/{artifactID}/parsed-content` devuelve texto extraído y requiere un índice vectorial inicializado. La descarga devuelve una URL prefirmada por defecto; con `Content-Disposition: attachment` devuelve los bytes del archivo. Las URLs antiguas de descarga también admiten ambos modos.
+
+`created_by` ahora representa una **cuenta**. Actualiza el código que lee los datos del creador o compara sus IDs; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
+
+`scopes[].ws_auto_select` y `scopes[].enabled` ya existían en las versiones publicadas de 1.57 y siguen siendo compatibles, incluido `enabled: false`. El campo anterior `ws_auto_select` de nivel superior no se acepta. Las skills siguen usando `file_data`; no hay una migración independiente de su cuerpo. Consulta los [ámbitos de artefactos](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts#añadir-o-eliminar-un-alcance).
+
+## Miembros del espacio de trabajo
+
+Sustituye `/app/user` por `/app/member`. Los IDs de estas rutas siguen siendo **IDs de miembro del espacio de trabajo**, no IDs de cuenta.
+
+| Método | Ruta obsoleta | Ruta actual |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/user` | `/app/member` |
+| `GET`, `PUT` | `/app/user/{wsMemberId}` | `/app/member/{wsMemberId}` |
+| `POST` | `/app/user/{wsMemberId}/activate` o `/deactivate` | `/app/member/{wsMemberId}/activate` o `/deactivate` |
+| `GET` | `/app/user/{wsMemberId}/project` | `/app/member/{wsMemberId}/project` |
+| `GET` | `/app/user/{wsMemberId}/latest-artifacts` | `/app/member/{wsMemberId}/latest-artifacts` |
+
+`GET /app/me` conserva su URL, pero también devuelve el nuevo modelo de miembro. El nombre, el correo y la imagen de perfil son datos de la cuenta y ya no son campos de primer nivel del miembro. Solicita `include=Account` al listar miembros, consultar un miembro o llamar a `/app/me` para recibir la cuenta anidada.
+
+<Accordion title="Parametros del endpoint">
+
+| Operación | Petición |
+| --- | --- |
+| `POST /app/member` | `account_id` y `role` son cadenas obligatorias. No se restaura el antiguo campo `user_info`. |
+| `PUT /app/member/{wsMemberId}` | `role` es una cadena obligatoria. Los campos de perfil ya no se actualizan aquí, tampoco mediante la URL antigua. |
+| Listado de miembros | `state` opcional: `Active`, `Inactive`, separados por comas; ambos por defecto. No se conserva la ordenación antigua con `order_by`/`order`. |
+| Lecturas de miembros | `include=Account` opcional. |
+
+Roles del espacio de trabajo: `AppGuest`, `AppMember`, `AppAdmin`, `AppOwner`.
+
+</Accordion>
+
+Actualiza los campos de perfil con `POST /account/{accountId}` (`me` permite actualizar tu propia cuenta), en lugar del endpoint de miembros. Los antiguos campos `job_position_name` y `job_position_description` se eliminan del miembro; no forman parte del modelo de cuenta.
+
+<Accordion title="Respuesta actual de miembro">
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de miembro del espacio de trabajo. |
+| `org_id` | string | ID de organización. |
+| `account_id` | string | ID de cuenta, distinto del ID de miembro. |
+| `state` | string | `Active` o `Inactive`. |
+| `roles` | string[] | Roles del espacio de trabajo. |
+| `created_at` | timestamp | Fecha de creación de la membresía, generada por el servidor. |
+| `account` | object o null | Datos de la cuenta cuando se solicitan. Consulta el [ejemplo completo de miembro y cuenta](/es/developer-manual/build-with-zylon/workspace-api/users/user#obtener-el-miembro-actual). |
+
+</Accordion>
+
+## IDs de cuenta y campos renombrados
+
+Los alias de entrada facilitan la compatibilidad temporal; las respuestas usan los nombres y modelos actuales.
+
+| Dónde | Anterior | Actual / acción necesaria |
+| --- | --- | --- |
+| Entradas de creación/actualización de miembros de proyecto | `user_id` | Usa `ws_member_id`; el nombre anterior sigue siendo un alias de entrada. El valor sigue siendo un ID de miembro. |
+| Transferencia de propiedad de proyecto | `old_owner_id`, `new_owner_id` | Usa `old_owner_ws_member_id`, `new_owner_ws_member_id`; los nombres anteriores siguen siendo alias de entrada. |
+| Consulta `include` de artefactos, hilos, interacciones e incidencias | `User` | Usa `Account`; `User` sigue siendo un alias de entrada. |
+| Consulta `include` del listado de cuentas | `Users` | Usa `WorkspaceMembers`; `Users` sigue siendo un alias de entrada. |
+| Membresías en la respuesta de cuenta | `users` | Lee `workspace_members`. |
+| Respuesta de miembro de proyecto | `user` | Lee `account`; `id` sigue siendo un ID de miembro del espacio de trabajo. |
+| Respuesta `created_by` de artefactos, hilos, interacciones e incidencias | Miembro del espacio de trabajo | Lee un objeto de cuenta y su ID de cuenta. |
+| Filtro `created_by` de artefactos | ID de miembro | Envía un ID de cuenta. No se convierten los IDs automáticamente. |
+| Filtro `created_by` de incidencias | IDs de miembro | Envía IDs de cuenta separados por comas. No se convierten los IDs automáticamente. |
+
+Consulta [miembros de proyecto](/es/developer-manual/build-with-zylon/workspace-api/projects/project-member), [transferencia de propiedad](/es/developer-manual/build-with-zylon/workspace-api/projects/project) y [filtros de incidencias](/es/developer-manual/build-with-zylon/workspace-api/general/issues) para ver los cuerpos y respuestas actuales completos.
+
+## Peticiones de filesystem
+
+| Método | Ruta obsoleta | Ruta actual |
+| --- | --- | --- |
+| `GET` | `/app/project/{projectID}/artifact/{integrationArtifactID}/files` | `/app/artifact/{integrationArtifactID}/files` |
+| `POST` | `/app/project/{projectID}/artifact/integration/filesystem/validate` | `/app/artifact/integration/filesystem/validate` |
+
+La validación de credenciales requiere el **cuerpo anidado actual en ambas URLs**. Las credenciales antiguas sin anidar no se adaptan.
+
+<Accordion title="Cuerpo de la petición">
+
+| Campo | Tipo | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| `organization_id` | string | Si | Debe coincidir con el espacio de trabajo autenticado. Es obligatorio en esta operación incluso al enviar `x-org`. |
+| `project_id` | string o null | No | Indica el proyecto explícitamente; su validación requiere Project Admin. Sin él, se requiere AppAdmin o superior en el espacio de trabajo. |
+| `credentials` | object | Si | Campos de credenciales anidados que se detallan a continuación. |
+| `credentials.username` | string | Si | Usuario de filesystem. |
+| `credentials.password` | string | Si | Contraseña de filesystem. |
+
+</Accordion>
+
+```json
+{
+  "organization_id": "{orgId}",
+  "project_id": "{projectID}",
+  "credentials": {
+    "username": "***",
+    "password": "***"
+  }
+}
+```
+
+Esta operación devuelve un booleano. Consulta [validar credenciales de filesystem](/es/developer-manual/build-with-zylon/workspace-api/integrations/filesystem#validar-credenciales) para ver un ejemplo completo. La ingestión desde integraciones usa la ruta unificada `/ingest` y `project_id` en el cuerpo, como se describe arriba.
+
+## Antes de actualizar tu cliente
+
+1. Sustituye las URLs obsoletas y mueve el selector de proyecto a la consulta o al cuerpo correspondiente.
+2. Usa bytes Base64 para crear artefactos con JSON, texto para actualizarlos y `file_data` para archivos multipart.
+3. Adapta la lectura de respuestas a la separación entre cuenta y miembro y a la eliminación del contenido inline de artefactos.
+4. Usa IDs de cuenta en los filtros de creador y los nombres canónicos de campos e inclusiones.
+5. Prueba con 1.58, incluidos permisos, validación, conversión de contenido y validación de filesystem. Las URLs antiguas usan la autorización, las respuestas y el comportamiento de servicio actuales; no reproducen todos los comportamientos de 1.57.

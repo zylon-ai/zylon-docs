@@ -3,6 +3,10 @@ title: "Miembros del espacio de trabajo"
 description: "Crea y administra membresías, roles, acceso a proyectos y actividad."
 ---
 
+<Warning>
+Las antiguas rutas `/app/user` y el modelo de perfil de miembro cambian en 1.58. Consulta [Migración de API 1.57 → 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#miembros-del-espacio-de-trabajo) antes de actualizar tu integración.
+</Warning>
+
 Usa la API de miembros del espacio de trabajo para gestionar la membresía de una cuenta en un espacio de trabajo. Una cuenta representa a una persona en Zylon, mientras que un miembro almacena el estado y los roles de esa cuenta dentro del espacio de trabajo.
 
 Las respuestas de miembro contienen `id`, `org_id`, `account_id`, `state`, `roles` y `created_at`. Usa `include=Account` en los endpoints compatibles para incluir la cuenta relacionada en `account`.

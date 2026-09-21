@@ -7,7 +7,7 @@ noindex: true
 Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace; la API de ZylonGPT queda fuera de esta migración.
 
 <Warning>
-Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Aceptan las peticiones antiguas compatibles descritas aquí, pero **devuelven los modelos de respuesta actuales**. Cambiar solo la URL no basta para el contenido de artefactos o los perfiles de miembros.
+Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Revisa los cambios de rutas, cuerpos y respuestas que se detallan abajo antes de actualizar tu integración.
 </Warning>
 
 ## Requisitos previos
@@ -160,6 +160,8 @@ Las respuestas ya no incluyen `has_content`, `content` ni `raw_content`, tampoco
 `scopes[].ws_auto_select` y `scopes[].enabled` ya existían en las versiones publicadas de 1.57 y siguen siendo compatibles, incluido `enabled: false`. El campo anterior `ws_auto_select` de nivel superior no se acepta. Las skills siguen usando `file_data`; no hay una migración independiente de su cuerpo. Consulta los [ámbitos de artefactos](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts#añadir-o-eliminar-un-alcance).
 
 ## Miembros del espacio de trabajo
+
+Los datos de usuario se unifican en la **cuenta**: la identidad, el nombre, el correo y la imagen de perfil pertenecen a la cuenta. El antiguo usuario pasa a ser una **membresía del espacio de trabajo**, que mantiene los roles, permisos y estado activo/inactivo de esa cuenta dentro del espacio.
 
 Sustituye `/app/user` por `/app/member`. Los IDs de estas rutas siguen siendo **IDs de miembro del espacio de trabajo**, no IDs de cuenta.
 

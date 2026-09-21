@@ -7,7 +7,7 @@ noindex: true
 Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs; the ZylonGPT API is outside this migration.
 
 <Warning>
-Legacy routes are deprecated in 1.58, with removal planned for 1.59. They accept the supported legacy requests described below, but **return current response models**. Updating only the URL is not enough for artifact content or member profiles.
+Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
 </Warning>
 
 ## Prerequisites
@@ -160,6 +160,8 @@ Artifact `created_by` now represents an **account**. Update code that reads crea
 `scopes[].ws_auto_select` and `scopes[].enabled` already existed in released 1.57 versions and remain supported, including `enabled: false`. The older top-level `ws_auto_select` flag is not accepted. Skill uploads still use `file_data`; there is no separate skill-body migration here. See [artifact scopes](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#add-update-or-remove-a-scope).
 
 ## Workspace members
+
+User data is unified at the **account** level: identity, name, email, and profile picture belong to the account. The former user becomes a **workspace membership**, holding the account's roles, permissions, and active/inactive state within that workspace.
 
 Replace `/app/user` with `/app/member`. IDs in these paths remain **workspace-member IDs**, not account IDs.
 

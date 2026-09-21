@@ -8,6 +8,8 @@ Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio 
 
 <Warning>
 Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Revisa los cambios de rutas, cuerpos y respuestas que se detallan abajo antes de actualizar tu integración.
+
+**Si tu integración usa IDs de usuario, revisa dónde los almacenas, comparas o envías.** Los campos de creador y sus filtros ahora usan IDs de cuenta. Ambos son UUIDs, por lo que las llamadas a la API pueden seguir funcionando aunque devuelvan IDs que ya no coincidan con tus registros o la lógica de tu aplicación. Actualiza los mapeos, búsquedas, comparaciones y filtros afectados. Las rutas y campos de membresía siguen usando IDs de miembro; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
 </Warning>
 
 ## Requisitos previos

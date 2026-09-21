@@ -8,6 +8,8 @@ Zylon 1.58 unifies artifact routes and separates workspace memberships from acco
 
 <Warning>
 Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
+
+**If your integration uses user IDs, review where you store, compare, or pass them.** Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
 </Warning>
 
 ## Prerequisites

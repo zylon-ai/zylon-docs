@@ -187,6 +187,10 @@ Your firewall must allow access to these domains:
 
     This will download and install the AI models that you have specified in the Wizard.
 
+    <Note>
+      Running `models download` with no arguments opens an interactive model-selection prompt, which requires a TTY. It will fail (`could not open a new TTY`) in non-interactive contexts such as a scripted SSH command, CI/CD pipeline, or other automation. For unattended or scripted installs, always pass the model names explicitly instead, as shown below.
+    </Note>
+
     If for some reason you need to download specific models, you can do so with:
 
     ```bash

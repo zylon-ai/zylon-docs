@@ -201,6 +201,10 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
 
     Esto descargará los modelos de IA que has especificado en el Wizard.
 
+    <Note>
+      Ejecutar `models download` sin argumentos abre un selector de modelos interactivo, que requiere una TTY. Fallará (`could not open a new TTY`) en contextos no interactivos, como un comando SSH en un script, un pipeline de CI/CD u otra automatización. Para instalaciones desatendidas o automatizadas, indica siempre los nombres de los modelos de forma explícita, como se muestra a continuación.
+    </Note>
+
     Si por alguna razón necesitas descargar modelos específicos, puedes hacerlo con:
 
     ```bash

@@ -1,43 +1,68 @@
 ---
-title: "Users"
-description: "Create and manage users, roles, and project access."
+title: "Workspace Members"
+description: "Create and manage workspace memberships, roles, project access, and activity."
 ---
 
-Use the Users API to manage people in your workspace. You can create users linked to existing accounts, update profiles and roles, and inspect related projects or artifacts.
+Use the Workspace Members API to manage an account's membership in a workspace. An account represents a person across Zylon, while a workspace member stores that account's workspace-specific state and roles.
 
-## Basic request and response
+Workspace member responses contain `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at`. Pass `include=Account` on supported endpoints to include the related account as `account`.
 
-Use `GET /api/v1/app/me` to verify your token and user context.
+`GET /api/v1/account/{accountId}` includes the account's memberships in `workspace_members`. For account lists, request the same relationship with `GET /api/v1/account?include=WorkspaceMembers`. Nested `account` objects returned by the member endpoints omit it.
+
+Valid workspace roles are `AppGuest`, `AppMember`, `AppAdmin`, and `AppOwner`.
+
+<Note>Names and profile pictures belong to the account, not its workspace membership. Update those fields through `POST /api/v1/account/{accountId}`; use `me` as the account ID to update the authenticated account. `PUT /api/v1/app/member/{wsMemberId}` changes only the workspace role.</Note>
+
+## Get the current workspace member
+
+Use `GET /api/v1/app/me` to verify your token and workspace-member context.
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `include` | No | Comma-separated related data to include. Supported value: `Account`. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/me" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/me?include=Account" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
-  "job_position_name": "Product Ops Lead",
-  "job_position_description": "Owns release coordination and analytics.",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppAdmin"],
-  "created_at": "2026-02-08T14:12:45Z"
+  "created_at": "2026-02-08T14:12:45Z",
+  "account": {
+    "id": "{accountId}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  }
 }
 ```
 </Accordion>
 
-## List users
+## List workspace members
 
 <Accordion title="Endpoint parameters">
 
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
+| Query | `state` | No | Comma-separated states: `Active` and `Inactive`. Both are included by default. |
+| Query | `include` | No | Comma-separated related data to include. Supported value: `Account`. |
 | Query | `page` | No | Absolute page number to fetch, 1-based. |
 | Query | `page_size` | No | Number of items per page. |
 | Query | `page_order` | No | `ASC` or `DESC`. |
@@ -45,13 +70,13 @@ curl "https://{BASE_URL}/api/v1/app/me" \
 | Query | `before` | No | Cursor or value to paginate before. |
 | Query | `first` | No | Limit to the first N items after a cursor. |
 | Query | `last` | No | Limit to the last N items before a cursor. |
-| Query | `total_count` | No | Include total count in the response. |
+| Query | `total_count` | No | Include the total count in the response. |
 
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member?state=Active&include=Account&page=1&page_size=20&total_count=true" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -60,14 +85,23 @@ curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
 {
   "data": [
     {
-      "id": "user_4b7c2a1d9e5f3c8b",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Sasha Patel",
-      "email": "sasha@auroralabs.com",
+      "id": "{wsMemberId}",
+      "org_id": "{orgId}",
+      "account_id": "{accountId}",
       "state": "Active",
       "roles": ["AppAdmin"],
-      "created_at": "2026-02-08T14:12:45Z"
+      "created_at": "2026-02-08T14:12:45Z",
+      "account": {
+        "id": "{accountId}",
+        "state": "Active",
+        "email": "sasha@example.com",
+        "name": "Sasha Patel",
+        "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+        "provider": "Credentials",
+        "roles": ["Workspace"],
+        "created_at": "2026-01-10T09:00:00Z",
+        "updated_at": "2026-02-08T14:12:45Z"
+      }
     }
   ],
   "has_next_page": false,
@@ -77,33 +111,34 @@ curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
 ```
 </Accordion>
 
-## Create a user
+## Create a workspace member
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `account_id` | Yes | ID of the account to add to the workspace. |
+| Body | `role` | Yes | Workspace role to assign. |
+
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user" \
+curl -X POST "https://{BASE_URL}/api/v1/app/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "account_id": "{accountID}",
-    "role": "AppMember",
-    "user_info": {
-      "email": "sasha@auroralabs.com",
-      "name": "Sasha Patel",
-      "given_name": "Sasha",
-      "family_name": "Patel"
-    }
+    "account_id": "{accountId}",
+    "role": "AppMember"
   }'
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppMember"],
   "created_at": "2026-02-08T14:12:45Z"
@@ -111,47 +146,67 @@ curl -X POST "https://{BASE_URL}/api/v1/app/user" \
 ```
 </Accordion>
 
-## Get or update a user
+## Get or update a workspace member
+
+`GET /member/{wsMemberId}` accepts `me` in place of the workspace-member ID. `PUT /member/{wsMemberId}` requires an explicit workspace-member ID.
 
 <Tabs>
-  <Tab title="Get user">
+  <Tab title="Get workspace member">
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Yes | Workspace-member ID, or `me` for the authenticated member. |
+| Query | `include` | No | Comma-separated related data to include. Supported value: `Account`. |
+
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}?include=Account" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppMember"],
-  "created_at": "2026-02-08T14:12:45Z"
+  "created_at": "2026-02-08T14:12:45Z",
+  "account": {
+    "id": "{accountId}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  }
 }
 ```
 </Accordion>
   </Tab>
-  <Tab title="Update user">
+  <Tab title="Update workspace member">
 <Accordion title="Endpoint parameters">
+
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Path | `userID` | Yes | User identifier. |
-| Body | `name` | No | User display name. |
-| Body | `role` | No | Workspace role to assign. |
+| Path | `wsMemberId` | Yes | Workspace-member ID. |
+| Body | `role` | Yes | Workspace role to assign. |
+
 </Accordion>
 
 ```bash
-curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/member/{wsMemberId}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Sasha Patel",
     "role": "AppAdmin"
   }'
 ```
@@ -159,11 +214,9 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppAdmin"],
   "created_at": "2026-02-08T14:12:45Z"
@@ -173,48 +226,87 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
   </Tab>
 </Tabs>
 
-## Activate or deactivate a user
+## Activate or deactivate a workspace member
+
+Both endpoints require an explicit workspace-member ID and return the updated workspace member.
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Yes | Workspace-member ID. The value `me` is not supported. |
+
+</Accordion>
 
 <Tabs>
   <Tab title="Deactivate">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/deactivate" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/deactivate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_9d1c3b5a7f2e4c6d",
-  "state": "Inactive"
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
+  "state": "Inactive",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
   </Tab>
   <Tab title="Activate">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/activate" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/activate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
 ```json
 {
-  "id": "user_9d1c3b5a7f2e4c6d",
-  "state": "Active"
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
   </Tab>
 </Tabs>
 
-## List projects for a user
+## List projects for a workspace member
+
+Use `me` in place of `wsMemberId` to list projects for the authenticated workspace member.
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Yes | Workspace-member ID, or `me` for the authenticated member. |
+| Query | `include` | No | Comma-separated related data to include. Supported value: `Members`. |
+| Query | `order_by` | No | Supported value: `Alphabetical`. |
+| Query | `order` | No | `ASC` or `DESC`. |
+| Query | `page` | No | Absolute page number to fetch, 1-based. |
+| Query | `page_size` | No | Number of items per page. |
+| Query | `page_order` | No | `ASC` or `DESC`. |
+| Query | `after` | No | Cursor or value to paginate after. |
+| Query | `before` | No | Cursor or value to paginate before. |
+| Query | `first` | No | Limit to the first N items after a cursor. |
+| Query | `last` | No | Limit to the last N items before a cursor. |
+| Query | `total_count` | No | Include the total count in the response. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/project?order_by=Alphabetical&order=ASC&page=1&page_size=20&total_count=true" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -223,16 +315,16 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
 {
   "data": [
     {
-      "id": "proj_7a5c3e1b9d2f4a6c",
+      "id": "{projectId}",
       "name": "Customer Insights",
       "goal": "Summarize weekly support trends.",
-      "deadline": "2026-03-01T00:00:00Z",
       "visibility": "Private",
       "member_count": 4,
       "default_member_role": "Editor",
       "default_role_enabled": true,
       "project_context": "Support analytics for Q1.",
-      "answer_context": "Use approved templates.",
+      "use_citations": true,
+      "use_system_prompt": true,
       "is_pinned": true
     }
   ],
@@ -243,57 +335,30 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
 ```
 </Accordion>
 
-## Latest artifacts for a user
+## Latest artifacts for a workspace member
+
+Use `me` in place of `wsMemberId` to get artifacts for the authenticated workspace member.
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Yes | Workspace-member ID, or `me` for the authenticated member. |
+| Query | `latest` | No | Maximum number of latest artifacts to return. Defaults to `3`. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}/latest-artifacts" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/latest-artifacts?latest=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Example response">
-```json
-[
-  {
-    "id": "artifact_2b4d6f8a1c3e5a7b",
-    "project_id": "proj_7a5c3e1b9d2f4a6c",
-    "name": "Q1 Support Summary",
-    "type": "Document",
-    "source": "User",
-    "state": "Published",
-    "ingest_status": "Done",
-    "has_content": true,
-    "created_at": "2026-02-08T14:30:12Z"
-  }
-]
-```
-</Accordion>
-
-## User integrations
-
-```bash
-curl "https://{BASE_URL}/api/v1/app/user/integrations" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-<Accordion title="Example response">
-```json
-[
-  {
-    "id": "conf_8a7b6c5d4e3f2a1b",
-    "user_id": "user_4b7c2a1d9e5f3c8b",
-    "org_id": "org_2f3a9d1c7b5e4a8f",
-    "type": "Confluence",
-    "created_at": "2026-02-05T09:10:00Z",
-    "updated_at": "2026-02-08T10:02:11Z"
-  }
-]
-```
-</Accordion>
+The response is an array of artifact objects. See [Artifacts](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts) for the response fields.
 
 ## Errors and edge cases
 
-- **409**: duplicate user email or account linkage.
-- **400**: invalid role.
-- **404**: user not found.
+- **400**: invalid state, include value, role, or request body.
+- **400**: a workspace member cannot activate or deactivate their own membership.
+- **403**: insufficient permission to change workspace membership or roles.
+- **404**: workspace member or related account not found.

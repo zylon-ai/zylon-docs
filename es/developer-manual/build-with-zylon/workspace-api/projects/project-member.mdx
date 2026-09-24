@@ -5,6 +5,8 @@ description: "Agrega, actualiza y elimina miembros de un proyecto."
 
 Usa estos endpoints para controlar quién puede acceder a un proyecto y qué rol tiene. Roles: `Viewer`, `Commenter`, `Editor`, `Admin`, `Owner`.
 
+Las respuestas de miembro del proyecto usan el ID del miembro del espacio de trabajo en `id` e incluyen la cuenta relacionada en `account`.
+
 ## Solicitud básica y respuesta
 
 Lista miembros actuales con `GET /api/v1/app/project/{projectId}/member`.
@@ -24,8 +26,8 @@ Lista miembros actuales con `GET /api/v1/app/project/{projectId}/member`.
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=50&total_count=true" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -34,17 +36,18 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=
 {
   "data": [
     {
-      "id": "member_1a2b3c4d5e6f",
+      "id": "{wsMemberId}",
       "role": "Owner",
-      "user": {
-        "id": "user_4b7c2a1d9e5f3c8b",
-        "org_id": "org_2f3a9d1c7b5e4a8f",
-        "account_id": "acct_6c8a1f3b2d4e5f7a",
-        "name": "Sasha Patel",
-        "email": "sasha@auroralabs.com",
+      "account": {
+        "id": "{accountId}",
         "state": "Active",
-        "roles": ["AppAdmin"],
-        "created_at": "2026-02-08T14:12:45Z"
+        "email": "sasha@example.com",
+        "name": "Sasha Patel",
+        "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+        "provider": "Credentials",
+        "roles": ["Workspace"],
+        "created_at": "2026-01-10T09:00:00Z",
+        "updated_at": "2026-02-08T14:12:45Z"
       },
       "is_project_member": true
     }
@@ -63,7 +66,7 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member?page=1&page_size=
 | --- | --- | --- | --- |
 | Path | `projectID` | Si | Identificador del proyecto. |
 | Body | `members` | Si | Lista de miembros a agregar. |
-| Body | `members[].user_id` | Si | Identificador del usuario. |
+| Body | `members[].ws_member_id` | Si | Identificador del miembro del espacio de trabajo. |
 | Body | `members[].role` | Si | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
 </Accordion>
 
@@ -74,7 +77,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
-      { "user_id": "{userID}", "role": "Editor" }
+      { "ws_member_id": "{wsMemberId}", "role": "Editor" }
     ]
   }'
 ```
@@ -83,17 +86,18 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 ```json
 [
   {
-    "id": "member_7f6e5d4c3b2a",
+    "id": "{wsMemberId}",
     "role": "Editor",
-    "user": {
-      "id": "user_9d1c3b5a7f2e4c6d",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Jordan Lee",
-      "email": "jordan@auroralabs.com",
+    "account": {
+      "id": "{accountId}",
       "state": "Active",
-      "roles": ["AppMember"],
-      "created_at": "2026-02-07T09:20:12Z"
+      "email": "jordan@example.com",
+      "name": "Jordan Lee",
+      "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+      "provider": "Credentials",
+      "roles": ["Workspace"],
+      "created_at": "2026-01-10T09:00:00Z",
+      "updated_at": "2026-02-07T09:20:12Z"
     },
     "is_project_member": true
   }
@@ -108,7 +112,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 | --- | --- | --- | --- |
 | Path | `projectID` | Si | Identificador del proyecto. |
 | Body | `members` | Si | Lista de miembros a actualizar. |
-| Body | `members[].user_id` | Si | Identificador del usuario. |
+| Body | `members[].ws_member_id` | Si | Identificador del miembro del espacio de trabajo. |
 | Body | `members[].role` | No | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
 | Body | `members[].is_pinned` | No | Fija o desfija el proyecto para ese miembro. |
 </Accordion>
@@ -120,7 +124,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [
-      { "user_id": "{userID}", "role": "Admin", "is_pinned": true }
+      { "ws_member_id": "{wsMemberId}", "role": "Admin", "is_pinned": true }
     ]
   }'
 ```
@@ -129,17 +133,18 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 ```json
 [
   {
-    "id": "member_7f6e5d4c3b2a",
+    "id": "{wsMemberId}",
     "role": "Admin",
-    "user": {
-      "id": "user_9d1c3b5a7f2e4c6d",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Jordan Lee",
-      "email": "jordan@auroralabs.com",
+    "account": {
+      "id": "{accountId}",
       "state": "Active",
-      "roles": ["AppMember"],
-      "created_at": "2026-02-07T09:20:12Z"
+      "email": "jordan@example.com",
+      "name": "Jordan Lee",
+      "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+      "provider": "Credentials",
+      "roles": ["Workspace"],
+      "created_at": "2026-01-10T09:00:00Z",
+      "updated_at": "2026-02-07T09:20:12Z"
     },
     "is_project_member": true
   }
@@ -149,28 +154,38 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}/member" \
 
 ## Obtener o quitar un miembro
 
+Usa `me` en lugar de `wsMemberId` para dirigirte al miembro autenticado del espacio de trabajo.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Path | `wsMemberId` | Si | ID del miembro, o `me` para el miembro autenticado. |
+</Accordion>
+
 <Tabs>
   <Tab title="Obtener miembro">
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{wsMemberId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "member_7f6e5d4c3b2a",
+  "id": "{wsMemberId}",
   "role": "Admin",
-  "user": {
-    "id": "user_9d1c3b5a7f2e4c6d",
-    "org_id": "org_2f3a9d1c7b5e4a8f",
-    "account_id": "acct_6c8a1f3b2d4e5f7a",
-    "name": "Jordan Lee",
-    "email": "jordan@auroralabs.com",
+  "account": {
+    "id": "{accountId}",
     "state": "Active",
-    "roles": ["AppMember"],
-    "created_at": "2026-02-07T09:20:12Z"
+    "email": "jordan@example.com",
+    "name": "Jordan Lee",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-07T09:20:12Z"
   },
   "is_project_member": true
 }
@@ -179,25 +194,28 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
   </Tab>
   <Tab title="Eliminar miembro">
 ```bash
-curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{wsMemberId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "member_7f6e5d4c3b2a",
+  "id": "{wsMemberId}",
   "role": "Admin",
-  "user": {
-    "id": "user_9d1c3b5a7f2e4c6d",
-    "name": "Jordan Lee",
-    "email": "jordan@auroralabs.com",
+  "account": {
+    "id": "{accountId}",
     "state": "Active",
-    "roles": ["AppMember"],
-    "created_at": "2026-02-07T09:20:12Z"
+    "email": "jordan@example.com",
+    "name": "Jordan Lee",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-07T09:20:12Z"
   },
-  "is_project_member": false
+  "is_project_member": true
 }
 ```
 </Accordion>
@@ -207,4 +225,4 @@ curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}/member/{userID
 ## Errores y casos límite
 
 - **403**: no tienes permisos para administrar miembros.
-- **404**: proyecto o usuario no encontrado.
+- **404**: proyecto o miembro del espacio de trabajo no encontrado.

@@ -1,43 +1,68 @@
 ---
-title: "Usuarios"
-description: "Crea y administra usuarios, roles y acceso a proyectos."
+title: "Miembros del espacio de trabajo"
+description: "Crea y administra membresías, roles, acceso a proyectos y actividad."
 ---
 
-Usa la API de usuarios para gestionar personas en tu espacio de trabajo. Puedes crear usuarios vinculados a cuentas existentes, actualizar perfiles y roles, y ver proyectos o artefactos asociados.
+Usa la API de miembros del espacio de trabajo para gestionar la membresía de una cuenta en un espacio de trabajo. Una cuenta representa a una persona en Zylon, mientras que un miembro almacena el estado y los roles de esa cuenta dentro del espacio de trabajo.
 
-## Solicitud básica y respuesta
+Las respuestas de miembro contienen `id`, `org_id`, `account_id`, `state`, `roles` y `created_at`. Usa `include=Account` en los endpoints compatibles para incluir la cuenta relacionada en `account`.
 
-Usa `GET /api/v1/app/me` para verificar tu token y contexto.
+`GET /api/v1/account/{accountId}` incluye las membresías de la cuenta en `workspace_members`. Para los listados de cuentas, solicita la misma relación con `GET /api/v1/account?include=WorkspaceMembers`. Los objetos `account` anidados que devuelven los endpoints de miembros la omiten.
+
+Los roles válidos del espacio de trabajo son `AppGuest`, `AppMember`, `AppAdmin` y `AppOwner`.
+
+<Note>Los nombres y las imágenes de perfil pertenecen a la cuenta, no a su membresía. Actualiza esos campos mediante `POST /api/v1/account/{accountId}`; usa `me` como ID para actualizar la cuenta autenticada. `PUT /api/v1/app/member/{wsMemberId}` solo cambia el rol del espacio de trabajo.</Note>
+
+## Obtener el miembro actual
+
+Usa `GET /api/v1/app/me` para verificar tu token y el contexto del miembro del espacio de trabajo.
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `include` | No | Datos relacionados que se incluirán, separados por comas. Valor compatible: `Account`. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/me" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/me?include=Account" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
-  "job_position_name": "Product Ops Lead",
-  "job_position_description": "Owns release coordination and analytics.",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppAdmin"],
-  "created_at": "2026-02-08T14:12:45Z"
+  "created_at": "2026-02-08T14:12:45Z",
+  "account": {
+    "id": "{accountId}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  }
 }
 ```
 </Accordion>
 
-## Listar usuarios
+## Listar miembros del espacio de trabajo
 
 <Accordion title="Parametros del endpoint">
 
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
+| Query | `state` | No | Estados separados por comas: `Active` e `Inactive`. Ambos se incluyen por defecto. |
+| Query | `include` | No | Datos relacionados que se incluirán, separados por comas. Valor compatible: `Account`. |
 | Query | `page` | No | Número de página absoluto, empezando en 1. |
 | Query | `page_size` | No | Número de elementos por página. |
 | Query | `page_order` | No | `ASC` o `DESC`. |
@@ -50,8 +75,8 @@ curl "https://{BASE_URL}/api/v1/app/me" \
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member?state=Active&include=Account&page=1&page_size=20&total_count=true" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -60,14 +85,23 @@ curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
 {
   "data": [
     {
-      "id": "user_4b7c2a1d9e5f3c8b",
-      "org_id": "org_2f3a9d1c7b5e4a8f",
-      "account_id": "acct_6c8a1f3b2d4e5f7a",
-      "name": "Sasha Patel",
-      "email": "sasha@auroralabs.com",
+      "id": "{wsMemberId}",
+      "org_id": "{orgId}",
+      "account_id": "{accountId}",
       "state": "Active",
       "roles": ["AppAdmin"],
-      "created_at": "2026-02-08T14:12:45Z"
+      "created_at": "2026-02-08T14:12:45Z",
+      "account": {
+        "id": "{accountId}",
+        "state": "Active",
+        "email": "sasha@example.com",
+        "name": "Sasha Patel",
+        "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+        "provider": "Credentials",
+        "roles": ["Workspace"],
+        "created_at": "2026-01-10T09:00:00Z",
+        "updated_at": "2026-02-08T14:12:45Z"
+      }
     }
   ],
   "has_next_page": false,
@@ -77,33 +111,34 @@ curl "https://{BASE_URL}/api/v1/app/user?page=1&page_size=20" \
 ```
 </Accordion>
 
-## Crear un usuario
+## Crear un miembro del espacio de trabajo
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `account_id` | Si | ID de la cuenta que se añadirá al espacio de trabajo. |
+| Body | `role` | Si | Rol del espacio de trabajo que se asignará. |
+
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user" \
+curl -X POST "https://{BASE_URL}/api/v1/app/member" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "account_id": "{accountID}",
-    "role": "AppMember",
-    "user_info": {
-      "email": "sasha@auroralabs.com",
-      "name": "Sasha Patel",
-      "given_name": "Sasha",
-      "family_name": "Patel"
-    }
+    "account_id": "{accountId}",
+    "role": "AppMember"
   }'
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppMember"],
   "created_at": "2026-02-08T14:12:45Z"
@@ -111,47 +146,67 @@ curl -X POST "https://{BASE_URL}/api/v1/app/user" \
 ```
 </Accordion>
 
-## Obtener o actualizar un usuario
+## Obtener o actualizar un miembro del espacio de trabajo
+
+`GET /member/{wsMemberId}` acepta `me` en lugar del ID del miembro. `PUT /member/{wsMemberId}` requiere un ID de miembro explícito.
 
 <Tabs>
-  <Tab title="Obtener usuario">
+  <Tab title="Obtener miembro">
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Si | ID del miembro, o `me` para el miembro autenticado. |
+| Query | `include` | No | Datos relacionados que se incluirán, separados por comas. Valor compatible: `Account`. |
+
+</Accordion>
+
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}?include=Account" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppMember"],
-  "created_at": "2026-02-08T14:12:45Z"
+  "created_at": "2026-02-08T14:12:45Z",
+  "account": {
+    "id": "{accountId}",
+    "state": "Active",
+    "email": "sasha@example.com",
+    "name": "Sasha Patel",
+    "profile_picture": "https://{BASE_URL}/files/profile-picture.png",
+    "provider": "Credentials",
+    "roles": ["Workspace"],
+    "created_at": "2026-01-10T09:00:00Z",
+    "updated_at": "2026-02-08T14:12:45Z"
+  }
 }
 ```
 </Accordion>
   </Tab>
-  <Tab title="Actualizar usuario">
+  <Tab title="Actualizar miembro">
 <Accordion title="Parametros del endpoint">
+
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `userID` | Si | Identificador del usuario. |
-| Body | `name` | No | Nombre visible del usuario. |
-| Body | `role` | No | Rol de Workspace a asignar. |
+| Path | `wsMemberId` | Si | ID del miembro del espacio de trabajo. |
+| Body | `role` | Si | Rol del espacio de trabajo que se asignará. |
+
 </Accordion>
 
 ```bash
-curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
+curl -X PUT "https://{BASE_URL}/api/v1/app/member/{wsMemberId}" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Sasha Patel",
     "role": "AppAdmin"
   }'
 ```
@@ -159,11 +214,9 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_4b7c2a1d9e5f3c8b",
-  "org_id": "org_2f3a9d1c7b5e4a8f",
-  "account_id": "acct_6c8a1f3b2d4e5f7a",
-  "name": "Sasha Patel",
-  "email": "sasha@auroralabs.com",
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
   "state": "Active",
   "roles": ["AppAdmin"],
   "created_at": "2026-02-08T14:12:45Z"
@@ -173,48 +226,87 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/user/{userID}" \
   </Tab>
 </Tabs>
 
-## Activar o desactivar un usuario
+## Activar o desactivar un miembro del espacio de trabajo
+
+Ambos endpoints requieren un ID de miembro explícito y devuelven el miembro actualizado.
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Si | ID del miembro del espacio de trabajo. No se admite el valor `me`. |
+
+</Accordion>
 
 <Tabs>
   <Tab title="Desactivar">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/deactivate" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/deactivate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_9d1c3b5a7f2e4c6d",
-  "state": "Inactive"
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
+  "state": "Inactive",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
   </Tab>
   <Tab title="Activar">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/user/{userID}/activate" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/activate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "user_9d1c3b5a7f2e4c6d",
-  "state": "Active"
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}",
+  "state": "Active",
+  "roles": ["AppMember"],
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
   </Tab>
 </Tabs>
 
-## Listar proyectos de un usuario
+## Listar proyectos de un miembro del espacio de trabajo
+
+Usa `me` en lugar de `wsMemberId` para listar los proyectos del miembro autenticado.
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Si | ID del miembro, o `me` para el miembro autenticado. |
+| Query | `include` | No | Datos relacionados que se incluirán, separados por comas. Valor compatible: `Members`. |
+| Query | `order_by` | No | Valor compatible: `Alphabetical`. |
+| Query | `order` | No | `ASC` o `DESC`. |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/project?order_by=Alphabetical&order=ASC&page=1&page_size=20&total_count=true" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -223,16 +315,16 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
 {
   "data": [
     {
-      "id": "proj_7a5c3e1b9d2f4a6c",
+      "id": "{projectId}",
       "name": "Customer Insights",
       "goal": "Summarize weekly support trends.",
-      "deadline": "2026-03-01T00:00:00Z",
       "visibility": "Private",
       "member_count": 4,
       "default_member_role": "Editor",
       "default_role_enabled": true,
       "project_context": "Support analytics for Q1.",
-      "answer_context": "Use approved templates.",
+      "use_citations": true,
+      "use_system_prompt": true,
       "is_pinned": true
     }
   ],
@@ -243,57 +335,30 @@ curl "https://{BASE_URL}/api/v1/app/user/{userID}/project" \
 ```
 </Accordion>
 
-## Últimos artefactos de un usuario
+## Últimos artefactos de un miembro del espacio de trabajo
+
+Usa `me` en lugar de `wsMemberId` para obtener los artefactos del miembro autenticado.
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Si | ID del miembro, o `me` para el miembro autenticado. |
+| Query | `latest` | No | Número máximo de artefactos recientes que se devolverán. El valor por defecto es `3`. |
+
+</Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/user/{userID}/latest-artifacts" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}/latest-artifacts?latest=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-[
-  {
-    "id": "artifact_2b4d6f8a1c3e5a7b",
-    "project_id": "proj_7a5c3e1b9d2f4a6c",
-    "name": "Q1 Support Summary",
-    "type": "Document",
-    "source": "User",
-    "state": "Published",
-    "ingest_status": "Done",
-    "has_content": true,
-    "created_at": "2026-02-08T14:30:12Z"
-  }
-]
-```
-</Accordion>
-
-## Integraciones del usuario
-
-```bash
-curl "https://{BASE_URL}/api/v1/app/user/integrations" \
-  -H "Authorization: Bearer {API_TOKEN}"
-  -H "x-org: {org_slug}"
-```
-
-<Accordion title="Ejemplo de respuesta">
-```json
-[
-  {
-    "id": "conf_8a7b6c5d4e3f2a1b",
-    "user_id": "user_4b7c2a1d9e5f3c8b",
-    "org_id": "org_2f3a9d1c7b5e4a8f",
-    "type": "Confluence",
-    "created_at": "2026-02-05T09:10:00Z",
-    "updated_at": "2026-02-08T10:02:11Z"
-  }
-]
-```
-</Accordion>
+La respuesta es un array de objetos de artefacto. Consulta [Artefactos](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts) para ver los campos de respuesta.
 
 ## Errores y casos límite
 
-- **409**: correo electrónico duplicado o cuenta ya vinculada.
-- **400**: rol inválido.
-- **404**: usuario no encontrado.
+- **400**: estado, valor de `include`, rol o cuerpo de la solicitud no válidos.
+- **400**: un miembro no puede activar ni desactivar su propia membresía.
+- **403**: permisos insuficientes para cambiar la membresía o los roles.
+- **404**: miembro del espacio de trabajo o cuenta relacionada no encontrados.

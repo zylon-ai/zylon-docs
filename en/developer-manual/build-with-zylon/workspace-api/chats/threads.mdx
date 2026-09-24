@@ -239,6 +239,8 @@ List threads in a project:
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
 | Path | `projectID` | Yes | Project identifier. |
+| Query | `state` | No | Comma-separated thread states: `Active` and `Deleted`. |
+| Query | `include` | No | Comma-separated related data to include: `Account` and `ReadState`. |
 | Query | `page` | No | Absolute page number to fetch, 1-based. |
 | Query | `page_size` | No | Number of items per page. |
 | Query | `page_order` | No | `ASC` or `DESC`. |
@@ -252,7 +254,7 @@ List threads in a project:
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -327,6 +329,7 @@ List interactions for a thread:
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
 | Path | `threadID` | Yes | Thread identifier. |
+| Query | `include` | No | Comma-separated related data to include. Supported value: `Account`. |
 | Query | `page` | No | Absolute page number to fetch, 1-based. |
 | Query | `page_size` | No | Number of items per page. |
 | Query | `page_order` | No | `ASC` or `DESC`. |
@@ -339,8 +342,8 @@ List interactions for a thread:
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20&include=Account" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 

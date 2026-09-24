@@ -10,6 +10,8 @@ Messages is the core of ZylonGPT. You send a conversation history, and Zylon ret
 - An API token. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console).
 - Your Zylon hostname (replace `{BASE_URL}` in the examples).
 
+`PrivateGPT.Read.All` permits synchronous `POST /messages`, `POST /messages/validate`, and the other endpoints in the [ZylonGPT read-only allowlist](/en/developer-manual/build-with-zylon/zylon-gpt-api/overview). `Read.All` permits the same calls only when the account token carries `gateway_id`; without gateway context, it cannot call ZylonGPT. Effective access also depends on the token owner's role permissions.
+
 ## Basic request and response
 
 Send one user message and get back one assistant message.
@@ -312,6 +314,10 @@ data: {"type":"message_stop"}
 </Accordion>
 
 ## Async messages
+
+<Warning>
+Async message start, stream, status, cancel, and delete routes require `PrivateGPT.ReadWrite.All` or `ReadWrite.All`. Read-only tokens receive `403` for every async lifecycle route.
+</Warning>
 
 Async messages use the **same request body** as sync messages—you just call a different endpoint. The main difference is the **response shape**: sync returns a full message, async returns a `message_id` you can stream or poll later.
 

@@ -16,8 +16,12 @@ Artifacts can be created from:
 
 ## Prerequisites
 
-- An API token. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console).
+- An API token with the required write scope. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console) or [Token Management](/en/developer-manual/get-started/token-management).
 - Your Zylon hostname (replace `{BASE_URL}` in the examples).
+
+<Warning>
+Every ZylonGPT artifact operation—including ingest, list, content retrieval, task status, and delete—requires a read-write scope. `PrivateGPT.Read.All` and `Read.All` with `gateway_id` return `403` for all artifact routes. A `Read.All` token without gateway context cannot call ZylonGPT at all.
+</Warning>
 
 ## Basic request and response
 

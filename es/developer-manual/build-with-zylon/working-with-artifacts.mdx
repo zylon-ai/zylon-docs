@@ -16,8 +16,12 @@ Se pueden crear a partir de:
 
 ## Requisitos previos
 
-- Un token de API. Ver [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
+- Un token de API con el scope de escritura necesario. Consulta [Backoffice Developer Console](/es/developer-manual/get-started/developer-console) o [Gestión de tokens](/es/developer-manual/get-started/token-management).
 - El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+<Warning>
+Todas las operaciones de artefactos de ZylonGPT, incluidas ingesta, listado, recuperación de contenido, estado de tareas y eliminación, requieren un scope de lectura y escritura. `PrivateGPT.Read.All` y `Read.All` con `gateway_id` devuelven `403` para todas las rutas de artefactos. Un token `Read.All` sin contexto de gateway no puede llamar a ZylonGPT.
+</Warning>
 
 ## Solicitud y respuesta básica
 

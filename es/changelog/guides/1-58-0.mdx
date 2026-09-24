@@ -189,15 +189,43 @@ watch sudo kubectl get pods -n zylon
 
 Ejecuta los mismos comandos en todos los tipos de instalación. No necesita acceso a internet.
 
+<Warning>
+  El backfill reescribe las Skills y Documentos existentes y no se puede deshacer. Ejecútalo siempre primero con `--dry-run` y revisa la salida antes de ejecutarlo de verdad.
+</Warning>
+
 ```bash
-# Backfill de las Skills y Documentos existentes para que aparezcan en 1.58.
-# Añade --dry-run primero para ver qué cambiará. Se puede ejecutar más de una vez.
+# Comprueba que se pueden ejecutar comandos dentro del backend. Debe terminar sin salida.
+# Justo después de un reinicio puede fallar unos minutos aunque el pod muestre 1/1; espera y reintenta.
+sudo kubectl -n zylon exec deploy/zylon-zylon-backend -- true
+
+# Previsualiza el backfill de las Skills y Documentos existentes. No se cambia nada.
+# Revisa la última línea: debe mostrar failures=0. "planned" es cuántos se escribirán.
+sudo zylon-cli backfill-projections --dry-run
+
+# Solo si el dry run ha ido bien: backfill de las Skills y Documentos existentes para que aparezcan en 1.58.
+# Este cambio es irreversible.
 sudo zylon-cli backfill-projections
+
+# Muestra el límite de pods actual del nodo. Si muestra 110 (el valor por defecto de Kubernetes), nunca se ha aumentado.
+sudo kubectl get nodes -o jsonpath='{.items[*].status.capacity.pods}{"\n"}'
 
 # Aumenta el límite de pods de Kubernetes a 200 (las instalaciones nuevas ya lo tienen).
 # Reinicia k0s, por lo que todos los servicios de Zylon estarán no disponibles durante unos minutos.
 # Si el límite ya es 200, no cambia nada y k0s no se reinicia.
 sudo zylon-cli configure --max-pods 200
+
+# Cuando k0s vuelva a estar en marcha, comprueba el nuevo límite. Debe mostrar 200.
+sudo kubectl get nodes -o jsonpath='{.items[*].status.capacity.pods}{"\n"}'
+```
+
+La última línea de cada ejecución del backfill muestra el resultado. Los números dependen de tus datos; `failures` siempre debe ser `0`:
+
+```text
+# --dry-run: "planned" es lo que se escribirá, todavía no se cambia nada
+Projection backfill complete: processed=178 content-migrated=0 projections-written=0 planned=43 skipped=135 failures=0
+
+# Ejecución real: lo planificado ya se ha escrito ("projections-written")
+Projection backfill complete: processed=178 content-migrated=43 projections-written=43 planned=0 skipped=135 failures=0
 ```
 
 <Info>
@@ -208,7 +236,9 @@ sudo zylon-cli configure --max-pods 200
 
 <AccordionGroup>
   <Accordion title="backfill-projections falla">
-    Comprueba que todos los pods del namespace `zylon` están listos y vuelve a ejecutarlo. Se puede ejecutar más de una vez sin problema.
+    Si el error dice `container not found ("zylon-backend")`, el nodo se ha reiniciado hace poco y aún no está listo para ejecutar comandos. Espera unos minutos hasta que `sudo kubectl -n zylon exec deploy/zylon-zylon-backend -- true` funcione y reintenta. No se ha cambiado nada.
+
+    Si no, comprueba que todos los pods del namespace `zylon` están listos, vuelve a ejecutarlo con `--dry-run` y revisa la salida. Si el dry run también falla, [abre un ticket de soporte](https://zylonsupport.zendesk.com/hc/en-us/requests/new?tf_subject=1.58+Upgrade+Help) antes de ejecutar el backfill real.
   </Accordion>
   <Accordion title="configure --max-pods no puede actualizar la configuración de k0s">
     El comando solo edita `/etc/k0s/k0s.yaml` cuando coincide con el formato generado por la Zylon CLI. Si no, se detiene y muestra los pasos manuales:

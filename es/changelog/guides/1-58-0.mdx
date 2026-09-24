@@ -1,0 +1,229 @@
+---
+title: "Actualización a 1.58"
+description: "Pasos para actualizar tu instalación de Zylon a la versión 1.58."
+---
+
+<Warning>
+  **Se requiere Zylon CLI 2.9.0 o posterior.** Los comandos de esta guía no están disponibles en versiones anteriores de la CLI.
+</Warning>
+
+## Qué ha cambiado
+
+1.58 requiere dos pasos manuales que la CLI no ejecuta por sí sola. Ejecuta ambos cuando 1.58 esté instalado y todos los pods estén listos:
+
+- **Backfill de Skills y Documentos.** Las Skills y los Documentos existentes deben procesarse con `zylon-cli backfill-projections`.
+- **Límite de pods más alto en el nodo.** El nodo de Kubernetes debe permitir hasta 200 pods. Las instalaciones nuevas lo aplican automáticamente; las existentes lo aplican con `zylon-cli configure --max-pods 200`. Esto reinicia k0s, por lo que todos los servicios de Zylon estarán brevemente no disponibles.
+
+## Cómo actualizar
+
+<Info>
+  Si necesitas ayuda, [abre un ticket de soporte](https://zylonsupport.zendesk.com/hc/en-us/requests/new?tf_subject=1.58+Upgrade+Help) y nuestro equipo de ingeniería te ayudará.
+</Info>
+
+### Paso 1: Instala 1.58
+
+Sigue los pasos según tu tipo de instalación.
+
+<Tabs>
+  <Tab title="Online">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Instala 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.58.X
+        ```
+      </Step>
+    </Steps>
+
+    Para detalles completos del entorno y troubleshooting, consulta la [guía de actualización online](/es/operator-manual/installation/online#updating-zylon).
+
+  </Tab>
+  <Tab title="Semi-Airgap">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Rehabilita acceso a internet">
+        Permite temporalmente operaciones online en tu configuración y aplícala:
+
+        ```yaml
+        airgap:
+          offlineOperation: false
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+      <Step title="Verifica conectividad">
+        ```bash
+        sudo zylon-cli preflight --network -v
+        ```
+      </Step>
+      <Step title="Instala 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.58.X
+        ```
+      </Step>
+      <Step title="Vuelve a activar modo offline">
+        ```yaml
+        airgap:
+          offlineOperation: true
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+    </Steps>
+
+    Para red/proxy y más detalle operativo, consulta la [guía de actualización semi-airgap](/es/operator-manual/installation/semi-airgap#updating-zylon).
+
+  </Tab>
+  <Tab title="Airgap Completo">
+
+    Estos pasos se ejecutan en dos máquinas: una con internet para descarga y la máquina destino offline.
+
+    <Steps>
+      <Step title="Máquina online: actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Máquina online: prepara el paquete de transferencia de la CLI">
+        ```bash
+        sudo tar -czf zylon-update.tar.gz \
+          /usr/local/bin/zylon-cli \
+          /usr/local/bin/zylon-forge-cli
+        ```
+      </Step>
+      <Step title="Máquina online: exporta el bundle de plataforma 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+
+        # Usa --from si conoces tu versión actual (bundle más pequeño)
+        sudo zylon-cli export 1.58.X --from CURRENT_VERSION
+
+        # Si no, exporta un bundle completo
+        sudo zylon-cli export 1.58.X
+        ```
+      </Step>
+      <Step title="Transfiere artefactos a la máquina offline">
+        Transfiere los archivos necesarios:
+
+        - `zylon-*.tar`
+        - `zylon-update.tar.gz`
+      </Step>
+      <Step title="Máquina offline: extrae el paquete de actualización CLI">
+        ```bash
+        cd /tmp
+        sudo tar -xzf zylon-update.tar.gz -C /
+        sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Máquina offline: importa e instala">
+        ```bash
+        # Importa el bundle de Zylon, verifica la versión y luego instala
+        sudo zylon-cli import zylon-*.tar
+        sudo zylon-cli list-versions --offline
+        sudo zylon-cli install 1.58.X --airgap
+        ```
+      </Step>
+    </Steps>
+
+    Para bundles diferenciales y transferencia, consulta la [guía de actualización airgap](/es/operator-manual/installation/airgap#updating-zylon).
+
+  </Tab>
+</Tabs>
+
+### Paso 2: Espera a que todos los pods estén listos
+
+Espera hasta que todos los pods del namespace `zylon` tengan todos sus contenedores listos (por ejemplo `1/1`) y estén en `Running` (o `Completed` en el caso de jobs):
+
+```bash
+watch sudo kubectl get pods -n zylon
+```
+
+### Paso 3: Aplica los cambios de 1.58
+
+Ejecuta los mismos comandos en todos los tipos de instalación. No necesita acceso a internet.
+
+```bash
+# Backfill de las Skills y Documentos existentes para que aparezcan en 1.58.
+# Añade --dry-run primero para ver qué cambiará. Se puede ejecutar más de una vez.
+sudo zylon-cli backfill-projections
+
+# Aumenta el límite de pods de Kubernetes a 200 (las instalaciones nuevas ya lo tienen).
+# Reinicia k0s, por lo que todos los servicios de Zylon estarán no disponibles durante unos minutos.
+# Si el límite ya es 200, no cambia nada y k0s no se reinicia.
+sudo zylon-cli configure --max-pods 200
+```
+
+<Info>
+  Ejecuta el backfill antes de aumentar el límite de pods: el backfill necesita la plataforma en marcha y el reinicio de k0s lo interrumpiría.
+</Info>
+
+## Solución de problemas
+
+<AccordionGroup>
+  <Accordion title="backfill-projections falla">
+    Comprueba que todos los pods del namespace `zylon` están listos y vuelve a ejecutarlo. Se puede ejecutar más de una vez sin problema.
+  </Accordion>
+  <Accordion title="configure --max-pods no puede actualizar la configuración de k0s">
+    El comando solo edita `/etc/k0s/k0s.yaml` cuando coincide con el formato generado por la Zylon CLI. Si no, se detiene y muestra los pasos manuales:
+
+    1. Añade `maxPods: 200` en `spec.workerProfiles` → `default` → `values` dentro de `/etc/k0s/k0s.yaml`.
+    2. Reinicia k0s:
+
+    ```bash
+    sudo k0s stop && sudo k0s start
+    ```
+
+    3. Comprueba que el nuevo límite está activo:
+
+    ```bash
+    sudo grep maxPods /run/k0s/kubelet/config.yaml
+    ```
+  </Accordion>
+</AccordionGroup>

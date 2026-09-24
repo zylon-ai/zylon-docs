@@ -3,6 +3,10 @@ title: "Miembros del proyecto"
 description: "Agrega, actualiza y elimina miembros de un proyecto."
 ---
 
+<Warning>
+Los campos de miembros de proyecto y las respuestas de cuenta cambian en 1.58. Consulta [Migración de API 1.57 → 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#ids-de-cuenta-y-campos-renombrados) antes de actualizar tu integración.
+</Warning>
+
 Usa estos endpoints para controlar quién puede acceder a un proyecto y qué rol tiene. Roles: `Viewer`, `Commenter`, `Editor`, `Admin`, `Owner`.
 
 Las respuestas de miembro del proyecto usan el ID del miembro del espacio de trabajo en `id` e incluyen la cuenta relacionada en `account`.

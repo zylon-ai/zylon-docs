@@ -1,0 +1,286 @@
+---
+title: "API migration 1.57 -> 1.58"
+description: "Migrate existing Workspace API integrations to the 1.58 routes, request bodies, and response models."
+noindex: true
+---
+
+Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs; the ZylonGPT API is outside this migration.
+
+<Warning>
+Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
+
+**If your integration uses user IDs, review where you store, compare, or pass them.** Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+</Warning>
+
+## Prerequisites
+
+- An API token and your Zylon hostname. See [Workspace Token Management](/en/developer-manual/get-started/token-management).
+- Send `Authorization: Bearer {API_TOKEN}` and `x-org: {org_slug}` for workspace requests.
+- Send `Content-Type: application/json` for JSON bodies. Let your HTTP client set the boundary for multipart requests.
+
+Paths in the tables below are relative to `https://{BASE_URL}/api/v1`.
+
+## Artifact routes
+
+Replace the project or organization artifact prefix with `/app/artifact`. Supply project ownership or filtering explicitly where needed.
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/project/{projectID}/artifact` or `/app/organization/artifact` | `/app/artifact` |
+| `GET`, `PUT`, `DELETE` | Either old prefix + `/{artifactID}` | `/app/artifact/{artifactID}` |
+| `POST` | Either old prefix + `/validate` | `/app/artifact/validate` |
+| `POST` | Either old prefix + `/{artifactID}/validate` | `/app/artifact/{artifactID}/validate` |
+| `GET` | Either old prefix + `/{artifactID}/download` | `/app/artifact/{artifactID}/download` |
+| `GET` | `/app/project/{projectID}/artifact/{artifactID}/parsed-content` | `/app/artifact/{artifactID}/parsed-content` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/retry` | `/app/artifact/{artifactID}/retry` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/sync` | `/app/artifact/{artifactID}/sync` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/ingest` | `/app/artifact/{artifactID}/ingest` |
+| `PUT`, `DELETE` | `/app/project/{projectID}/artifact/bulk` | `/app/artifact/bulk` |
+
+<Accordion title="Endpoint parameters">
+
+| Operation | What to change |
+| --- | --- |
+| List | Move the old path `projectID` to the `project_id` query parameter. Keep `x-org` to select the workspace. |
+| Create, create-validation, retry | Move the old path `projectID` to the body as `project_id`. Omit it, or send `null`, for organization artifacts. |
+| Ingest | Send `project_id` in the provider-specific JSON body. Keep the existing provider parameters. |
+| Other ID-based operations | The artifact ID identifies its ownership. Keep the existing operation-specific parameters. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/artifact?project_id={projectID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+When using `x-org`, do not also send `organization_id`. Without `x-org`, specifying `organization_id` requires an Operator or SuperAdmin. Creating organization artifacts requires AppAdmin or higher; `Link` artifacts require a project.
+
+### Creation bodies
+
+The current JSON create field `content` contains **Base64-encoded file or text bytes**. It replaces the old plain-text `raw_content` input. For example, UTF-8 `Hello` becomes `SGVsbG8=`.
+
+<Tabs>
+<Tab title="1.57 request">
+
+`POST /app/project/{projectID}/artifact`
+
+```json
+{
+  "type": "SmartDoc",
+  "name": "Draft",
+  "raw_content": "Hello",
+  "props": {}
+}
+```
+
+</Tab>
+<Tab title="1.58 request">
+
+`POST /app/artifact`
+
+```json
+{
+  "project_id": "{projectID}",
+  "type": "SmartDoc",
+  "name": "Draft",
+  "content": "SGVsbG8=",
+  "props": {}
+}
+```
+
+</Tab>
+</Tabs>
+
+<Accordion title="Request body changes">
+
+| Field | Migration |
+| --- | --- |
+| `raw_content` | Replace with Base64-encoded `content` on current JSON create, create-validation, and retry requests. |
+| `file_data` | Keep this multipart file field, including for skill uploads. Add `project_id` as a multipart form field when creating in a project. |
+| `project_id` | New location for the old path selector. Optional string or `null`; required for project ownership. |
+| `organization_id` | Omit when sending `x-org`. Available without that header to authorized Operator/SuperAdmin callers. |
+| `props`, `private_props`, `integration_id` | Use these canonical names. Existing aliases `config`, `private_config` (create only), and `integration_artifact_id` remain accepted. |
+| `source` | Defaults to `User`. Clients cannot set `Assistant` or `System`. |
+
+</Accordion>
+
+Other type-specific fields retain their current rules. See the complete [artifact request fields and types](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#artifact-request-fields).
+
+### Update bodies
+
+The old update `content` was **Base64 binary editor state**. The current JSON update `content` is **plain UTF-8 text**, such as Markdown. Export the editor document to Markdown; merely decoding its Base64 bytes does not produce document text.
+
+<Tabs>
+<Tab title="1.57 request">
+
+`PUT /app/project/{projectID}/artifact/{artifactID}`
+
+```json
+{
+  "content": "{BASE64_EDITOR_STATE}",
+  "plain_text_content": "Hello"
+}
+```
+
+`{BASE64_EDITOR_STATE}` represents your existing encoded editor document.
+
+</Tab>
+<Tab title="1.58 request">
+
+`PUT /app/artifact/{artifactID}`
+
+```json
+{
+  "content": "Hello"
+}
+```
+
+</Tab>
+</Tabs>
+
+<Warning>
+Create and update use different encodings: **Base64 for JSON creation, plain text for JSON updates**. Do not send the old editor-state string to the current update route; it would be treated as literal text.
+</Warning>
+
+The same update format applies to update-validation and each `artifacts[].update` entry in bulk updates. Bulk entries still use `artifactId` and `update`. Remove `plain_text_content`; it was separate search text, and current search text is derived from the document. For file replacement, use multipart `file_data` on the current update route. See [updating artifacts](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#update-an-artifact).
+
+### What legacy artifact requests still support
+
+- JSON creation, validation, and retry accept `raw_content`; multipart creation also accepts file bytes. Legacy creation takes the project from the URL and rejects body `project_id`, `organization_id`, and new JSON `content`.
+- Legacy JSON updates convert Base64 editor state to Markdown before saving. This requires the deployment's document conversion service to be available. Binary content can be supplied with or without `plain_text_content`; that field alone does not replace document content.
+- Legacy update, update-validation, and bulk update accept JSON only. Use the current endpoint for multipart replacement.
+- A create request combining `raw_content` and a file is rejected: both cannot be preserved in the single current content field. Send one content representation.
+- Unknown fields and invalid legacy field types are rejected. Organization creation accepts only scopes for the selected organization.
+
+### Artifact responses and selection
+
+Legacy artifact responses keep `has_content`, always `false`: this field described the old binary editor content, not whether a file exists. Original editor bytes cannot be reconstructed, so `content` is null/omitted.
+
+On legacy artifact detail requests, add `include_content=true` to receive available UTF-8 text as `raw_content`. The default is `false`; lists and mutation responses do not include text. Whitespace and empty text are preserved. Non-text files and invalid UTF-8 have no `raw_content`. Current download permissions apply; disabled downloads return `403`, and missing stored files return the current download error.
+
+<Accordion title="Legacy content fields (partial response)">
+
+```json
+{
+  "has_content": false,
+  "raw_content": "# Current document"
+}
+```
+
+Null fields are omitted. No Base64 editor `content` is generated from the text.
+
+</Accordion>
+
+Current artifact responses omit these legacy content fields. Use `/app/artifact/{artifactID}/download` for stored content. `/app/artifact/{artifactID}/parsed-content` returns extracted text and requires an initialized vector index. Download returns a presigned URL by default; `Content-Disposition: attachment` returns file bytes. Both modes are also supported on legacy download URLs.
+
+Artifact `created_by` now represents an **account**. Update code that reads creator details or compares creator IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+
+`scopes[].ws_auto_select` and `scopes[].enabled` already existed in released 1.57 versions and remain supported, including `enabled: false`. The older top-level `ws_auto_select` flag is not accepted. Skill uploads still use `file_data`; there is no separate skill-body migration here. See [artifact scopes](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#add-update-or-remove-a-scope).
+
+## Workspace members
+
+User data is unified at the **account** level: identity, name, email, and profile picture belong to the account. The former user becomes a **workspace membership**, holding the account's roles, permissions, and active/inactive state within that workspace.
+
+Replace `/app/user` with `/app/member`. IDs in these paths remain **workspace-member IDs**, not account IDs.
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/user` | `/app/member` |
+| `GET`, `PUT` | `/app/user/{wsMemberId}` | `/app/member/{wsMemberId}` |
+| `POST` | `/app/user/{wsMemberId}/activate` or `/deactivate` | `/app/member/{wsMemberId}/activate` or `/deactivate` |
+| `GET` | `/app/user/{wsMemberId}/project` | `/app/member/{wsMemberId}/project` |
+| `GET` | `/app/user/{wsMemberId}/latest-artifacts` | `/app/member/{wsMemberId}/latest-artifacts` |
+
+Legacy `/app/user` list, detail, create, role-update, activate, and deactivate responses still expose top-level `name`, `email`, and available `profile_picture`, taken from the account's current profile. Membership `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at` remain available. Removed job-position data cannot be recovered and is null/omitted. These response fields do not restore profile updates through the old member route.
+
+`GET /app/me` keeps its URL but returns the new member model too. Names, email, and profile pictures are account data; they are no longer top-level member fields. Request `include=Account` on member list, member details, or `/app/me` to receive the nested account.
+
+<Accordion title="Endpoint parameters">
+
+| Operation | Request |
+| --- | --- |
+| `POST /app/member` | Required `account_id` string and `role` string. The old `user_info` input is not restored. |
+| `PUT /app/member/{wsMemberId}` | Required `role` string. Profile fields are no longer updated here, including through the legacy URL. |
+| Member list | Optional `state`: comma-separated `Active`, `Inactive`; both included by default. The old `order_by`/`order` sorting contract is not retained. |
+| Member reads | Optional `include=Account`. |
+
+Workspace roles: `AppGuest`, `AppMember`, `AppAdmin`, `AppOwner`.
+
+</Accordion>
+
+Update account profile fields with `POST /account/{accountId}` (`me` is accepted for your own account), instead of the member update endpoint. The former `job_position_name` and `job_position_description` member fields are removed; they are not part of the account model.
+
+<Accordion title="Current member response">
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Workspace-member ID. |
+| `org_id` | string | Organization ID. |
+| `account_id` | string | Account ID; distinct from the member ID. |
+| `state` | string | `Active` or `Inactive`. |
+| `roles` | string[] | Workspace roles. |
+| `created_at` | timestamp | Server-generated membership creation time. |
+| `account` | object or null | Account details when requested. See the full [member and account response example](/en/developer-manual/build-with-zylon/workspace-api/users/user#get-the-current-workspace-member). |
+
+</Accordion>
+
+## Account IDs and renamed fields
+
+The field-name aliases below are temporary. **Creator IDs and objects now refer to accounts, including on legacy artifact URLs.** Update stored ID comparisons and `created_by` filters; workspace-member IDs are not converted automatically. Shared project, thread, interaction, issue, and account responses retain their current field names.
+
+| Where | Old | Current / required action |
+| --- | --- | --- |
+| Project member create/update entries | `user_id` | Use `ws_member_id`; the old name remains an input alias. The value is still a workspace-member ID. |
+| Project ownership transfer | `old_owner_id`, `new_owner_id` | Use `old_owner_ws_member_id`, `new_owner_ws_member_id`; old names remain input aliases. |
+| Artifact, thread, interaction, issue `include` queries | `User` | Use `Account`; `User` remains an input alias. |
+| Account-list `include` query | `Users` | Use `WorkspaceMembers`; `Users` remains an input alias. |
+| Account response memberships | `users` | Read `workspace_members`. |
+| Project member response | `user` | Read `account`; member `id` remains a workspace-member ID. |
+| Artifact, thread, interaction, issue `created_by` response | Workspace member | Read an account object and its account ID. |
+| Artifact `created_by` filter | Workspace-member ID | Send an account ID. No ID conversion is provided. |
+| Issue `created_by` filter | Workspace-member IDs | Send comma-separated account IDs. No ID conversion is provided. |
+
+See [project members](/en/developer-manual/build-with-zylon/workspace-api/projects/project-member), [ownership transfer](/en/developer-manual/build-with-zylon/workspace-api/projects/project), and [issue filters](/en/developer-manual/build-with-zylon/workspace-api/general/issues) for complete current bodies and responses.
+
+## Filesystem requests
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET` | `/app/project/{projectID}/artifact/{integrationArtifactID}/files` | `/app/artifact/{integrationArtifactID}/files` |
+| `POST` | `/app/project/{projectID}/artifact/integration/filesystem/validate` | `/app/artifact/integration/filesystem/validate` |
+
+Credential validation requires the **current nested body on both URLs**. Flat legacy credentials are not adapted.
+
+<Accordion title="Request body">
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `organization_id` | string | Yes | Must match the authenticated workspace. Required for this operation even when sending `x-org`. |
+| `project_id` | string or null | No | Supply the project explicitly; project validation requires Project Admin. Without it, workspace AppAdmin or higher is required. |
+| `credentials` | object | Yes | Nested credential fields below. |
+| `credentials.username` | string | Yes | Filesystem username. |
+| `credentials.password` | string | Yes | Filesystem password. |
+
+</Accordion>
+
+```json
+{
+  "organization_id": "{orgId}",
+  "project_id": "{projectID}",
+  "credentials": {
+    "username": "***",
+    "password": "***"
+  }
+}
+```
+
+This operation returns a boolean. See [filesystem validation](/en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem#validate-credentials) for the complete request example. Integration ingestion uses the unified artifact `/ingest` route and a body `project_id`, as described above.
+
+## Before upgrading your client
+
+1. Replace deprecated URLs and move project selectors to the appropriate query or body fields.
+2. Use Base64 bytes for JSON artifact creation, plain text for updates, and `file_data` for multipart files.
+3. Update response readers for account/member separation and removed inline artifact content.
+4. Replace creator filters with account IDs and use canonical field/include names.
+5. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.

@@ -3,6 +3,10 @@ title: "Project Members"
 description: "Add, update, and remove members from a project."
 ---
 
+<Warning>
+Project member fields and account responses change in 1.58. See [API migration 1.57 → 1.58](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#account-ids-and-renamed-fields) before upgrading your integration.
+</Warning>
+
 Use project member endpoints to control who can access a project and what role they have. Roles include `Viewer`, `Commenter`, `Editor`, `Admin`, and `Owner`.
 
 Project member responses use the workspace member ID in `id` and include the related account as `account`.

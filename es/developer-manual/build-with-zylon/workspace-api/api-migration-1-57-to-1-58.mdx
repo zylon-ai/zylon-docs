@@ -4,7 +4,7 @@ description: "Adapta tus integraciones de la API de Workspace a las rutas, cuerp
 noindex: true
 ---
 
-Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace; la API de ZylonGPT queda fuera de esta migración.
+Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace y los nuevos [bloques de herramientas de servidor](#bloques-de-herramientas-de-servidor) que devuelven los mensajes de chat, tanto en la API de Workspace como en la de ZylonGPT.
 
 <Warning>
 Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Revisa los cambios de rutas, cuerpos y respuestas que se detallan abajo antes de actualizar tu integración.
@@ -277,10 +277,999 @@ La validación de credenciales requiere el **cuerpo anidado actual en ambas URLs
 
 Esta operación devuelve un booleano. Consulta [validar credenciales de filesystem](/es/developer-manual/build-with-zylon/workspace-api/integrations/filesystem#validar-credenciales) para ver un ejemplo completo. La ingestión desde integraciones usa la ruta unificada `/ingest` y `project_id` en el cuerpo, como se describe arriba.
 
+## Bloques de herramientas de servidor
+
+En 1.57, cada llamada a herramienta de un mensaje se devolvía como un bloque `tool_use` seguido de un bloque `tool_result`, tanto si la ejecutaba Zylon como si la ejecutaba tu aplicación. En 1.58, las herramientas que **Zylon ejecuta en el servidor** usan el formato de herramientas de servidor de la API de Mensajes de Anthropic. Las herramientas que **ejecuta tu aplicación** (herramientas personalizadas) no cambian y siguen usando `tool_use` y `tool_result`.
+
+Esto afecta al contenido de los mensajes en los eventos en streaming, en las interacciones guardadas de los hilos y en las respuestas de `/messages`. Actualiza cualquier código que detecte llamadas a herramientas comprobando `type == "tool_use"` o `type == "tool_result"`.
+
+| Nombre en 1.57 | Nombre en 1.58 | Bloque de llamada en 1.58 | Bloque de resultado en 1.58 |
+| --- | --- | --- | --- |
+| `web_search` | `web_search` | `server_tool_use` | `web_search_tool_result` |
+| `web_fetch` | `web_fetch` | `server_tool_use` | `web_fetch_tool_result` |
+| `bash` | `bash_code_execution` | `server_tool_use` | `bash_code_execution_tool_result` |
+| `view`, `create`, `str_replace`, `insert` | `text_editor_code_execution`, con la operación en `input.command` | `server_tool_use` | `text_editor_code_execution_tool_result` |
+| `semantic_search`, `summarize`, `tabular_analysis`, `database_query`, `present_files`, `present_server`, herramientas de skills, herramientas MCP | Sin cambios | `server_tool_use` | `server_tool_result` |
+| Herramientas personalizadas que ejecuta tu aplicación | Sin cambios | `tool_use` (sin cambios) | `tool_result` (sin cambios) |
+
+- Los IDs de las llamadas a herramientas de servidor empiezan por `srvtoolu_`, y los de herramientas de cliente, por `tool_`. El `tool_use_id` del resultado hace referencia al ID de la llamada, como antes.
+- Zylon ya ha ejecutado las herramientas de servidor, así que no envíes un resultado para ellas. `stop_reason: "tool_use"` sigue aplicándose solo a las herramientas que ejecuta tu aplicación.
+- Los bloques siguen el [formato de herramientas de servidor de Anthropic](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools), por lo que los SDKs de Anthropic pueden leerlos directamente. Ignora los campos que no reconozcas, porque Zylon puede añadir campos adicionales.
+
+### Reglas de migración
+
+- **Herramientas de servidor genéricas** (`server_tool_result`): solo cambian los valores de `type` de los bloques y el prefijo del ID. `content` e `is_error` funcionan como antes, así que puedes reutilizar tu parser de 1.57.
+- **Herramientas web y de ejecución de código**: `content` es ahora un objeto tipado (o una lista de objetos tipados en la búsqueda web) en lugar de una lista de bloques `text`. Estos bloques **no tienen campo `is_error`**. Para detectar un fallo, comprueba si `content.type` termina en `_error` y lee `content.error_code`.
+- **Fallos que 1.57 devolvía como texto**: en 1.57, las herramientas del editor de texto devolvían los fallos como un `tool_result` correcto cuyo texto empezaba por `Error:`. En 1.58 devuelven un objeto de error.
+- **Códigos de salida distintos de cero**: un comando bash que termina con un código distinto de cero no es un error en ninguna de las dos versiones. En 1.58, lee `return_code` en lugar de extraer `exit_code:` del texto.
+
+| Qué leías en 1.57 | Dónde leerlo en 1.58 |
+| --- | --- |
+| `tool_use.name` | `server_tool_use.name` (consulta la tabla de nombres anterior) |
+| `tool_use.input` | `server_tool_use.input` (las llamadas al editor de texto añaden `command`) |
+| `tool_result.is_error: true` | `server_tool_result.is_error: true`, o `content.type` terminado en `_error` en los resultados tipados |
+| Líneas `exit_code`, `stdout` y `stderr` del texto de bash | `content.return_code`, `content.stdout`, `content.stderr` |
+| Texto de salida del editor de texto | `content` tipado según el comando: resultado de `view`, `create` o `str_replace` |
+| Lista de texto de la búsqueda web | `content[]` de `web_search_result` (`url`, `title`, `encrypted_content`, `page_age`) |
+| Texto Markdown de web fetch | `content.content.source.data` |
+
+### Ejemplos de migración por herramienta
+
+Cada ejemplo muestra el bloque de llamada y el bloque de resultado de una llamada correcta y de una llamada fallida. Los IDs, las entradas y los textos de resultado son solo ejemplos.
+
+<AccordionGroup>
+<Accordion title="web_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1a2b",
+    "content": [
+      {
+        "type": "text",
+        "text": "1. Quarterly Report\nDescription: Support metrics for Q3\nURL: https://example.com/report\nAge: 2 days ago\nContent: Support backlog dropped 8%.\n"
+      }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1a2b",
+  "content": "Web search provider timed out",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "web_search_tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "web_search_result",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "encrypted_content": "Support backlog dropped 8%.",
+        "page_age": "2 days ago"
+      }
+    ]
+  }
+]
+```
+
+Zylon ejecuta la búsqueda, así que `encrypted_content` contiene el texto del resultado en texto plano, no datos cifrados.
+
+Error (`content` es un objeto, no una lista):
+
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": { "type": "web_search_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+</Tab>
+<Tab title="1.58 con extensión de Zylon">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "source",
+        "sources": [
+          {
+            "object": "context.website",
+            "url": "https://example.com/report",
+            "title": "Quarterly Report",
+            "description": "Support metrics for Q3",
+            "content": "Support backlog dropped 8%."
+          }
+        ]
+      },
+      { "type": "text", "text": "Support backlog dropped 8%." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": [{ "type": "text", "text": "Web search error: Web search provider timed out" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="web_fetch">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_3c4d",
+  "content": "403 Forbidden",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "web_fetch_tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": {
+      "type": "web_fetch_result",
+      "url": "https://example.com",
+      "retrieved_at": "2026-09-24T10:00:00Z",
+      "content": {
+        "type": "document",
+        "title": "Example",
+        "source": {
+          "type": "text",
+          "media_type": "text/plain",
+          "data": "# Example page\n\nWelcome to the example page."
+        }
+      }
+    }
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "web_fetch_tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": { "type": "web_fetch_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Valores posibles de `error_code`: `invalid_tool_input`, `url_too_long`, `url_not_allowed`, `url_not_in_prior_context`, `url_not_accessible`, `unsupported_content_type`, `too_many_requests`, `max_uses_exceeded`, `unavailable`.
+
+</Tab>
+<Tab title="1.58 con extensión de Zylon">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": [{ "type": "text", "text": "Web fetch error: 403 Forbidden" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="bash → bash_code_execution">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5e6f", "name": "bash", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5e6f",
+    "content": [{ "type": "text", "text": "exit_code: 0\n\nstdout:\nreport.csv\n" }],
+    "is_error": false
+  }
+]
+```
+
+Un comando con código de salida distinto de cero:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": [{ "type": "text", "text": "exit_code: 2\n\nstderr:\nls: cannot access 'missing': No such file or directory\n" }],
+  "is_error": false
+}
+```
+
+Error (la herramienta no se pudo ejecutar):
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": "code_execution provider is not configured.",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5e6f", "name": "bash_code_execution", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "bash_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_5e6f",
+    "content": {
+      "type": "bash_code_execution_result",
+      "stdout": "report.csv\n",
+      "stderr": "",
+      "return_code": 0
+    }
+  }
+]
+```
+
+Un comando con código de salida distinto de cero:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_result",
+    "stdout": "",
+    "stderr": "ls: cannot access 'missing': No such file or directory\n",
+    "return_code": 2
+  }
+}
+```
+
+Error (la herramienta no se pudo ejecutar):
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": { "type": "bash_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Valores posibles de `error_code`: `unavailable`, `execution_time_exceeded`, `invalid_tool_input`, `too_many_requests`, `output_file_too_large`, `file_not_found`.
+
+</Tab>
+<Tab title="1.58 con extensión de Zylon">
+
+Los resultados correctos son iguales que sin la extensión. Los objetos de error incluyen además `detail`, con el error original:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "code_execution provider is not configured." }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="view, create, str_replace, insert → text_editor_code_execution">
+
+En 1.57, cada operación era una herramienta distinta. En 1.58 todas son `text_editor_code_execution` y la operación se indica en `input.command`. El resto de campos de entrada mantienen su nombre. En `insert`, 1.58 acepta tanto `insert_text` como `new_str`.
+
+| Llamada en 1.57 | Llamada en 1.58 |
+| --- | --- |
+| `view` `{ "path" }` | `text_editor_code_execution` `{ "command": "view", "path" }` |
+| `create` `{ "path", "file_text" }` | `text_editor_code_execution` `{ "command": "create", "path", "file_text" }` |
+| `str_replace` `{ "path", "old_str", "new_str" }` | `text_editor_code_execution` `{ "command": "str_replace", "path", "old_str", "new_str" }` |
+| `insert` `{ "path", "insert_line", "new_str" }` | `text_editor_code_execution` `{ "command": "insert", "path", "insert_line", "insert_text" }` |
+
+| Comando | Texto de resultado en 1.57 | `content.type` en 1.58 |
+| --- | --- | --- |
+| `view` | Líneas del archivo numeradas | `text_editor_code_execution_view_result` |
+| `create` | `Created <path>` | `text_editor_code_execution_create_result` |
+| `str_replace` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+| `insert` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+
+<Tabs>
+<Tab title="1.57">
+
+`view`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8b", "name": "view", "input": { "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7a8b",
+    "content": [{ "type": "text", "text": "1: total = 0\n2: print(total)" }],
+    "is_error": false
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8c", "name": "create", "input": { "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8c", "content": [{ "type": "text", "text": "Created /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8d", "name": "str_replace", "input": { "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8d", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`insert`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8e", "name": "insert", "input": { "path": "/tmp/outputs/app.py", "insert_line": 1, "new_str": "print(total)" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8e", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+Error. Los errores de archivo se devolvían como un resultado correcto cuyo texto empezaba por `Error:`:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_7a8b",
+  "content": [{ "type": "text", "text": "Error: File not found: /tmp/outputs/missing.py" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+`view`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8b", "name": "text_editor_code_execution", "input": { "command": "view", "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8b",
+    "content": {
+      "type": "text_editor_code_execution_view_result",
+      "file_type": "text",
+      "content": "total = 0\nprint(total)",
+      "num_lines": 2,
+      "start_line": 1,
+      "total_lines": 2
+    }
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8c", "name": "text_editor_code_execution", "input": { "command": "create", "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8c",
+    "content": { "type": "text_editor_code_execution_create_result", "is_file_update": false }
+  }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8d", "name": "text_editor_code_execution", "input": { "command": "str_replace", "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8d",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 1,
+      "old_lines": 1,
+      "new_start": 1,
+      "new_lines": 1,
+      "lines": ["- total = 0", "+ total = 100"]
+    }
+  }
+]
+```
+
+`insert` (devuelve un resultado de `str_replace` con `old_lines: 0`):
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8e", "name": "text_editor_code_execution", "input": { "command": "insert", "path": "/tmp/outputs/app.py", "insert_line": 1, "insert_text": "print(total)" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8e",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 2,
+      "old_lines": 0,
+      "new_start": 2,
+      "new_lines": 1,
+      "lines": ["+ print(total)"]
+    }
+  }
+]
+```
+
+Error. Los errores de archivo devuelven ahora un objeto de error:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": { "type": "text_editor_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Los códigos de error son los mismos que en `bash_code_execution`.
+
+</Tab>
+<Tab title="1.58 con extensión de Zylon">
+
+Los resultados correctos son iguales que sin la extensión. Los objetos de error incluyen además `detail`, con el error original:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": {
+    "type": "text_editor_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "File not found: /tmp/outputs/missing.py" }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="semantic_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+Los bloques `source` son específicos de Zylon. Solo se devuelven cuando la extensión de Zylon está activada.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="summarize">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="tabular_analysis">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="database_query">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_files">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+En ambas versiones, un archivo que no se puede presentar añade un bloque de texto `Error presenting <path>: ...` y el resultado mantiene `is_error: false`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_server">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+Si el sandbox no puede exponer el puerto, ambas versiones devuelven un resultado correcto que solo contiene el texto `No HTTP endpoint is available for port 8000. ...`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Herramientas de skills (load_skill, unload_skill, list_skills)">
+
+Las herramientas de skills devuelven JSON como texto. Si no se encuentra una skill, la herramienta devuelve una clave `error` en el JSON y mantiene `is_error: false`.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "server_tool_result",
+  "tool_use_id": "srvtoolu_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Herramientas MCP">
+
+Las herramientas MCP mantienen el nombre de la herramienta del servidor MCP y devuelven los bloques de contenido que genera el servidor MCP.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Herramientas personalizadas (sin cambios)">
+
+Nada cambia para las herramientas que define y ejecuta tu aplicación. La respuesta se detiene con `stop_reason: "tool_use"`, tu aplicación ejecuta la herramienta y envía de vuelta un bloque `tool_result`, como en 1.57.
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5a6b", "name": "get_weather", "input": { "city": "Madrid" } }
+]
+```
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5a6b", "content": [{ "type": "text", "text": "24°C, sunny" }], "is_error": false }
+```
+
+</Accordion>
+</AccordionGroup>
+
+### Peticiones con la extensión de Zylon activada
+
+Si una petición activa la extensión de Zylon (`system.extensions` incluye `zylon`):
+
+- Los resultados de `web_search` y `web_fetch` se devuelven como un bloque `tool_result` normal, como muestran los ejemplos anteriores. El bloque de llamada sigue siendo `server_tool_use` y el ID de la llamada sigue empezando por `srvtoolu_`.
+- Los objetos de error de `bash_code_execution_tool_result` y `text_editor_code_execution_tool_result` incluyen un campo `detail` con el error original.
+- Los bloques específicos de Zylon, como `source`, se conservan en el contenido de `server_tool_result`.
+
+### Envío del historial de conversación
+
+Puedes enviar de vuelta en `messages` los bloques `server_tool_use` y los resultados de herramientas de servidor tal como los recibiste. Zylon los convierte internamente, así que no necesitas cambios si reenvías sin modificar los turnos anteriores del asistente. El historial con los bloques `tool_use` y `tool_result` de 1.57 se sigue aceptando.
+
 ## Antes de actualizar tu cliente
 
 1. Sustituye las URLs obsoletas y mueve el selector de proyecto a la consulta o al cuerpo correspondiente.
 2. Usa bytes Base64 para crear artefactos con JSON, texto para actualizarlos y `file_data` para archivos multipart.
 3. Adapta la lectura de respuestas a la separación entre cuenta y miembro y a la eliminación del contenido inline de artefactos.
 4. Usa IDs de cuenta en los filtros de creador y los nombres canónicos de campos e inclusiones.
-5. Prueba con 1.58, incluidos permisos, validación, conversión de contenido y validación de filesystem. Las URLs antiguas usan la autorización, las respuestas y el comportamiento de servicio actuales; no reproducen todos los comportamientos de 1.57.
+5. Adapta el procesado de mensajes a `server_tool_use` y a los bloques de resultado de herramientas de servidor, y devuelve `tool_result` solo para tus herramientas personalizadas.
+6. Prueba con 1.58, incluidos permisos, validación, conversión de contenido y validación de filesystem. Las URLs antiguas usan la autorización, las respuestas y el comportamiento de servicio actuales; no reproducen todos los comportamientos de 1.57.

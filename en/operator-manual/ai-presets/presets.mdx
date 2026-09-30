@@ -148,7 +148,7 @@ ai:
 
 <Note>
 - Set `ai.gpuCount` to the number of GPUs in the node. The model is split across all of them with tensor parallelism, so their combined memory must reach the preset size.
-- Every preset enables speculative decoding, prefix caching, chunked prefill and async scheduling. The drafter follows the vLLM recipe: DSpark for DeepSeek V4 and V4.1, MTP for GLM and Qwen, EAGLE3 (`Inferact/MiniMax-M3-EAGLE3-GQA`) for MiniMax M3 and Google's assistant models for Gemma 4. The MiniMax and Gemma drafters are separate repositories that are downloaded on first start, so the node needs access to Hugging Face.
+- Every preset enables speculative decoding, prefix caching, chunked prefill and async scheduling. The drafter follows the vLLM recipe: DSpark for DeepSeek V4 and V4.1, MTP for GLM and Qwen, EAGLE3 (`Inferact/MiniMax-M3-EAGLE3-GQA`) for MiniMax M3 and Google's assistant models for Gemma 4. DSpark and MTP are part of the main checkpoint and need no extra download. The MiniMax and Gemma drafters are separate repositories that load from the local model cache like any other model: in airgap and semi-airgap installations, add them to `zylon-cli models download` (`Inferact/MiniMax-M3-EAGLE3-GQA`, `google/gemma-4-26B-A4B-it-assistant` or `google/gemma-4-31B-it-assistant`).
 - NVFP4 checkpoints from NVIDIA are used. Blackwell GPUs run them natively; older GPUs such as Hopper run them through vLLM's FP4 weight-only kernels, which is slower.
 - DeepSeek V4 Flash Vision has no NVFP4 release, so its preset uses the vendor FP8 checkpoint.
 - DeepSeek V4.1 Flash offloads its ~180GB Engram tables to host memory to fit in 560GB: the node needs at least 256GB of RAM.

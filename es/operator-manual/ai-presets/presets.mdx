@@ -100,6 +100,59 @@ ai:
   preset: "experimental.gpt-oss-24g"
 ```
 
+### Presets Experimentales de Modelos Grandes
+
+**Disponible a partir de la versión 1.59**
+
+Presets experimentales para las familias de modelos abiertos más recientes, dimensionados para GPUs de centro de datos. El hardware de referencia es la NVIDIA H200 (141GB); los tipos de instancia de AWS se dan como ejemplo, igual que `baseline-48g` corresponde a una instancia de clase `g6e`. La columna `Alias` es el nombre del modelo que se muestra en Zylon y el que se usa en `ai.config.models`.
+
+| Preset | Memoria GPU Requerida | Ejemplo AWS | Familia de Modelo | Alias | Modelos |
+|---|---|---|---|---|---|
+| `experimental.glm-5-2-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.2 | `glm-5-2-nvfp4` | nvidia/GLM-5.2-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.glm-5-3-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.3 | `glm-5-3-nvfp4` | nvidia/GLM-5.3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.glm-5-3-flash-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.3 | `glm-5-3-flash-nvfp4` | nvidia/GLM-5.3-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.minimax-m3-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | MiniMax M3 | `minimax-m3-nvfp4` | nvidia/MiniMax-M3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.qwen-3-8-flash-next-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | Qwen 3.8 | `qwen-3-8-flash-next-nvfp4` | nvidia/Qwen3.8-Flash-Next-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.deepseek-v4-flash-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | DeepSeek V4 | `deepseek-v4-flash-nvfp4` | nvidia/DeepSeek-V4-Flash-0731-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.deepseek-v4-flash-vision-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | DeepSeek V4 | `deepseek-v4-flash-vision-fp8` | deepseek-ai/DeepSeek-V4-Flash-Vision-Exp, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.deepseek-v4-1-flash-8xh200` | 8x H200 (1128GB) | p5en.48xlarge | DeepSeek V4.1 | `deepseek-v4-1-flash-nvfp4` | nvidia/DeepSeek-V4.1-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.deepseek-v4-pro-8xh200` | 8x H200 (1128GB) | p5en.48xlarge | DeepSeek V4 | `deepseek-v4-pro-nvfp4` | nvidia/DeepSeek-V4-Pro-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.gemma-4-26b-a4b-48g` | 48GB | g6e.xlarge | Gemma 4 | `gemma-4-26b-a4b-nvfp4` | nvidia/Gemma-4-26B-A4B-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.gemma-4-31b-96g` | 96GB | g7e.2xlarge | Gemma 4 | `gemma-4-31b-nvfp4` | nvidia/Gemma-4-31B-IT-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+
+### Presets Experimentales de Código
+
+**Disponible a partir de la versión 1.59**
+
+Los presets `experimental.code.*` usan los mismos modelos ajustados para agentes de programación: ventanas de contexto más largas, menos sesiones concurrentes, respuestas más largas y el muestreo recomendado por el fabricante (temperatura 1.0) en lugar de los valores de baja temperatura usados para preguntas sobre documentos.
+
+| Preset | Memoria GPU Requerida | Ejemplo AWS | Familia de Modelo | Alias | Modelos |
+|---|---|---|---|---|---|
+| `experimental.code.glm-5-2-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.2 | `glm-5-2-nvfp4` | nvidia/GLM-5.2-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.glm-5-3-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.3 | `glm-5-3-nvfp4` | nvidia/GLM-5.3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.glm-5-3-flash-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | GLM 5.3 | `glm-5-3-flash-nvfp4` | nvidia/GLM-5.3-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.minimax-m3-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | MiniMax M3 | `minimax-m3-nvfp4` | nvidia/MiniMax-M3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.qwen-3-8-flash-next-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | Qwen 3.8 | `qwen-3-8-flash-next-nvfp4` | nvidia/Qwen3.8-Flash-Next-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-flash-4xh200` | 4x H200 (564GB) | p5en.48xlarge (4 of 8 GPUs) | DeepSeek V4 | `deepseek-v4-flash-nvfp4` | nvidia/DeepSeek-V4-Flash-0731-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-1-flash-8xh200` | 8x H200 (1128GB) | p5en.48xlarge | DeepSeek V4.1 | `deepseek-v4-1-flash-nvfp4` | nvidia/DeepSeek-V4.1-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-pro-8xh200` | 8x H200 (1128GB) | p5en.48xlarge | DeepSeek V4 | `deepseek-v4-pro-nvfp4` | nvidia/DeepSeek-V4-Pro-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+
+**Ejemplo de Configuración (4x H200):**
+
+```yaml
+ai:
+  preset: "experimental.code.glm-5-3-4xh200"
+  gpuCount: 4
+```
+
+<Note>
+- Configura `ai.gpuCount` con el número de GPUs para el que está dimensionado el preset (`4` para `*-4xh200`, `8` para `*-8xh200`, `1` para Gemma 4). El modelo se reparte entre todas ellas con paralelismo de tensores.
+- Se usan checkpoints NVFP4 cuando el fabricante o NVIDIA los publican. La H200 (Hopper) no tiene tensor cores FP4 nativos, así que vLLM los ejecuta con su ruta FP4 solo de pesos; las GPUs Blackwell (B200/B300) los ejecutan de forma nativa y más rápida.
+- DeepSeek V4 Flash Vision no tiene versión NVFP4, por lo que su preset usa el checkpoint FP8 del fabricante.
+- DeepSeek V4.1 Flash y V4 Pro no caben en 4x H200 y requieren 8x H200.
+- `experimental.glm-5-3-flash-*` necesita una caché KV en bfloat16 en Hopper: configura `triton.vllm.allowKvCache: true` para que se aplique la configuración de caché KV del preset.
+</Note>
+
 ### Notas Importantes Sobre Presets Experimentales
 
 - Los presets experimentales pueden ser eliminados o cambiados significativamente entre versiones

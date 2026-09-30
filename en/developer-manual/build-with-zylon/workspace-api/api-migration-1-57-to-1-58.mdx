@@ -4,7 +4,7 @@ description: "Migrate existing Workspace API integrations to the 1.58 routes, re
 noindex: true
 ---
 
-Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs; the ZylonGPT API is outside this migration.
+Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs, plus the new [server tool content blocks](#server-tool-content-blocks) returned in chat messages by both the Workspace and ZylonGPT APIs.
 
 <Warning>
 Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
@@ -277,10 +277,999 @@ Credential validation requires the **current nested body on both URLs**. Flat le
 
 This operation returns a boolean. See [filesystem validation](/en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem#validate-credentials) for the complete request example. Integration ingestion uses the unified artifact `/ingest` route and a body `project_id`, as described above.
 
+## Server tool content blocks
+
+In 1.57, every tool call in a message came back as a `tool_use` block followed by a `tool_result` block. That was true whether Zylon ran the tool or your application did. In 1.58, tools that **Zylon runs on the server** use the Anthropic Messages API server tool format instead. Tools that **your application runs** (custom tools) have not changed and still use `tool_use` and `tool_result`.
+
+The change affects message content in streamed events, stored thread interactions, and `/messages` responses. Update any code that finds tool calls by checking `type == "tool_use"` or `type == "tool_result"`.
+
+| 1.57 tool name | 1.58 tool name | 1.58 call block | 1.58 result block |
+| --- | --- | --- | --- |
+| `web_search` | `web_search` | `server_tool_use` | `web_search_tool_result` |
+| `web_fetch` | `web_fetch` | `server_tool_use` | `web_fetch_tool_result` |
+| `bash` | `bash_code_execution` | `server_tool_use` | `bash_code_execution_tool_result` |
+| `view`, `create`, `str_replace`, `insert` | `text_editor_code_execution`, with the operation in `input.command` | `server_tool_use` | `text_editor_code_execution_tool_result` |
+| `semantic_search`, `summarize`, `tabular_analysis`, `database_query`, `present_files`, `present_server`, skill tools, MCP tools | Unchanged | `server_tool_use` | `server_tool_result` |
+| Custom tools your application runs | Unchanged | `tool_use` (unchanged) | `tool_result` (unchanged) |
+
+- Server tool call IDs start with `srvtoolu_`. Client tool call IDs start with `tool_`. The result's `tool_use_id` points to the call ID, as it did before.
+- Zylon has already run server tools, so do not send results back for them. `stop_reason: "tool_use"` still applies only to tools your application runs.
+- The block shapes follow the [Anthropic server tool format](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools), so Anthropic SDKs can parse them directly. Ignore any fields you do not recognize, because Zylon may add extra ones.
+
+### Migration rules
+
+- **Generic server tools** (`server_tool_result`): only the block `type` values and the ID prefix change. `content` and `is_error` work as before, so you can reuse your 1.57 parser.
+- **Web and code execution tools**: `content` is now a typed object (or a list of typed objects for web search) instead of a list of `text` blocks. These blocks have **no `is_error` field**. To detect a failure, check whether `content.type` ends in `_error`, then read `content.error_code`.
+- **Failures that 1.57 returned as text**: in 1.57, the text editor tools reported failures as a successful `tool_result` whose text started with `Error:`. In 1.58, they return an error object.
+- **Non-zero exit codes**: a bash command that exits with a non-zero code is not an error in either version. In 1.58, read `return_code` instead of parsing `exit_code:` from the text.
+
+| What you read in 1.57 | Where to read it in 1.58 |
+| --- | --- |
+| `tool_use.name` | `server_tool_use.name` (see the name table above) |
+| `tool_use.input` | `server_tool_use.input` (text editor calls add `command`) |
+| `tool_result.is_error: true` | `server_tool_result.is_error: true`, or `content.type` ending in `_error` for typed results |
+| `exit_code`, `stdout`, `stderr` lines in the bash text | `content.return_code`, `content.stdout`, `content.stderr` |
+| Text editor text output | `content` typed by command: `view`, `create`, or `str_replace` result |
+| Web search text list | `content[]` of `web_search_result` (`url`, `title`, `encrypted_content`, `page_age`) |
+| Web fetch Markdown text | `content.content.source.data` |
+
+### Migration examples by tool
+
+Each example shows the call block and the result block for a successful call and a failed call. The IDs, inputs, and result text are only examples.
+
+<AccordionGroup>
+<Accordion title="web_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1a2b",
+    "content": [
+      {
+        "type": "text",
+        "text": "1. Quarterly Report\nDescription: Support metrics for Q3\nURL: https://example.com/report\nAge: 2 days ago\nContent: Support backlog dropped 8%.\n"
+      }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1a2b",
+  "content": "Web search provider timed out",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "web_search_tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "web_search_result",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "encrypted_content": "Support backlog dropped 8%.",
+        "page_age": "2 days ago"
+      }
+    ]
+  }
+]
+```
+
+Zylon runs the search itself, so `encrypted_content` contains the result text as plain text, not encrypted data.
+
+Error (`content` is an object, not a list):
+
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": { "type": "web_search_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "source",
+        "sources": [
+          {
+            "object": "context.website",
+            "url": "https://example.com/report",
+            "title": "Quarterly Report",
+            "description": "Support metrics for Q3",
+            "content": "Support backlog dropped 8%."
+          }
+        ]
+      },
+      { "type": "text", "text": "Support backlog dropped 8%." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": [{ "type": "text", "text": "Web search error: Web search provider timed out" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="web_fetch">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_3c4d",
+  "content": "403 Forbidden",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "web_fetch_tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": {
+      "type": "web_fetch_result",
+      "url": "https://example.com",
+      "retrieved_at": "2026-09-24T10:00:00Z",
+      "content": {
+        "type": "document",
+        "title": "Example",
+        "source": {
+          "type": "text",
+          "media_type": "text/plain",
+          "data": "# Example page\n\nWelcome to the example page."
+        }
+      }
+    }
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "web_fetch_tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": { "type": "web_fetch_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Possible `error_code` values: `invalid_tool_input`, `url_too_long`, `url_not_allowed`, `url_not_in_prior_context`, `url_not_accessible`, `unsupported_content_type`, `too_many_requests`, `max_uses_exceeded`, `unavailable`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": [{ "type": "text", "text": "Web fetch error: 403 Forbidden" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="bash → bash_code_execution">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5e6f", "name": "bash", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5e6f",
+    "content": [{ "type": "text", "text": "exit_code: 0\n\nstdout:\nreport.csv\n" }],
+    "is_error": false
+  }
+]
+```
+
+A command with a non-zero exit code:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": [{ "type": "text", "text": "exit_code: 2\n\nstderr:\nls: cannot access 'missing': No such file or directory\n" }],
+  "is_error": false
+}
+```
+
+Error (the tool could not run):
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": "code_execution provider is not configured.",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5e6f", "name": "bash_code_execution", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "bash_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_5e6f",
+    "content": {
+      "type": "bash_code_execution_result",
+      "stdout": "report.csv\n",
+      "stderr": "",
+      "return_code": 0
+    }
+  }
+]
+```
+
+A command with a non-zero exit code:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_result",
+    "stdout": "",
+    "stderr": "ls: cannot access 'missing': No such file or directory\n",
+    "return_code": 2
+  }
+}
+```
+
+Error (the tool could not run):
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": { "type": "bash_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Possible `error_code` values: `unavailable`, `execution_time_exceeded`, `invalid_tool_input`, `too_many_requests`, `output_file_too_large`, `file_not_found`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+Successful results are the same as without the extension. Error objects also include `detail`, which contains the underlying error:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "code_execution provider is not configured." }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="view, create, str_replace, insert → text_editor_code_execution">
+
+In 1.57, each operation was a separate tool. In 1.58, they are all `text_editor_code_execution`, and the operation is given in `input.command`. The other input fields keep their names. For `insert`, 1.58 accepts both `insert_text` and `new_str`.
+
+| 1.57 call | 1.58 call |
+| --- | --- |
+| `view` `{ "path" }` | `text_editor_code_execution` `{ "command": "view", "path" }` |
+| `create` `{ "path", "file_text" }` | `text_editor_code_execution` `{ "command": "create", "path", "file_text" }` |
+| `str_replace` `{ "path", "old_str", "new_str" }` | `text_editor_code_execution` `{ "command": "str_replace", "path", "old_str", "new_str" }` |
+| `insert` `{ "path", "insert_line", "new_str" }` | `text_editor_code_execution` `{ "command": "insert", "path", "insert_line", "insert_text" }` |
+
+| Command | 1.57 result text | 1.58 `content.type` |
+| --- | --- | --- |
+| `view` | Numbered file lines | `text_editor_code_execution_view_result` |
+| `create` | `Created <path>` | `text_editor_code_execution_create_result` |
+| `str_replace` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+| `insert` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+
+<Tabs>
+<Tab title="1.57">
+
+`view`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8b", "name": "view", "input": { "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7a8b",
+    "content": [{ "type": "text", "text": "1: total = 0\n2: print(total)" }],
+    "is_error": false
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8c", "name": "create", "input": { "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8c", "content": [{ "type": "text", "text": "Created /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8d", "name": "str_replace", "input": { "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8d", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`insert`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8e", "name": "insert", "input": { "path": "/tmp/outputs/app.py", "insert_line": 1, "new_str": "print(total)" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8e", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+Error. File errors came back as a successful result whose text started with `Error:`:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_7a8b",
+  "content": [{ "type": "text", "text": "Error: File not found: /tmp/outputs/missing.py" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+`view`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8b", "name": "text_editor_code_execution", "input": { "command": "view", "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8b",
+    "content": {
+      "type": "text_editor_code_execution_view_result",
+      "file_type": "text",
+      "content": "total = 0\nprint(total)",
+      "num_lines": 2,
+      "start_line": 1,
+      "total_lines": 2
+    }
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8c", "name": "text_editor_code_execution", "input": { "command": "create", "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8c",
+    "content": { "type": "text_editor_code_execution_create_result", "is_file_update": false }
+  }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8d", "name": "text_editor_code_execution", "input": { "command": "str_replace", "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8d",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 1,
+      "old_lines": 1,
+      "new_start": 1,
+      "new_lines": 1,
+      "lines": ["- total = 0", "+ total = 100"]
+    }
+  }
+]
+```
+
+`insert` (returns a `str_replace` result with `old_lines: 0`):
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8e", "name": "text_editor_code_execution", "input": { "command": "insert", "path": "/tmp/outputs/app.py", "insert_line": 1, "insert_text": "print(total)" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8e",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 2,
+      "old_lines": 0,
+      "new_start": 2,
+      "new_lines": 1,
+      "lines": ["+ print(total)"]
+    }
+  }
+]
+```
+
+Error. File errors now return an error object:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": { "type": "text_editor_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+The error codes are the same as for `bash_code_execution`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+Successful results are the same as without the extension. Error objects also include `detail`, which contains the underlying error:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": {
+    "type": "text_editor_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "File not found: /tmp/outputs/missing.py" }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="semantic_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+`source` blocks are Zylon-specific. They are returned only when the Zylon extension is enabled.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="summarize">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="tabular_analysis">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="database_query">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_files">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+In both versions, a file that cannot be presented adds an `Error presenting <path>: ...` text block, and the result keeps `is_error: false`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_server">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+If the sandbox cannot expose the port, both versions return a successful result that contains only the text `No HTTP endpoint is available for port 8000. ...`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Skill tools (load_skill, unload_skill, list_skills)">
+
+Skill tools return JSON as text. If a skill is not found, the tool returns an `error` key in the JSON and keeps `is_error: false`.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "server_tool_result",
+  "tool_use_id": "srvtoolu_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="MCP tools">
+
+MCP tools keep the MCP server's tool name and return the content blocks the MCP server produced.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Custom tools (unchanged)">
+
+Nothing changes for tools that your application defines and runs. The response stops with `stop_reason: "tool_use"`, your application runs the tool, and it sends back a `tool_result` block, as in 1.57.
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5a6b", "name": "get_weather", "input": { "city": "Madrid" } }
+]
+```
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5a6b", "content": [{ "type": "text", "text": "24°C, sunny" }], "is_error": false }
+```
+
+</Accordion>
+</AccordionGroup>
+
+### Requests with the Zylon extension enabled
+
+When a request enables the Zylon extension (`system.extensions` includes `zylon`):
+
+- `web_search` and `web_fetch` results are returned as a plain `tool_result` block, as the examples above show. The call block is still `server_tool_use`, and the call ID still starts with `srvtoolu_`.
+- Error objects in `bash_code_execution_tool_result` and `text_editor_code_execution_tool_result` include a `detail` field that contains the underlying error.
+- Zylon-specific blocks, such as `source`, are kept in `server_tool_result` content.
+
+### Sending conversation history
+
+You can send `server_tool_use` and server tool result blocks back in `messages` exactly as you received them. Zylon converts them internally, so if you forward previous assistant turns unchanged, you do not need to change anything. History that uses the 1.57 `tool_use` and `tool_result` blocks is still accepted.
+
 ## Before upgrading your client
 
 1. Replace deprecated URLs and move project selectors to the appropriate query or body fields.
 2. Use Base64 bytes for JSON artifact creation, plain text for updates, and `file_data` for multipart files.
 3. Update response readers for account/member separation and removed inline artifact content.
 4. Replace creator filters with account IDs and use canonical field/include names.
-5. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.
+5. Update message parsers to handle `server_tool_use` and the server tool result blocks, and only return `tool_result` for your own custom tools.
+6. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.

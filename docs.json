@@ -343,6 +343,18 @@
                 "pages": [
                   "en/operator-manual/configuration/index",
                   {
+                    "group": "Models",
+                    "pages": [
+                      "en/operator-manual/models/index",
+                      "en/operator-manual/models/qwen",
+                      "en/operator-manual/models/laguna",
+                      "en/operator-manual/models/glm",
+                      "en/operator-manual/models/deepseek",
+                      "en/operator-manual/models/minimax",
+                      "en/operator-manual/models/gemma"
+                    ]
+                  },
+                  {
                     "group": "AI Presets",
                     "pages": [
                       "en/operator-manual/ai-presets/getting-started",
@@ -761,6 +773,18 @@
                 "group": "Configuraci\u00f3n",
                 "pages": [
                   "es/operator-manual/configuration/index",
+                  {
+                    "group": "Modelos",
+                    "pages": [
+                      "es/operator-manual/models/index",
+                      "es/operator-manual/models/qwen",
+                      "es/operator-manual/models/laguna",
+                      "es/operator-manual/models/glm",
+                      "es/operator-manual/models/deepseek",
+                      "es/operator-manual/models/minimax",
+                      "es/operator-manual/models/gemma"
+                    ]
+                  },
                   {
                     "group": "Preajustes de IA",
                     "pages": [

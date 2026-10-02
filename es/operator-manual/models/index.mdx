@@ -1,0 +1,26 @@
+---
+title: "Resumen"
+description: "Modelos experimentales que puedes desplegar con Zylon y cómo configurar cada uno"
+---
+
+import { LABELS } from "/snippets/models/labels.mdx";
+import { ZylonFamilyGrid } from "/snippets/components/zylon-models.mdx";
+import { qwen } from "/snippets/models/qwen.mdx";
+import { laguna } from "/snippets/models/laguna.mdx";
+import { glm } from "/snippets/models/glm.mdx";
+import { deepseek } from "/snippets/models/deepseek.mdx";
+import { minimax } from "/snippets/models/minimax.mdx";
+import { gemma } from "/snippets/models/gemma.mdx";
+
+Elige un modelo y el hardware que tienes, y copia la configuración en tu archivo de configuración de Zylon. Cada opción indica también los modelos que hay que descargar en instalaciones airgap y semi-airgap y la primera versión de Zylon que la soporta.
+
+<ZylonFamilyGrid families={[qwen, laguna, glm, deepseek, minimax, gemma]} t={LABELS.es} base="/es/operator-manual/models" />
+
+## Cómo se dimensiona el hardware
+
+- **48GB, 96GB, 560GB, 1120GB**: memoria GPU total necesaria. Configura `ai.gpuCount` con el número de GPUs: el modelo se reparte entre todas, así que su memoria conjunta debe alcanzar ese tamaño (por ejemplo, 4 x 141GB para 560GB).
+- **DGX Spark**: un NVIDIA DGX Spark.
+
+Los modelos se publican en NVFP4: las GPUs Blackwell los ejecutan de forma nativa y las anteriores, como Hopper, más despacio. Si un modelo tiene también versión AWQ o GPTQ, configura `ai.quantization: awq` o `gptq` para usarla.
+
+Todos los presets, incluidos los base, alternativos y obsoletos, están en la [referencia de presets de IA](/es/operator-manual/ai-presets/presets).

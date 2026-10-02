@@ -1,0 +1,41 @@
+{/* Rendering for the model catalogue. Data: /snippets/models/<family>.mdx, labels: labels.mdx.
+    Mintlify limit: an exported component cannot render another component or call a helper defined
+    in this file, so each component is self-contained. */}
+
+export const ZylonModelList = ({ family, t }) => (
+  <div>
+    {family.models.map((model) => (
+      <Card key={model.id} title={model.name}>
+        <p>{model.vision ? t.vision : t.textOnly}{model.quant.length > 0 ? ` · ${t.quantAlso} ${model.quant.join(", ").toUpperCase()} (${t.quantNote})` : ""}</p>
+        <Tabs>
+          {model.deps.map((d) => (
+            <Tab key={d.preset} title={d.size === "dgx" ? t.dgx : t[d.use]}>
+              <p><strong>{t.hardware}</strong>: {d.size === "dgx" ? t.spark : `${d.size.replace("g", "GB")} ${t.gpuMemory}`}</p>
+              <p><strong>{t.config}</strong></p>
+              <pre><code>{[
+                "ai:",
+                `  preset: "${d.preset}"`,
+                ...(d.gpus ? [`  gpuCount: ${d.gpus}   # e.g. ${d.gpus} x ${Math.round(parseInt(d.size) / d.gpus)}GB`] : []),
+                ...(model.kv ? ["triton:", "  vllm:", "    allowKvCache: true"] : []),
+              ].join("\n")}</code></pre>
+              <p><strong>{t.downloads}</strong></p>
+              <pre><code>{model.downloads.join("\n")}</code></pre>
+              <p><strong>{t.available}</strong> {d.min}</p>
+              {d.notes.map((n) => <Note key={n}>{t.notes[n]}</Note>)}
+            </Tab>
+          ))}
+        </Tabs>
+      </Card>
+    ))}
+  </div>
+);
+
+export const ZylonFamilyGrid = ({ families, t, base }) => (
+  <CardGroup cols={3}>
+    {families.map((f) => (
+      <Card key={f.id} title={f.name} href={`${base}/${f.id}`}>
+        {f.vendor} · {f.models.map((m) => m.name).join(", ")}
+      </Card>
+    ))}
+  </CardGroup>
+);

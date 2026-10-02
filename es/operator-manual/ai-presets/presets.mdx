@@ -5,6 +5,10 @@ description: "Referencia completa de presets de IA disponibles incluyendo config
 
 Establece el preset de IA en tu archivo de configuración de Zylon usando la propiedad `ai.preset`. La configuración por defecto usa una configuración de 24GB.
 
+<Tip>
+Para configurar un modelo experimental paso a paso (hardware, configuración y modelos a descargar), consulta [Modelos](/es/operator-manual/models/index).
+</Tip>
+
 ## Presets Base
 
 Los presets base proporcionan configuraciones estándar optimizadas para cargas de trabajo de IA de propósito general.
@@ -160,6 +164,40 @@ ai:
 - DeepSeek V4.1 Flash descarga sus tablas Engram (~180GB) a la memoria del host para caber en 560GB: el nodo necesita al menos 256GB de RAM.
 - La caché KV en fp8 que usan la mayoría de presets solo se aplica con `triton.vllm.allowKvCache: true`.
 </Note>
+
+### Presets de Código para DGX Spark
+
+**Disponible a partir de la versión 1.59**
+
+Presets para un único NVIDIA DGX Spark (GB10, 128GB de memoria unificada compartida con el sistema operativo). Ejecutan hasta cuatro sesiones de programación con 131k de contexto.
+
+| Preset | Modelo | Alias | Plataforma Zylon en el mismo Spark |
+|---|---|---|---|
+| `experimental.code.qwen-3-8-27b-dgx` | nvidia/Qwen3.8-27B-NVFP4 | `qwen-3-8-27b-dgx` | Sí |
+| `experimental.code.laguna-s-2-1-dgx` | poolside/Laguna-S-2.1-NVFP4 | `laguna-s-2-1-dgx` | No: ejecuta la plataforma en otro equipo |
+
+### Cuantización
+
+**Disponible a partir de la versión 1.59**
+
+`ai.quantization` elige el formato de pesos del modelo de lenguaje del preset: `nvfp4` (por defecto), `awq` o `gptq`. Con `awq` o `gptq` el preset carga una versión entera de 4 bits del mismo modelo. `awq` recurre a `gptq` cuando un modelo no tiene versión AWQ, y la instalación falla si el preset no tiene ninguna de las dos. Hay versiones AWQ para GLM 5.x, MiniMax M3, Qwen3.8 Flash-Next y Gemma 4, y versiones GPTQ para DeepSeek V4 Flash y V4.1 Flash.
+
+```yaml
+ai:
+  preset: "experimental.code.minimax-m3-560g"
+  quantization: awq
+```
+
+### Detección de Bucles en el Chat
+
+Zylon comprueba cada pocos mensajes del asistente si un agente ha entrado en un bucle; cada comprobación es una llamada extra al modelo. Los agentes de programación ejecutan secuencias largas y legítimas de herramientas que pueden parecer bucles, por lo que los presets de código para DGX Spark la desactivan. Se configura en cualquier instalación con:
+
+```yaml
+ai:
+  config:
+    chat:
+      loopDetectionInterval: 0   # mensajes del asistente entre comprobaciones; 0 la desactiva
+```
 
 ### Notas Importantes Sobre Presets Experimentales
 

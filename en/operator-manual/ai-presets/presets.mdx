@@ -5,6 +5,10 @@ description: "Complete reference of available AI presets including base, alterna
 
 Set the AI preset in your Zylon configuration file using the `ai.preset` property. The default configuration uses a 24GB setup.
 
+<Tip>
+To configure an experimental model step by step (hardware, configuration and models to download), see [Models](/en/operator-manual/models/index).
+</Tip>
+
 ## Base Presets
 
 Base presets provide standard configurations optimized for general-purpose AI workloads.
@@ -161,6 +165,40 @@ ai:
 - DeepSeek V4.1 Flash offloads its ~180GB Engram tables to host memory to fit in 560GB: the node needs at least 256GB of RAM.
 - The fp8 KV cache set by most presets is only applied with `triton.vllm.allowKvCache: true`.
 </Note>
+
+### DGX Spark Coding Presets
+
+**Available from version 1.59**
+
+Presets for a single NVIDIA DGX Spark (GB10, 128GB of unified memory shared with the operating system). They run up to four coding sessions at 131k context.
+
+| Preset | Model | Alias | Zylon platform on the same Spark |
+|---|---|---|---|
+| `experimental.code.qwen-3-8-27b-dgx` | nvidia/Qwen3.8-27B-NVFP4 | `qwen-3-8-27b-dgx` | Yes |
+| `experimental.code.laguna-s-2-1-dgx` | poolside/Laguna-S-2.1-NVFP4 | `laguna-s-2-1-dgx` | No: run the platform on another host |
+
+### Quantization
+
+**Available from version 1.59**
+
+`ai.quantization` selects the weight format of the preset's language model: `nvfp4` (default), `awq` or `gptq`. With `awq` or `gptq` the preset loads a 4-bit integer build of the same model. `awq` falls back to `gptq` when a model has no AWQ build, and the installation fails when a preset has neither. AWQ builds exist for GLM 5.x, MiniMax M3, Qwen3.8 Flash-Next and Gemma 4; GPTQ builds for DeepSeek V4 Flash and V4.1 Flash.
+
+```yaml
+ai:
+  preset: "experimental.code.minimax-m3-560g"
+  quantization: awq
+```
+
+### Chat Loop Detection
+
+Zylon checks for repetitive agent loops every few assistant messages; each check is an extra model call. Coding agents run long, legitimate tool sequences that can look like loops, so the DGX Spark coding presets turn it off. Set it in any configuration with:
+
+```yaml
+ai:
+  config:
+    chat:
+      loopDetectionInterval: 0   # assistant messages between checks; 0 disables
+```
 
 ### Important Notes About Experimental Presets
 

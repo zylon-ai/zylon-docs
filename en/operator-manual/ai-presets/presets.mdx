@@ -109,7 +109,7 @@ ai:
 
 **Available from version 1.59**
 
-Experimental presets for the newest open-weight families. Like the other presets, they are named after the total GPU memory they need, not a specific GPU: `560g` fits for example 4x 141GB or 8x 80GB GPUs. The `Alias` column is the model name shown in Zylon and used in `ai.config.models` overrides.
+Experimental presets for the newest open-weight families. Like the other presets, they are named after the total GPU memory they need, not a specific GPU: `560g` fits for example 4x 141GB or 8x 80GB GPUs. The `Alias` column is the model name shown in Zylon and used in `ai.config.models` overrides. Names without `chat.` from earlier builds (for example `experimental.gemma-4-31b-96g`) still resolve to `experimental.chat.<name>`.
 
 | Preset | Required GPU Memory | Model Family | Alias | Models |
 |---|---|---|---|---|

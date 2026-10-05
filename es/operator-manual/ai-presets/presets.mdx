@@ -5,6 +5,10 @@ description: "Referencia completa de presets de IA disponibles incluyendo config
 
 Establece el preset de IA en tu archivo de configuración de Zylon usando la propiedad `ai.preset`. La configuración por defecto usa una configuración de 24GB.
 
+<Tip>
+Para configurar un modelo experimental paso a paso (hardware, configuración y modelos a descargar), consulta [Modelos](/es/operator-manual/models/index).
+</Tip>
+
 ## Presets Base
 
 Los presets base proporcionan configuraciones estándar optimizadas para cargas de trabajo de IA de propósito general.
@@ -98,6 +102,101 @@ Los presets experimentales proporcionan acceso a modelos y configuraciones de va
 ```yaml
 ai:
   preset: "experimental.gpt-oss-24g"
+```
+
+### Presets Experimentales de Modelos Grandes
+
+**Disponible a partir de la versión 1.59**
+
+Presets experimentales para las familias de modelos abiertos más recientes. Como el resto de presets, se nombran por la memoria GPU total que necesitan y no por una GPU concreta: `560g` cabe, por ejemplo, en 4 GPUs de 141GB o en 8 de 80GB. La columna `Alias` es el nombre del modelo que se muestra en Zylon y el que se usa en `ai.config.models`.
+
+| Preset | Memoria GPU Requerida | Familia de Modelo | Alias | Modelos |
+|---|---|---|---|---|
+| `experimental.chat.glm-5-2-560g` | 560GB | GLM 5.2 | `glm-5-2-nvfp4` | nvidia/GLM-5.2-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.glm-5-3-560g` | 560GB | GLM 5.3 | `glm-5-3-nvfp4` | nvidia/GLM-5.3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.glm-5-3-flash-560g` | 560GB | GLM 5.3 | `glm-5-3-flash-nvfp4` | nvidia/GLM-5.3-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.minimax-m3-560g` | 560GB | MiniMax M3 | `minimax-m3-nvfp4` | nvidia/MiniMax-M3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.qwen-3-8-flash-next-560g` | 560GB | Qwen 3.8 | `qwen-3-8-flash-next-nvfp4` | nvidia/Qwen3.8-Flash-Next-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.deepseek-v4-flash-560g` | 560GB | DeepSeek V4 | `deepseek-v4-flash-nvfp4` | nvidia/DeepSeek-V4-Flash-0731-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.deepseek-v4-flash-vision-560g` | 560GB | DeepSeek V4 | `deepseek-v4-flash-vision-fp8` | deepseek-ai/DeepSeek-V4-Flash-Vision-Exp, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.deepseek-v4-1-flash-560g` | 560GB | DeepSeek V4.1 | `deepseek-v4-1-flash-nvfp4` | nvidia/DeepSeek-V4.1-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.deepseek-v4-pro-1120g` | 1120GB | DeepSeek V4 | `deepseek-v4-pro-nvfp4` | nvidia/DeepSeek-V4-Pro-0813-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.gemma-4-26b-a4b-48g` | 48GB | Gemma 4 | `gemma-4-26b-a4b-nvfp4` | nvidia/Gemma-4-26B-A4B-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.gemma-4-31b-96g` | 96GB | Gemma 4 | `gemma-4-31b-nvfp4` | nvidia/Gemma-4-31B-IT-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.laguna-xs-2-1-48g` | 48GB | Laguna XS 2.1 | `laguna-xs-2-1-nvfp4` | poolside/Laguna-XS-2.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.laguna-s-2-1-560g` | 560GB | Laguna S 2.1 | `laguna-s-2-1-nvfp4` | poolside/Laguna-S-2.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.chat.laguna-m-1-560g` | 560GB | Laguna M.1 | `laguna-m-1-nvfp4` | poolside/Laguna-M.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+
+### Presets Experimentales de Código
+
+**Disponible a partir de la versión 1.59**
+
+Los presets `experimental.code.*` usan los mismos modelos ajustados para agentes de programación: ventanas de contexto más largas, menos sesiones concurrentes, respuestas más largas y el muestreo recomendado por el fabricante (temperatura 1.0) en lugar de los valores de baja temperatura usados para preguntas sobre documentos.
+
+| Preset | Memoria GPU Requerida | Familia de Modelo | Alias | Modelos |
+|---|---|---|---|---|
+| `experimental.code.glm-5-2-560g` | 560GB | GLM 5.2 | `glm-5-2-nvfp4` | nvidia/GLM-5.2-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.glm-5-3-560g` | 560GB | GLM 5.3 | `glm-5-3-nvfp4` | nvidia/GLM-5.3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.glm-5-3-flash-560g` | 560GB | GLM 5.3 | `glm-5-3-flash-nvfp4` | nvidia/GLM-5.3-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.minimax-m3-560g` | 560GB | MiniMax M3 | `minimax-m3-nvfp4` | nvidia/MiniMax-M3-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.qwen-3-8-flash-next-560g` | 560GB | Qwen 3.8 | `qwen-3-8-flash-next-nvfp4` | nvidia/Qwen3.8-Flash-Next-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-flash-560g` | 560GB | DeepSeek V4 | `deepseek-v4-flash-nvfp4` | nvidia/DeepSeek-V4-Flash-0731-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-1-flash-560g` | 560GB | DeepSeek V4.1 | `deepseek-v4-1-flash-nvfp4` | nvidia/DeepSeek-V4.1-Flash-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.deepseek-v4-pro-1120g` | 1120GB | DeepSeek V4 | `deepseek-v4-pro-nvfp4` | nvidia/DeepSeek-V4-Pro-0813-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.laguna-xs-2-1-48g` | 48GB | Laguna XS 2.1 | `laguna-xs-2-1-nvfp4` | poolside/Laguna-XS-2.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.laguna-s-2-1-560g` | 560GB | Laguna S 2.1 | `laguna-s-2-1-nvfp4` | poolside/Laguna-S-2.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.code.laguna-m-1-560g` | 560GB | Laguna M.1 | `laguna-m-1-nvfp4` | poolside/Laguna-M.1-NVFP4, mixedbread-ai/mxbai-embed-large-v1 |
+
+**Ejemplo de Configuración (4 GPUs de 141GB):**
+
+```yaml
+ai:
+  preset: "experimental.code.glm-5-3-560g"
+  gpuCount: 4
+```
+
+<Note>
+- Configura `ai.gpuCount` con el número de GPUs del nodo. El modelo se reparte entre todas con paralelismo de tensores, así que su memoria conjunta debe alcanzar el tamaño del preset.
+- Todos los presets salvo Laguna M.1 activan decodificación especulativa, caché de prefijos, prefill por fragmentos y planificación asíncrona. El modelo borrador sigue la receta de vLLM: DSpark para DeepSeek V4 y V4.1, MTP para GLM y Qwen, EAGLE3 (`Inferact/MiniMax-M3-EAGLE3-GQA`) para MiniMax M3 y los modelos asistentes de Google para Gemma 4. DSpark y MTP forman parte del checkpoint principal y no requieren descargas adicionales. Los borradores de MiniMax y Gemma son repositorios aparte que se cargan desde la caché local de modelos como cualquier otro modelo: en instalaciones airgap y semi-airgap, añádelos a `zylon-cli models download` (`Inferact/MiniMax-M3-EAGLE3-GQA`, `google/gemma-4-26B-A4B-it-assistant` o `google/gemma-4-31B-it-assistant`).
+- Los presets de Laguna (Poolside) usan el promptStyle `laguna`. S 2.1 y XS 2.1 usan los borradores DFlash de Poolside con la misma cuantización (`poolside/Laguna-S-2.1-DFlash-NVFP4`, `poolside/Laguna-XS-2.1-DFlash-NVFP4`), repositorios aparte que hay que añadir a `zylon-cli models download` en instalaciones airgap y semi-airgap. DFlash hace fallar vLLM por encima de 32 secuencias concurrentes, así que estos presets mantienen `maxConcurrentRequests` en 32 o menos y no fijan `minP` (vLLM lo rechaza con decodificación especulativa). Laguna M.1 no tiene borrador y funciona sin decodificación especulativa.
+- Se usan los checkpoints NVFP4 de NVIDIA. Las GPUs Blackwell los ejecutan de forma nativa; GPUs anteriores como Hopper los ejecutan con los kernels FP4 solo de pesos de vLLM, que son más lentos.
+- DeepSeek V4 Flash Vision no tiene versión NVFP4, por lo que su preset usa el checkpoint FP8 del fabricante.
+- DeepSeek V4.1 Flash descarga sus tablas Engram (~180GB) a la memoria del host para caber en 560GB: el nodo necesita al menos 256GB de RAM.
+- La caché KV en fp8 que usan la mayoría de presets solo se aplica con `triton.vllm.allowKvCache: true`.
+</Note>
+
+### Presets de Código para DGX Spark
+
+**Disponible a partir de la versión 1.59**
+
+Presets para un único NVIDIA DGX Spark (GB10, 128GB de memoria unificada compartida con el sistema operativo). Ejecutan hasta cuatro sesiones de programación con 131k de contexto.
+
+| Preset | Modelo | Alias | Plataforma Zylon en el mismo Spark |
+|---|---|---|---|
+| `experimental.code.qwen-3-8-27b-dgx` | nvidia/Qwen3.8-27B-NVFP4 | `qwen-3-8-27b-dgx` | Sí |
+| `experimental.code.laguna-s-2-1-dgx` | poolside/Laguna-S-2.1-NVFP4 | `laguna-s-2-1-dgx` | No: ejecuta la plataforma en otro equipo |
+
+### Cuantización
+
+**Disponible a partir de la versión 1.59**
+
+`ai.quantization` elige el formato de pesos del modelo de lenguaje del preset: `nvfp4` (por defecto), `awq` o `gptq`. Con `awq` o `gptq` el preset carga una versión entera de 4 bits del mismo modelo. `awq` recurre a `gptq` cuando un modelo no tiene versión AWQ, y la instalación falla si el preset no tiene ninguna de las dos. Hay versiones AWQ para GLM 5.x, MiniMax M3, Qwen3.8 Flash-Next y Gemma 4, y versiones GPTQ para DeepSeek V4 Flash y V4.1 Flash.
+
+```yaml
+ai:
+  preset: "experimental.code.minimax-m3-560g"
+  quantization: awq
+```
+
+### Detección de Bucles en el Chat
+
+Zylon comprueba cada pocos mensajes del asistente si un agente ha entrado en un bucle; cada comprobación es una llamada extra al modelo. Los agentes de programación ejecutan secuencias largas y legítimas de herramientas que pueden parecer bucles, por lo que los presets de código para DGX Spark la desactivan. Se configura en cualquier instalación con:
+
+```yaml
+ai:
+  config:
+    chat:
+      loopDetectionInterval: 0   # mensajes del asistente entre comprobaciones; 0 la desactiva
 ```
 
 ### Notas Importantes Sobre Presets Experimentales

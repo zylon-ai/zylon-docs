@@ -40,6 +40,21 @@ Por defecto, solo se conservan las últimas 10 copias de seguridad.
 
 **Durante el proceso de copia de seguridad, Zylon estará fuera de línea.** Dependiendo de la cantidad de documentos que hayas cargado, este proceso puede tomar varios minutos.
 
+### Cómo se detiene Zylon durante la copia de seguridad y la restauración
+
+Antes de copiar o reemplazar datos, `zylon-cli backup` y `zylon-cli restore` acordonan (cordon) y drenan (drain) el nodo para que todos los pods de Zylon se detengan de forma ordenada. Solo entonces se detiene k0s. Cuando termina la copia o la restauración de los datos, k0s se vuelve a iniciar y se quita el acordonamiento del nodo (uncordon), de modo que los pods se vuelven a programar automáticamente.
+
+- El drenado suele tardar entre uno y dos minutos.
+- Cuando el comando termina, Zylon todavía necesita unos minutos más para estar completamente disponible, sobre todo mientras se cargan los modelos de IA. Puedes comprobar el progreso con `sudo k0s kubectl get pods -n zylon`.
+
+<Warning>
+    Si una copia de seguridad o una restauración se interrumpe (por ejemplo, si se mata el proceso o se cae la sesión SSH), el nodo puede quedar acordonado. En ese caso los pods de Zylon permanecen en `Pending` y Zylon sigue fuera de línea, incluso después de reiniciar. Para recuperar Zylon, quita el acordonamiento del nodo:
+
+    ```bash
+    sudo k0s kubectl uncordon $(sudo k0s kubectl get nodes -o name)
+    ```
+</Warning>
+
 ### Poner las copias de seguridad en programación
 
 Puedes agregar estas copias de seguridad en una programación automáticamente, ejecuta `sudo crontab -e` para abrir el editor de cron y agrega la copia de seguridad como

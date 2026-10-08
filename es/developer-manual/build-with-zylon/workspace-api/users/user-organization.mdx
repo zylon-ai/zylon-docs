@@ -26,11 +26,12 @@ curl "https://{BASE_URL}/api/v1/app/organization" \
   "context": "Enterprise R&D and analytics.",
   "logo": "https://{BASE_URL}/files/org-logo.png",
   "auto_join_enabled": true,
-  "default_role": "Viewer",
-  "email_regex": ".*@auroralabs.com",
+  "enable_generated_resources_downloads": true,
+  "enable_uploaded_resources_downloads": true,
+  "default_role": "AppMember",
+  "email_regex": ".*@example.com",
   "gateway_id": "gw_4b7c2a1d9e5f",
-  "created_at": "2026-02-08T14:12:45Z",
-  "member_count": null
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
@@ -46,7 +47,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
     "name": "Aurora Labs",
     "context": "Private AI platform for product and support teams.",
     "clear_context": false,
-    "email_regex": ".*@auroralabs.com"
+    "email_regex": ".*@example.com",
+    "enable_generated_resources_downloads": true,
+    "enable_uploaded_resources_downloads": true
   }'
 ```
 
@@ -56,6 +59,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
 | `name` | string | No | Nombre visible de la organización. Máximo 60 caracteres. |
 | `context` | string | No | Contexto de organización usado por funcionalidades de Workspace. |
 | `clear_context` | boolean | No | Ponlo a `true` para eliminar el contexto existente. Por defecto es `false`. |
+| `email_regex` | string | No | Regex valida para los emails de la organizacion. |
+| `enable_generated_resources_downloads` | boolean | No | Permite descargar recursos generados. Omite o envia null para mantener el ajuste. |
+| `enable_uploaded_resources_downloads` | boolean | No | Permite descargar recursos subidos. Omite o envia null para mantener el ajuste. |
 | `logo_file_name` | string | No | Nombre del archivo de logo en multipart. Obligatorio si subes un logo. |
 | `logo_content_type` | string | No | Tipo de contenido del logo en multipart. Debe ser PNG o JPEG. |
 | `logo_content_length` | integer | No | Tamaño del logo en bytes. Máximo 5 MB. |
@@ -73,14 +79,37 @@ curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
   "context": "Private AI platform for product and support teams.",
   "logo": "https://{BASE_URL}/files/org-logo.png",
   "auto_join_enabled": true,
-  "default_role": "Viewer",
-  "email_regex": ".*@auroralabs.com",
+  "enable_generated_resources_downloads": true,
+  "enable_uploaded_resources_downloads": true,
+  "default_role": "AppMember",
+  "email_regex": ".*@example.com",
   "gateway_id": "gw_4b7c2a1d9e5f",
-  "created_at": "2026-02-08T14:12:45Z",
-  "member_count": null
+  "created_at": "2026-02-08T14:12:45Z"
 }
 ```
 </Accordion>
+
+## Campos de respuesta de organizacion
+
+GET y POST devuelven el mismo modelo. Los campos nulos pueden omitirse. La politica de descarga afecta a artefactos y descargas/exportaciones de archivos del hilo; las descargas deshabilitadas devuelven `403`.
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de organizacion. |
+| `name` | string | Nombre. |
+| `slug` | string | Slug del espacio para `x-org`. |
+| `state` | string | `Active`, `Inactive`. |
+| `display_name` | string | Nombre visible. |
+| `context` | string or null | Instrucciones de organizacion. |
+| `logo` | string or null | URL publica del logo. |
+| `auto_join_enabled` | boolean | Adhesion automatica habilitada. |
+| `enable_generated_resources_downloads` | boolean | Politica de descarga de recursos generados. |
+| `enable_uploaded_resources_downloads` | boolean | Politica de descarga de recursos subidos. |
+| `default_role` | string | `AppGuest`, `AppMember`, `AppAdmin`, `AppOwner`. |
+| `email_regex` | string | Regex de emails. |
+| `gateway_id` | string | ID de gateway de la organizacion. |
+| `created_at` | timestamp | Fecha de creacion generada por el servidor. |
+| `member_count` | integer or null | Numero de miembros opcional; estas rutas de organizacion actual no lo incluyen. |
 
 ## Errores y casos límite
 

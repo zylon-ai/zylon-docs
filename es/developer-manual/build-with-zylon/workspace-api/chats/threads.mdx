@@ -12,37 +12,51 @@ Los chats en la Workspace API se organizan alrededor de **hilos** e **interaccio
 
 Usa hilos cuando necesitas historial y seguimiento. Usa interacciones para enviar un nuevo turno a un hilo. Usa el endpoint de chat para solicitudes de un solo turno.
 
+<Warning>
+En 1.58, `created_by.id` identifica una cuenta, no un miembro del espacio de trabajo. Ambos IDs son UUIDs. Actualiza las comparaciones y busquedas guardadas; consulta la [migracion de IDs de cuenta](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#account-ids-and-renamed-fields).
+</Warning>
+
 ## Solicitud básica y respuesta
 
-Crea una interacción en un hilo con `POST /api/v1/app/thread/{threadId}/interaction`.
+Crea una interaccion con `POST /api/v1/app/thread/{threadID}/interaction`. Envia exactamente un nuevo mensaje de usuario; el servidor incorpora el historial del hilo. La respuesta es `200` SSE con un evento inicial `interaction` y eventos de mensaje que terminan en `done`.
 
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `threadID` | Si | Identificador del hilo. |
-| Body | `thread_id` | Si | Identificador del hilo. |
-| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
-| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
-| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
-| Body | `agent` | No | Preset de agente a usar. |
+| Path | `threadID` | Si | Identificador del hilo; se toma de la URL. |
+| Body | `thread_id` | No | Opcional; el ID de hilo de la URL tiene prioridad. |
+| Body | `pgpt` | Si | Exactamente un mensaje en `messages`, con `role: "user"`. Usa los campos de solicitud de Messages. |
+| Body | `artifacts` | No | Selecciones por alcance; consulta Seleccionar artefactos. |
+| Body | `agent` | No | `Default` (predeterminado) o `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "thread_id": "{threadID}",
-    "artifact_ids": ["{artifactID}"],
-    "all_artifacts": false,
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
     "agent": "Default",
     "pgpt": {
       "messages": [
         {
           "role": "user",
           "content": [
-            { "type": "text", "text": "Summarize the artifact in three bullets." }
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
           ]
         }
       ],
@@ -52,35 +66,83 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   }'
 ```
 
-<Accordion title="Ejemplo de respuesta (InteractionDTO)">
-```json
-{
-  "id": "inter_5a7b9c1d3e5f7a9b",
-  "project_id": "proj_7a5c3e1b9d2f4a6c",
-  "thread_id": "thread_3f2a1c4d5b6e7f8a",
-  "state": "Completed",
-  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
-  "all_artifacts": false,
-  "user_input": {
-    "role": "user",
-    "content": [
-      { "type": "text", "text": "Summarize the artifact in three bullets." }
-    ]
-  },
-  "assistant_output": {
-    "id": "msg_3d2c1b4a5f6e7d8c",
-    "created": 1739036500,
-    "model": "default",
-    "stop_reason": "end_turn",
-    "content": [
-      { "type": "text", "text": "• Ticket volume rose 12% week-over-week\n• Billing issues drove 38% of cases\n• Priority bugs were resolved within 48 hours" }
-    ],
-    "usage": { "input_tokens": 180, "output_tokens": 52 }
-  },
-  "created_at": "2026-02-08T14:41:10Z"
-}
+El stream siguiente esta abreviado. Lee el evento inicial `interaction` para obtener el ID de la interaccion guardada y procesa los eventos de mensaje hasta `done`.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
+
+### Campos de respuesta de interaccion
+
+Los campos nulos pueden omitirse. Los mensajes anidados siguen [Messages](/es/developer-manual/build-with-zylon/working-with-messages) y las cuentas siguen [Miembros del espacio de trabajo](/es/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de interaccion generado por el servidor. |
+| `project_id` | string | Proyecto de la interaccion. |
+| `thread_id` | string or null | Hilo al que pertenece, cuando existe. |
+| `state` | string | `Processing`, `Completed`, `Error`. |
+| `user_input` | object | Mensaje del usuario: `role` y bloques `content`. |
+| `assistant_output` | object or null | Mensaje del asistente cuando existe; consulta el modelo de respuesta de Messages. |
+| `artifacts` | object or null | Selecciones de artefactos descritas abajo. |
+| `created_at` | timestamp | Fecha de creacion generada por el servidor. |
+| `created_by` | object or null | Datos de cuenta al pedir `include=Account` en la lista de interacciones. El ID del creador es un ID de cuenta. |
+| `pgpt` | object or null | Solicitud de chat guardada; consulta el modelo de solicitud de Messages. |
+
+## Seleccionar artefactos
+
+Usa `artifacts` en las solicitudes de interaccion y de chat con envoltorio. Contiene arrays opcionales `document`, `connector`, `skill` y `agent_flow`. Cada array contiene selecciones por alcance `organization` o `project`.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `artifacts.document` | No | Documentos, texto inline, carpetas y enlaces. |
+| Body | `artifacts.connector` | No | Bases de datos SQL y servidores MCP. |
+| Body | `artifacts.skill` | No | Skills. |
+| Body | `artifacts.agent_flow` | No | Artefactos Analysis, BulkQA, Composition, ReadAndExtract, SmartDoc y Summary. |
+| Body | `artifacts.<category>[].scope` | Si | `organization` o `project`. |
+| Body | `artifacts.<category>[].all_artifacts` | No | Selecciona todos los artefactos habilitados de ese alcance. Por defecto null. |
+| Body | `artifacts.<category>[].artifacts_ids` | No | Array de IDs de artefactos seleccionados. El nombre exacto incluye la `s`: `artifacts_ids`. Por defecto null. |
+</Accordion>
+
+No combines `all_artifacts: true` con un array `artifacts_ids` no vacio. Cada categoria admite como maximo una entrada por alcance. La seleccion `project` usa el proyecto del hilo o el `project_id` del chat con envoltorio; sin contexto de proyecto, `all_artifacts` para ese alcance no selecciona nada. `artifact_ids` y `all_artifacts` en el nivel superior no son el modelo de seleccion actual.
+
+```json
+{
+  "artifacts": {
+    "document": [
+      {
+        "scope": "project",
+        "artifacts_ids": [
+          "{artifactID}"
+        ]
+      },
+      {
+        "scope": "organization",
+        "all_artifacts": false,
+        "artifacts_ids": []
+      }
+    ]
+  }
+}
+```
+
+Los artefactos de organizacion disponibles se incluyen por defecto en cada categoria sin una entrada explicita `organization`. Para excluir ese valor predeterminado de una categoria, envia una entrada de organizacion con `all_artifacts: false` y `artifacts_ids: []`. Los archivos disponibles producidos en turnos anteriores del mismo hilo tambien siguen utilizables.
 
 ## Agregar media al chat
 
@@ -158,23 +220,23 @@ Ejemplo de interacción con imagen + texto y flags de ejecución:
 <Accordion title="Parametros del endpoint">
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `threadID` | Si | Identificador del hilo. |
-| Body | `thread_id` | Si | Identificador del hilo. |
-| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
-| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
-| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
-| Body | `agent` | No | Preset de agente a usar. |
+| Path | `threadID` | Si | Identificador del hilo; se toma de la URL. |
+| Body | `thread_id` | No | Opcional; el ID de hilo de la URL tiene prioridad. |
+| Body | `pgpt` | Si | Exactamente un mensaje en `messages`, con `role: "user"`. Usa los campos de solicitud de Messages. |
+| Body | `artifacts` | No | Selecciones por alcance; consulta Seleccionar artefactos. |
+| Body | `agent` | No | `Default` (predeterminado) o `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "thread_id": "{threadID}",
-    "all_artifacts": true,
-    "artifact_ids": [],
+    "artifacts": {
+      "document": [{ "scope": "project", "all_artifacts": true }]
+    },
     "agent": "Default",
     "pgpt": {
       "messages": [
@@ -253,7 +315,7 @@ Listar hilos:
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20&include=ReadState" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
@@ -263,43 +325,110 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=
 {
   "data": [
     {
-      "id": "thread_3f2a1c4d5b6e7f8a",
+      "id": "{threadID}",
+      "project_id": "{projectID}",
       "name": "Weekly Support Brief",
+      "state": "Active",
       "visibility": "Private",
-      "created_at": "2026-02-08T14:40:00Z"
+      "read_state": {
+        "last_read_at": "2026-02-08T14:41:10Z",
+        "has_unread_response": false
+      }
     }
   ],
   "has_next_page": false,
-  "has_previous_page": false,
-  "total_count": 1
+  "has_previous_page": false
 }
 ```
 </Accordion>
 
+### Campos de respuesta del hilo
+
+Crear, consultar, actualizar y eliminar devuelven este modelo de hilo con `200`. Las listas de proyecto lo incluyen en el envoltorio de paginacion compartido. Los campos nulos pueden omitirse; las respuestas de hilo no contienen `created_at`. Los datos de cuenta siguen el [modelo de cuenta del miembro](/es/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de hilo generado por el servidor. |
+| `project_id` | string | ID del proyecto al que pertenece. |
+| `name` | string | Nombre del hilo. |
+| `state` | string | `Active` o `Deleted`. |
+| `visibility` | string | `Public` o `Private`. |
+| `created_by` | object or null | Objeto de cuenta en listas de hilos con `include=Account`. Los IDs de creador son de cuenta, no de miembro del espacio de trabajo. |
+| `read_state` | object or null | Presente en listas de hilos con `include=ReadState`. |
+| `read_state.last_read_at` | timestamp or null | Punto de lectura de la cuenta actual; null u omitido antes de la primera lectura. |
+| `read_state.has_unread_response` | boolean | True para un hilo nuevo creado por otra cuenta o una respuesta completada posterior al punto de lectura. |
+
+Consultar `GET /app/thread/{threadID}/interaction` avanza el punto de lectura de la cuenta actual hasta las respuestas completadas de la pagina devuelta, o al menos hasta la creacion del hilo si no hay respuestas completadas. Consultar solo el detalle del hilo no marca la conversacion como leida. El estado de lectura es por cuenta.
+
 Crea un hilo y la primera interacción en una sola petición:
 
 <Accordion title="Parametros del endpoint">
-
 | Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
 | Path | `projectID` | Si | Identificador del proyecto. |
-| Body | `name` | Si | Nombre del nuevo hilo. |
-| Body | `visibility` | Si | `Public` o `Private`. |
-
+| Body | `thread_name` | No | Nombre del nuevo hilo. Por defecto `New Thread`. |
+| Body | `thread_visibility` | No | `Public` o `Private`; por defecto `Private`. |
+| Body | `pgpt` | Si | Exactamente un mensaje de usuario. |
+| Body | `artifacts` | No | Selecciones de artefactos por alcance. |
+| Body | `agent` | No | `Default` (predeterminado) o `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "name": "Weekly Support Brief",
-    "visibility": "Private"
+    "thread_name": "Weekly Support Brief",
+    "thread_visibility": "Private",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
   }'
 ```
 
+Esta operacion devuelve `200` SSE con los IDs de la nueva interaccion y del hilo en el evento inicial `interaction`, seguido de eventos de mensaje y `done`. `name` y `visibility` pertenecen al cuerpo de creacion de hilo separado y no sustituyen aqui a `thread_name`, `thread_visibility` ni `pgpt`.
+
+## Obtener un hilo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+Devuelve el modelo de respuesta de hilo anterior. Las relaciones `include` estan disponibles en la lista del proyecto, no en este endpoint de detalle.
+
 ## Actualizar o eliminar un hilo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `name` | No | Nuevo nombre en PUT. Omite o envia null para mantenerlo. |
+| Body | `visibility` | No | Nueva visibilidad `Public` o `Private` en PUT. Omite o envia null para mantenerla. |
+</Accordion>
+
+PUT devuelve el hilo actualizado; DELETE lo elimina de forma logica y devuelve el hilo con `state: "Deleted"`. Ambos devuelven `200` JSON.
 
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
@@ -316,7 +445,7 @@ Eliminar un hilo:
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -351,7 +480,7 @@ Obtener una interacción:
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -361,7 +490,7 @@ Cancelar una interacción en ejecución:
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -369,7 +498,7 @@ Eliminar una interacción:
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -382,55 +511,251 @@ curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Accept: text/event-stream"
 ```
 
+El stream siguiente esta abreviado. Lee el evento inicial `interaction` para obtener el ID de la interaccion guardada y procesa los eventos de mensaje hasta `done`.
+
 <Accordion title="Ejemplo de stream">
 ```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
 event: message_start
-data: {"type":"message_start","message":{"id":"msg_3d2c1b4a5f6e7d8c","role":"assistant","content":[]}}
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"• Ticket volume rose 12%"}}
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
 
 event: message_stop
 data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
 
-## Chat de una sola llamada
+## Archivos del hilo
 
-Si no necesitas un hilo, usa el endpoint de chat:
+Los endpoints de archivos usan el hilo como alcance de sesion. La subida y PUT guardan bytes; la conversion exporta o importa contenido MDX de artefactos. Envia `x-org` y un token API en cada solicitud. La subida, PUT y la exportacion desde un artefacto requieren permiso para actualizar el hilo.
+
+### Subir un archivo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Query | `path` | No | Clave relativa a uploads, como `reports/report.mdx`. Por defecto el nombre del archivo; se normaliza el prefijo `uploads/`. |
+| Query | `namespace` | No | `session` (predeterminado), `artifacts`, `skills`. |
+| Multipart | `file` | Si | Parte de archivo con los bytes. No fijes manualmente el boundary multipart. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/upload-file?path=report.mdx&namespace=session" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -F "file=@report.mdx;type=text/plain"
+```
+
+Devuelve `200` con metadatos de archivo. La ausencia de `file` en multipart devuelve `400`.
+
+### Guardar bytes de archivo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Path | `path` | Si | Clave de almacenamiento, con segmentos anidados como `reports/report.mdx`. |
+| Query | `namespace` | No | `session` (predeterminado), `artifacts`, `skills`. |
+| Header | `Content-Type` | No | Tipo MIME del archivo; por defecto `application/octet-stream`. |
+| Body | `file bytes` | Si | Bytes sin codificacion JSON ni multipart. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}/put-file/reports/report.mdx?namespace=session" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: text/plain" \
+  --data-binary @report.mdx
+```
+
+Devuelve `200` con metadatos de archivo. Crea las carpetas padre y sobrescribe una clave existente.
+
+### Descargar un archivo del hilo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Query | `path` | Si | Ruta absoluta del sandbox o su ID de archivo codificado en Base64. Codifica el valor de consulta para la URL. |
+| Query | `namespace` | No | `session` (predeterminado), `artifacts`, `skills`. |
+| Query | `disposition` | No | `attachment` (predeterminado) o `inline`. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/download-file?path=%2Fmnt%2Fuser-data%2Foutputs%2Freport.mdx&namespace=session&disposition=attachment" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -o report.mdx
+```
+
+Devuelve `200` con bytes, tipo MIME inferido y `Content-Disposition`; no devuelve una URL prefirmada. La configuracion de organizacion puede denegar la descarga con `403`: outputs requiere descargas de recursos generados, uploads requiere descargas de recursos subidos y las rutas no reconocidas requieren ambos ajustes.
+
+### Convertir un archivo del hilo en artefacto
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `file_id` | No | ID de archivo. Proporciona `file_id` o `path` no vacio. |
+| Body | `path` | No | Ruta absoluta o codificada en Base64. Cuando se envia, el nombre debe terminar en `.mdx`. |
+| Body | `project_id` | No | ID del proyecto de destino. Omite o envia null para crear un artefacto de organizacion; no se toma del hilo. |
+| Body | `name` | No | Nombre del artefacto; en su ausencia se usa el titulo MDX o el nombre de archivo. |
+| Body | `parent_id` | No | Aceptado pero actualmente sin efecto. Mueve el artefacto con el endpoint de actualizacion despues de convertirlo. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/convert-to-artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
-      {
-        "role": "user",
-        "content": [
-          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
-        ]
-      }
-    ],
-    "max_tokens": 64,
-    "temperature": 0.3
+    "path": "/mnt/user-data/outputs/report.mdx",
+    "project_id": "{projectID}",
+    "name": "Support report"
   }'
 ```
+
+Devuelve `200` con el [modelo del artefacto](/es/developer-manual/build-with-zylon/workspace-api/content/artifacts) creado o actualizado. El contenido debe ser MDX valido de artefacto; sus metadatos determinan el tipo y las propiedades. Fallan la ausencia de ambos selectores, las rutas no MDX o el MDX invalido. Se aplican los permisos normales de creacion y actualizacion de artefactos.
+
+### Convertir un artefacto en archivo del hilo
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `artifact_id` | Si | Artefacto que se exporta a la sesion del hilo. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/convert-from-artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "artifact_id": "{artifactID}"
+  }'
+```
+
+Devuelve `200` con metadatos del archivo MDX exportado. Requiere permiso de lectura del artefacto y las mismas comprobaciones de descarga que el artefacto; las descargas deshabilitadas devuelven `403`.
+
+### Respuesta de metadatos de archivo
+
+La subida, PUT y la exportacion desde artefacto comparten esta respuesta. Los campos nulos pueden omitirse.
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | Identificador que codifica en Base64 la ruta absoluta del sandbox. |
+| `created_at` | string | Fecha de creacion generada por el servidor. |
+| `filename` | string | Nombre de archivo. |
+| `mime_type` | string | Tipo de contenido. |
+| `size_bytes` | integer | Tamano en bytes. |
+| `type` | string | `file`. |
+| `downloadable` | boolean | Si los metadatos marcan el archivo como descargable; tambien se aplica la politica de organizacion. |
+| `namespace` | string or null | `session`, `artifacts`, `skills`. |
+| `scope` | object or null | Alcance del archivo con `id` (string) y `type` (`session`, `artifacts`, `skills`). |
+| `etag` | string or null | Identificador de contenido opcional. |
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "msg_5f2e1d3c4b6a7c8d",
-  "role": "assistant",
-  "content": [
-    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
-  ]
+  "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9yZXBvcnQubWR4",
+  "created_at": "2026-02-08T14:41:10Z",
+  "filename": "report.mdx",
+  "mime_type": "text/plain",
+  "size_bytes": 128,
+  "type": "file",
+  "downloadable": true,
+  "namespace": "session",
+  "scope": {
+    "id": "{threadID}",
+    "type": "session"
+  },
+  "etag": "etag_example"
 }
 ```
 </Accordion>
 
-## Validar una solicitud de chat
+## Chat puntual
+
+El endpoint actual devuelve `200` con `Content-Type: text/event-stream`, incluso si `pgpt.stream` es false. No crea un hilo ni una interaccion guardada. Usa el cuerpo con envoltorio para seleccionar un proyecto o artefactos. Se sigue aceptando una solicitud de Messages plana para un chat solo de organizacion.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `pgpt` | Si | Solicitud de Messages con exactamente un mensaje de usuario. `private_gpt` es un alias aceptado. |
+| Body | `project_id` | No | Contexto de proyecto opcional. Omite o envia null para un chat solo de organizacion. |
+| Body | `artifacts` | No | Selecciones de artefactos por alcance descritas arriba. |
+</Accordion>
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Draft a two-sentence update on this week support backlog."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 64,
+      "temperature": 0.3
+    }
+  }'
+```
+
+Consume los eventos de mensaje hasta `done`; esta operacion no emite un evento `interaction` guardado. La desconexion cancela la solicitud activa. Consulta [Messages](/es/developer-manual/build-with-zylon/working-with-messages) para los campos anidados de solicitud y respuesta.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
+## Validar un chat
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `messages` | Si | Mensajes de solicitud de chat, enviados directamente en el nivel superior. No uses el envoltorio `pgpt` en este endpoint. Los campos opcionales de generacion, system y herramientas siguen el modelo de Messages enlazado. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
@@ -442,7 +767,10 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
       {
         "role": "user",
         "content": [
-          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+          {
+            "type": "text",
+            "text": "Give me a three-bullet summary of the Q1 support plan."
+          }
         ]
       }
     ],
@@ -451,22 +779,40 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   }'
 ```
 
+Devuelve `200` con `valid: true`, o `400` con `valid: false` y el resultado de validacion. Los cuerpos invalidos o los fallos anteriores al resultado devuelven un error API estandar. Los campos nulos del resultado pueden omitirse. Esta operacion comprueba el cuerpo de Messages; el contexto de proyecto, las selecciones de artefactos y los permisos de Workspace se comprueban al ejecutar el chat.
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "valid": true,
+  "request_summary": {
+    "message_count": 1,
+    "has_tools": false,
+    "stream_enabled": false
+  }
+}
+```
+</Accordion>
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `valid` | boolean | Si la validacion fue correcta. |
+| `errors` | string[] o null | Errores de validacion. |
+| `warnings` | string[] o null | Avisos no fatales. |
+| `request_summary` | object o null | Resumen opcional de la solicitud comprobada. |
+| `request_summary.message_count` | integer o null | Numero de mensajes de entrada. |
+| `request_summary.has_tools` | boolean o null | Si se enviaron herramientas. |
+| `request_summary.stream_enabled` | boolean o null | Valor solicitado de stream. |
+| `request_summary.tool_choice` | string o null | Modo solicitado de seleccion de herramientas. |
+
 ## Herramientas disponibles
 
-Pasa tools en `pgpt.tools` como `{ "name": "...", "type": "..." }`.
-
-| Nombre | Tipo | Qué hace |
-| --- | --- | --- |
-| `semantic_search` | `semantic_search_v1` | Busca conocimiento indexado del proyecto/workspace por similitud semántica. |
-| `file_sematic_search` | `file_semantic_search_v1` | Busca semánticamente en archivos y adjuntos. |
-| `tabular_analysis` | `tabular_analysis_v1` | Analiza datasets tabulares y devuelve insights calculados. |
-| `database_query` | `database_query_v1` | Ejecuta consultas a bases de datos configuradas. |
-| `web_search` | `web_search_v1` | Realiza búsqueda web para información externa/pública. |
-| `web_extract` | `web_extract_v1` | Extrae contenido estructurado de URLs. |
-| `list_project_files` | `list_project_files_v1` | Lista archivos del proyecto actual para usarlos con otras tools. |
+Solo se aceptan herramientas definidas por Zylon en `pgpt.tools`; estas rutas de chat de Workspace no admiten herramientas personalizadas del cliente. Usa las [declaraciones y ejemplos de herramientas](/es/developer-manual/build-with-zylon/tools/introduction-to-tools). Las herramientas de conocimiento de Workspace tambien incluyen `get_knowledge_base_files` (`list_files_v1`), `get_artifact_structure` (`get_file_structure_v1`), `get_artifact_content` (`get_content_v1`), `analyze_artifact` (`analyze_artifact_v1`), `summarize_artifact` (`summarize_artifact_v1`) y `create_document` (`process_content_v1`).
 
 ## Errores y casos límite
 
-- **400**: esquema inválido (usa `/chat/validate`).
+- **400**: esquema invalido, selectores de artefactos invalidos o solicitud sin exactamente un mensaje de usuario (usa `/chat/validate`).
+- **403**: acceso al proyecto insuficiente o descargas deshabilitadas por la organizacion.
+- Procesa los eventos SSE `error` y el evento final `done` despues de iniciar el stream HTTP.
 - **404**: hilo o interacción no encontrada.
 - **409**: interacción ya completada al cancelar.

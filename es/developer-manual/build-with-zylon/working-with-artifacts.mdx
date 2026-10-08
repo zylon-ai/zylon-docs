@@ -56,14 +56,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
       "object": "ingest.document",
       "artifact": "docs_text_artifact_sync",
       "doc_metadata": {
-        "file_name": "release_notes.txt",
-        "source": "docs",
-        "headers": [],
-        "artifact_id": "docs_text_artifact_sync",
-        "collection": "019c7569-f1f3-74da-8017-35d4a11f93ca",
-        "llm_model": "default",
-        "embed_model": "default",
-        "hash": "faf6da679814136cb7cef94532397948cd2cd303b25f91a527af53227e9da99d"
+        "file_name": "release_notes.txt"
       }
     }
   ]
@@ -71,9 +64,32 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
 ```
 </Accordion>
 
+<Accordion title="Campos de respuesta de ingesta síncrona">
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `object`, `model` | string | Tipo de respuesta y modelo. |
+| `data` | object[] | Referencias de documentos ingeridos. |
+| `data[].object`, `data[].artifact` | string | Tipo de documento e ID del artefacto. |
+| `data[].doc_metadata` | object | Campos opcionales de tipo string que admiten null: `window`, `original_text`, `page_label`, `file_name`, `doc_id`. |
+| `callback.properties` | JSON o null | Metadatos devueltos opcionales; es una clave literal del nivel superior, no un objeto anidado. |
+
+Los campos que admiten null pueden omitirse. La respuesta de ingesta síncrona no incluye metadatos arbitrarios del documento devueltos por el proveedor.
+
+</Accordion>
+
 ## Ingesta asíncrona
 
-Usa `POST /artifacts/ingest/async` para cuerpos de petición más grandes o cuando la ingesta pueda tardar. El cuerpo es el mismo que en la ingesta síncrona, envuelto en `ingest_body`, y la respuesta devuelve un `task_id` que puedes consultar.
+Usa `POST /artifacts/ingest/async` para cuerpos de petición más grandes o cuando la ingesta pueda tardar. Envuelve el cuerpo de ingesta síncrona en `ingest_body` e incluye el objeto obligatorio `callback`. Usa `callback: {}` si consultas el estado sin configurar callbacks. La respuesta devuelve un `task_id` que puedes consultar.
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `ingest_body` | Si | Cuerpo de ingesta síncrona con `collection`, `artifact` e `input` obligatorios; `metadata` opcional. |
+| Body | `callback` | Si | Objeto de callback; se acepta `{}`. El campo opcional `properties` contiene datos de correlación. |
+
+</Accordion>
 
 <Tabs>
   <Tab title="Text">
@@ -93,7 +109,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "release_notes.txt",
         "source": "docs"
       }
-    }
+    },
+    "callback": {}
   }'
 ```
   </Tab>
@@ -115,7 +132,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "onboarding_checklist.txt",
         "source": "docs"
       }
-    }
+    },
+    "callback": {}
   }'
 ```
   </Tab>
@@ -137,7 +155,8 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "example.html",
         "source": "docs"
       }
-    }
+    },
+    "callback": {}
   }'
 ```
   </Tab>

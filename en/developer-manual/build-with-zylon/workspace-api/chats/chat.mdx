@@ -5,42 +5,82 @@ description: "Run ad-hoc chats without creating a thread."
 
 The Chat endpoints let you send a one-off request using the same message format as Messages, without creating a thread or interaction record.
 
+
 ## Basic request and response
 
-Send an ad-hoc request with `POST /api/v1/app/chat`.
+The current endpoint returns `200` with `Content-Type: text/event-stream`, including when `pgpt.stream` is false. It creates no persisted thread or interaction. Send the wrapped body to select a project or artifacts. A legacy flat Messages request is still accepted for an organization-only chat.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `pgpt` | Yes | Messages request containing exactly one user message. `private_gpt` is an accepted alias. |
+| Body | `project_id` | No | Optional project context. Omit or send null for an organization-only chat. |
+| Body | `artifacts` | No | Scoped artifact selections linked below. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "messages": [
-      {
-        "role": "user",
-        "content": [
-          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
-        ]
-      }
-    ],
-    "max_tokens": 64,
-    "temperature": 0.3
+    "project_id": "{projectID}",
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Draft a two-sentence update on this week support backlog."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 64,
+      "temperature": 0.3
+    }
   }'
 ```
 
-<Accordion title="Example response">
-```json
-{
-  "id": "msg_5f2e1d3c4b6a7c8d",
-  "role": "assistant",
-  "content": [
-    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
-  ]
-}
+Consume the message events until `done`; there is no persisted `interaction` event for this operation. Disconnecting cancels the active request. See [Messages](/en/developer-manual/build-with-zylon/working-with-messages) for nested request and response fields.
+
+<Accordion title="Example stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
 
+Artifact selections use the same [scoped model as thread interactions](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#selecting-artifacts).
+
 ## Validate a chat request
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `messages` | Yes | Chat request messages, sent directly at the top level. Do not wrap this endpoint body in `pgpt`. Optional generation, system and tool fields follow the linked Messages model. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
@@ -52,7 +92,10 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
       {
         "role": "user",
         "content": [
-          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+          {
+            "type": "text",
+            "text": "Give me a three-bullet summary of the Q1 support plan."
+          }
         ]
       }
     ],
@@ -61,13 +104,34 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   }'
 ```
 
+Returns `200` with `valid: true`, or `400` with `valid: false` and the validation result. Invalid bodies or failures before a result is available return a standard API error. Nullable result fields may be omitted. This checks the Messages body; wrapped project context, artifact selections and Workspace permissions are checked when executing the chat.
+
 <Accordion title="Example response">
-```text
-HTTP/1.1 204 No Content
+```json
+{
+  "valid": true,
+  "request_summary": {
+    "message_count": 1,
+    "has_tools": false,
+    "stream_enabled": false
+  }
+}
 ```
 </Accordion>
 
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `valid` | boolean | Whether validation succeeded. |
+| `errors` | string[] or null | Validation errors. |
+| `warnings` | string[] or null | Nonfatal warnings. |
+| `request_summary` | object or null | Optional summary of the checked request. |
+| `request_summary.message_count` | integer or null | Number of input messages. |
+| `request_summary.has_tools` | boolean or null | Whether tools were supplied. |
+| `request_summary.stream_enabled` | boolean or null | Requested stream flag. |
+| `request_summary.tool_choice` | string or null | Requested tool selection mode. |
+
 ## Errors and edge cases
 
-- **400**: invalid message schema (use `/chat/validate` to debug).
-- **413**: request too large.
+- **400**: invalid request, invalid artifact selectors, or more or fewer than one user message.
+- **403**: insufficient Workspace or project permissions.
+- Streaming errors must also be handled after the HTTP response starts.

@@ -9,7 +9,7 @@ Zylon 1.58 unifies artifact routes and separates workspace memberships from acco
 <Warning>
 Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
 
-**If your integration uses user IDs, review where you store, compare, or pass them.** Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+**If your integration uses user or account IDs, migrate the affected identity mappings even if requests still work.** Review where you store, compare, or pass them. Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
 </Warning>
 
 ## Prerequisites
@@ -232,6 +232,7 @@ The field-name aliases below are temporary. **Creator IDs and objects now refer 
 | Where | Old | Current / required action |
 | --- | --- | --- |
 | Project member create/update entries | `user_id` | Use `ws_member_id`; the old name remains an input alias. The value is still a workspace-member ID. |
+| Chat request metadata (Workspace and ZylonGPT) | `metadata.user_id` | Use `metadata.ws_member_id`; `user_id` remains an input alias. Send only one name. The value remains a workspace-member ID, not an account ID. |
 | Project ownership transfer | `old_owner_id`, `new_owner_id` | Use `old_owner_ws_member_id`, `new_owner_ws_member_id`; old names remain input aliases. |
 | Artifact, thread, interaction, issue `include` queries | `User` | Use `Account`; `User` remains an input alias. |
 | Account-list `include` query | `Users` | Use `WorkspaceMembers`; `Users` remains an input alias. |
@@ -242,6 +243,76 @@ The field-name aliases below are temporary. **Creator IDs and objects now refer 
 | Issue `created_by` filter | Workspace-member IDs | Send comma-separated account IDs. No ID conversion is provided. |
 
 See [project members](/en/developer-manual/build-with-zylon/workspace-api/projects/project-member), [ownership transfer](/en/developer-manual/build-with-zylon/workspace-api/projects/project), and [issue filters](/en/developer-manual/build-with-zylon/workspace-api/general/issues) for complete current bodies and responses.
+
+## Chats and threads
+
+### Move project chat to the unified route
+
+Replace `POST /app/project/{projectID}/chat` with `POST /app/chat` and move the project selector into the body. Use a wrapped `pgpt` message request (`private_gpt` remains an input alias). The current route also accepts a legacy flat message request for workspace context, but project and artifact selectors require the wrapper. `/app/chat/validate` takes the flat message request.
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "pgpt": {
+      "messages": [{ "role": "user", "content": "Summarize the project." }]
+    }
+  }'
+```
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Migration |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Former path selector. Supply it for project context; omit it for workspace context. |
+| Body | `pgpt` | Yes | Message request. See [Messages](/en/developer-manual/build-with-zylon/working-with-messages). |
+| Body | `artifacts` | No | Scoped selection object described below. |
+
+</Accordion>
+
+<Warning>
+The current `/app/chat` response is **always SSE**, including when `pgpt.stream` is `false`. The retained project-chat URL returns JSON when that flag is `false` and SSE when it is `true`. Update clients that expect a JSON response before switching URLs. No removal version is assigned to the project-chat alias.
+</Warning>
+
+For explicit artifact selection, use `artifacts.document`, `artifacts.connector`, `artifacts.skill`, or `artifacts.agent_flow`. Each is an array of selectors with `scope` (`organization` or `project`), optional `all_artifacts`, and optional `artifacts_ids` (note the plural spelling). For example:
+
+```json
+{
+  "artifacts": {
+    "document": [
+      { "scope": "project", "artifacts_ids": ["{artifactID}"] }
+    ]
+  }
+}
+```
+
+This is a partial request body to combine with `pgpt` and, for project scope, `project_id`. Do not send the old reference examples' top-level `artifact_ids` or `all_artifacts`: unknown fields are ignored, so they do not select artifacts. A category cannot repeat the same scope or combine `all_artifacts: true` with nonempty `artifacts_ids`. See [chat requests](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#one-shot-chat).
+
+### Create a thread with its first interaction
+
+`POST /app/project/{projectID}/thread/interaction` requires a single user message in `pgpt.messages`. Use `thread_name` and `thread_visibility`, rather than the `name` and `visibility` fields used to create a thread alone. They default to `New Thread` and `Private`. Optional `artifacts` uses the same scoped selectors above.
+
+```json
+{
+  "thread_name": "Project summary",
+  "thread_visibility": "Private",
+  "pgpt": {
+    "messages": [{ "role": "user", "content": "Summarize the project." }]
+  }
+}
+```
+
+This request streams the first interaction. See [threads and interactions](/en/developer-manual/build-with-zylon/workspace-api/chats/threads) for the complete request and stream.
+
+### Thread files and read state
+
+1.58 adds raw file writes with `PUT /app/thread/{threadID}/put-file/{path...}`. Send bytes as the body. Multipart `POST /app/thread/{threadID}/upload-file` still uses `file` and now accepts optional `path` and `namespace`. Uploads, raw writes, and downloads select `session` (default), `artifacts`, or `skills` with `namespace`; downloads also accept `disposition=attachment` (default) or `inline`. See [thread files](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#thread-files) for upload, download, and MDX artifact conversion.
+
+On project thread lists, request `include=ReadState` to receive `read_state.last_read_at` and `read_state.has_unread_response`. A new thread created by another account may also count as unread. Listing interactions with `GET /app/thread/{threadID}/interaction` now advances the caller's read checkpoint through the completed responses returned. Clients that poll this endpoint can therefore clear unread state; account for that side effect in notification and polling logic.
 
 ## Filesystem requests
 
@@ -1269,7 +1340,8 @@ You can send `server_tool_use` and server tool result blocks back in `messages` 
 
 1. Replace deprecated URLs and move project selectors to the appropriate query or body fields.
 2. Use Base64 bytes for JSON artifact creation, plain text for updates, and `file_data` for multipart files.
-3. Update response readers for account/member separation and removed inline artifact content.
+3. Update response readers for account/member separation and removed inline artifact content. Audit stored user/account IDs, joins, comparisons, and filters even when existing calls succeed.
 4. Replace creator filters with account IDs and use canonical field/include names.
 5. Update message parsers to handle `server_tool_use` and the server tool result blocks, and only return `tool_result` for your own custom tools.
-6. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.
+6. Adapt chat wrappers, scoped artifact selectors, SSE handling, thread files, and read-state polling.
+7. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.

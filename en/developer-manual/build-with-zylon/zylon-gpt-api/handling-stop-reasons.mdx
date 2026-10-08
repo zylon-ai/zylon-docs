@@ -3,13 +3,13 @@ title: "Handling stop reasons"
 description: "Know why a response stopped and how to handle ZylonGPT errors."
 ---
 
-When you call the Messages endpoint, each response includes a `stop_reason` that explains **why the model stopped**. Handling this field correctly is key to building reliable apps.
+Message responses distinguish the model's `stop_reason` from the overall `interaction_stop_reason` and error details. Check each field when deciding whether to continue, run a tool, or retry.
 
 For details about `stop_reason` in the response schema, see [Messages](/en/developer-manual/build-with-zylon/working-with-messages).
 
 ## What is `stop_reason`?
 
-`stop_reason` is present on every **successful** response. It doesn’t mean there was an error—it tells you how the model completed its response.
+`stop_reason` explains how model generation ended. It is nullable and may be omitted; it is not an error type.
 
 Example response (truncated):
 
@@ -22,13 +22,13 @@ Example response (truncated):
     { "type": "text", "text": "Here’s a concise update..." }
   ],
   "stop_reason": "end_turn",
-  "stop_sequence": null
+  "interaction_stop_reason": "stop"
 }
 ```
 
 ## Stop reason values
 
-When a request fails, the stop reason matches one of the error values below and the response is returned as an error envelope.
+Only the six model-generation values below are `stop_reason` values.
 
 | stop_reason | Why it happens | What to do |
 | --- | --- | --- |
@@ -38,6 +38,17 @@ When a request fails, the stop reason matches one of the error values below and 
 | `tool_use` | The model wants you to run a tool. | Execute the tool and return a `tool_result` block. |
 | `pause_turn` | The model intentionally paused. | Resume the conversation when ready. |
 | `refusal` | The model refused for safety or policy reasons. | Surface the refusal or re‑prompt with allowed content. |
+
+## Interaction outcomes
+
+`interaction_stop_reason` is nullable and describes the overall interaction: `stop`, `error`, `cancelled`, or `refusal`. It is separate from the model stop reason. Optional `stop_details` contains required `type`, optional `category`, and optional `explanation`; use these details when explaining an outcome to the user.
+
+## Errors
+
+Failures before generation may return an HTTP error envelope. During streaming, handle `error` events; completed message objects may also include an `errors` array. Error types below are **not** valid `stop_reason` values. Do not retry refusals or cancellations as transient server errors.
+
+| Error type | Why it happens | What to do |
+| --- | --- | --- |
 | `invalid_request_error` | The request inputs are invalid (e.g., artifacts not fully ingested, missing tool config, invalid IDs). | Fix inputs and retry. |
 | `permission_error` | The token lacks access to the referenced resource. | Check org/project membership and artifact visibility. |
 | `request_too_large` | Input size or token count exceeds model limits. | Reduce input, chunk content, or lower context size. |

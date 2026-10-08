@@ -207,6 +207,7 @@
                     "group": "Workspace API",
                     "pages": [
                       "en/developer-manual/build-with-zylon/workspace-api/overview",
+                      "en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58",
                       {
                         "group": "General",
                         "pages": [
@@ -614,6 +615,7 @@
                     "group": "Workspace API",
                     "pages": [
                       "es/developer-manual/build-with-zylon/workspace-api/overview",
+                      "es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58",
                       {
                         "group": "General",
                         "pages": [

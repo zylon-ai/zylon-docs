@@ -11,7 +11,7 @@ Start with totals to get a usage snapshot from `GET /api/v1/app/organization/ana
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -32,14 +32,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/totals" \
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
-| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
-| Query | `limit` | No | Maximum number of ranked users to return. |
+| Query | `start_date` | No | Start of the reporting window as Unix epoch milliseconds. |
+| Query | `end_date` | No | End of the reporting window as Unix epoch milliseconds. |
+| Query | `limit` | No | Maximum number of ranked users to return. Defaults to `5`. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1738291200&end_date=1738972800&limit=5" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?start_date=1769990400000&end_date=1771804800000&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -70,14 +70,14 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-users?
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
-| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
-| Query | `limit` | No | Maximum number of ranked projects to return. |
+| Query | `start_date` | No | Start of the reporting window as Unix epoch milliseconds. |
+| Query | `end_date` | No | End of the reporting window as Unix epoch milliseconds. |
+| Query | `limit` | No | Maximum number of ranked projects to return. Defaults to `5`. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1738291200&end_date=1738972800&limit=5" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projects?start_date=1769990400000&end_date=1771804800000&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -89,14 +89,32 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projec
       "id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Customer Insights",
       "goal": "Summarize weekly support trends.",
-      "deadline": "2026-03-01T00:00:00Z",
-      "visibility": "Private",
-      "member_count": 4,
+      "visibility": "Public",
       "default_member_role": "Editor",
       "default_role_enabled": true,
       "project_context": "Support analytics for Q1.",
-      "answer_context": "Use approved templates.",
-      "is_pinned": true
+      "use_citations": true,
+      "use_system_prompt": true,
+      "members": [
+        {
+          "id": "{wsMemberId}",
+          "role": "Owner",
+          "account": {
+            "id": "acct_6c8a1f3b2d4e5f7a",
+            "state": "Active",
+            "email": "sasha@example.com",
+            "name": "Sasha Patel",
+            "provider": "Credentials",
+            "roles": [
+              "Workspace"
+            ],
+            "created_at": "2026-02-08T14:12:45Z",
+            "updated_at": "2026-02-08T14:12:45Z"
+          },
+          "is_project_member": true
+        }
+      ],
+      "is_pinned": false
     },
     "interactions_created": 112,
     "agent_flows_created": 12
@@ -105,19 +123,23 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/ranking/active-projec
 ```
 </Accordion>
 
+The nested project follows the [Project response model](/en/developer-manual/build-with-zylon/workspace-api/projects/project#project-response-fields), including member accounts. Nullable project fields can be omitted.
+
 ## Time series
+
+Both date bounds are required. Results are weekly counts at seven-day intervals starting on the requested start date.
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Query | `start_date` | No | Start of the reporting window as a Unix timestamp. |
-| Query | `end_date` | No | End of the reporting window as a Unix timestamp. |
-| Query | `type` | Yes | Metric type to return, such as `interactions`. |
+| Query | `start_date` | Yes | Start of the reporting window as Unix epoch milliseconds. |
+| Query | `end_date` | Yes | End of the reporting window as Unix epoch milliseconds. |
+| Query | `type` | Yes | `Thread`, `Interactions`, `artifact_agent_flow`, or `artifact_document`; case-insensitive. |
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1738291200&end_date=1738972800&type=interactions" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date=1769990400000&end_date=1771804800000&type=interactions" \
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -125,8 +147,9 @@ curl "https://{BASE_URL}/api/v1/app/organization/analytics/timeseries?start_date
 ```json
 [
   { "date": "2026-02-02", "value": 18 },
-  { "date": "2026-02-03", "value": 25 },
-  { "date": "2026-02-04", "value": 21 }
+  { "date": "2026-02-09", "value": 25 },
+  { "date": "2026-02-16", "value": 21 },
+  { "date": "2026-02-23", "value": 19 }
 ]
 ```
 </Accordion>

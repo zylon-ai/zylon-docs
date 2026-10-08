@@ -5,6 +5,10 @@ description: "API for automating and managing Zylon Workspace."
 
 The Workspace API lets you programmatically manage **everything in Zylon Workspace**—organizations, workspace members, projects, chats, artifacts, integrations, and reporting. Use it to automate admin workflows or integrate Zylon into your internal systems.
 
+## Upgrading to 1.58
+
+Follow the [1.57 → 1.58 migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for retained legacy routes, artifact bodies, and chat/thread changes. If your integration uses user or account IDs, migrate affected mappings and comparisons: creator IDs now identify accounts, while membership APIs still use workspace-member IDs. Successful requests do not guarantee that stored IDs still match.
+
 ## Base URL
 
 All Workspace endpoints live under:

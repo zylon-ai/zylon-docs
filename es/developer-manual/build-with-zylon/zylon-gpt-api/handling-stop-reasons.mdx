@@ -3,13 +3,13 @@ title: "Motivos de parada"
 description: "Entiende por qué terminó una respuesta y cómo manejar errores de ZylonGPT."
 ---
 
-Cuando llamas al endpoint de Messages, cada respuesta incluye un `stop_reason` que explica **por qué el modelo se detuvo**. Manejar bien este campo es clave para crear aplicaciones fiables.
+Las respuestas de mensajes distinguen el `stop_reason` del modelo, el resultado global `interaction_stop_reason` y los detalles de error. Comprueba cada campo para decidir si continuar, ejecutar una herramienta o reintentar.
 
 Para ver `stop_reason` en el esquema de respuesta, revisa [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages).
 
 ## ¿Qué es `stop_reason`?
 
-`stop_reason` aparece en cada respuesta **exitosa**. No es un error: indica cómo terminó la generación.
+`stop_reason` indica cómo terminó la generación del modelo. Admite null y puede omitirse; no es un tipo de error.
 
 Ejemplo de respuesta (truncada):
 
@@ -22,13 +22,13 @@ Ejemplo de respuesta (truncada):
     { "type": "text", "text": "Aquí tienes un resumen..." }
   ],
   "stop_reason": "end_turn",
-  "stop_sequence": null
+  "interaction_stop_reason": "stop"
 }
 ```
 
 ## Valores de `stop_reason`
 
-Cuando una petición falla, el stop reason coincide con uno de los valores de error de la tabla y la respuesta se entrega como un objeto de error.
+Solo los seis valores de generación siguientes son valores de `stop_reason`.
 
 | stop_reason | Por qué ocurre | Qué hacer |
 | --- | --- | --- |
@@ -38,6 +38,17 @@ Cuando una petición falla, el stop reason coincide con uno de los valores de er
 | `tool_use` | El modelo necesita que ejecutes una herramienta. | Ejecuta la herramienta y devuelve un bloque `tool_result`. |
 | `pause_turn` | El modelo pausó la conversación. | Continúa cuando estés listo. |
 | `refusal` | El modelo se negó por razones de seguridad o políticas. | Muestra la negativa o re‑formula con contenido permitido. |
+
+## Resultados de la interacción
+
+`interaction_stop_reason` admite null y describe el resultado global: `stop`, `error`, `cancelled` o `refusal`. Es independiente del motivo de parada del modelo. El objeto opcional `stop_details` tiene `type` obligatorio y `category` y `explanation` opcionales; usa esos detalles para explicar el resultado al usuario.
+
+## Errores
+
+Los fallos anteriores a la generación pueden devolver un objeto de error HTTP. Durante el streaming, gestiona los eventos `error`; los mensajes completados también pueden incluir un array `errors`. Los tipos siguientes **no** son valores válidos de `stop_reason`. No reintentes negativas o cancelaciones como si fueran errores transitorios del servidor.
+
+| Tipo de error | Por qué ocurre | Qué hacer |
+| --- | --- | --- |
 | `invalid_request_error` | Entradas inválidas (artefactos sin ingesta completa, configuración de herramientas inexistente, IDs incorrectos). | Corrige la entrada y reintenta. |
 | `permission_error` | El token no tiene acceso al recurso referenciado. | Revisa la pertenencia a la organización/proyecto y la visibilidad del artefacto. |
 | `request_too_large` | La entrada excede límites de tamaño o tokens. | Reduce la entrada, divide el contenido o baja el contexto. |

@@ -72,7 +72,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": {
     "input_tokens": 95,
     "output_tokens": 16
@@ -83,22 +82,77 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
 
 ## Formato de mensajes
 
-Como mínimo, envía:
+El mismo cuerpo de mensaje se usa en ZylonGPT y en el campo `pgpt` de las peticiones de chat/interacción de Workspace. Envía el contenido de la conversación; el modelo o gateway seleccionado determina qué opciones admite. `model` y `max_tokens` son opciones que admiten null, no campos obligatorios para todos los modelos. Indicarlos explícitamente hace predecibles la selección de modelo y el límite de salida; valida las peticiones con tu gateway.
 
-{/* <!-- RESTRUCTURED --> */}
-| Campo | Requerido | Descripción |
+<Accordion title="Cuerpo de la petición">
+
+| Campo | Tipo / valor por defecto | Descripción |
 | --- | --- | --- |
-| `model` | Sí | Nombre del modelo (comúnmente `"default"`). |
-| `messages` | Sí | Historial de conversación. |
-| `max_tokens` | Sí | Máximo de tokens a generar. |
+| `messages` | message[]; `[]` | Historial de conversación. Cada mensaje tiene `role` (`user` o `assistant`) y `content` (cadena o array de bloques). Crear una interacción de Workspace requiere exactamente un mensaje de usuario. |
+| `model` | string o null | Nombre del modelo, normalmente `default`; Valida su omisión con el gateway seleccionado. |
+| `max_tokens` | integer o null | Límite de tokens de salida, sujeto a la validación del modelo. |
+| `stream` | boolean; `false` | Messages de ZylonGPT devuelve JSON por defecto y SSE con `true`. Las rutas actuales `/app/chat` y de interacción de Workspace transmiten por streaming independientemente del indicador. |
+| `system` | string, object, object[] o null | Texto y configuración del sistema; campos anidados abajo. |
+| `tools` | object[] o null | Definiciones de herramientas. Consulta [Herramientas](/es/developer-manual/build-with-zylon/tools/introduction-to-tools). |
+| `tool_choice` | object o null | Selección y validación de herramientas, descritas abajo. |
+| `tool_context` | object[] o null | Contexto tipado, como `ingested_artifact` o `sql_database`; consulta la guía de la herramienta correspondiente. |
+| `mcp_servers` | object[] o null | Configuración de servidores MCP. Cada uno requiere `url`; `name` y `tool_configuration` son opcionales. |
+| `thinking` | object o null | `enabled` es `false` por defecto; `type` (string) y `budget_tokens` (integer) son opcionales. |
+| `output_config` | object o null | `effort`: `low`, `medium`, `high` o `max`; `format` opcional, descrito abajo. |
+| `cache_control` | object o null | Si se incluye, requiere `type` de tipo string. Su soporte depende del modelo. |
+| `temperature`, `min_p`, `top_p` | number o null | Opciones de muestreo; los rangos admitidos dependen del modelo. |
+| `top_k` | integer o null | Opción de muestreo. |
+| `repetition_penalty`, `presence_penalty`, `frequency_penalty` | number o null | Opciones de penalización de tokens. |
+| `seed` | integer o null | Semilla de muestreo opcional. |
+| `priority` | integer o null | Prioridad de petición opcional. |
+| `stop_sequences` | string[]; `[]` | Límites personalizados de generación. |
+| `metadata` | object; `{}` | `ws_member_id` es una cadena opcional que admite null. Usa un ID de miembro, no de cuenta. `user_id` sigue siendo un alias de entrada; envía solo un nombre. |
+| `service_tier` | string; `auto` | `auto` o `standard_only`. |
+| `inference_geo` | string o null | Preferencia opcional de ubicación de inferencia. |
+| `container` | string o null | ID opcional de un contenedor existente. |
+| `message_id`, `correlation_id` | string o null | Identificadores opcionales de mensaje y correlación. |
 
-Cada mensaje incluye:
+Los campos que admiten null pueden omitirse. Una opción que no admite null pero tiene valor por defecto puede omitirse; no envíes `null`.
 
-{/* <!-- RESTRUCTURED --> */}
-| Campo | Descripción |
-| --- | --- |
-| `role` | `"user"` o `"assistant"`. |
-| `content` | Una cadena o un array de bloques. |
+</Accordion>
+
+<Accordion title="Sistema, selección de herramientas y salida estructurada">
+
+| Objeto | Campo | Tipo / valor por defecto |
+| --- | --- | --- |
+| `system` | `text` | Cadena opcional. |
+| `system` | `citations` | Objeto; `enabled` es `false` por defecto y `known_citations` es un array opcional de citas. |
+| `system` | `blob_visibility` | `binary`, `internal` o `public`, opcional. |
+| `system` | `extensions` | string[] opcional; actualmente admite `zylon`. |
+| `system` | `prompt` | Objeto con booleanos `tools`, `citations`, `thinking`, `code_execution` y `skills`; todos son `false` por defecto. |
+| `tool_choice` | `type` | String; `auto`. |
+| `tool_choice` | `name` | Cadena opcional que identifica una herramienta. |
+| `tool_choice` | `disable_parallel_tool_use` | Boolean; `false`. |
+| `tool_choice` | `validation_mode` | `eager` o `lazy`; `lazy`. |
+| `output_config.format` | `type` | `json_schema` obligatorio. |
+| `output_config.format` | `schema` | Objeto JSON Schema obligatorio. |
+
+`response_format` está obsoleto; usa `output_config.format`. Mueve `thinking.effort` a `output_config.effort`. Sustituye `system.use_default_prompt` por los indicadores individuales de `system.prompt`; el indicador antiguo con `true` activa todas las categorías de prompt.
+
+</Accordion>
+
+<Accordion title="Campos de respuesta del mensaje">
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id`, `type`, `role`, `model` | string | ID de mensaje, tipo `message`, rol `assistant` y modelo seleccionado. |
+| `created` | integer | Milisegundos desde epoch. |
+| `content` | object[] | Bloques de contenido. Consulta los [bloques de herramientas de servidor de 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#bloques-de-herramientas-de-servidor). |
+| `stop_reason` | string o null | `end_turn`, `max_tokens`, `stop_sequence`, `tool_use`, `pause_turn` o `refusal`. |
+| `interaction_stop_reason` | string o null | Resultado global de la interacción: `stop`, `error`, `cancelled` o `refusal`. |
+| `stop_details` | object o null | `type` obligatorio; `category` y `explanation` opcionales. |
+| `container` | object o null | `id` obligatorio; `expires_at` opcional de tipo string. |
+| `usage` | object | `input_tokens` y `output_tokens` (por defecto `0`); uso de caché y herramientas opcional, descrito abajo. |
+| `errors` | object[] | Detalles de errores cuando estén disponibles. |
+
+`usage` puede incluir `cache_creation_input_tokens`, `cache_read_input_tokens`, `inference_geo`, `service_tier`, `cache_creation` (`ephemeral_1m_input_tokens`, `ephemeral_1h_input_tokens`, `ephemeral_5m_input_tokens`) y `server_tool_use` (`web_fetch_requests`, `web_search_requests`). Los contadores de esos objetos anidados son `0` por defecto. Los campos que admiten null pueden omitirse en la respuesta. No hay un campo `stop_sequence` en el nivel superior; usa `stop_reason: "stop_sequence"`. Consulta [Motivos de parada](/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons).
+
+</Accordion>
 
 ## Validar una solicitud
 
@@ -160,7 +214,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 135, "output_tokens": 2 }
 }
 ```
@@ -183,7 +236,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
     "model": "default",
     "max_tokens": 8,
     "temperature": 0,
-    "system": { "text": "You are a support agent. Reply with only a short ticket title.", "use_default_prompt": false },
+    "system": { "text": "You are a support agent. Reply with only a short ticket title." },
     "messages": [
       { "role": "user", "content": "The login button on mobile does not work." }
     ]
@@ -207,7 +260,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 100, "output_tokens": 6 }
 }
 ```
@@ -215,7 +267,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
 
 ## JSON estructurado (json_schema)
 
-Si necesitas salida legible por máquina, usa `response_format.type` = `json_schema`.
+Si necesitas salida legible por máquina, usa `output_config.format.type` = `json_schema` e incluye el esquema en `output_config.format.schema`.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
@@ -224,22 +276,36 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -d '{
     "model": "default",
     "max_tokens": 128,
-    "response_format": {
-      "type": "json_schema",
-      "json_schema": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "status": { "type": "string" },
-          "next_step": { "type": "string" }
-        },
-        "required": ["status", "next_step"]
-      }
+    "system": {
+      "text": "Return ONLY valid JSON."
     },
-    "system": { "text": "Return ONLY valid JSON.", "use_default_prompt": false },
     "messages": [
-      { "role": "user", "content": "We deployed the billing dashboard. Return a status and the next step." }
-    ]
+      {
+        "role": "user",
+        "content": "We deployed the billing dashboard. Return a status and the next step."
+      }
+    ],
+    "output_config": {
+      "format": {
+        "type": "json_schema",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "next_step": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "next_step"
+          ]
+        }
+      }
+    }
   }'
 ```
 
@@ -260,7 +326,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 98, "output_tokens": 16 }
 }
 ```
@@ -338,7 +403,6 @@ Los mensajes asíncronos usan **el mismo cuerpo** que los mensajes síncronos: s
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": {
     "input_tokens": 95,
     "output_tokens": 16

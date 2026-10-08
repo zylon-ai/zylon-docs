@@ -12,37 +12,51 @@ Chats in the Workspace API are organized around **threads** and **interactions**
 
 Use threads when you want history and follow‑ups. Use interactions to send a new turn into a thread. Use the chat endpoint for single‑turn requests.
 
+<Warning>
+In 1.58, `created_by.id` identifies an account, not a workspace membership. Both IDs are UUIDs. Update stored comparisons and lookups; see [account ID migration](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#account-ids-and-renamed-fields).
+</Warning>
+
 ## Basic request and response
 
-Create a thread interaction with `POST /api/v1/app/thread/{threadId}/interaction`.
+Create a thread interaction with `POST /api/v1/app/thread/{threadID}/interaction`. Send exactly one new user message; the server adds thread history. The response is `200` SSE with an initial `interaction` event and message events ending in `done`.
 
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Path | `threadID` | Yes | Thread identifier. |
-| Body | `thread_id` | Yes | Thread identifier. |
-| Body | `pgpt` | Yes | Chat request body. |
-| Body | `artifact_ids` | No | Artifact IDs to use as context. |
-| Body | `all_artifacts` | No | Include all available artifacts when `true`. |
-| Body | `agent` | No | Agent preset to use. |
+| Path | `threadID` | Yes | Thread identifier; the URL supplies the thread. |
+| Body | `thread_id` | No | Optional; the URL thread ID takes precedence. |
+| Body | `pgpt` | Yes | Exactly one message in `messages`, with `role: "user"`. Uses the Messages request fields. |
+| Body | `artifacts` | No | Scoped selections; see Selecting artifacts. |
+| Body | `agent` | No | `Default` (default) or `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "thread_id": "{threadID}",
-    "artifact_ids": ["{artifactID}"],
-    "all_artifacts": false,
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
     "agent": "Default",
     "pgpt": {
       "messages": [
         {
           "role": "user",
           "content": [
-            { "type": "text", "text": "Summarize the artifact in three bullets." }
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
           ]
         }
       ],
@@ -52,35 +66,83 @@ curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   }'
 ```
 
-<Accordion title="Example response (InteractionDTO)">
-```json
-{
-  "id": "inter_5a7b9c1d3e5f7a9b",
-  "project_id": "proj_7a5c3e1b9d2f4a6c",
-  "thread_id": "thread_3f2a1c4d5b6e7f8a",
-  "state": "Completed",
-  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
-  "all_artifacts": false,
-  "user_input": {
-    "role": "user",
-    "content": [
-      { "type": "text", "text": "Summarize the artifact in three bullets." }
-    ]
-  },
-  "assistant_output": {
-    "id": "msg_3d2c1b4a5f6e7d8c",
-    "created": 1739036500,
-    "model": "default",
-    "stop_reason": "end_turn",
-    "content": [
-      { "type": "text", "text": "• Ticket volume rose 12% week-over-week\n• Billing issues drove 38% of cases\n• Priority bugs were resolved within 48 hours" }
-    ],
-    "usage": { "input_tokens": 180, "output_tokens": 52 }
-  },
-  "created_at": "2026-02-08T14:41:10Z"
-}
+The stream below is abbreviated. Read the initial `interaction` event for the persisted interaction ID, then process message events until `done`.
+
+<Accordion title="Example stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
+
+### Interaction response fields
+
+Null fields may be omitted. Nested message fields follow [Messages](/en/developer-manual/build-with-zylon/working-with-messages); account fields follow [Workspace Members](/en/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Server-generated interaction ID. |
+| `project_id` | string | Project containing the interaction. |
+| `thread_id` | string or null | Owning thread, when present. |
+| `state` | string | `Processing`, `Completed`, `Error`. |
+| `user_input` | object | The user message: `role` and `content` blocks. |
+| `assistant_output` | object or null | Assistant message when available; see the Messages response model. |
+| `artifacts` | object or null | Artifact selections described below. |
+| `created_at` | timestamp | Server-generated creation time. |
+| `created_by` | object or null | Account details when requested on the interaction list with `include=Account`. Creator ID is an account ID. |
+| `pgpt` | object or null | Stored chat request; see the Messages request model. |
+
+## Selecting artifacts
+
+Use `artifacts` on interaction and wrapped chat requests. It contains optional `document`, `connector`, `skill`, and `agent_flow` arrays. Each array contains selections by `organization` or `project` scope.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `artifacts.document` | No | Documents, inline text, folders and links. |
+| Body | `artifacts.connector` | No | SQL databases and MCP servers. |
+| Body | `artifacts.skill` | No | Skills. |
+| Body | `artifacts.agent_flow` | No | Analysis, BulkQA, Composition, ReadAndExtract, SmartDoc and Summary artifacts. |
+| Body | `artifacts.<category>[].scope` | Yes | `organization` or `project`. |
+| Body | `artifacts.<category>[].all_artifacts` | No | Select all enabled artifacts in that scope. Defaults to null. |
+| Body | `artifacts.<category>[].artifacts_ids` | No | Array of selected artifact IDs. Exact spelling includes the extra `s`: `artifacts_ids`. Defaults to null. |
+</Accordion>
+
+Do not combine `all_artifacts: true` with a nonempty `artifacts_ids` array. Each category may contain at most one entry per scope. A `project` selection uses the thread project or the wrapped chat `project_id`; without project context, `all_artifacts` for that scope selects nothing. Top-level `artifact_ids` and `all_artifacts` are not the current selection model.
+
+```json
+{
+  "artifacts": {
+    "document": [
+      {
+        "scope": "project",
+        "artifacts_ids": [
+          "{artifactID}"
+        ]
+      },
+      {
+        "scope": "organization",
+        "all_artifacts": false,
+        "artifacts_ids": []
+      }
+    ]
+  }
+}
+```
+
+Eligible organization artifacts are included by default for each category without an explicit `organization` entry. To exclude that default for a category, send an explicit organization entry with `all_artifacts: false` and `artifacts_ids: []`. Available files produced by previous turns in the same thread also remain usable.
 
 ## Adding media to the chat
 
@@ -159,23 +221,23 @@ Example interaction request with image + text and runtime flags:
 <Accordion title="Endpoint parameters">
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
-| Path | `threadID` | Yes | Thread identifier. |
-| Body | `thread_id` | Yes | Thread identifier. |
-| Body | `pgpt` | Yes | Chat request body. |
-| Body | `artifact_ids` | No | Artifact IDs to use as context. |
-| Body | `all_artifacts` | No | Include all available artifacts when `true`. |
-| Body | `agent` | No | Agent preset to use. |
+| Path | `threadID` | Yes | Thread identifier; the URL supplies the thread. |
+| Body | `thread_id` | No | Optional; the URL thread ID takes precedence. |
+| Body | `pgpt` | Yes | Exactly one message in `messages`, with `role: "user"`. Uses the Messages request fields. |
+| Body | `artifacts` | No | Scoped selections; see Selecting artifacts. |
+| Body | `agent` | No | `Default` (default) or `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "thread_id": "{threadID}",
-    "all_artifacts": true,
-    "artifact_ids": [],
+    "artifacts": {
+      "document": [{ "scope": "project", "all_artifacts": true }]
+    },
     "agent": "Default",
     "pgpt": {
       "messages": [
@@ -254,53 +316,120 @@ List threads in a project:
 </Accordion>
 
 ```bash
-curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20&include=ReadState" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
-<Accordion title="Example response (schema not defined in OpenAPI)">
+<Accordion title="Example response">
 ```json
 {
   "data": [
     {
-      "id": "thread_3f2a1c4d5b6e7f8a",
+      "id": "{threadID}",
+      "project_id": "{projectID}",
       "name": "Weekly Support Brief",
+      "state": "Active",
       "visibility": "Private",
-      "created_at": "2026-02-08T14:40:00Z"
+      "read_state": {
+        "last_read_at": "2026-02-08T14:41:10Z",
+        "has_unread_response": false
+      }
     }
   ],
   "has_next_page": false,
-  "has_previous_page": false,
-  "total_count": 1
+  "has_previous_page": false
 }
 ```
 </Accordion>
 
+### Thread response fields
+
+Create, detail, update and delete return this thread model with `200`. Project lists wrap it in the shared pagination envelope. Nullable fields may be omitted; thread responses have no `created_at` field. Account details follow the [Workspace member account model](/en/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Server-generated thread ID. |
+| `project_id` | string | Owning project ID. |
+| `name` | string | Thread name. |
+| `state` | string | `Active` or `Deleted`. |
+| `visibility` | string | `Public` or `Private`. |
+| `created_by` | object or null | Account object on project thread lists with `include=Account`. Creator IDs are account IDs, not workspace-member IDs. |
+| `read_state` | object or null | Present on project thread lists with `include=ReadState`. |
+| `read_state.last_read_at` | timestamp or null | Current account read checkpoint; null or omitted before first read. |
+| `read_state.has_unread_response` | boolean | True for a new thread created by another account or a completed assistant response after the checkpoint. |
+
+Reading `GET /app/thread/{threadID}/interaction` advances the current account checkpoint through completed assistant responses in the returned page, or at least the thread creation time when none are returned. Reading thread details alone does not mark the conversation read. Read state is per account.
+
 Create a thread and first interaction in one request:
 
 <Accordion title="Endpoint parameters">
-
 | Type | Name | Required | Notes |
 | --- | --- | --- | --- |
 | Path | `projectID` | Yes | Project identifier. |
-| Body | `name` | Yes | New thread name. |
-| Body | `visibility` | Yes | `Public` or `Private`. |
-
+| Body | `thread_name` | No | New thread name. Defaults to `New Thread`. |
+| Body | `thread_visibility` | No | `Public` or `Private`; defaults to `Private`. |
+| Body | `pgpt` | Yes | Exactly one user message. |
+| Body | `artifacts` | No | Scoped artifact selections. |
+| Body | `agent` | No | `Default` (default) or `ProjectDeepResearch`. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "name": "Weekly Support Brief",
-    "visibility": "Private"
+    "thread_name": "Weekly Support Brief",
+    "thread_visibility": "Private",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
   }'
 ```
 
+This operation returns `200` SSE with the new interaction and thread IDs in the initial `interaction` event, followed by message events and `done`. `name` and `visibility` belong to the separate thread-create body and do not replace `thread_name`, `thread_visibility`, or `pgpt` here.
+
+## Get a thread
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+Returns the thread response model above. `include` relations are available on the project list, not this detail endpoint.
+
 ## Update or delete a thread
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `name` | No | New name on PUT. Omit or send null to keep it. |
+| Body | `visibility` | No | New `Public` or `Private` visibility on PUT. Omit or send null to keep it. |
+</Accordion>
+
+PUT returns the updated thread; DELETE soft-deletes it and returns the thread with `state: "Deleted"`. Both return `200` JSON.
 
 ```bash
 curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
@@ -317,7 +446,7 @@ Delete a thread:
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -352,7 +481,7 @@ Fetch a specific interaction:
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -362,7 +491,7 @@ Cancel a running interaction:
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -370,7 +499,7 @@ Delete an interaction:
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
@@ -383,55 +512,251 @@ curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
   -H "Accept: text/event-stream"
 ```
 
+The stream below is abbreviated. Read the initial `interaction` event for the persisted interaction ID, then process message events until `done`.
+
 <Accordion title="Example stream">
 ```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
 event: message_start
-data: {"type":"message_start","message":{"id":"msg_3d2c1b4a5f6e7d8c","role":"assistant","content":[]}}
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"• Ticket volume rose 12%"}}
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
 
 event: message_stop
 data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
 
-## One‑shot chat
+## Thread files
 
-If you don’t need a thread, call the chat endpoint directly:
+Thread file endpoints use the thread as the session scope. Upload and raw PUT store bytes; conversion exports or imports MDX artifact content. Send `x-org` and an API token on every request. Upload, PUT and export from an artifact require permission to update the thread.
+
+### Upload a file
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Query | `path` | No | Storage key relative to uploads, such as `reports/report.mdx`. Defaults to the uploaded filename; an `uploads/` prefix is normalized away. |
+| Query | `namespace` | No | `session` (default), `artifacts`, `skills`. |
+| Multipart | `file` | Yes | File part containing the bytes. Do not set the multipart boundary manually. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/upload-file?path=report.mdx&namespace=session" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -F "file=@report.mdx;type=text/plain"
+```
+
+Returns `200` with file metadata. Missing multipart `file` returns `400`.
+
+### Put raw file bytes
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Path | `path` | Yes | Storage key, including nested segments such as `reports/report.mdx`. |
+| Query | `namespace` | No | `session` (default), `artifacts`, `skills`. |
+| Header | `Content-Type` | No | File MIME type; defaults to `application/octet-stream`. |
+| Body | `file bytes` | Yes | Raw bytes, without JSON or multipart encoding. |
+</Accordion>
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}/put-file/reports/report.mdx?namespace=session" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: text/plain" \
+  --data-binary @report.mdx
+```
+
+Returns `200` with file metadata. Parent directories are created and an existing key is overwritten.
+
+### Download a thread file
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Query | `path` | Yes | Absolute sandbox path, or its Base64-encoded file ID. URL-encode the query value. |
+| Query | `namespace` | No | `session` (default), `artifacts`, `skills`. |
+| Query | `disposition` | No | `attachment` (default) or `inline`. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/download-file?path=%2Fmnt%2Fuser-data%2Foutputs%2Freport.mdx&namespace=session&disposition=attachment" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -o report.mdx
+```
+
+Returns `200` with raw file bytes, inferred MIME type and `Content-Disposition`; it does not return a presigned URL. Organization settings can deny the download with `403`: outputs require generated-resource downloads, uploads require uploaded-resource downloads, and unrecognized paths require both settings.
+
+### Convert a thread file to an artifact
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `file_id` | No | File ID. Provide a nonblank `file_id` or `path`. |
+| Body | `path` | No | Absolute path or Base64-encoded path. When supplied, the filename must end in `.mdx`. |
+| Body | `project_id` | No | Destination project ID. Omit or send null to create an organization artifact; it is not inferred from the thread. |
+| Body | `name` | No | Artifact name override; otherwise the MDX title or filename is used. |
+| Body | `parent_id` | No | Accepted but currently has no effect. Move the artifact with the artifact update endpoint after conversion. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/convert-to-artifact" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
-      {
-        "role": "user",
-        "content": [
-          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
-        ]
-      }
-    ],
-    "max_tokens": 64,
-    "temperature": 0.3
+    "path": "/mnt/user-data/outputs/report.mdx",
+    "project_id": "{projectID}",
+    "name": "Support report"
   }'
 ```
 
-<Accordion title="Example response (schema not defined in OpenAPI)">
+Returns `200` with the created or updated [artifact model](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts). The content must be valid artifact MDX; its projection metadata determines the artifact type and properties. Missing both selectors, non-MDX paths or invalid MDX fail. Normal artifact creation/update permissions apply.
+
+### Convert an artifact to a thread file
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier. |
+| Body | `artifact_id` | Yes | Artifact to export into the thread session. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/convert-from-artifact" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "artifact_id": "{artifactID}"
+  }'
+```
+
+Returns `200` with file metadata for the MDX export. Requires artifact read permission and passes the same content-download checks as downloading the artifact; disabled downloads return `403`.
+
+### File metadata response
+
+Upload, PUT and export-from-artifact share this response. Nullable fields may be omitted.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | File identifier encoding the absolute sandbox path in Base64. |
+| `created_at` | string | Server-generated creation time. |
+| `filename` | string | File name. |
+| `mime_type` | string | File content type. |
+| `size_bytes` | integer | File size in bytes. |
+| `type` | string | `file`. |
+| `downloadable` | boolean | Whether the file metadata marks it as downloadable; organization policy still applies. |
+| `namespace` | string or null | `session`, `artifacts`, `skills`. |
+| `scope` | object or null | File scope with `id` (string) and `type` (`session`, `artifacts`, `skills`). |
+| `etag` | string or null | Optional content identifier. |
+
+<Accordion title="Example response">
 ```json
 {
-  "id": "msg_5f2e1d3c4b6a7c8d",
-  "role": "assistant",
-  "content": [
-    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
-  ]
+  "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9yZXBvcnQubWR4",
+  "created_at": "2026-02-08T14:41:10Z",
+  "filename": "report.mdx",
+  "mime_type": "text/plain",
+  "size_bytes": 128,
+  "type": "file",
+  "downloadable": true,
+  "namespace": "session",
+  "scope": {
+    "id": "{threadID}",
+    "type": "session"
+  },
+  "etag": "etag_example"
 }
 ```
 </Accordion>
 
+## One-shot chat
+
+The current endpoint returns `200` with `Content-Type: text/event-stream`, including when `pgpt.stream` is false. It creates no persisted thread or interaction. Send the wrapped body to select a project or artifacts. A legacy flat Messages request is still accepted for an organization-only chat.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `pgpt` | Yes | Messages request containing exactly one user message. `private_gpt` is an accepted alias. |
+| Body | `project_id` | No | Optional project context. Omit or send null for an organization-only chat. |
+| Body | `artifacts` | No | Scoped artifact selections described above. |
+</Accordion>
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Draft a two-sentence update on this week support backlog."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 64,
+      "temperature": 0.3
+    }
+  }'
+```
+
+Consume the message events until `done`; there is no persisted `interaction` event for this operation. Disconnecting cancels the active request. See [Messages](/en/developer-manual/build-with-zylon/working-with-messages) for nested request and response fields.
+
+<Accordion title="Example stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
 ## Validate a chat request
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Body | `messages` | Yes | Chat request messages, sent directly at the top level. Do not wrap this endpoint body in `pgpt`. Optional generation, system and tool fields follow the linked Messages model. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
@@ -443,7 +768,10 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
       {
         "role": "user",
         "content": [
-          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+          {
+            "type": "text",
+            "text": "Give me a three-bullet summary of the Q1 support plan."
+          }
         ]
       }
     ],
@@ -452,22 +780,40 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   }'
 ```
 
+Returns `200` with `valid: true`, or `400` with `valid: false` and the validation result. Invalid bodies or failures before a result is available return a standard API error. Nullable result fields may be omitted. This checks the Messages body; wrapped project context, artifact selections and Workspace permissions are checked when executing the chat.
+
+<Accordion title="Example response">
+```json
+{
+  "valid": true,
+  "request_summary": {
+    "message_count": 1,
+    "has_tools": false,
+    "stream_enabled": false
+  }
+}
+```
+</Accordion>
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `valid` | boolean | Whether validation succeeded. |
+| `errors` | string[] or null | Validation errors. |
+| `warnings` | string[] or null | Nonfatal warnings. |
+| `request_summary` | object or null | Optional summary of the checked request. |
+| `request_summary.message_count` | integer or null | Number of input messages. |
+| `request_summary.has_tools` | boolean or null | Whether tools were supplied. |
+| `request_summary.stream_enabled` | boolean or null | Requested stream flag. |
+| `request_summary.tool_choice` | string or null | Requested tool selection mode. |
+
 ## Available tools
 
-Pass tools in `pgpt.tools` as `{ "name": "...", "type": "..." }`.
-
-| Name | Type | What it does |
-| --- | --- | --- |
-| `semantic_search` | `semantic_search_v1` | Searches indexed project/workspace knowledge by semantic similarity. |
-| `file_sematic_search` | `file_semantic_search_v1` | Searches file-based content and attachments semantically. |
-| `tabular_analysis` | `tabular_analysis_v1` | Analyzes tabular datasets and returns computed insights. |
-| `database_query` | `database_query_v1` | Runs database lookups/queries through configured data sources. |
-| `web_search` | `web_search_v1` | Performs web search for external/public information. |
-| `web_extract` | `web_extract_v1` | Extracts structured text/content from URLs. |
-| `list_project_files` | `list_project_files_v1` | Lists files in the current project for downstream tool usage. |
+Only Zylon-defined tools are accepted in `pgpt.tools`; custom client tools are not supported by these Workspace chat routes. Use the [tool declarations and examples](/en/developer-manual/build-with-zylon/tools/introduction-to-tools). Workspace knowledge tools also include `get_knowledge_base_files` (`list_files_v1`), `get_artifact_structure` (`get_file_structure_v1`), `get_artifact_content` (`get_content_v1`), `analyze_artifact` (`analyze_artifact_v1`), `summarize_artifact` (`summarize_artifact_v1`), and `create_document` (`process_content_v1`).
 
 ## Errors and edge cases
 
-- **400**: invalid message schema (use `/chat/validate`).
+- **400**: invalid message schema, invalid artifact selectors, or a request without exactly one user message (use `/chat/validate`).
+- **403**: insufficient project access or downloads disabled by organization policy.
+- Handle SSE `error` events and terminal `done` after the HTTP stream begins.
 - **404**: thread or interaction not found.
 - **409**: interaction already completed when canceling.

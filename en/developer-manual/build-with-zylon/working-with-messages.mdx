@@ -72,7 +72,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": {
     "input_tokens": 95,
     "output_tokens": 16
@@ -85,22 +84,77 @@ To render plain text, concatenate the `text` values from any blocks where `type`
 
 ## Messages shape
 
-At minimum, send:
+The same message body is used by ZylonGPT and by the `pgpt` field in Workspace chat/interaction requests. Send conversation content; the selected model or gateway determines which optional settings it supports. `model` and `max_tokens` are nullable options, rather than universally required fields. Keeping them explicit makes model selection and output limits predictable; validate requests against your gateway.
 
-{/* <!-- RESTRUCTURED --> */}
-| Field | Required | Description |
+<Accordion title="Request body">
+
+| Field | Type / default | Description |
 | --- | --- | --- |
-| `model` | Yes | Model name to use (commonly `"default"`). |
-| `messages` | Yes | Conversation history. |
-| `max_tokens` | Yes | Maximum tokens to generate. |
+| `messages` | message[]; `[]` | Conversation history. Each message has `role` (`user` or `assistant`) and `content` (string or content-block array). Workspace interaction creation requires exactly one user message. |
+| `model` | string or null | Model name, commonly `default`; validate omission against the selected gateway. |
+| `max_tokens` | integer or null | Output token limit, subject to model validation. |
+| `stream` | boolean; `false` | ZylonGPT Messages returns JSON by default and SSE when `true`. Current `/app/chat` and Workspace interaction routes stream regardless of this flag. |
+| `system` | string, object, object[], or null | System text and configuration; nested fields below. |
+| `tools` | object[] or null | Tool definitions. See [Tools](/en/developer-manual/build-with-zylon/tools/introduction-to-tools). |
+| `tool_choice` | object or null | Tool selection and validation settings below. |
+| `tool_context` | object[] or null | Typed context, such as `ingested_artifact` or `sql_database`; see the relevant tool guide. |
+| `mcp_servers` | object[] or null | MCP server configurations. Each requires `url`; `name` and `tool_configuration` are optional. |
+| `thinking` | object or null | `enabled` defaults to `false`; `type` (string) and `budget_tokens` (integer) are optional. |
+| `output_config` | object or null | `effort`: `low`, `medium`, `high`, or `max`; optional `format` described below. |
+| `cache_control` | object or null | When supplied, requires string `type`. Support depends on the model. |
+| `temperature`, `min_p`, `top_p` | number or null | Sampling options; supported ranges depend on the model. |
+| `top_k` | integer or null | Sampling option. |
+| `repetition_penalty`, `presence_penalty`, `frequency_penalty` | number or null | Token penalty options. |
+| `seed` | integer or null | Optional sampling seed. |
+| `priority` | integer or null | Optional request priority. |
+| `stop_sequences` | string[]; `[]` | Custom generation boundaries. |
+| `metadata` | object; `{}` | Optional nullable string `ws_member_id`. Use a workspace-member ID, not an account ID. `user_id` remains an input alias; send only one name. |
+| `service_tier` | string; `auto` | `auto` or `standard_only`. |
+| `inference_geo` | string or null | Optional inference location preference. |
+| `container` | string or null | Optional existing container identifier. |
+| `message_id`, `correlation_id` | string or null | Optional message and correlation identifiers. |
 
-Each message has:
+Nullable fields can be omitted. A non-nullable option with a default can be omitted but should not be sent as `null`.
 
-{/* <!-- RESTRUCTURED --> */}
-| Field | Description |
-| --- | --- |
-| `role` | `"user"` or `"assistant"`. |
-| `content` | A string, or an array of content blocks. |
+</Accordion>
+
+<Accordion title="System, tool choice, and structured output">
+
+| Object | Field | Type / default |
+| --- | --- | --- |
+| `system` | `text` | Optional string. |
+| `system` | `citations` | Object; `enabled` defaults to `false`, `known_citations` is an optional citation array. |
+| `system` | `blob_visibility` | Optional `binary`, `internal`, or `public`. |
+| `system` | `extensions` | Optional string[]; currently supports `zylon`. |
+| `system` | `prompt` | Object with boolean `tools`, `citations`, `thinking`, `code_execution`, and `skills`; each defaults to `false`. |
+| `tool_choice` | `type` | String; `auto`. |
+| `tool_choice` | `name` | Optional string identifying a tool. |
+| `tool_choice` | `disable_parallel_tool_use` | Boolean; `false`. |
+| `tool_choice` | `validation_mode` | `eager` or `lazy`; `lazy`. |
+| `output_config.format` | `type` | Required `json_schema`. |
+| `output_config.format` | `schema` | Required JSON Schema object. |
+
+`response_format` is deprecated; use `output_config.format`. Move deprecated `thinking.effort` to `output_config.effort`. Replace `system.use_default_prompt` with the individual `system.prompt` flags; setting the old flag to `true` enables all prompt categories.
+
+</Accordion>
+
+<Accordion title="Message response fields">
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id`, `type`, `role`, `model` | string | Message identity, `message` type, `assistant` role, and selected model. |
+| `created` | integer | Epoch milliseconds. |
+| `content` | object[] | Content blocks. See the [1.58 server tool blocks](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#server-tool-content-blocks). |
+| `stop_reason` | string or null | `end_turn`, `max_tokens`, `stop_sequence`, `tool_use`, `pause_turn`, or `refusal`. |
+| `interaction_stop_reason` | string or null | Overall interaction outcome: `stop`, `error`, `cancelled`, or `refusal`. |
+| `stop_details` | object or null | Required `type`, optional `category` and `explanation`. |
+| `container` | object or null | Required `id`, optional `expires_at` string. |
+| `usage` | object | `input_tokens` and `output_tokens` (default `0`); optional cache and server-tool usage below. |
+| `errors` | object[] | Error details when available. |
+
+`usage` may include `cache_creation_input_tokens`, `cache_read_input_tokens`, `inference_geo`, `service_tier`, `cache_creation` (`ephemeral_1m_input_tokens`, `ephemeral_1h_input_tokens`, `ephemeral_5m_input_tokens`), and `server_tool_use` (`web_fetch_requests`, `web_search_requests`). Counts in the nested usage objects default to `0`. Nullable response fields may be omitted. There is no top-level `stop_sequence` field; use `stop_reason: "stop_sequence"`. See [Handling stop reasons](/en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons).
+
+</Accordion>
 
 ## Validate a request
 
@@ -162,7 +216,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 135, "output_tokens": 2 }
 }
 ```
@@ -185,7 +238,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
     "model": "default",
     "max_tokens": 8,
     "temperature": 0,
-    "system": { "text": "You are a support agent. Reply with only a short ticket title.", "use_default_prompt": false },
+    "system": { "text": "You are a support agent. Reply with only a short ticket title." },
     "messages": [
       { "role": "user", "content": "The login button on mobile does not work." }
     ]
@@ -209,7 +262,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 100, "output_tokens": 6 }
 }
 ```
@@ -217,7 +269,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
 
 ## Structured JSON output (json_schema)
 
-If you need machine-readable output, set `response_format.type` to `json_schema` and provide a schema. Zylon returns JSON as text in a `text` content block.
+If you need machine-readable output, set `output_config.format.type` to `json_schema` and provide `output_config.format.schema`. Zylon returns JSON as text in a `text` content block.
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
@@ -226,22 +278,36 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   -d '{
     "model": "default",
     "max_tokens": 128,
-    "response_format": {
-      "type": "json_schema",
-      "json_schema": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "status": { "type": "string" },
-          "next_step": { "type": "string" }
-        },
-        "required": ["status", "next_step"]
-      }
+    "system": {
+      "text": "Return ONLY valid JSON."
     },
-    "system": { "text": "Return ONLY valid JSON.", "use_default_prompt": false },
     "messages": [
-      { "role": "user", "content": "We deployed the billing dashboard. Return a status and the next step." }
-    ]
+      {
+        "role": "user",
+        "content": "We deployed the billing dashboard. Return a status and the next step."
+      }
+    ],
+    "output_config": {
+      "format": {
+        "type": "json_schema",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "next_step": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "next_step"
+          ]
+        }
+      }
+    }
   }'
 ```
 
@@ -262,7 +328,6 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": { "input_tokens": 98, "output_tokens": 16 }
 }
 ```
@@ -340,7 +405,6 @@ Async messages use the **same request body** as sync messages—you just call a 
   ],
   "model": "private-gpt",
   "stop_reason": "end_turn",
-  "stop_sequence": null,
   "usage": {
     "input_tokens": 95,
     "output_tokens": 16

@@ -14,8 +14,7 @@ Crea un proyecto con `POST /api/v1/app/project`.
 | --- | --- | --- | --- |
 | Body | `name` | Si | Nombre del proyecto. |
 | Body | `goal` | No | Objetivo o descripcion del proyecto. |
-| Body | `deadline` | No | Fecha limite como timestamp Unix. |
-| Body | `visibility` | No | `Public` o `Private`. |
+| Body | `visibility` | No | `Public` o `Private`; por defecto `Private`. |
 </Accordion>
 
 ```bash
@@ -26,7 +25,6 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project" \
   -d '{
     "name": "Customer Insights",
     "goal": "Summarize weekly support trends.",
-    "deadline": 1709337600,
     "visibility": "Private"
   }'
 ```
@@ -34,41 +32,66 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project" \
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "proj_7a5c3e1b9d2f4a6c",
+  "id": "{projectID}",
   "name": "Customer Insights",
   "goal": "Summarize weekly support trends.",
-  "deadline": "2026-03-01T00:00:00Z",
+  "default_member_role": "Viewer",
+  "default_role_enabled": false,
   "visibility": "Private",
-  "member_count": 1,
-  "default_member_role": "Editor",
-  "default_role_enabled": true,
-  "project_context": "Support analytics for Q1.",
-  "answer_context": "Use approved templates.",
+  "use_citations": true,
+  "use_system_prompt": true,
   "is_pinned": false
 }
 ```
 </Accordion>
 
+### Campos de respuesta del proyecto
+
+Crear, obtener, PUT, PATCH y DELETE devuelven este modelo JSON con `200`. Los campos nulos pueden omitirse. Al crear se usa `Viewer`, `default_role_enabled:false`, `use_citations:true`, `use_system_prompt:true`. Los miembros anidados usan el [modelo de Miembros del proyecto](/es/developer-manual/build-with-zylon/workspace-api/projects/project-member).
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de proyecto. |
+| `name` | string | Nombre. |
+| `goal` | string or null | Objetivo opcional. |
+| `default_member_role` | string | `Viewer`, `Commenter`, `Editor`, `Admin`, `Owner`. |
+| `default_role_enabled` | boolean | Si los no miembros reciben el rol predeterminado. |
+| `visibility` | string | `Public` o `Private`. |
+| `member_count` | integer or null | Total incluido en operaciones de detalle/lista cuando existe. |
+| `members` | object[] or null | Miembros cuando se solicitan; cada uno tiene `id` (ID de miembro), `role`, `account`, `is_project_member`. Consulta Miembros del proyecto para el modelo de cuenta. |
+| `project_context` | string or null | Instrucciones opcionales del proyecto. |
+| `use_citations` | boolean | Ajuste de citas. |
+| `use_system_prompt` | boolean | Ajuste del system prompt. |
+| `is_pinned` | boolean or null | Estado de fijacion del miembro actual cuando existe; las respuestas de modificacion usan false por defecto. |
+
 ## Obtener un proyecto
 
 ```bash
 curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "proj_7a5c3e1b9d2f4a6c",
+  "id": "{projectID}",
   "name": "Customer Insights",
   "goal": "Summarize weekly support trends.",
-  "visibility": "Private"
+  "default_member_role": "Viewer",
+  "default_role_enabled": false,
+  "visibility": "Private",
+  "use_citations": true,
+  "use_system_prompt": true,
+  "is_pinned": false,
+  "member_count": 1
 }
 ```
 </Accordion>
 
 ## Actualizar un proyecto
+
+PUT y PATCH aceptan los mismos campos opcionales. Los valores omitidos o null mantienen los ajustes actuales. Se recortan los espacios de `project_context`; una cadena vacia o de espacios lo elimina. La instalacion limita su longitud. `default_role_enabled:true` hace el proyecto `Public`; false lo hace `Private`, con prioridad sobre `visibility` si tambien se envia.
 
 <Tabs>
   <Tab title="PUT">
@@ -78,12 +101,12 @@ curl "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 | Path | `projectID` | Si | Identificador del proyecto. |
 | Body | `name` | No | Nombre del proyecto. |
 | Body | `goal` | No | Objetivo o descripcion del proyecto. |
-| Body | `deadline` | No | Fecha limite como timestamp ISO. |
 | Body | `visibility` | No | `Public` o `Private`. |
 | Body | `project_context` | No | Contexto del proyecto. |
-| Body | `answer_context` | No | Guia predeterminada de respuesta. |
 | Body | `default_member_role` | No | `Viewer`, `Commenter`, `Editor`, `Admin` u `Owner`. |
 | Body | `default_role_enabled` | No | Habilita el rol predeterminado. |
+| Body | `use_citations` | No | Habilita las citas del chat del proyecto. |
+| Body | `use_system_prompt` | No | Habilita el system prompt del chat del proyecto. |
 </Accordion>
 
 ```bash
@@ -94,29 +117,28 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
   -d '{
     "name": "Customer Insights",
     "goal": "Summarize weekly support and churn signals.",
-    "deadline": "2026-03-15T00:00:00Z",
-    "visibility": "Private",
+    "visibility": "Public",
     "project_context": "Support analytics for Q1.",
-    "answer_context": "Return answers in a weekly memo format.",
     "default_member_role": "Editor",
-    "default_role_enabled": true
+    "default_role_enabled": true,
+    "use_citations": true,
+    "use_system_prompt": true
   }'
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```json
 {
-  "id": "proj_7a5c3e1b9d2f4a6c",
+  "id": "{projectID}",
   "name": "Customer Insights",
   "goal": "Summarize weekly support and churn signals.",
-  "deadline": "2026-03-15T00:00:00Z",
-  "visibility": "Private",
-  "member_count": 3,
   "default_member_role": "Editor",
   "default_role_enabled": true,
-  "project_context": "Support analytics for Q1.",
-  "answer_context": "Return answers in a weekly memo format.",
-  "is_pinned": true
+  "visibility": "Public",
+  "use_citations": true,
+  "use_system_prompt": true,
+  "is_pinned": false,
+  "project_context": "Support analytics for Q1."
 }
 ```
 </Accordion>
@@ -126,7 +148,7 @@ curl -X PUT "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 | Tipo | Nombre | Requerido | Notas |
 | --- | --- | --- | --- |
 | Path | `projectID` | Si | Identificador del proyecto. |
-| Body | Cualquier campo de `UpdateProjectDTO` | No | Actualizacion parcial; envia solo los campos a cambiar. |
+| Body | Los campos de PUT anteriores | No | Actualizacion parcial; envia solo los campos a cambiar. |
 </Accordion>
 
 ```bash
@@ -140,8 +162,19 @@ curl -X PATCH "https://{BASE_URL}/api/v1/app/project/{projectID}" \
 ```
 
 <Accordion title="Ejemplo de respuesta">
-```text
-HTTP/1.1 200 OK
+```json
+{
+  "id": "{projectID}",
+  "name": "Customer Insights",
+  "goal": "Summarize weekly support trends.",
+  "default_member_role": "Viewer",
+  "default_role_enabled": false,
+  "visibility": "Private",
+  "use_citations": true,
+  "use_system_prompt": true,
+  "is_pinned": false,
+  "project_context": "Support analytics for Q1 with strict PII handling."
+}
 ```
 </Accordion>
   </Tab>
@@ -151,27 +184,41 @@ HTTP/1.1 200 OK
 
 ```bash
 curl -X DELETE "https://{BASE_URL}/api/v1/app/project/{projectID}" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
-```text
-HTTP/1.1 204 No Content
+```json
+{
+  "id": "{projectID}",
+  "name": "Customer Insights",
+  "goal": "Summarize weekly support trends.",
+  "default_member_role": "Viewer",
+  "default_role_enabled": false,
+  "visibility": "Private",
+  "use_citations": true,
+  "use_system_prompt": true,
+  "is_pinned": false
+}
 ```
 </Accordion>
+
+DELETE elimina el proyecto y devuelve su modelo, en lugar de `204 No Content`.
 
 ## Salir de un proyecto
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/leave" \
-  -H "Authorization: Bearer {API_TOKEN}"
+  -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Ejemplo de respuesta">
 ```text
 HTTP/1.1 200 OK
+
+200
 ```
 </Accordion>
 
@@ -278,28 +325,41 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/info" \
 
 ## Chat con alcance de proyecto
 
+Usa el endpoint actual `POST /api/v1/app/chat` con `project_id` en el cuerpo. La URL de compatibilidad `POST /api/v1/app/project/{projectID}/chat` sigue disponible; migra los clientes al endpoint actual. La ruta actual siempre devuelve SSE.
+
 <Accordion title="Parametros del endpoint">
-| Tipo | Nombre | Requerido | Notas |
+| Tipo | Nombre | Obligatorio | Notas |
 | --- | --- | --- | --- |
-| Path | `projectID` | Si | Identificador del proyecto. |
-| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
-| Body | `artifact_ids` | No | Limita el contexto a artefactos seleccionados. |
-| Body | `all_artifacts` | No | Incluye todos los artefactos del proyecto si es `true`. |
+| Body | `project_id` | Si | Proyecto cuyo contexto se usa. |
+| Body | `pgpt` | Si | Solicitud de Messages con exactamente un mensaje de usuario. |
+| Body | `artifacts` | No | Selectores de artefactos por alcance. |
 </Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "all_artifacts": true,
+    "project_id": "{projectID}",
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "all_artifacts": true
+        }
+      ]
+    },
     "pgpt": {
       "messages": [
         {
           "role": "user",
           "content": [
-            { "type": "text", "text": "Summarize the latest support trends in three bullets." }
+            {
+              "type": "text",
+              "text": "Summarize the latest support trends in three bullets."
+            }
           ]
         }
       ],
@@ -309,14 +369,7 @@ curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/chat" \
   }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "inter_5a7b9c1d3e5f7a9b",
-  "state": "Completed"
-}
-```
-</Accordion>
+Consulta [Chats](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#chat-puntual) para los eventos SSE y los modelos de cuerpo y seleccion de artefactos. La URL antigua del proyecto respeta `pgpt.stream`: true transmite eventos; false devuelve una respuesta de Message.
 
 ## Errores y casos límite
 

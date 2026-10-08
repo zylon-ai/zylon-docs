@@ -9,7 +9,7 @@ Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio 
 <Warning>
 Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Revisa los cambios de rutas, cuerpos y respuestas que se detallan abajo antes de actualizar tu integración.
 
-**Si tu integración usa IDs de usuario, revisa dónde los almacenas, comparas o envías.** Los campos de creador y sus filtros ahora usan IDs de cuenta. Ambos son UUIDs, por lo que las llamadas a la API pueden seguir funcionando aunque devuelvan IDs que ya no coincidan con tus registros o la lógica de tu aplicación. Actualiza los mapeos, búsquedas, comparaciones y filtros afectados. Las rutas y campos de membresía siguen usando IDs de miembro; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
+**Si tu integración usa IDs de usuario o cuenta, migra los mapeos de identidad afectados aunque las peticiones sigan funcionando.** Revisa dónde los almacenas, comparas o envías. Los campos de creador y sus filtros ahora usan IDs de cuenta. Ambos son UUIDs, por lo que las llamadas a la API pueden seguir funcionando aunque devuelvan IDs que ya no coincidan con tus registros o la lógica de tu aplicación. Actualiza los mapeos, búsquedas, comparaciones y filtros afectados. Las rutas y campos de membresía siguen usando IDs de miembro; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
 </Warning>
 
 ## Requisitos previos
@@ -232,6 +232,7 @@ Los alias de nombres siguientes son temporales. **Los IDs y objetos de creador a
 | Dónde | Anterior | Actual / acción necesaria |
 | --- | --- | --- |
 | Entradas de creación/actualización de miembros de proyecto | `user_id` | Usa `ws_member_id`; el nombre anterior sigue siendo un alias de entrada. El valor sigue siendo un ID de miembro. |
+| Metadatos de chat (Workspace y ZylonGPT) | `metadata.user_id` | Usa `metadata.ws_member_id`; `user_id` sigue siendo un alias de entrada. Envía solo un nombre. El valor sigue siendo un ID de miembro, no de cuenta. |
 | Transferencia de propiedad de proyecto | `old_owner_id`, `new_owner_id` | Usa `old_owner_ws_member_id`, `new_owner_ws_member_id`; los nombres anteriores siguen siendo alias de entrada. |
 | Consulta `include` de artefactos, hilos, interacciones e incidencias | `User` | Usa `Account`; `User` sigue siendo un alias de entrada. |
 | Consulta `include` del listado de cuentas | `Users` | Usa `WorkspaceMembers`; `Users` sigue siendo un alias de entrada. |
@@ -242,6 +243,60 @@ Los alias de nombres siguientes son temporales. **Los IDs y objetos de creador a
 | Filtro `created_by` de incidencias | IDs de miembro | Envía IDs de cuenta separados por comas. No se convierten los IDs automáticamente. |
 
 Consulta [miembros de proyecto](/es/developer-manual/build-with-zylon/workspace-api/projects/project-member), [transferencia de propiedad](/es/developer-manual/build-with-zylon/workspace-api/projects/project) y [filtros de incidencias](/es/developer-manual/build-with-zylon/workspace-api/general/issues) para ver los cuerpos y respuestas actuales completos.
+
+## Chats e hilos
+
+### Mover el chat de proyecto a la ruta unificada
+
+Sustituye `POST /app/project/{projectID}/chat` por `POST /app/chat` y mueve el selector de proyecto al cuerpo. Usa una petición de mensajes envuelta en `pgpt` (`private_gpt` sigue siendo un alias de entrada). La ruta actual también acepta una petición antigua sin envolver para contexto del espacio de trabajo, pero los selectores de proyecto y artefactos requieren el cuerpo envuelto. `/app/chat/validate` recibe la petición de mensajes sin envolver.
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "pgpt": {
+      "messages": [{ "role": "user", "content": "Resume el proyecto." }]
+    }
+  }'
+```
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Migración |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Antes se indicaba en la ruta. Inclúyelo para contexto de proyecto; omítelo para contexto del espacio de trabajo. |
+| Body | `pgpt` | Si | Petición de mensajes. Consulta [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages). |
+| Body | `artifacts` | No | Objeto de selección por ámbito descrito abajo. |
+
+</Accordion>
+
+<Warning>
+La respuesta actual de `/app/chat` es **siempre SSE**, incluso con `pgpt.stream: false`. La URL de chat de proyecto conservada devuelve JSON cuando ese indicador es `false` y SSE cuando es `true`. Adapta los clientes que esperan JSON antes de cambiar la URL. El alias de chat de proyecto no tiene asignada una versión de retirada.
+</Warning>
+
+Para seleccionar artefactos, usa `artifacts.document`, `artifacts.connector`, `artifacts.skill` o `artifacts.agent_flow`. Cada campo es un array de selectores con `scope` (`organization` o `project`), `all_artifacts` opcional y `artifacts_ids` opcional (observa el plural). Por ejemplo:
+
+```json
+{
+  "artifacts": {
+    "document": [
+      { "scope": "project", "artifacts_ids": ["{artifactID}"] }
+    ]
+  }
+}
+```
+
+Es un cuerpo parcial que debes combinar con `pgpt` y, para el ámbito de proyecto, `project_id`. No envíes los campos de los ejemplos antiguos de referencia `artifact_ids` o `all_artifacts` en el nivel superior: los campos desconocidos se ignoran y no seleccionan artefactos. Una categoría no puede repetir el mismo ámbito ni combinar `all_artifacts: true` con `artifacts_ids` no vacío. Consulta [peticiones de chat](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#chat-puntual).
+
+### Archivos de hilo y estado de lectura
+
+1.58 añade la escritura de archivos sin multipart con `PUT /app/thread/{threadID}/put-file/{path...}`. Envía los bytes en el cuerpo. `POST /app/thread/{threadID}/upload-file` sigue usando el campo multipart `file` y ahora acepta `path` y `namespace` opcionales. Las subidas multipart, escrituras sin multipart y descargas seleccionan `session` (por defecto), `artifacts` o `skills` mediante `namespace`; la descarga también acepta `disposition=attachment` (por defecto) o `inline`. Consulta [archivos de hilo](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#archivos-del-hilo) para subida, descarga y conversión de artefactos MDX.
+
+En los listados de hilos del proyecto, solicita `include=ReadState` para recibir `read_state.last_read_at` y `read_state.has_unread_response`. Un hilo nuevo creado por otra cuenta también puede contar como no leído. Listar interacciones con `GET /app/thread/{threadID}/interaction` ahora avanza el punto de lectura del solicitante hasta las respuestas completadas devueltas. Los clientes que consultan este endpoint periódicamente pueden marcar así el contenido como leído; tenlo en cuenta en la lógica de notificaciones y sondeo.
 
 ## Peticiones de filesystem
 
@@ -1270,7 +1325,8 @@ Puedes enviar de vuelta en `messages` los bloques `server_tool_use` y los result
 
 1. Sustituye las URLs obsoletas y mueve el selector de proyecto a la consulta o al cuerpo correspondiente.
 2. Usa bytes Base64 para crear artefactos con JSON, texto para actualizarlos y `file_data` para archivos multipart.
-3. Adapta la lectura de respuestas a la separación entre cuenta y miembro y a la eliminación del contenido inline de artefactos.
+3. Adapta la lectura de respuestas a la separación entre cuenta y miembro y a la eliminación del contenido inline de artefactos. Revisa los IDs de usuario/cuenta almacenados, relaciones, comparaciones y filtros aunque las llamadas sigan funcionando.
 4. Usa IDs de cuenta en los filtros de creador y los nombres canónicos de campos e inclusiones.
 5. Adapta el procesado de mensajes a `server_tool_use` y a los bloques de resultado de herramientas de servidor, y devuelve `tool_result` solo para tus herramientas personalizadas.
-6. Prueba con 1.58, incluidos permisos, validación, conversión de contenido y validación de filesystem. Las URLs antiguas usan la autorización, las respuestas y el comportamiento de servicio actuales; no reproducen todos los comportamientos de 1.57.
+6. Adapta los cuerpos de chat, selectores de artefactos por ámbito, SSE, archivos de hilo y sondeo del estado de lectura.
+7. Prueba con 1.58, incluidos permisos, validación, conversión de contenido y validación de filesystem. Las URLs antiguas usan la autorización, las respuestas y el comportamiento de servicio actuales; no reproducen todos los comportamientos de 1.57.

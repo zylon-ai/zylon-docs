@@ -95,7 +95,8 @@ You can mix multiple content blocks in one message. Supported block types in the
 | `audio` | Audio attachment | `data` | `data` can be base64 or URL; optional `mime_type`. |
 | `binary` | Generic binary payload | `data`, `mime_type` | Optional `filename`. |
 | `file` | File/document content block | `content` | Optional `content_type`, `doc_metadata`. |
-| `tool_use` | Tool call request | `id`, `name`, `input` | Internal/tool orchestration block. |
+| `tool_use` | Custom tool call | `id`, `name`, `input` | Call to a tool your application runs. Return a `tool_result` block. |
+| `server_tool_use` | Built-in tool call | `id` (`srvtoolu_` prefix), `name`, `input` | Zylon ran the tool. Followed by its result block (`server_tool_result`, `web_search_tool_result`, `web_fetch_tool_result`, `bash_code_execution_tool_result`, or `text_editor_code_execution_tool_result`). |
 
 `start_timestamp`, `stop_timestamp`, and `_meta` are optional on all blocks.
 
@@ -134,10 +135,10 @@ You can mix multiple content blocks in one message. Supported block types in the
       }
     ]
   },
-  { "type": "tool_use", "id": "toolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
+  { "type": "server_tool_use", "id": "srvtoolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
   {
-    "type": "tool_result",
-    "tool_use_id": "toolu_123",
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_123",
     "content": [{ "type": "text", "text": "Found 5 matching passages." }],
     "is_error": false
   },

@@ -95,7 +95,8 @@ Puedes combinar múltiples bloques de contenido en un mismo mensaje. Tipos princ
 | `audio` | Audio adjunto | `data` | `data` puede ser base64 o URL; `mime_type` es opcional. |
 | `binary` | Payload binario genérico | `data`, `mime_type` | `filename` opcional. |
 | `file` | Bloque de archivo/documento | `content` | `content_type` y `doc_metadata` opcionales. |
-| `tool_use` | Solicitud de llamada de herramienta | `id`, `name`, `input` | Bloque interno de orquestación de tools. |
+| `tool_use` | Llamada a una herramienta personalizada | `id`, `name`, `input` | Llamada a una herramienta que ejecuta tu aplicación. Devuelve un bloque `tool_result`. |
+| `server_tool_use` | Llamada a una herramienta integrada | `id` (prefijo `srvtoolu_`), `name`, `input` | Zylon ejecutó la herramienta. Va seguido de su bloque de resultado (`server_tool_result`, `web_search_tool_result`, `web_fetch_tool_result`, `bash_code_execution_tool_result` o `text_editor_code_execution_tool_result`). |
 
 `start_timestamp`, `stop_timestamp` y `_meta` son opcionales en todos los bloques.
 
@@ -134,10 +135,10 @@ Puedes combinar múltiples bloques de contenido en un mismo mensaje. Tipos princ
       }
     ]
   },
-  { "type": "tool_use", "id": "toolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
+  { "type": "server_tool_use", "id": "srvtoolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
   {
-    "type": "tool_result",
-    "tool_use_id": "toolu_123",
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_123",
     "content": [{ "type": "text", "text": "Found 5 matching passages." }],
     "is_error": false
   },

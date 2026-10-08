@@ -62,6 +62,7 @@ Zylon includes a set of built-in tools you can enable by name + type:
 | `web_extract_v1` | Fetch and extract a URL mentioned in the message | No |
 | `web_search_v1` | Search the web from a natural language query | No |
 | `database_query_v1` | Query a SQL database from natural language | Yes (`sql_database`) |
+| `code_execution_v1` | Run bash commands and edit files in a sandboxed container | No |
 
 Guides:
 
@@ -70,6 +71,33 @@ Guides:
 - [Web Fetch tool](/en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
 - [Web Search tool](/en/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
 - [Database Query tool](/en/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
+- [Code Execution tool](/en/developer-manual/build-with-zylon/tools/built-in/code-execution-tool)
+
+### How built-in tool results are returned
+
+Zylon runs built-in tools on the server, inside the same request. Each call appears in the response as a `server_tool_use` block (ID prefix `srvtoolu_`), followed by its result block:
+
+| Tool | Result block |
+| --- | --- |
+| `semantic_search`, `tabular_analysis`, `database_query`, `summarize`, `present_files`, skills, MCP tools | `server_tool_result` (`content`, `is_error`) |
+| `web_search` | `web_search_tool_result` |
+| `web_fetch` | `web_fetch_tool_result` |
+| Code execution: `bash_code_execution` | `bash_code_execution_tool_result` |
+| Code execution: `text_editor_code_execution` | `text_editor_code_execution_tool_result` |
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [{ "type": "text", "text": "Customers reported duplicate charges after the plan change." }],
+    "is_error": false
+  }
+]
+```
+
+Don't send results back for built-in tools: Zylon has already run them. `stop_reason: "tool_use"` and `tool_result` blocks apply only to [custom tools](#custom-tools). Each tool guide shows its result format.
 
 ## Custom tools
 

@@ -35,7 +35,7 @@ Cuando una petición falla, el stop reason coincide con uno de los valores de er
 | `end_turn` | El modelo terminó normalmente. A veces llega vacío después de un `tool_result` si envías texto adicional junto al bloque `tool_result`. | Trátalo como completo. Si viene vacío, envía solo el `tool_result` o añade un nuevo mensaje como “Continúa”. |
 | `max_tokens` | La respuesta llegó al límite de `max_tokens`. | Aumenta `max_tokens` o pide continuar. |
 | `stop_sequence` | Se generó una secuencia de parada configurada por ti. | Considera la salida completa en ese punto o ajusta la secuencia. |
-| `tool_use` | El modelo necesita que ejecutes una herramienta. | Ejecuta la herramienta y devuelve un bloque `tool_result`. |
+| `tool_use` | El modelo necesita que ejecutes una de tus herramientas personalizadas. Las herramientas integradas nunca paran con `tool_use`: Zylon las ejecuta y devuelve bloques `server_tool_use`. | Ejecuta la herramienta y devuelve un bloque `tool_result`. |
 | `pause_turn` | El modelo pausó la conversación. | Continúa cuando estés listo. |
 | `refusal` | El modelo se negó por razones de seguridad o políticas. | Muestra la negativa o re‑formula con contenido permitido. |
 | `invalid_request_error` | Entradas inválidas (artefactos sin ingesta completa, configuración de herramientas inexistente, IDs incorrectos). | Corrige la entrada y reintenta. |

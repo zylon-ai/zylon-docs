@@ -35,7 +35,7 @@ When a request fails, the stop reason matches one of the error values below and 
 | `end_turn` | The model completed its response normally. Sometimes you’ll see an empty response after tool execution if you send extra user text with a `tool_result`. | Treat as complete. If empty, send only the `tool_result` block, or add a new user message like “Please continue.” |
 | `max_tokens` | The response hit your `max_tokens` limit. | Increase `max_tokens` or ask the model to continue. |
 | `stop_sequence` | The model generated one of your custom stop sequences. | Treat output as complete at the boundary or adjust/remove the sequence. |
-| `tool_use` | The model wants you to run a tool. | Execute the tool and return a `tool_result` block. |
+| `tool_use` | The model wants you to run one of your custom tools. Built-in tools never stop with `tool_use`: Zylon runs them and returns `server_tool_use` blocks. | Execute the tool and return a `tool_result` block. |
 | `pause_turn` | The model intentionally paused. | Resume the conversation when ready. |
 | `refusal` | The model refused for safety or policy reasons. | Surface the refusal or re‑prompt with allowed content. |
 | `invalid_request_error` | The request inputs are invalid (e.g., artifacts not fully ingested, missing tool config, invalid IDs). | Fix inputs and retry. |

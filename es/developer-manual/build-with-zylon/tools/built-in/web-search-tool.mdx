@@ -41,6 +41,47 @@ Ejemplo de respuesta:
 
 Para ejecutar, envía el mismo cuerpo a `POST /messages`.
 
+## Bloques de respuesta
+
+Zylon ejecuta esta herramienta en el servidor. La respuesta contiene un bloque `server_tool_use` con la llamada, seguido de un bloque `web_search_tool_result` con el resultado. El ID de la llamada empieza por `srvtoolu_`. No envíes un `tool_result` de vuelta para ella.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "EU AI Act recent updates" } },
+  {
+    "type": "web_search_tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "web_search_result",
+        "url": "https://example.com/eu-ai-act",
+        "title": "EU AI Act: what changed this month",
+        "encrypted_content": "The European Commission published new guidance...",
+        "page_age": "2 days ago"
+      }
+    ]
+  }
+]
+```
+
+Zylon ejecuta la búsqueda, así que `encrypted_content` contiene el texto del resultado en texto plano, no datos cifrados.
+
+Error:
+
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": { "type": "web_search_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Estos bloques no tienen campo `is_error`. Para detectar un fallo, comprueba si `content.type` termina en `_error` y lee `content.error_code`.
+
+Con la extensión Zylon activada (`system.extensions` incluye `zylon`), el resultado se devuelve como un bloque `tool_result` simple con contenido `text`.
+
+Consulta [Migración de 1.57 a 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para ver la lista completa de bloques de herramientas de servidor.
+
 ## Consejos
 
 - Usa consultas precisas para reducir ruido.

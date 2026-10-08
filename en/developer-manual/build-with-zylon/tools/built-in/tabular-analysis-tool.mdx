@@ -52,6 +52,32 @@ Example response:
 
 To run the request, send the same body to `POST /messages`.
 
+## Response blocks
+
+Zylon runs this tool on the server. The response contains a `server_tool_use` block with the call, followed by a `server_tool_result` block with the result. The call ID starts with `srvtoolu_`. Don't send a `tool_result` back for it.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3a4b", "name": "tabular_analysis", "input": { "query": "Average of the Q1 revenue column" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3a4b",
+    "content": [{ "type": "text", "text": "avg_q1_revenue\n18250.4" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+`is_error` is `true` when the tool fails, and `content` holds the error message.
+
+See [Migrating from 1.57 to 1.58](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for the full list of server tool blocks.
+
 ## Tips
 
 - Ensure the artifact content is a clean table (CSV/TSV is best).

@@ -50,6 +50,32 @@ Ejemplo de respuesta:
 
 Para ejecutar, envía el mismo cuerpo a `POST /messages`.
 
+## Bloques de respuesta
+
+Zylon ejecuta esta herramienta en el servidor. La respuesta contiene un bloque `server_tool_use` con la llamada, seguido de un bloque `server_tool_result` con el resultado. El ID de la llamada empieza por `srvtoolu_`. No envíes un `tool_result` de vuelta para ella.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3a4b", "name": "tabular_analysis", "input": { "query": "Average of the Q1 revenue column" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3a4b",
+    "content": [{ "type": "text", "text": "avg_q1_revenue\n18250.4" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+`is_error` es `true` cuando la herramienta falla, y `content` contiene el mensaje de error.
+
+Consulta [Migración de 1.57 a 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para ver la lista completa de bloques de herramientas de servidor.
+
 ## Consejos
 
 - Asegura que el contenido sea una tabla limpia.

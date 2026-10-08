@@ -14,6 +14,10 @@ description: "Pasos para actualizar tu instalación de Zylon a la versión 1.58.
 - **Backfill de Skills y Documentos.** Las Skills y los Documentos existentes deben procesarse con `zylon-cli backfill-projections`.
 - **Límite de pods más alto en el nodo.** El nodo de Kubernetes debe permitir hasta 200 pods. Las instalaciones nuevas lo aplican automáticamente; las existentes lo aplican con `zylon-cli configure --max-pods 200`. Esto reinicia k0s, por lo que todos los servicios de Zylon estarán brevemente no disponibles.
 
+Si usas el preset `baseline-96g`, hay un paso más antes de instalar:
+
+- **Nuevo modelo en `baseline-96g`.** `baseline-96g` ahora usa `nvidia/Qwen3.8-27B-NVFP4` en lugar de `cyankiwi/qwen3.5-27b-awq-4bit`. Descárgalo antes de instalar 1.58. Para mantener el modelo anterior, configura `ai.preset: "deprecated.96g.20261008"`.
+
 ## Cómo actualizar
 
 <Info>
@@ -41,6 +45,13 @@ Sigue los pasos según tu tipo de instalación.
 
         ```bash
         sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download nvidia/Qwen3.8-27B-NVFP4
         ```
       </Step>
       <Step title="Instala 1.58">
@@ -87,6 +98,13 @@ Sigue los pasos según tu tipo de instalación.
       <Step title="Verifica conectividad">
         ```bash
         sudo zylon-cli preflight --network -v
+        ```
+      </Step>
+      <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download nvidia/Qwen3.8-27B-NVFP4
         ```
       </Step>
       <Step title="Instala 1.58">
@@ -137,6 +155,14 @@ Sigue los pasos según tu tipo de instalación.
           /usr/local/bin/zylon-forge-cli
         ```
       </Step>
+      <Step title="Máquina online: descarga y exporta el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download --no-install nvidia/Qwen3.8-27B-NVFP4
+        sudo zylon-cli models export
+        ```
+      </Step>
       <Step title="Máquina online: exporta el bundle de plataforma 1.58">
         ```bash
         sudo zylon-cli list-versions
@@ -153,6 +179,7 @@ Sigue los pasos según tu tipo de instalación.
 
         - `zylon-*.tar`
         - `zylon-update.tar.gz`
+        - `zylon-models-<timestamp>.tar` (solo para `baseline-96g`). Colócalo en su propia carpeta en la máquina offline, por ejemplo `/tmp/models`, para que `zylon-cli import zylon-*.tar` no lo incluya.
       </Step>
       <Step title="Máquina offline: extrae el paquete de actualización CLI">
         ```bash
@@ -160,6 +187,16 @@ Sigue los pasos según tu tipo de instalación.
         sudo tar -xzf zylon-update.tar.gz -C /
         sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
         sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Máquina offline: importa el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        cd /tmp/models
+        sudo zylon-cli models import zylon-models-<timestamp>.tar
+        sudo zylon-cli models download --offline
+        sudo zylon-cli models list --installed
         ```
       </Step>
       <Step title="Máquina offline: importa e instala">

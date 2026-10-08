@@ -286,12 +286,13 @@ Esto afecta al contenido de los mensajes en los eventos en streaming, en las int
 | Nombre en 1.57 | Nombre en 1.58 | Bloque de llamada en 1.58 | Bloque de resultado en 1.58 |
 | --- | --- | --- | --- |
 | `web_search` | `web_search` | `server_tool_use` | `web_search_tool_result` |
-| `web_fetch` | `web_fetch` | `server_tool_use` | `web_fetch_tool_result` |
+| `web_extract` (`web_fetch` en la ZylonGPT API) | Sin cambios | `server_tool_use` | `web_fetch_tool_result` |
 | `bash` | `bash_code_execution` | `server_tool_use` | `bash_code_execution_tool_result` |
 | `view`, `create`, `str_replace`, `insert` | `text_editor_code_execution`, con la operación en `input.command` | `server_tool_use` | `text_editor_code_execution_tool_result` |
 | `semantic_search`, `summarize`, `tabular_analysis`, `database_query`, `present_files`, `present_server`, herramientas de skills, herramientas MCP | Sin cambios | `server_tool_use` | `server_tool_result` |
 | Herramientas personalizadas que ejecuta tu aplicación | Sin cambios | `tool_use` (sin cambios) | `tool_result` (sin cambios) |
 
+- `server_tool_use.name` es el `name` de la herramienta en la solicitud. Los chats del Workspace envían la herramienta web fetch como `web_extract`, así que sus llamadas aparecen como `web_extract`; los clientes de la ZylonGPT API ven el nombre que enviaron (`web_extract` o `web_fetch`). Identifica el resultado por el tipo de bloque (`web_fetch_tool_result`) en lugar del nombre.
 - Los IDs de las llamadas a herramientas de servidor empiezan por `srvtoolu_`, y los de herramientas de cliente, por `tool_`. El `tool_use_id` del resultado hace referencia al ID de la llamada, como antes.
 - Zylon ya ha ejecutado las herramientas de servidor, así que no envíes un resultado para ellas. `stop_reason: "tool_use"` sigue aplicándose solo a las herramientas que ejecuta tu aplicación.
 - Los bloques siguen el [formato de herramientas de servidor de Anthropic](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools), por lo que los SDKs de Anthropic pueden leerlos directamente. Ignora los campos que no reconozcas, porque Zylon puede añadir campos adicionales.
@@ -429,14 +430,14 @@ Error:
 </Tabs>
 
 </Accordion>
-<Accordion title="web_fetch">
+<Accordion title="web_extract (web fetch)">
 
 <Tabs>
 <Tab title="1.57">
 
 ```json
 [
-  { "type": "tool_use", "id": "tool_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "tool_use", "id": "tool_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "tool_result",
     "tool_use_id": "tool_3c4d",
@@ -462,7 +463,7 @@ Error:
 
 ```json
 [
-  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "web_fetch_tool_result",
     "tool_use_id": "srvtoolu_3c4d",
@@ -501,7 +502,7 @@ Valores posibles de `error_code`: `invalid_tool_input`, `url_too_long`, `url_not
 
 ```json
 [
-  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "tool_result",
     "tool_use_id": "srvtoolu_3c4d",

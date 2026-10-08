@@ -286,12 +286,13 @@ The change affects message content in streamed events, stored thread interaction
 | 1.57 tool name | 1.58 tool name | 1.58 call block | 1.58 result block |
 | --- | --- | --- | --- |
 | `web_search` | `web_search` | `server_tool_use` | `web_search_tool_result` |
-| `web_fetch` | `web_fetch` | `server_tool_use` | `web_fetch_tool_result` |
+| `web_extract` (`web_fetch` in the ZylonGPT API) | Unchanged | `server_tool_use` | `web_fetch_tool_result` |
 | `bash` | `bash_code_execution` | `server_tool_use` | `bash_code_execution_tool_result` |
 | `view`, `create`, `str_replace`, `insert` | `text_editor_code_execution`, with the operation in `input.command` | `server_tool_use` | `text_editor_code_execution_tool_result` |
 | `semantic_search`, `summarize`, `tabular_analysis`, `database_query`, `present_files`, `present_server`, skill tools, MCP tools | Unchanged | `server_tool_use` | `server_tool_result` |
 | Custom tools your application runs | Unchanged | `tool_use` (unchanged) | `tool_result` (unchanged) |
 
+- `server_tool_use.name` is the tool `name` from the request. Workspace chats send the web fetch tool as `web_extract`, so its calls appear as `web_extract`; ZylonGPT API clients see whichever name they sent (`web_extract` or `web_fetch`). Match on the result block type (`web_fetch_tool_result`) rather than the name.
 - Server tool call IDs start with `srvtoolu_`. Client tool call IDs start with `tool_`. The result's `tool_use_id` points to the call ID, as it did before.
 - Zylon has already run server tools, so do not send results back for them. `stop_reason: "tool_use"` still applies only to tools your application runs.
 - The block shapes follow the [Anthropic server tool format](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools), so Anthropic SDKs can parse them directly. Ignore any fields you do not recognize, because Zylon may add extra ones.
@@ -429,14 +430,14 @@ Error:
 </Tabs>
 
 </Accordion>
-<Accordion title="web_fetch">
+<Accordion title="web_extract (web fetch)">
 
 <Tabs>
 <Tab title="1.57">
 
 ```json
 [
-  { "type": "tool_use", "id": "tool_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "tool_use", "id": "tool_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "tool_result",
     "tool_use_id": "tool_3c4d",
@@ -462,7 +463,7 @@ Error:
 
 ```json
 [
-  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "web_fetch_tool_result",
     "tool_use_id": "srvtoolu_3c4d",
@@ -501,7 +502,7 @@ Possible `error_code` values: `invalid_tool_input`, `url_too_long`, `url_not_all
 
 ```json
 [
-  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_fetch", "input": { "url": "https://example.com" } },
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
   {
     "type": "tool_result",
     "tool_use_id": "srvtoolu_3c4d",

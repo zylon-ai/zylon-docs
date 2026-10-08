@@ -1,0 +1,54 @@
+---
+title: Code execution
+description: Let Zylon run code to analyze data, transform files, and create documents, charts, and spreadsheets.
+---
+
+<Warning>
+    Ask your IT administrator to enable Code execution in your system configuration [with the Operator Manual](/en/operator-manual/configuration/features/feat-code-execution).
+</Warning>
+
+With **Code execution**, Zylon can write and run code in a private, isolated environment (a **sandbox**) to work with your files. Instead of estimating an answer, Zylon computes it, checks the result, and hands you the files it produced.
+
+## What you get
+
+- **Exact calculations** on your data, instead of approximations.
+- **New files** you can preview and download: spreadsheets, charts, reports, and converted documents.
+- **Multi-step work**: Zylon can run code, look at the result, fix mistakes, and try again until it gets it right.
+
+## When to use it
+
+- "Analyze this spreadsheet and tell me which region grew the most."
+- "Plot monthly revenue from this CSV as a line chart."
+- "Merge these two Excel files and remove duplicate customers."
+- "Convert this JSON export into a clean table I can open in Excel."
+- "Calculate the loan payment schedule for these terms and give it to me as a spreadsheet."
+
+For simple questions, conversation, or writing, Zylon answers directly without running code. If you want Zylon to compute or verify something, ask explicitly (for example, "run code to check this").
+
+## How it works
+
+1. **Attach your files** to the chat, or reference documents in your project.
+2. **Ask** what you need. Zylon writes the code, runs it in the sandbox, and reads the results.
+3. **Get your files.** When Zylon creates a file, it appears in the chat and is saved to your project, so you can preview, download, or reuse it later.
+
+Each chat has its **own sandbox**:
+
+- Files you upload and files Zylon creates stay available for the whole chat, so you can keep asking follow-up questions ("now group it by quarter").
+- Other chats, and other users, can't see the files in your chat's sandbox.
+
+## Supported files
+
+Zylon can work with most common formats, including:
+
+- Spreadsheets and data: CSV, Excel (`.xlsx`, `.xls`), JSON, XML
+- Documents: PDF, Word (`.docx`), PowerPoint (`.pptx`), text and Markdown
+- Images: PNG, JPEG, GIF, WebP
+- Archives: ZIP, 7z, RAR
+
+## Notes & best practices
+
+- **Name the columns or fields** you care about. Zylon only knows the data structure after looking at the file.
+- **Say what output you want**: "a bar chart as PNG", "an Excel file with one sheet per region", "a short summary table".
+- **Iterate in the same chat.** Your files are still there, so small follow-ups are fast.
+- **The sandbox has no internet access.** If you need information from the web, combine it with [Web search](/en/user-manual/tools/web-search).
+- **Downloads depend on your organization's settings.** If you can preview a file but not download it, ask your administrator.

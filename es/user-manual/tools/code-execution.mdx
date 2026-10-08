@@ -1,0 +1,54 @@
+---
+title: Ejecución de código
+description: Deja que Zylon ejecute código para analizar datos, transformar archivos y crear documentos, gráficos y hojas de cálculo.
+---
+
+<Warning>
+    Pide a tu administrador de TI que habilite la Ejecución de código en la configuración del sistema [con el Manual del operador](/es/operator-manual/configuration/features/feat-code-execution).
+</Warning>
+
+Con **Ejecución de código**, Zylon puede escribir y ejecutar código en un entorno privado y aislado (un **sandbox**) para trabajar con tus archivos. En lugar de estimar una respuesta, Zylon la calcula, comprueba el resultado y te entrega los archivos que ha generado.
+
+## Qué obtienes
+
+- **Cálculos exactos** sobre tus datos, en lugar de aproximaciones.
+- **Archivos nuevos** que puedes previsualizar y descargar: hojas de cálculo, gráficos, informes y documentos convertidos.
+- **Trabajo en varios pasos**: Zylon puede ejecutar código, revisar el resultado, corregir errores y volver a intentarlo hasta dar con la solución.
+
+## Cuándo usarla
+
+- "Analiza esta hoja de cálculo y dime qué región ha crecido más."
+- "Representa los ingresos mensuales de este CSV en un gráfico de líneas."
+- "Combina estos dos archivos de Excel y elimina los clientes duplicados."
+- "Convierte esta exportación JSON en una tabla limpia que pueda abrir en Excel."
+- "Calcula el cuadro de amortización del préstamo con estas condiciones y dámelo en una hoja de cálculo."
+
+Para preguntas sencillas, conversación o redacción, Zylon responde directamente sin ejecutar código. Si quieres que Zylon calcule o verifique algo, pídelo explícitamente (por ejemplo, "ejecuta código para comprobarlo").
+
+## Cómo funciona
+
+1. **Adjunta tus archivos** al chat, o haz referencia a documentos de tu proyecto.
+2. **Pide** lo que necesites. Zylon escribe el código, lo ejecuta en el sandbox y lee los resultados.
+3. **Obtén tus archivos.** Cuando Zylon crea un archivo, aparece en el chat y se guarda en tu proyecto, para que puedas previsualizarlo, descargarlo o reutilizarlo más adelante.
+
+Cada chat tiene su **propio sandbox**:
+
+- Los archivos que subes y los que crea Zylon siguen disponibles durante todo el chat, así que puedes seguir haciendo preguntas de seguimiento ("ahora agrúpalo por trimestre").
+- Otros chats, y otros usuarios, no pueden ver los archivos del sandbox de tu chat.
+
+## Archivos compatibles
+
+Zylon puede trabajar con la mayoría de formatos habituales, entre ellos:
+
+- Hojas de cálculo y datos: CSV, Excel (`.xlsx`, `.xls`), JSON, XML
+- Documentos: PDF, Word (`.docx`), PowerPoint (`.pptx`), texto y Markdown
+- Imágenes: PNG, JPEG, GIF, WebP
+- Archivos comprimidos: ZIP, 7z, RAR
+
+## Notas y buenas prácticas
+
+- **Indica las columnas o campos** que te interesan. Zylon solo conoce la estructura de los datos después de examinar el archivo.
+- **Di qué resultado quieres**: "un gráfico de barras en PNG", "un archivo de Excel con una hoja por región", "una tabla resumen breve".
+- **Itera en el mismo chat.** Tus archivos siguen ahí, así que las pequeñas preguntas de seguimiento son rápidas.
+- **El sandbox no tiene acceso a internet.** Si necesitas información de la web, combínalo con [Búsqueda web](/es/user-manual/tools/web-search).
+- **Las descargas dependen de la configuración de tu organización.** Si puedes previsualizar un archivo pero no descargarlo, consulta a tu administrador.

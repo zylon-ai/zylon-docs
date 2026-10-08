@@ -1,0 +1,559 @@
+---
+title: "Code Execution tool"
+description: "Run bash commands and edit files in a sandboxed container to analyze data, generate files, and iterate on solutions."
+---
+
+The code execution tool lets the assistant run bash commands and create, view, and edit files inside a sandboxed container, directly within a `/messages` request. Use it to analyze uploaded data, run calculations, transform documents, or produce files such as charts, spreadsheets, and reports.
+
+It follows the same model as the [Anthropic code execution tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool): the server runs every command, so you never execute code or send `tool_result` blocks yourself.
+
+## Prerequisites
+
+- An API token. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console).
+- Code execution enabled on your installation. See [Code Execution](/en/operator-manual/configuration/features/feat-code-execution) in the Operator Manual.
+
+## Requirements
+
+- Tool spec: `{ "name": "code_execution", "type": "code_execution_v1" }`
+- Anthropic-compatible spec also accepted: `{ "name": "code_execution", "type": "code_execution_20250825" }`
+- No `tool_context` required
+- Optional: a `container` ID to reuse a sandbox across requests
+
+## Quick start
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "messages": [
+      { "role": "user", "content": "Calculate the mean and standard deviation of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" }
+    ],
+    "tools": [
+      { "name": "code_execution", "type": "code_execution_v1" }
+    ]
+  }'
+```
+
+To check the request without running it, send the same body to `POST /api/gpt/v1/messages/validate`.
+
+## How code execution works
+
+When you add the code execution tool to a request:
+
+1. The assistant decides whether running code would help answer the question.
+2. The tool expands into two sub-tools that the assistant can combine freely:
+   - `bash_code_execution`: run shell commands.
+   - `text_editor_code_execution`: view, create, and edit files.
+3. Every operation runs server-side in a sandboxed container, and the results are fed back to the assistant within the same request.
+4. The response contains each tool call (`server_tool_use`) and its result, followed by the assistant's final answer.
+5. The response also contains a top-level `container` object. Pass its `id` back in later requests to keep working in the same sandbox.
+
+<Tip>
+For borderline requests, ask explicitly (for example, "run code to verify this") so the assistant uses the sandbox instead of answering from memory.
+</Tip>
+
+### Sub-tools
+
+**`bash_code_execution`**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `command` | string | Required. The shell command to run. |
+| `timeout` | integer | Optional. Timeout in seconds (default `60`). |
+| `restart` | boolean | Optional. Resets the workspace. |
+
+Each call runs in a new shell. Files persist between calls; environment variables and `cd` do not.
+
+**`text_editor_code_execution`**
+
+| `command` | Parameters | Description |
+|-----------|------------|-------------|
+| `view` | `path`, `view_range` (optional, `[start, end]`, 1-based, `-1` = end of file) | View a file or list a directory |
+| `create` | `path`, `file_text` | Create or overwrite a file |
+| `str_replace` | `path`, `old_str`, `new_str` | Replace one exact, unique string |
+| `insert` | `path`, `insert_line`, `insert_text` | Insert text after a line (`0` = start of file) |
+
+Relative paths resolve against the workspace (`/home/agent/workspace/`).
+
+## Containers
+
+A container is an isolated sandbox with its own file system. The container is identified by a string ID that you choose or that the server assigns.
+
+### Select a container
+
+Set the top-level `container` field to the ID you want to use. If the container doesn't exist yet, it's created; if it exists, the request reuses it and all its files.
+
+```json
+{
+  "model": "default",
+  "max_tokens": 4096,
+  "container": "sales-analysis-2026-q3",
+  "messages": [{ "role": "user", "content": "..." }],
+  "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+}
+```
+
+<Warning>
+If you omit `container`, the sandbox is keyed on the authenticated user, so every request from that user without a `container` shares the same sandbox. Use an explicit, unique `container` ID per conversation or task to keep work isolated.
+</Warning>
+
+### Read the container from the response
+
+When code runs, the response includes the container that was used:
+
+```json
+{
+  "id": "msg_...",
+  "type": "message",
+  "role": "assistant",
+  "content": [ ... ],
+  "stop_reason": "end_turn",
+  "container": {
+    "id": "sales-analysis-2026-q3",
+    "expires_at": "2026-10-08T12:30:00Z"
+  }
+}
+```
+
+When streaming, the `container` object arrives in the final `message_delta` event as `delta.container`.
+
+### Reuse a container
+
+Pass the same `container` ID in follow-up requests to keep the files created earlier:
+
+```bash
+# First request: create a file
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      { "role": "user", "content": "Write a random number to /home/agent/workspace/number.txt" }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+
+# Second request: same container, the file is still there
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      { "role": "user", "content": "Read /home/agent/workspace/number.txt and square the number" }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+```
+
+`expires_at` is a rolling value that is refreshed on every request. When a container is idle, its sandbox is shut down to free resources, but its files are kept. The next request with the same ID starts a fresh sandbox with the same files. Installed packages, running processes, and shell state aren't kept.
+
+To start clean, use a new `container` ID or [delete the files](#delete-files).
+
+### File system layout
+
+| Path | Access | Purpose |
+|------|--------|---------|
+| `/home/agent/workspace/` | read-write | Working directory. Scratch files and intermediate results. |
+| `/mnt/user-data/uploads/` | read-only | Files you upload through the [Files API](#work-with-files). |
+| `/mnt/user-data/outputs/` | read-write | Deliverables. Files here can be listed and downloaded through the Files API. |
+| `/mnt/skills/` | read-only | Skills loaded for the request, one folder per skill. |
+
+<Tip>
+If your application expects a generated file, ask the assistant to save it to `/mnt/user-data/outputs/` (for example, "save the chart as `/mnt/user-data/outputs/chart.png`").
+</Tip>
+
+### Runtime environment
+
+The sandbox includes Python 3 with common data libraries: pandas, numpy, scipy, scikit-learn, statsmodels, matplotlib, seaborn, pyarrow, openpyxl, xlsxwriter, xlrd, pillow, python-pptx, python-docx, pypdf, pdfplumber, pypdfium2, pdf2image, pdfkit, tabula-py, reportlab, img2pdf, sympy, mpmath, tqdm, python-dateutil, pytz, and joblib. Command-line tools include `unzip`, `unrar`, `7zip`, `bc`, `rg`, `fd`, and `sqlite3`.
+
+### Networking and security
+
+- **No internet access.** The sandbox can't reach the internet, so packages can't be installed at runtime. Only the pre-installed libraries are available.
+- **Zylon API access.** The sandbox can reach the Zylon API, with these environment variables already set: `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL`. Code running in the sandbox, such as a script that uses the Anthropic SDK, can call the model **with the permissions of the user who sent the request**.
+- **Isolation.** Each container runs in its own sandbox, isolated from the host and from other containers.
+
+Your operator can allow access to additional internal services. See [Code Execution](/en/operator-manual/configuration/features/feat-code-execution).
+
+## Work with files
+
+Use the Files API to put files into a container before a request, and to list, download, and delete the files it produced. Every Files API call takes a `scope_id` query parameter: **this is the container ID**.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/gpt/v1/files?scope_id={container}` | Upload a file (multipart) |
+| `PUT` | `/api/gpt/v1/files/{key}?scope_id={container}` | Put a file at a specific key (raw body) |
+| `GET` | `/api/gpt/v1/files?scope_id={container}` | List files |
+| `GET` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Get file metadata |
+| `HEAD` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Check that a file exists (metadata in `X-File-*` headers) |
+| `GET` | `/api/gpt/v1/files/{file_id}/content?scope_id={container}` | Download file content |
+| `DELETE` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Delete one file |
+| `DELETE` | `/api/gpt/v1/files?scope_id={container}&prefix={prefix}` | Delete every uploaded file under a prefix |
+
+### Upload files
+
+Upload a file into the container's uploads folder. It's available to the assistant at `/mnt/user-data/uploads/{filename}`:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@sales.csv"
+```
+
+Response:
+
+```json
+{
+  "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+  "created_at": "2026-10-08T10:30:00Z",
+  "filename": "sales.csv",
+  "mime_type": "text/csv",
+  "size_bytes": 4096,
+  "type": "file",
+  "downloadable": false,
+  "etag": "d41d8cd98f00b204e9800998ecf8427e",
+  "namespace": "session",
+  "scope": { "id": "my-container", "type": "session" }
+}
+```
+
+The `id` is the file ID used by the other endpoints. It's the base64url-encoded sandbox path (here, `/mnt/user-data/uploads/sales.csv`), without padding.
+
+Use the `path` query parameter to choose the key, for example to organize files into folders. Parent folders are created automatically, and uploading to an existing key overwrites it:
+
+```bash
+# Available at /mnt/user-data/uploads/data/2026/q3.xlsx
+curl -X POST "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container&path=data/2026/q3.xlsx" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@q3.xlsx"
+```
+
+A key that starts with `outputs/` places the file in `/mnt/user-data/outputs/` instead. Keys must be relative and can't contain `..` or end with `/`.
+
+You can also put raw bytes at a key, S3-style:
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/gpt/v1/files/config/settings.json?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-binary @settings.json
+```
+
+### Analyze uploaded files
+
+After uploading, send a message with the **same container ID** and refer to the file by its path:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Analyze /mnt/user-data/uploads/sales.csv. Plot monthly revenue and save the chart to /mnt/user-data/outputs/revenue.png"
+      }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+```
+
+### List files
+
+List every file in a container, both uploads and generated outputs, sorted by creation time:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{
+  "data": [
+    {
+      "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+      "filename": "sales.csv",
+      "mime_type": "text/csv",
+      "size_bytes": 4096,
+      "type": "file",
+      "downloadable": false,
+      "scope": { "id": "my-container", "type": "session" }
+    },
+    {
+      "id": "L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw",
+      "filename": "revenue.png",
+      "mime_type": "image/png",
+      "size_bytes": 38211,
+      "type": "file",
+      "downloadable": true,
+      "scope": { "id": "my-container", "type": "session" }
+    }
+  ],
+  "first_id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+  "last_id": "L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw",
+  "has_more": false
+}
+```
+
+`downloadable` is `true` for files in `/mnt/user-data/outputs/` and `false` for uploads.
+
+Optional query parameters:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `limit` | `20` | Page size (1 to 1000) |
+| `after_id` | | Return files after this file ID (next page) |
+| `before_id` | | Return files before this file ID (previous page) |
+| `prefix` | | Only files whose upload key starts with this prefix, for example `data/2026/` |
+
+### Download files
+
+Download a file with its ID:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/files/L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw/content?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -o revenue.png
+```
+
+Add `disposition=inline` to open the file in the browser instead of downloading it.
+
+The file ID is the base64url-encoded sandbox path, so you can also build it yourself:
+
+```bash
+FILE_ID=$(printf '/mnt/user-data/outputs/revenue.png' | base64 | tr '+/' '-_' | tr -d '=')
+```
+
+```python
+import base64
+
+file_id = base64.urlsafe_b64encode(b"/mnt/user-data/outputs/revenue.png").decode().rstrip("=")
+```
+
+### Delete files
+
+Delete one file, whether it's an upload, a generated output, or a workspace file:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/gpt/v1/files/L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{ "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y", "type": "file_deleted" }
+```
+
+Delete every uploaded file under a prefix. Use a trailing `/` so sibling keys that share the same text aren't deleted:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container&prefix=data/2026/" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{ "prefix": "data/2026/", "deleted_count": 3, "type": "prefix_deleted" }
+```
+
+### End-to-end example
+
+```python
+import base64
+import requests
+
+BASE = "https://{BASE_URL}/api/gpt/v1"
+HEADERS = {"Authorization": "Bearer {API_TOKEN}"}
+CONTAINER = "sales-analysis-2026-q3"
+
+# 1. Upload the input file
+with open("sales.csv", "rb") as f:
+    requests.post(f"{BASE}/files", params={"scope_id": CONTAINER},
+                  headers=HEADERS, files={"file": f}).raise_for_status()
+
+# 2. Ask the assistant to analyze it in the same container
+response = requests.post(f"{BASE}/messages", headers=HEADERS, json={
+    "model": "default",
+    "max_tokens": 4096,
+    "container": CONTAINER,
+    "messages": [{
+        "role": "user",
+        "content": "Analyze /mnt/user-data/uploads/sales.csv and save a revenue chart "
+                   "to /mnt/user-data/outputs/revenue.png",
+    }],
+    "tools": [{"name": "code_execution", "type": "code_execution_v1"}],
+}).json()
+print(response["content"][-1]["text"])
+
+# 3. Download every generated output
+files = requests.get(f"{BASE}/files", params={"scope_id": CONTAINER}, headers=HEADERS).json()
+for item in files["data"]:
+    if item["downloadable"]:
+        content = requests.get(f"{BASE}/files/{item['id']}/content",
+                               params={"scope_id": CONTAINER}, headers=HEADERS)
+        with open(item["filename"], "wb") as out:
+            out.write(content.content)
+
+# 4. Clean up
+for item in files["data"]:
+    requests.delete(f"{BASE}/files/{item['id']}", params={"scope_id": CONTAINER}, headers=HEADERS)
+```
+
+## Code execution in the Workspace API
+
+When you use the [Workspace API](/en/developer-manual/build-with-zylon/workspace-api/overview) instead of calling the ZylonGPT API directly, Zylon manages the container for you:
+
+- **The container is the chat thread.** Each thread gets its own sandbox, and the `container` field is set to the thread ID. Files persist for the life of the thread, and threads can't see each other's files.
+- **Code execution is added automatically** when the request uses Skills. You can also enable it explicitly by adding the code execution tools to `pgpt.tools`.
+- **Generated files become artifacts.** When the assistant presents a file, Zylon saves it as an artifact in the project and returns it in the stream as a `zylon-resource` block, so users can preview and download it.
+
+Use the thread endpoints to manage the files in a thread's sandbox:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/v1/app/thread/{threadId}/upload-file` | Upload a file (multipart field `file`, optional `path`) to `/mnt/user-data/uploads/` |
+| `PUT` | `/api/v1/app/thread/{threadId}/put-file/{path}` | Put raw bytes at a key |
+| `GET` | `/api/v1/app/thread/{threadId}/download-file?path={path}` | Download a file by sandbox path, for example `/mnt/user-data/outputs/chart.png` |
+
+```bash
+# Upload a file to the thread's sandbox
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadId}/upload-file" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@sales.csv"
+
+# Download a generated file
+curl "https://{BASE_URL}/api/v1/app/thread/{threadId}/download-file?path=/mnt/user-data/outputs/revenue.png" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -o revenue.png
+```
+
+<Note>
+Downloads follow your organization's settings: generated files (`outputs/`) need generated-resource downloads to be enabled, and uploaded files (`uploads/`) need uploaded-resource downloads to be enabled.
+</Note>
+
+## Response format
+
+Each sub-tool call appears as a `server_tool_use` block followed by its result block.
+
+### Bash command
+
+```json
+{
+  "type": "server_tool_use",
+  "id": "srvtoolu_01B3C4D5E6F7G8H9I0J1K2L3",
+  "name": "bash_code_execution",
+  "input": { "command": "ls -la /mnt/user-data/uploads" }
+},
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01B3C4D5E6F7G8H9I0J1K2L3",
+  "content": {
+    "type": "bash_code_execution_result",
+    "stdout": "total 8\n-rw-r--r-- 1 agent agent 4096 Oct  8 10:30 sales.csv",
+    "stderr": "",
+    "return_code": 0
+  }
+}
+```
+
+A non-zero `return_code` isn't an error: it means the command ran and failed, and the assistant can read `stderr` and retry.
+
+### File operations
+
+**View:**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01C4D5E6F7G8H9I0J1K2L3M4",
+  "content": {
+    "type": "text_editor_code_execution_view_result",
+    "file_type": "text",
+    "content": "{\n  \"setting\": \"value\",\n  \"debug\": true\n}",
+    "num_lines": 4,
+    "start_line": 1,
+    "total_lines": 4
+  }
+}
+```
+
+**Create:**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01D5E6F7G8H9I0J1K2L3M4N5",
+  "content": {
+    "type": "text_editor_code_execution_create_result",
+    "is_file_update": false
+  }
+}
+```
+
+**Edit (`str_replace` and `insert`):**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01E6F7G8H9I0J1K2L3M4N5O6",
+  "content": {
+    "type": "text_editor_code_execution_str_replace_result",
+    "old_start": 3,
+    "old_lines": 1,
+    "new_start": 3,
+    "new_lines": 1,
+    "lines": ["-  \"debug\": true", "+  \"debug\": false"]
+  }
+}
+```
+
+### Errors
+
+When a tool can't run, its result contains an error block:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01VfmxgZ46TiHbmXgy928hQR",
+  "content": {
+    "type": "bash_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": {
+      "code": "unavailable",
+      "explanation": "File not found: /home/agent/workspace/missing.txt"
+    }
+  }
+}
+```
+
+`detail.explanation` holds the underlying reason. It's a Zylon extension and is omitted in Anthropic-compatible responses.
+
+| Situation | Behavior |
+|-----------|----------|
+| Command exceeds its timeout | `return_code: 124`, `stderr: "Command timed out after 60s."` |
+| Output larger than the limit (1 MiB by default) | Output is truncated and ends with `...[truncated]` |
+| File doesn't exist, `old_str` missing or not unique | Error block with the reason in `detail.explanation` |
+| Writing to a read-only folder (`uploads`, `skills`) | Error block: `Path '...' is in a read-only mount` |
+| Path outside the sandbox folders | Error block: `Path '...' does not match any session mount` |
+| Code execution not enabled on the server | Error block: `code_execution provider is not configured.` |
+
+## Tips
+
+- Use one `container` ID per conversation or task, and reuse it for every follow-up and Files API call.
+- Ask for deliverables in `/mnt/user-data/outputs/` so they can be listed and downloaded.
+- Combine code execution with other tools, such as [Web Fetch](/en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool) or [Semantic Search](/en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool), to bring data into the analysis.
+- Delete uploads and outputs you no longer need: files stay in the container until you remove them.
+
+## Next steps
+
+- Learn how messages return tool blocks: [Messages](/en/developer-manual/build-with-zylon/working-with-messages)
+- Handle long-running turns: [Handling stop reasons](/en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons)

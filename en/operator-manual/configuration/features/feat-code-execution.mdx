@@ -1,0 +1,106 @@
+---
+title: "Code Execution"
+description: "Let the assistant run code and work with files in isolated sandboxes."
+---
+
+<Note>**Feature in Beta**</Note>
+
+Code execution lets the assistant run bash commands and create, edit, and present files inside an isolated sandbox. Each chat thread (or API `container`) gets its own sandbox, created on demand by the bundled OpenSandbox service on the same Kubernetes cluster.
+
+Users see it in the Workspace when they work with Skills or generate files. Developers can use it through the API; see [Code Execution tool](/en/developer-manual/build-with-zylon/tools/built-in/code-execution-tool).
+
+### Configuration
+
+| Key | Default | Values | Description |
+|-----|---------|--------|-------------|
+| `features.codeExecution.enabled` | `true` | `true \| false` | Enable code execution |
+| `features.codeExecution.timeout` | `60` | seconds | Default timeout for each command run in the sandbox |
+| `external.opensandbox.sessionTTLSeconds` | `600` | seconds | How long an idle sandbox is kept running before it's shut down. Files are kept; the next request starts a new sandbox with the same files. |
+
+### Example
+
+```yaml
+features:
+    codeExecution:
+        enabled: true
+        timeout: 60
+```
+
+To turn code execution off:
+
+```yaml
+features:
+    codeExecution:
+        enabled: false
+```
+
+### How it works
+
+- **One sandbox per thread.** Each sandbox is a pod in the `opensandbox-runtimes` namespace, created when the assistant first runs code in a thread and shut down after `sessionTTLSeconds` of inactivity.
+- **Persistent files.** Uploads, outputs, and workspace files are stored in the `sessions` bucket of the platform object storage, so they survive sandbox restarts and platform upgrades.
+- **Pre-pulled images.** The sandbox images are pulled during installation and upgrade, so no registry access is needed when a sandbox starts. This also works in airgapped installations.
+
+### Network access
+
+Sandboxes have no internet access. By default, a code execution sandbox can only reach:
+
+- DNS.
+- The Zylon API, so code in the sandbox can call the model with the permissions of the user who sent the request.
+
+To let sandboxes reach other services inside the cluster, such as an internal database or API, add them to `external.opensandbox.codeExecution.internal.services`. Each entry is a Kubernetes NetworkPolicy peer:
+
+```yaml
+external:
+    opensandbox:
+        codeExecution:
+            internal:
+                services:
+                    - namespaceSelector:
+                          matchLabels:
+                              kubernetes.io/metadata.name: analytics
+                      podSelector:
+                          matchLabels:
+                              app: postgres
+```
+
+<Warning>
+Code in the sandbox is written by the AI model. Only allow services that you're comfortable exposing to any user who can chat with the assistant.
+</Warning>
+
+### Resources
+
+By default, sandboxes don't have CPU or memory limits. To cap the total resources sandboxes can use, enable the quota and limit range for the sandbox namespace:
+
+```yaml
+opensandbox:
+    runtime:
+        resourceQuota:
+            enabled: true    # Total for all sandboxes: 50 pods, 20 CPU, 40Gi memory (limits)
+        limitRange:
+            enabled: true    # Per sandbox: 1 CPU, 512Mi memory by default
+```
+
+### Sandbox images
+
+| Key | Default |
+|-----|---------|
+| `external.opensandbox.codeExecution.image.repository` | `zylon-sandbox-templates/code-execution` |
+| `external.opensandbox.codeExecution.image.tag` | `1.1.0` |
+
+The image includes Python 3 with common data libraries (pandas, numpy, matplotlib, openpyxl, python-docx, pypdf, and others) and command-line tools such as `unzip`, `rg`, and `sqlite3`.
+
+### Troubleshooting
+
+Check the sandboxes that are running:
+
+```bash
+sudo kubectl get pods -n opensandbox-runtimes
+```
+
+Check the OpenSandbox server logs:
+
+```bash
+sudo kubectl logs -n opensandbox deploy/opensandbox-server --tail=200
+```
+
+If the assistant reports `code_execution provider is not configured.`, make sure `features.codeExecution.enabled` is `true` and run `sudo zylon-cli sync`.

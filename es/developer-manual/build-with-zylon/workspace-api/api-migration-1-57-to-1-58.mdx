@@ -292,22 +292,6 @@ Para seleccionar artefactos, usa `artifacts.document`, `artifacts.connector`, `a
 
 Es un cuerpo parcial que debes combinar con `pgpt` y, para el ámbito de proyecto, `project_id`. No envíes los campos de los ejemplos antiguos de referencia `artifact_ids` o `all_artifacts` en el nivel superior: los campos desconocidos se ignoran y no seleccionan artefactos. Una categoría no puede repetir el mismo ámbito ni combinar `all_artifacts: true` con `artifacts_ids` no vacío. Consulta [peticiones de chat](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#chat-puntual).
 
-### Crear un hilo con su primera interacción
-
-`POST /app/project/{projectID}/thread/interaction` requiere un único mensaje de usuario en `pgpt.messages`. Usa `thread_name` y `thread_visibility`, en lugar de los campos `name` y `visibility` de la creación de un hilo sin interacción. Sus valores por defecto son `New Thread` y `Private`. El campo opcional `artifacts` usa los mismos selectores por ámbito.
-
-```json
-{
-  "thread_name": "Resumen del proyecto",
-  "thread_visibility": "Private",
-  "pgpt": {
-    "messages": [{ "role": "user", "content": "Resume el proyecto." }]
-  }
-}
-```
-
-La primera interacción se devuelve por streaming. Consulta [hilos e interacciones](/es/developer-manual/build-with-zylon/workspace-api/chats/threads) para ver la petición y el stream completos.
-
 ### Archivos de hilo y estado de lectura
 
 1.58 añade la escritura de archivos sin multipart con `PUT /app/thread/{threadID}/put-file/{path...}`. Envía los bytes en el cuerpo. `POST /app/thread/{threadID}/upload-file` sigue usando el campo multipart `file` y ahora acepta `path` y `namespace` opcionales. Las subidas multipart, escrituras sin multipart y descargas seleccionan `session` (por defecto), `artifacts` o `skills` mediante `namespace`; la descarga también acepta `disposition=attachment` (por defecto) o `inline`. Consulta [archivos de hilo](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#archivos-del-hilo) para subida, descarga y conversión de artefactos MDX.

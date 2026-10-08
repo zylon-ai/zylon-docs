@@ -292,22 +292,6 @@ For explicit artifact selection, use `artifacts.document`, `artifacts.connector`
 
 This is a partial request body to combine with `pgpt` and, for project scope, `project_id`. Do not send the old reference examples' top-level `artifact_ids` or `all_artifacts`: unknown fields are ignored, so they do not select artifacts. A category cannot repeat the same scope or combine `all_artifacts: true` with nonempty `artifacts_ids`. See [chat requests](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#one-shot-chat).
 
-### Create a thread with its first interaction
-
-`POST /app/project/{projectID}/thread/interaction` requires a single user message in `pgpt.messages`. Use `thread_name` and `thread_visibility`, rather than the `name` and `visibility` fields used to create a thread alone. They default to `New Thread` and `Private`. Optional `artifacts` uses the same scoped selectors above.
-
-```json
-{
-  "thread_name": "Project summary",
-  "thread_visibility": "Private",
-  "pgpt": {
-    "messages": [{ "role": "user", "content": "Summarize the project." }]
-  }
-}
-```
-
-This request streams the first interaction. See [threads and interactions](/en/developer-manual/build-with-zylon/workspace-api/chats/threads) for the complete request and stream.
-
 ### Thread files and read state
 
 1.58 adds raw file writes with `PUT /app/thread/{threadID}/put-file/{path...}`. Send bytes as the body. Multipart `POST /app/thread/{threadID}/upload-file` still uses `file` and now accepts optional `path` and `namespace`. Uploads, raw writes, and downloads select `session` (default), `artifacts`, or `skills` with `namespace`; downloads also accept `disposition=attachment` (default) or `inline`. See [thread files](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#thread-files) for upload, download, and MDX artifact conversion.

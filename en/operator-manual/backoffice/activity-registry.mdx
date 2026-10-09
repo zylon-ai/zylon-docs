@@ -1,0 +1,59 @@
+---
+title: Activity Registry
+description: Inspect individual recorded chat requests in Backoffice Activity explorer.
+icon: list-check
+---
+
+## Overview
+
+The Activity Registry is available in the UI as **Backoffice > Platform > Activity explorer**. It complements the [Usage Dashboard](/en/operator-manual/backoffice/usage-dashboard): Usage summarizes consumption, while Activity explorer lets you inspect individual recorded chat requests.
+
+Access requires **Operator** or **Super Admin** permissions, enabled [Audit Log](/en/operator-manual/configuration/features/feat-audit) logging and storage, and the **Activity Registry** feature. If Activity Registry is disabled, its navigation item and Usage report links to requests are unavailable; the Activity explorer route shows a disabled state.
+
+This explorer lists gateway **chat requests**. It is not a registry of every platform action, file ingestion, or embedding event.
+
+![Activity explorer with synthetic example requests](/images/operator-manual/backoffice/activity-registry.png)
+
+## Find requests
+
+1. Open **Activity explorer**, or choose **View requests** from a Usage report to carry its selected scope into the explorer.
+2. Set **Gateway**, **API key**, **Attributed user**, **Status**, and **Date range**. These are the [same filters and date limits as Usage](/en/operator-manual/backoffice/usage-dashboard#filters), including the last-30-days default and 90-day maximum.
+3. Review **Chat requests** and **Successful requests** for the selected scope. The successful percentage and count use requests without a recorded error.
+4. Browse the **Request explorer** table. It shows time, attributed user, API key, token total with input/output breakdown, response latency, and status.
+5. Use pagination to browse **25 requests per page**, then choose **Details** on a request.
+
+Filter and page state are stored in the URL. Changing a filter returns to the first page. **Reset filters** restores the default scope.
+
+**Non API Users** indicates no API key was recorded. **Unattributed** indicates no account identity was recorded. Known names are preferred; recorded emails or IDs provide fallbacks when names are unavailable.
+
+## Inspect request details
+
+The **Request details** dialog opens for the selected record and loads its recorded content. The header shows the request ID, timestamp, and status.
+
+![Request details with synthetic configuration and response data](/images/operator-manual/backoffice/activity-request-details.png)
+
+The dialog includes:
+
+- **Request metadata**: attributed identity and key, recorded input/output tokens, response latency, time to first response block, and model latency when available.
+- **Recorded error**: error text for a request with a recorded failure.
+- **Requested configuration**: sampling controls such as temperature, Top P, Top K, seed, and max tokens, plus recorded thinking, effort, tool-choice, and streaming settings.
+- **Structured response**: recorded model, stop reason, role, token usage, and expandable safe JSON views of the request and response.
+- **Tools recorded**: tool names reported for the request; this does not establish successful execution.
+- **Input** and **Output**: available text from the last recorded user message and the response. Expand **Other recorded messages** to inspect earlier recorded user and assistant messages.
+
+The JSON views contain a selected projection of recorded data. They omit system messages, tool arguments, credentials, and reasoning blocks, and do not reproduce the complete request or response.
+
+## Interpret missing data
+
+A gateway record can be partial. Earlier conversation history, a system prompt, input text, output text, or configuration may be absent. The dialog shows empty or **Not recorded** states where applicable; token values and timings can display **—**. A recorded zero remains zero.
+
+Configuration describes what the client requested. Missing values do not establish the effective model defaults or zero usage. Unspecified or unrecognized thinking settings display **Disabled** in the UI, and unrecognized effort displays **None**; these labels do not establish what the model actually did.
+
+API requests are attributed to the API-key owner, who may differ from the end user. Success means no error was recorded; it is not an independent confirmation of the quality of the response.
+
+## Loading and retention
+
+- Failed explorer loads offer a retry control. Failed request-detail loads offer **Retry** inside the dialog.
+- If no requests match, adjust or reset filters. Partial failures loading filter names leave recorded IDs visible with a notice.
+- The explorer is read-only and has no export or download controls.
+- Only stored, retained records are available. [Hard Delete](/en/operator-manual/configuration/cron-tasks/hard-delete), retention settings, and disabled logging can limit the history and details shown.

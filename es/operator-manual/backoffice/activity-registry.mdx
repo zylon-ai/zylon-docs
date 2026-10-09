@@ -1,0 +1,61 @@
+---
+title: Registro de actividad
+description: Inspecciona solicitudes de chat registradas en Activity explorer de Backoffice.
+icon: list-check
+---
+
+## Resumen
+
+Activity Registry está disponible en la interfaz como **Backoffice > Platform > Activity explorer**. Complementa el [Panel de uso](/es/operator-manual/backoffice/usage-dashboard): Usage resume el consumo y Activity explorer permite inspeccionar solicitudes de chat individuales.
+
+El acceso requiere permisos **Operator** o **Super Admin**, registro y almacenamiento de [Audit Log](/es/operator-manual/configuration/features/feat-audit) habilitados y la función **Activity Registry**. Si esta función está deshabilitada, no aparecen su opción de navegación ni los enlaces a solicitudes desde los informes de Usage; la ruta de Activity explorer muestra un estado deshabilitado.
+
+El explorador lista **solicitudes de chat** de gateways. No registra todas las acciones de la plataforma ni los eventos de ingestión o embeddings.
+
+Las capturas muestran la interfaz en inglés con datos sintéticos de ejemplo. Los nombres de controles corresponden a esa interfaz.
+
+![Activity explorer con solicitudes sintéticas](/images/operator-manual/backoffice/activity-registry.png)
+
+## Encontrar solicitudes
+
+1. Abre **Activity explorer** o elige **View requests** en un informe de Usage para conservar su alcance seleccionado.
+2. Configura **Gateway**, **API key**, **Attributed user**, **Status** y **Date range**. Son los [mismos filtros y límites de fechas de Usage](/es/operator-manual/backoffice/usage-dashboard#filtros), con los últimos 30 días por defecto y un máximo de 90 días.
+3. Revisa **Chat requests** y **Successful requests**. El porcentaje y número de solicitudes exitosas cuentan solicitudes sin error registrado.
+4. Revisa la tabla **Request explorer**: fecha y hora, usuario atribuido, clave de API, tokens totales con desglose de entrada/salida, latencia de respuesta y estado.
+5. Usa la paginación de **25 solicitudes por página** y elige **Details** en una solicitud.
+
+Los filtros y la página se guardan en la URL. Cambiar un filtro vuelve a la primera página. **Reset filters** restablece el alcance predeterminado.
+
+**Non API Users** indica que no se registró una clave de API. **Unattributed** indica que no se registró una identidad de cuenta. Se prefieren nombres conocidos; los emails o IDs registrados sirven como alternativa cuando faltan nombres.
+
+## Inspeccionar los detalles
+
+El diálogo **Request details** carga el contenido registrado de la solicitud seleccionada. La cabecera muestra su ID, fecha y hora, y estado.
+
+![Detalles de solicitud con configuración y respuesta sintéticas](/images/operator-manual/backoffice/activity-request-details.png)
+
+El diálogo incluye:
+
+- **Metadatos de solicitud**: identidad y clave atribuidas, tokens de entrada/salida, latencia de respuesta, tiempo hasta el primer bloque y latencia del modelo, cuando están disponibles.
+- **Recorded error**: texto del error de una solicitud con fallo registrado.
+- **Requested configuration**: controles como temperatura, Top P, Top K, seed y max tokens, además de ajustes registrados de thinking, effort, selección de herramientas y streaming.
+- **Structured response**: modelo, motivo de parada, rol, uso de tokens y vistas expandibles de JSON seguro para solicitud y respuesta.
+- **Tools recorded**: nombres de herramientas registrados; no demuestra que se ejecutaran correctamente.
+- **Input** y **Output**: texto disponible del último mensaje de usuario registrado y de la respuesta. Expande **Other recorded messages** para revisar mensajes anteriores de usuario y asistente.
+
+Las vistas JSON contienen una proyección seleccionada de los datos registrados. Omiten mensajes de sistema, argumentos de herramientas, credenciales y bloques de razonamiento; no reproducen la solicitud o respuesta completas.
+
+## Interpretar datos ausentes
+
+Los registros del gateway pueden ser parciales. Pueden faltar historial anterior, prompt de sistema, entrada, salida o configuración. El diálogo muestra estados vacíos o **Not recorded** cuando corresponde; tokens y tiempos pueden mostrar **—**. Un cero registrado se conserva como cero.
+
+La configuración describe lo que pidió el cliente. La ausencia de valores no determina los valores efectivos del modelo ni un consumo cero. Thinking no especificado o no reconocido aparece como **Disabled** y effort no reconocido como **None**; estas etiquetas no demuestran lo que hizo el modelo.
+
+Las solicitudes de API se atribuyen al propietario de la clave, que puede ser distinto del usuario final. Success significa que no se registró un error, no una confirmación independiente de la calidad de la respuesta.
+
+## Carga y retención
+
+- Los fallos al cargar el explorador ofrecen un control para reintentar. Los fallos en detalles ofrecen **Retry** dentro del diálogo.
+- Si no coinciden solicitudes, ajusta o restablece los filtros. Los fallos parciales al cargar nombres dejan visibles los IDs registrados junto a un aviso.
+- El explorador es de solo lectura y no ofrece exportación ni descarga.
+- Solo están disponibles los registros almacenados y conservados. [Hard Delete](/es/operator-manual/configuration/cron-tasks/hard-delete), la retención y el registro deshabilitado pueden limitar el historial y los detalles.

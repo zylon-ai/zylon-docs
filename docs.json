@@ -335,7 +335,8 @@
                   "en/operator-manual/backoffice/accessing-the-backoffice",
                   "en/operator-manual/backoffice/platform-backoffice",
                   "en/operator-manual/backoffice/guardrails",
-                  "en/operator-manual/backoffice/usage-dashboard"
+                  "en/operator-manual/backoffice/usage-dashboard",
+                  "en/operator-manual/backoffice/activity-registry"
                 ]
               },
               {
@@ -754,7 +755,8 @@
                   "es/operator-manual/backoffice/accessing-the-backoffice",
                   "es/operator-manual/backoffice/platform-backoffice",
                   "es/operator-manual/backoffice/guardrails",
-                  "es/operator-manual/backoffice/usage-dashboard"
+                  "es/operator-manual/backoffice/usage-dashboard",
+                  "es/operator-manual/backoffice/activity-registry"
                 ]
               },
               {

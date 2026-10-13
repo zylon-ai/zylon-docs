@@ -1,0 +1,55 @@
+---
+title: "Autenticación para acciones sensibles"
+description: "Referencia de compliance para las acciones protegidas por la vigencia de autenticación."
+---
+
+Zylon puede exigir una autenticación reciente antes de que un principal realice una acción sensible del espacio de trabajo o del backoffice. Este control añade un requisito de reautenticación limitado en el tiempo a las comprobaciones existentes de permisos y autorización.
+
+<Warning>
+La vigencia de autenticación no se aplica a las peticiones a la API autenticadas con tokens. Las integraciones basadas en tokens no necesitan pasos adicionales de reautenticación ni cambios en sus flujos actuales.
+</Warning>
+
+La función puede [activarse y configurarse por nivel de riesgo](/es/operator-manual/configuration/features/authentication-freshness). Cuando está activada, la comprobación específica de cada acción solo es válida durante el periodo de vigencia configurado. Los periodos bajo, medio y alto son independientes.
+
+## Acciones protegidas
+
+La siguiente tabla refleja los puntos actuales del backend que llaman a `assertPrincipalAuthChallengeIsValid`. Es una referencia basada en el código y debe revisarse después de cualquier cambio en las rutas de autorización sensibles.
+
+| Área | Acción protegida | Método backend | Nivel de riesgo |
+| --- | --- | --- | --- |
+| Organización | Crear una organización | `createOrganization` | Medio |
+| Organización | Eliminar una organización, incluido su contenido | `deleteOrganization` | Alto |
+| Organización | Actualizar la configuración de una organización | `updateOrganization` | Bajo |
+| Gateway | Crear un gateway | `createGateway` | Alto |
+| Gateway | Eliminar un gateway | `deleteGateway` | Alto |
+| Usuarios de gateway | Añadir un usuario a un gateway | `addUserToGateway` | Medio |
+| Usuarios de gateway | Cambiar el rol de un usuario de gateway | `updateUserRole` | Medio |
+| Usuarios de gateway | Activar un usuario de gateway | `setGatewayUserState` | Bajo |
+| Usuarios de gateway | Desactivar un usuario de gateway | `setGatewayUserState` | Alto |
+| Usuarios de gateway | Eliminar un usuario de un gateway | `removeGatewayUser` | Medio |
+| Proyecto | Transferir la propiedad de un proyecto | `transferProjectOwnership` | Medio |
+| Proyecto | Actualizar la configuración de un proyecto | `updateProject` | Bajo |
+| Proyecto | Añadir miembros a un proyecto | `addMembersToProject` | Medio |
+| Proyecto | Actualizar los roles de miembros de un proyecto | `updateMemberRoles` | Medio |
+| Proyecto | Eliminar un miembro de un proyecto | `removeMemberFromProject` | Medio |
+| Proyecto | Borrado lógico de un proyecto | `deleteProject` | Alto |
+| Proyecto | Borrado permanente de un proyecto | `hardDeleteProject` | Alto |
+| Tokens de API | Crear un token de API | `createApiToken` | Alto |
+| Tokens de API | Eliminar un token de API | `deleteTokenByHash` | Alto |
+| Artefactos | Crear artefactos de tipo conector | `createArtifact` | Bajo |
+| Artefactos | Eliminar artefactos | `deleteArtifactsById` | Alto |
+| Artefactos | Eliminar un documento ingerido y su entidad | `scheduleDeleteVectorsAndEntity` | Alto |
+| Usuarios | Cambiar el rol de un usuario | `updateUser` | Medio al mantener o reducir privilegios; alto al conceder un rol superior |
+| Usuarios | Añadir un usuario a una organización | `addUserToOrganization` | Alto |
+| Usuarios | Activar un usuario | `setUserState` | Alto |
+| Usuarios | Desactivar un usuario | `setUserState` | Medio |
+| Cuentas | Activar una cuenta | `updateAccount` | Alto |
+| Cuentas | Desactivar una cuenta | `updateAccount` | Bajo |
+
+Los principales autenticados con tokens están exentos de esta comprobación por diseño. Esto no omite las comprobaciones normales de permisos, ámbitos u ownership del endpoint.
+
+## Métodos de autenticación y gestión de fallos
+
+Para los usuarios interactivos, el frontend puede responder al desafío de autenticación mediante la contraseña configurada o el flujo SSO disponible. Si no existe un desafío válido o este ha caducado, la acción protegida no continúa hasta que el usuario vuelve a autenticarse. Google y Microsoft SSO pueden redirigir el navegador fuera de la petición original; los operadores deben contemplar que el usuario tenga que repetir la acción al volver.
+
+Para conocer la configuración y los periodos de vigencia exactos, consulta [Vigencia de autenticación](/es/operator-manual/configuration/features/authentication-freshness).

@@ -1,0 +1,34 @@
+---
+title: "Autenticación para acciones sensibles"
+description: "Descubre cuándo Zylon solicita volver a autenticarse antes de realizar una acción sensible."
+---
+
+Zylon puede solicitarte que vuelvas a autenticarte antes de realizar acciones que podrían tener un impacto importante en la seguridad o en la operación. Esta comprobación adicional ayuda a proteger tu espacio de trabajo si una sesión activa queda desatendida o es utilizada por otra persona.
+
+![Modal de reautenticación para una acción sensible](/images/user-manual/authentication-for-sensitive-actions.png)
+
+<Warning>
+La vigencia de autenticación no se aplica a las peticiones a la API autenticadas con tokens. Las integraciones basadas en tokens no muestran este modal, por lo que los usuarios que ejecuten flujos automatizados con tokens de API no necesitan modificar sus flujos actuales.
+</Warning>
+
+## Cuándo se solicita la reautenticación
+
+La comprobación puede aplicarse a acciones sensibles del espacio de trabajo y del backoffice, como:
+
+- eliminar organizaciones, proyectos, gateways, artefactos, usuarios o tokens;
+- crear tokens de API o gateways;
+- cambiar membresías, roles o el estado de una cuenta; y
+- otros cambios administrativos protegidos según su nivel de riesgo.
+
+Consulta la [referencia de seguridad del Manual del Operador](/es/operator-manual/security/authentication-for-sensitive-actions) para ver la lista completa de acciones protegidas y sus niveles de riesgo.
+
+## Cómo funciona
+
+Cuando tu autenticación reciente deja de estar vigente para la acción, Zylon muestra un modal de **Confirmar acceso**. Según los proveedores de autenticación habilitados en tu instancia, puedes:
+
+1. introducir tu contraseña de Zylon; o
+2. volver a autenticarte con Google o Microsoft SSO.
+
+Después de validar correctamente la autenticación, Zylon normalmente continúa la acción de forma automática. Con Google o Microsoft SSO, la redirección al proveedor puede interrumpir la petición original. Si la acción no continúa automáticamente al volver a Zylon, repite la acción.
+
+El tiempo durante el que una autenticación permanece vigente depende del nivel de riesgo de la acción y lo configura el operador. Consulta [Configuración de la vigencia de autenticación](/es/operator-manual/configuration/features/authentication-freshness) para obtener más información.

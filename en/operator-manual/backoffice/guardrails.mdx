@@ -1,0 +1,116 @@
+---
+title: Guardrails
+description: Create regex-based guardrails and assign them to gateways to block AI requests that match sensitive patterns.
+icon: shield
+---
+
+## Overview
+**Guardrails** let Operators define rules that inspect AI traffic flowing through a gateway. When a guardrail is triggered, the AI request is **blocked** before it reaches the model.
+
+Guardrails are useful to prevent sensitive or non-compliant data (such as national IDs, bank accounts, or credit cards) from being sent to the AI, helping you enforce data protection and compliance policies.
+
+Each guardrail is:
+
+- **Assigned to one or more gateways**, so it only applies to the traffic of those gateways.
+- **Evaluated on every AI request** handled by the assigned gateways.
+- **Blocking**: when the guardrail matches, the request is rejected.
+
+<Note>
+For now, guardrails support **regular expressions (regex)** only. Additional guardrail types may be added in the future.
+</Note>
+
+Only users with the **Operator** role can manage guardrails. Availability and limits depend on the active license.
+
+## How guardrails work
+A guardrail contains one or more **regex patterns**. On each AI request routed through an assigned gateway:
+
+1. The request content is checked against the guardrail's regex patterns.
+2. If **any** pattern matches, the guardrail is triggered.
+3. The AI request is **blocked** and does not reach the model.
+
+Because regex guardrails run locally as a text match, they add virtually no latency to the request.
+
+## Create a guardrail
+To create a guardrail:
+
+1. Open **Guardrails** in the Platform Backoffice.
+2. Click **Add guardrail**.
+3. Enter a **name** and an optional **description**.
+4. Select the **gateways** this guardrail should apply to.
+5. Add one or more **regex** patterns. Use **Add regex** to define multiple patterns in the same guardrail.
+6. Save the guardrail.
+
+Once saved, the guardrail is active on every assigned gateway and starts blocking matching requests immediately.
+
+## Manage guardrails
+From the guardrails list you can review each guardrail's name, description, type, effect, and the gateways it is assigned to.
+
+- **Edit** a guardrail to update its patterns or reassign it to different gateways.
+- **Delete** a guardrail to stop it from blocking requests.
+
+## Regex examples
+The table below lists common regex patterns you can use as a starting point for your guardrails. Adjust them to match the exact formats used in your organization.
+
+| Data type | Example regex |
+| --- | --- |
+| Spanish DNI | `\b\d{8}[A-Za-z]\b` |
+| Spanish NIE | `\b[XYZ]\d{7}[A-Za-z]\b` |
+| IBAN (bank account) | `\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b` |
+| Spanish CCC (bank account) | `\b\d{4}[ -]?\d{4}[ -]?\d{2}[ -]?\d{10}\b` |
+| Credit card number | `\b(?:\d[ -]?){13,16}\b` |
+| Email address | `\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b` |
+| Phone number (Spain) | `(?:\+34\|0034)?[ -]?[6-9]\d{2}[ -]?\d{3}[ -]?\d{3}` |
+| Spanish social security number | `\b\d{2}[ -]?\d{8}[ -]?\d{2}\b` |
+| IPv4 address | `\b(?:\d{1,3}\.){3}\d{1,3}\b` |
+
+### Copy-ready regex snippets
+Use the code blocks below when you want a one-click copy action.
+
+#### Spanish DNI
+```txt
+\b\d{8}[A-Za-z]\b
+```
+
+#### Spanish NIE
+```txt
+\b[XYZ]\d{7}[A-Za-z]\b
+```
+
+#### IBAN
+```txt
+\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b
+```
+
+#### Spanish CCC
+```txt
+\b\d{4}[ -]?\d{4}[ -]?\d{2}[ -]?\d{10}\b
+```
+
+#### Credit card number
+```txt
+\b(?:\d[ -]?){13,16}\b
+```
+
+#### Email address
+```txt
+\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b
+```
+
+#### Phone number (Spain)
+```txt
+(?:\+34|0034)?[ -]?[6-9]\d{2}[ -]?\d{3}[ -]?\d{3}
+```
+
+#### Spanish social security number
+```txt
+\b\d{2}[ -]?\d{8}[ -]?\d{2}\b
+```
+
+#### IPv4 address
+```txt
+\b(?:\d{1,3}\.){3}\d{1,3}\b
+```
+
+<Warning>
+Regex patterns are matched exactly as written. Always test your patterns against representative data to avoid false positives (blocking valid requests) or false negatives (letting sensitive data through).
+</Warning>

@@ -65,7 +65,9 @@
                 "pages": [
                   "en/user-manual/workspace-look-and-feel",
                   "en/user-manual/adding-company-context",
-                  "en/user-manual/engagement-analytics"
+                  "en/user-manual/block-resource-downloads",
+                  "en/user-manual/engagement-analytics",
+                  "en/user-manual/managing-organization-skills"
                 ]
               },
               {
@@ -85,6 +87,7 @@
                   {
                     "group": "External Connectors",
                     "pages": [
+                      "en/user-manual/connectors/google-drive",
                       "en/user-manual/connectors/sharepoint",
                       "en/user-manual/connectors/confluence",
                       "en/user-manual/connectors/confluence-server",
@@ -92,6 +95,15 @@
                       "en/user-manual/connectors/claromentis"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Skills",
+                "pages": [
+                  "en/user-manual/skills/introduction-to-skills",
+                  "en/user-manual/skills/creating-a-skill",
+                  "en/user-manual/skills/installing-from-organization",
+                  "en/user-manual/skills/using-skills-in-chat"
                 ]
               },
               {
@@ -150,6 +162,12 @@
                 "group": "n8n",
                 "pages": [
                   "en/user-manual/n8n"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "en/user-manual/security/authentication-for-sensitive-actions"
                 ]
               }
             ]
@@ -319,6 +337,7 @@
                   "en/operator-manual/backoffice/roles-and-permissions",
                   "en/operator-manual/backoffice/accessing-the-backoffice",
                   "en/operator-manual/backoffice/platform-backoffice",
+                  "en/operator-manual/backoffice/guardrails",
                   "en/operator-manual/backoffice/usage-dashboard",
                   "en/operator-manual/backoffice/system-monitor"
                 ]
@@ -356,6 +375,7 @@
                     "group": "Knowledge Base Connectors",
                     "pages": [
                       "en/operator-manual/knowledge-base/index",
+                      "en/operator-manual/knowledge-base/google-drive",
                       "en/operator-manual/knowledge-base/sharepoint",
                       "en/operator-manual/knowledge-base/confluence",
                       "en/operator-manual/knowledge-base/confluence-server",
@@ -377,7 +397,8 @@
                       "en/operator-manual/configuration/search",
                       "en/operator-manual/configuration/features/feat-webextract",
                       "en/operator-manual/configuration/features/feat-websearch",
-                      "en/operator-manual/configuration/features/feat-multimodal"
+                      "en/operator-manual/configuration/features/feat-multimodal",
+                      "en/operator-manual/configuration/features/authentication-freshness"
                     ]
                   },
                   {
@@ -421,7 +442,8 @@
                 "pages": [
                   "en/operator-manual/instance-hardening/index",
                   "en/operator-manual/instance-hardening/airgap-your-server",
-                  "en/operator-manual/instance-hardening/disk-encryption"
+                  "en/operator-manual/instance-hardening/disk-encryption",
+                  "en/operator-manual/security/authentication-for-sensitive-actions"
                 ]
               },
               {
@@ -476,7 +498,8 @@
                 "pages": [
                   "es/user-manual/workspace-look-and-feel",
                   "es/user-manual/adding-company-context",
-                  "es/user-manual/engagement-analytics"
+                  "es/user-manual/engagement-analytics",
+                  "es/user-manual/managing-organization-skills"
                 ]
               },
               {
@@ -496,6 +519,7 @@
                   {
                     "group": "Conectores Externos",
                     "pages": [
+                      "es/user-manual/connectors/google-drive",
                       "es/user-manual/connectors/sharepoint",
                       "es/user-manual/connectors/confluence",
                       "es/user-manual/connectors/confluence-server",
@@ -503,6 +527,15 @@
                       "es/user-manual/connectors/claromentis"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Habilidades",
+                "pages": [
+                  "es/user-manual/skills/introduction-to-skills",
+                  "es/user-manual/skills/creating-a-skill",
+                  "es/user-manual/skills/installing-from-organization",
+                  "es/user-manual/skills/using-skills-in-chat"
                 ]
               },
               {
@@ -561,6 +594,12 @@
                 "group": "n8n",
                 "pages": [
                   "es/user-manual/n8n"
+                ]
+              },
+              {
+                "group": "Seguridad",
+                "pages": [
+                  "es/user-manual/security/authentication-for-sensitive-actions"
                 ]
               }
             ]
@@ -723,6 +762,7 @@
                   "es/operator-manual/backoffice/roles-and-permissions",
                   "es/operator-manual/backoffice/accessing-the-backoffice",
                   "es/operator-manual/backoffice/platform-backoffice",
+                  "es/operator-manual/backoffice/guardrails",
                   "es/operator-manual/backoffice/usage-dashboard",
                   "es/operator-manual/backoffice/system-monitor"
                 ]
@@ -760,6 +800,7 @@
                     "group": "Conectores de Bases de Conocimiento",
                     "pages": [
                       "es/operator-manual/knowledge-base/index",
+                      "es/operator-manual/knowledge-base/google-drive",
                       "es/operator-manual/knowledge-base/sharepoint",
                       "es/operator-manual/knowledge-base/confluence",
                       "es/operator-manual/knowledge-base/confluence-server",
@@ -781,7 +822,8 @@
                       "es/operator-manual/configuration/search",
                       "es/operator-manual/configuration/features/feat-webextract",
                       "es/operator-manual/configuration/features/feat-websearch",
-                      "es/operator-manual/configuration/features/feat-multimodal"
+                      "es/operator-manual/configuration/features/feat-multimodal",
+                      "es/operator-manual/configuration/features/authentication-freshness"
                     ]
                   },
                   {
@@ -825,7 +867,8 @@
                 "pages": [
                   "es/operator-manual/instance-hardening/index",
                   "es/operator-manual/instance-hardening/airgap-your-server",
-                  "es/operator-manual/instance-hardening/disk-encryption"
+                  "es/operator-manual/instance-hardening/disk-encryption",
+                  "es/operator-manual/security/authentication-for-sensitive-actions"
                 ]
               },
               {

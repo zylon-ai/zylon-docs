@@ -1,0 +1,34 @@
+---
+title: "Authentication for Sensitive Actions"
+description: "Understand when Zylon asks you to authenticate again before performing a sensitive action."
+---
+
+Zylon can ask you to authenticate again before performing actions that could have a significant security or operational impact. This additional check helps protect your workspace if an active session is left unattended or accessed by someone else.
+
+![Re-authentication modal for a sensitive action](/images/user-manual/authentication-for-sensitive-actions.png)
+
+<Warning>
+Authentication freshness does not apply to API requests authenticated with tokens. Token-based integrations do not display this modal, so users running automated flows with API tokens do not need to change their existing workflows.
+</Warning>
+
+## When re-authentication is required
+
+The check can be applied to sensitive workspace and backoffice actions, including:
+
+- deleting organizations, projects, gateways, artifacts, users, or tokens;
+- creating API tokens or gateways;
+- changing membership, roles, or account state; and
+- other administrative changes that are protected according to their risk level.
+
+The complete list of currently protected actions and their risk levels is available in the [Operator Manual security reference](/en/operator-manual/security/authentication-for-sensitive-actions).
+
+## How it works
+
+When your recent authentication is no longer fresh for the action, Zylon displays a **Confirm Access** modal. Depending on the authentication providers enabled for your instance, you can:
+
+1. enter your Zylon password; or
+2. authenticate again with Google or Microsoft SSO.
+
+After the authentication is successfully validated, Zylon normally continues with the action automatically. With Google or Microsoft SSO, the provider redirect can interrupt the original request. If the action does not continue automatically after returning to Zylon, repeat the action.
+
+The time for which an authentication remains fresh depends on the action's risk level and is configured by the operator. See [Authentication Freshness configuration](/en/operator-manual/configuration/features/authentication-freshness) for details.

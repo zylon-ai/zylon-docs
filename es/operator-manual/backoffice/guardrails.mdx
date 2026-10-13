@@ -1,0 +1,116 @@
+---
+title: Guardrails
+description: Crea guardrails basados en regex y asígnalos a gateways para bloquear peticiones de IA que coincidan con patrones sensibles.
+icon: shield
+---
+
+## Resumen
+Los **Guardrails** permiten a los Operadores definir reglas que inspeccionan el tráfico de IA que pasa por un gateway. Cuando se activa un guardrail, la petición de IA se **bloquea** antes de llegar al modelo.
+
+Los guardrails son útiles para evitar que datos sensibles o no conformes (como DNI, cuentas bancarias o tarjetas de crédito) se envíen a la IA, ayudándote a aplicar tus políticas de protección de datos y cumplimiento.
+
+Cada guardrail:
+
+- **Se asigna a uno o varios gateways**, por lo que solo se aplica al tráfico de esos gateways.
+- **Se evalúa en cada petición de IA** gestionada por los gateways asignados.
+- **Bloquea**: cuando el guardrail coincide, la petición se rechaza.
+
+<Note>
+Por ahora, los guardrails solo admiten **expresiones regulares (regex)**. En el futuro podrían añadirse otros tipos de guardrail.
+</Note>
+
+Solo los usuarios con rol **Operator** pueden gestionar guardrails. La disponibilidad y los límites dependen de la licencia activa.
+
+## Cómo funcionan los guardrails
+Un guardrail contiene uno o varios **patrones regex**. En cada petición de IA enrutada por un gateway asignado:
+
+1. El contenido de la petición se comprueba contra los patrones regex del guardrail.
+2. Si **cualquier** patrón coincide, el guardrail se activa.
+3. La petición de IA se **bloquea** y no llega al modelo.
+
+Como los guardrails de regex se ejecutan localmente como una coincidencia de texto, apenas añaden latencia a la petición.
+
+## Crear un guardrail
+Para crear un guardrail:
+
+1. Abre **Guardrails** en el Backoffice de Plataforma.
+2. Haz clic en **Add guardrail**.
+3. Introduce un **nombre** y una **descripción** opcional.
+4. Selecciona los **gateways** a los que se aplicará este guardrail.
+5. Añade uno o varios patrones **regex**. Usa **Add regex** para definir varios patrones en el mismo guardrail.
+6. Guarda el guardrail.
+
+Una vez guardado, el guardrail queda activo en cada gateway asignado y empieza a bloquear las peticiones coincidentes de inmediato.
+
+## Gestionar guardrails
+Desde la lista de guardrails puedes revisar el nombre, la descripción, el tipo, el efecto y los gateways asignados de cada guardrail.
+
+- **Edita** un guardrail para actualizar sus patrones o reasignarlo a otros gateways.
+- **Elimina** un guardrail para dejar de bloquear peticiones.
+
+## Ejemplos de regex
+La siguiente tabla muestra patrones regex habituales que puedes usar como punto de partida para tus guardrails. Ajústalos para que coincidan con los formatos exactos que usa tu organización.
+
+| Tipo de dato | Ejemplo de regex |
+| --- | --- |
+| DNI español | `\b\d{8}[A-Za-z]\b` |
+| NIE español | `\b[XYZ]\d{7}[A-Za-z]\b` |
+| IBAN (cuenta bancaria) | `\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b` |
+| CCC español (cuenta bancaria) | `\b\d{4}[ -]?\d{4}[ -]?\d{2}[ -]?\d{10}\b` |
+| Número de tarjeta de crédito | `\b(?:\d[ -]?){13,16}\b` |
+| Dirección de correo electrónico | `\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b` |
+| Número de teléfono (España) | `(?:\+34\|0034)?[ -]?[6-9]\d{2}[ -]?\d{3}[ -]?\d{3}` |
+| Número de la Seguridad Social | `\b\d{2}[ -]?\d{8}[ -]?\d{2}\b` |
+| Dirección IPv4 | `\b(?:\d{1,3}\.){3}\d{1,3}\b` |
+
+### Snippets regex listos para copiar
+Usa los siguientes bloques de código cuando quieras una acción de copia con un clic.
+
+#### DNI español
+```txt
+\b\d{8}[A-Za-z]\b
+```
+
+#### NIE español
+```txt
+\b[XYZ]\d{7}[A-Za-z]\b
+```
+
+#### IBAN
+```txt
+\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b
+```
+
+#### CCC español
+```txt
+\b\d{4}[ -]?\d{4}[ -]?\d{2}[ -]?\d{10}\b
+```
+
+#### Número de tarjeta de crédito
+```txt
+\b(?:\d[ -]?){13,16}\b
+```
+
+#### Dirección de correo electrónico
+```txt
+\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b
+```
+
+#### Número de teléfono (España)
+```txt
+(?:\+34|0034)?[ -]?[6-9]\d{2}[ -]?\d{3}[ -]?\d{3}
+```
+
+#### Número de la Seguridad Social
+```txt
+\b\d{2}[ -]?\d{8}[ -]?\d{2}\b
+```
+
+#### Dirección IPv4
+```txt
+\b(?:\d{1,3}\.){3}\d{1,3}\b
+```
+
+<Warning>
+Los patrones regex coinciden exactamente como se escriben. Prueba siempre tus patrones con datos representativos para evitar falsos positivos (bloquear peticiones válidas) o falsos negativos (dejar pasar datos sensibles).
+</Warning>

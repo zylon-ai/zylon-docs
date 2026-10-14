@@ -7,6 +7,10 @@ description: "Steps to upgrade your Zylon installation to version 1.58."
   **Zylon CLI 2.9.0 or later is required.** The commands used in this guide are not available in earlier CLI versions.
 </Warning>
 
+<Warning>
+If you maintain an API integration, review the [1.57 → 1.58 API migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) before upgrading. Creator IDs now identify accounts; member operations still use workspace-member IDs. For clients that depend on these IDs, migrate the affected calls to the current API and [update saved ID mappings](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrate-saved-user-ids). Legacy URLs do not preserve the complete 1.57 identity contract.
+</Warning>
+
 ## What changed
 
 1.58 requires two manual steps that the CLI does not run on its own. Run both once 1.58 is installed and all pods are ready:

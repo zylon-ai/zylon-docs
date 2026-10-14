@@ -7,7 +7,7 @@ The Workspace API lets you programmatically manage **everything in Zylon Workspa
 
 ## Upgrading to 1.58
 
-Follow the [1.57 → 1.58 migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for retained legacy routes, artifact bodies, and chat/thread changes. If your integration uses user or account IDs, migrate affected mappings and comparisons: creator IDs now identify accounts, while membership APIs still use workspace-member IDs. Successful requests do not guarantee that stored IDs still match.
+Follow the [1.57 → 1.58 migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for retained legacy routes, artifact bodies, and chat/thread changes. If your integration uses user or account IDs, migrate affected mappings and comparisons: creator IDs now identify accounts, while membership APIs still use workspace-member IDs. Successful requests do not guarantee that stored IDs still match. For integrations that need user identity or creator filtering, use the current API and follow the [member-ID-to-account-ID lookup](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrate-saved-user-ids); retained legacy URLs do not perform this conversion.
 
 ## Base URL
 

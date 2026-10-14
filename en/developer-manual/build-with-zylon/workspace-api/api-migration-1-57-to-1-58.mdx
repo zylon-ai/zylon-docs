@@ -7,9 +7,9 @@ noindex: true
 Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs, plus the new [server tool content blocks](#server-tool-content-blocks) returned in chat messages by both the Workspace and ZylonGPT APIs.
 
 <Warning>
-Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
+The legacy artifact, integration, and member routes are deprecated in 1.58, with removal planned for 1.59. Other accepted aliases have their own compatibility notes below. Use the current 1.58 routes for new or maintained integrations.
 
-**If your integration uses user or account IDs, migrate the affected identity mappings even if requests still work.** Review where you store, compare, or pass them. Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+**If your integration depends on user identity, creator IDs, or creator filters, migrate the affected calls to the current API and update your identity mappings.** A working legacy URL does not restore the 1.57 identity model. Creator fields now identify accounts; membership routes still use workspace-member IDs. Follow the [saved user-ID migration](#migrate-saved-user-ids) before relying on existing lookups, comparisons, or filters.
 </Warning>
 
 ## Prerequisites
@@ -227,7 +227,55 @@ Update account profile fields with `POST /account/{accountId}` (`me` is accepted
 
 ## Account IDs and renamed fields
 
-The field-name aliases below are temporary. **Creator IDs and objects now refer to accounts, including on legacy artifact URLs.** Update stored ID comparisons and `created_by` filters; workspace-member IDs are not converted automatically. Shared project, thread, interaction, issue, and account responses retain their current field names.
+### Migrate saved user IDs
+
+If your client saved `userId` from a 1.57 `/app/user` response's `id`, that value is a workspace-member ID. **Do not replace every `userId` with `accountId`: these identify different records.** One account can have different member IDs in different organizations.
+
+1. Keep the saved member ID and its organization context. Use the current member endpoint to read the linked account ID:
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `wsMemberId` | Yes | The member ID previously returned as the legacy user `id`. |
+| Header | `x-org` | Yes | The organization containing that membership. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="ID mapping response (selected fields)">
+
+```json
+{
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}"
+}
+```
+
+`account_id` is returned without an `include` parameter. Add `include=Account` when you also need the account profile; see the [complete member response](/en/developer-manual/build-with-zylon/workspace-api/users/user#get-the-current-workspace-member).
+
+</Accordion>
+
+2. Store both IDs with distinct names. Use `account_id` to compare against artifact, thread, interaction, and issue `created_by.id`, and for artifact or issue `created_by` filters. Keep the member `id` for `/app/member/{wsMemberId}`, project membership, ownership transfer, and chat `metadata.ws_member_id`.
+3. Update affected calls to current routes and canonical field names, then check your stored joins and filters. For example, an artifact creator filter must use `created_by={accountId}`; a project-member request still uses `ws_member_id: "{wsMemberId}"`.
+
+For your own identity, `GET /api/v1/app/me` returns the same `id` and `account_id` distinction. To migrate a directory, paginate `/app/member` separately for each organization and build a member-ID-to-account-ID mapping. If your application needs a workspace-member ID for a creator account, resolve that account's membership in the selected organization; an account ID alone does not identify one workspace membership.
+
+### What legacy aliases preserve
+
+Legacy `/app/user` reads can restore selected profile fields such as `name` and `email`, but their `id` remains a member ID and their `account_id` remains an account ID. Legacy artifact creator objects already use account IDs. `include=User` on supported creator queries selects account data; it does not restore the old workspace-user object or convert creator IDs.
+
+Use legacy aliases only as a temporary bridge for the request shapes documented in this guide. If your integration needs the old user-ID relationships, creator filters, or profile-update behavior, migrate to the current API and the account/member model above. Changing only the URL or field name is insufficient.
+
+### Use canonical field names
+
+The temporary aliases below accept selected old input names. Responses keep the current model and field names; aliases do not convert member IDs to account IDs.
 
 | Where | Old | Current / required action |
 | --- | --- | --- |

@@ -6,6 +6,10 @@ description: "Run and manage interactions inside a thread."
 Interactions are individual message exchanges within a thread. You can create them, fetch full details, cancel in-flight work, or stream output.
 
 
+<Note>
+In 1.58, `created_by.id` identifies an account. If your client compares it with a saved workspace-user ID, migrate that mapping using the [current member API](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrate-saved-user-ids). Retained aliases do not restore the old creator identity.
+</Note>
+
 ## Basic request and response
 
 Create a turn with `POST /api/v1/app/thread/{threadID}/interaction`. The server adds prior thread history; send only the new user message. The response is `200` SSE, not a JSON interaction object.

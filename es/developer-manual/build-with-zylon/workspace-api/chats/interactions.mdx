@@ -6,6 +6,10 @@ description: "Ejecuta y administra interacciones dentro de un hilo."
 Las interacciones son intercambios individuales dentro de un hilo. Puedes crearlas, consultar detalles, cancelar trabajos en curso o ver el streaming de la salida.
 
 
+<Note>
+En 1.58, `created_by.id` identifica una cuenta. Si tu cliente lo compara con un ID de usuario del espacio de trabajo guardado, migra ese mapeo mediante la [API actual de miembros](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados). Los alias conservados no restauran la identidad antigua del creador.
+</Note>
+
 ## Solicitud basica y respuesta
 
 Crea un turno con `POST /api/v1/app/thread/{threadID}/interaction`. El servidor incorpora el historial del hilo; envia solo el nuevo mensaje de usuario. La respuesta es `200` SSE, no un objeto JSON de interaccion.

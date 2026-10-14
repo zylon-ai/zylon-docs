@@ -7,7 +7,7 @@ La Workspace API te permite gestionar por API **todo lo que ocurre en Zylon Work
 
 ## Actualizar a 1.58
 
-Consulta la [guía de migración 1.57 → 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para las rutas antiguas conservadas, cuerpos de artefactos y cambios de chat/hilos. Si tu integración usa IDs de usuario o cuenta, migra los mapeos y comparaciones afectados: los IDs de creador ahora identifican cuentas, mientras que las APIs de membresía siguen usando IDs de miembro. Que una petición funcione no garantiza que los IDs almacenados sigan coincidiendo.
+Consulta la [guía de migración 1.57 → 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para las rutas antiguas conservadas, cuerpos de artefactos y cambios de chat/hilos. Si tu integración usa IDs de usuario o cuenta, migra los mapeos y comparaciones afectados: los IDs de creador ahora identifican cuentas, mientras que las APIs de membresía siguen usando IDs de miembro. Que una petición funcione no garantiza que los IDs almacenados sigan coincidiendo. Para integraciones que necesiten identidad de usuario o filtros de creador, usa la API actual y sigue la [búsqueda de ID de cuenta a partir del ID de miembro](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados); las URLs antiguas conservadas no hacen esa conversión.
 
 ## Base URL
 

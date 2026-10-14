@@ -7,9 +7,9 @@ noindex: true
 Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace y los nuevos [bloques de herramientas de servidor](#bloques-de-herramientas-de-servidor) que devuelven los mensajes de chat, tanto en la API de Workspace como en la de ZylonGPT.
 
 <Warning>
-Las rutas antiguas quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Revisa los cambios de rutas, cuerpos y respuestas que se detallan abajo antes de actualizar tu integración.
+Las rutas antiguas de artefactos, integraciones y miembros quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Otros alias aceptados tienen sus propias notas de compatibilidad más abajo. Usa las rutas actuales de 1.58 para integraciones nuevas o mantenidas.
 
-**Si tu integración usa IDs de usuario o cuenta, migra los mapeos de identidad afectados aunque las peticiones sigan funcionando.** Revisa dónde los almacenas, comparas o envías. Los campos de creador y sus filtros ahora usan IDs de cuenta. Ambos son UUIDs, por lo que las llamadas a la API pueden seguir funcionando aunque devuelvan IDs que ya no coincidan con tus registros o la lógica de tu aplicación. Actualiza los mapeos, búsquedas, comparaciones y filtros afectados. Las rutas y campos de membresía siguen usando IDs de miembro; consulta [IDs de cuenta y campos renombrados](#ids-de-cuenta-y-campos-renombrados).
+**Si tu integración depende de la identidad del usuario, IDs de creador o filtros de creador, migra las llamadas afectadas a la API actual y actualiza tus mapeos de identidad.** Que una URL antigua funcione no restaura el modelo de identidad de 1.57. Los campos de creador ahora identifican cuentas; las rutas de membresía siguen usando IDs de miembro. Sigue la [migración de IDs de usuario guardados](#migrar-ids-de-usuario-guardados) antes de confiar en búsquedas, comparaciones o filtros existentes.
 </Warning>
 
 ## Requisitos previos
@@ -227,7 +227,55 @@ Actualiza los campos de perfil con `POST /account/{accountId}` (`me` permite act
 
 ## IDs de cuenta y campos renombrados
 
-Los alias de nombres siguientes son temporales. **Los IDs y objetos de creador ahora corresponden a cuentas, también en las URLs antiguas de artefactos.** Actualiza las comparaciones de IDs almacenados y los filtros `created_by`; no se convierten automáticamente los IDs de miembro. Las respuestas compartidas de proyectos, hilos, interacciones, incidencias y cuentas mantienen sus nombres de campo actuales.
+### Migrar IDs de usuario guardados
+
+Si tu cliente guardó `userId` a partir del campo `id` de una respuesta `/app/user` de 1.57, ese valor es un ID de miembro del espacio de trabajo. **No sustituyas todos los `userId` por `accountId`: identifican registros distintos.** Una cuenta puede tener IDs de miembro diferentes en distintas organizaciones.
+
+1. Conserva el ID de miembro guardado y su organización. Usa el endpoint actual de miembros para leer el ID de cuenta asociado:
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Ruta | `wsMemberId` | Si | El ID de miembro que antes devolvía `id` en el usuario antiguo. |
+| Cabecera | `x-org` | Si | La organización que contiene esa membresía. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/member/{wsMemberId}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Respuesta de mapeo de IDs (campos seleccionados)">
+
+```json
+{
+  "id": "{wsMemberId}",
+  "org_id": "{orgId}",
+  "account_id": "{accountId}"
+}
+```
+
+`account_id` se devuelve sin un parámetro `include`. Añade `include=Account` si también necesitas el perfil de cuenta; consulta la [respuesta completa de miembro](/es/developer-manual/build-with-zylon/workspace-api/users/user#obtener-el-miembro-actual).
+
+</Accordion>
+
+2. Guarda ambos IDs con nombres distintos. Usa `account_id` para comparar con `created_by.id` de artefactos, hilos, interacciones e incidencias, y para los filtros `created_by` de artefactos o incidencias. Conserva el `id` de miembro para `/app/member/{wsMemberId}`, miembros de proyecto, transferencia de propiedad y `metadata.ws_member_id` del chat.
+3. Actualiza las llamadas afectadas a las rutas actuales y nombres canónicos, y comprueba tus relaciones y filtros guardados. Por ejemplo, un filtro de creador de artefactos debe usar `created_by={accountId}`; una petición de miembro de proyecto sigue usando `ws_member_id: "{wsMemberId}"`.
+
+Para tu propia identidad, `GET /api/v1/app/me` devuelve la misma distinción entre `id` y `account_id`. Para migrar un directorio, pagina `/app/member` por separado en cada organización y crea un mapeo de IDs de miembro a IDs de cuenta. Si tu aplicación necesita un ID de miembro para la cuenta de un creador, resuelve su membresía en la organización seleccionada; un ID de cuenta por sí solo no identifica una membresía concreta.
+
+### Qué conservan los alias antiguos
+
+Las lecturas de `/app/user` antiguo pueden restaurar campos de perfil seleccionados, como `name` y `email`, pero `id` sigue siendo un ID de miembro y `account_id` sigue siendo un ID de cuenta. Los objetos de creador de artefactos antiguos ya usan IDs de cuenta. `include=User` en las consultas de creador compatibles selecciona datos de cuenta; no restaura el antiguo objeto de usuario del espacio de trabajo ni convierte IDs de creador.
+
+Usa los alias antiguos solo como puente temporal para los formatos de petición documentados en esta guía. Si tu integración necesita las relaciones antiguas de IDs de usuario, filtros de creador o comportamiento de actualización de perfil, migra a la API actual y al modelo de cuenta/miembro descrito arriba. Cambiar solo la URL o el nombre de campo no basta.
+
+### Usar nombres de campo canónicos
+
+Los alias temporales siguientes aceptan ciertos nombres de entrada antiguos. Las respuestas mantienen el modelo y los nombres de campo actuales; los alias no convierten IDs de miembro en IDs de cuenta.
 
 | Dónde | Anterior | Actual / acción necesaria |
 | --- | --- | --- |

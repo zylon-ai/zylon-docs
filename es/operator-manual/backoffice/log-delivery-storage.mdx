@@ -19,7 +19,7 @@ Zylon puede:
 
 Para conectar tu SIEM, sigue [Enviar logs a tu SIEM](/es/operator-manual/configuration/features/log-delivery-storage#enviar-logs-a-tu-siem). La guía cubre el colector, archivo de configuración, comando para aplicar cambios y primer evento de prueba. Esta página cubre evidencia, gobernanza y retención.
 
-La generación de auditoría, el almacenamiento interno y la entrega externa son controles independientes. La auditoría y el almacenamiento están habilitados por defecto; syslog y HTTP deben habilitarse explícitamente. La API de Backoffice es una alternativa para recuperar logs almacenados; no es necesaria para configurar la entrega push.
+La captura de contenido de chat del gateway, el almacenamiento interno y la entrega externa son controles independientes. La captura de contenido y el almacenamiento están habilitados por defecto; syslog y HTTP deben habilitarse explícitamente. Los eventos de Workspace, Backoffice y seguridad se emiten independientemente del flag de contenido de chat. La API de Backoffice es una alternativa para recuperar logs almacenados; no es necesaria para configurar la entrega push.
 
 <Note>
 La entrega externa es asincrona. Con `failurePolicy=drop`, la entrega evita bloquear el camino critico cuando las colas estan bajo presion.
@@ -126,7 +126,9 @@ Cuando el almacenamiento esta habilitado, Zylon persiste logs estructurados inte
 
 Zylon puede limpiar logs almacenados tras una ventana configurada. La limpieza de logs almacenados esta deshabilitada por defecto. El valor predeterminado de retencion es `180` dias cuando la limpieza de logs esta habilitada.
 
-Los colectores externos mantienen sus propias politicas de retencion fuera de Zylon.
+Para el borrado interno programado, sigue [Limpieza solo de logs](/es/operator-manual/configuration/features/log-delivery-storage#configurar-limpieza-solo-de-logs). Ambos flags de limpieza deben estar habilitados. Cada ejecución correcta borra definitivamente los registros vencidos y sus detalles asociados en todas las organizaciones, según su momento de persistencia en la base de datos. Los filtros de entrega externa no restringen esta limpieza. Deshabilitar el almacenamiento detiene la persistencia nueva sin borrar registros existentes.
+
+Los colectores externos mantienen sus propias políticas de retención fuera de Zylon; borrar un log interno no borra sus copias en un SIEM o data lake.
 
 | Ubicacion | Quien controla la retencion | Notas |
 | --- | --- | --- |

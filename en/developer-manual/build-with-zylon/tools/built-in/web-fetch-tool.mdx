@@ -43,6 +43,46 @@ Example response:
 
 To run the request, send the same body to `POST /messages`.
 
+## Response blocks
+
+Zylon runs this tool on the server. The response contains a `server_tool_use` block with the call, followed by a `web_fetch_tool_result` block with the result. The call ID starts with `srvtoolu_`. Don't send a `tool_result` back for it.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com/" } },
+  {
+    "type": "web_fetch_tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": {
+      "type": "web_fetch_result",
+      "url": "https://example.com/",
+      "retrieved_at": "2026-10-08T10:00:00Z",
+      "content": {
+        "type": "document",
+        "title": "Example Domain",
+        "source": { "type": "text", "media_type": "text/plain", "data": "# Example Domain\n\nThis domain is for use in examples." }
+      }
+    }
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "web_fetch_tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": { "type": "web_fetch_tool_result_error", "error_code": "url_not_accessible" }
+}
+```
+
+These blocks have no `is_error` field. To detect a failure, check whether `content.type` ends in `_error`, then read `content.error_code`.
+
+With the Zylon extension enabled (`system.extensions` includes `zylon`), the result is returned as a plain `tool_result` block with `text` content instead.
+
+See [Migrating from 1.57 to 1.58](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for the full list of server tool blocks.
+
 ## Tips
 
 - The URL must appear in the user message.

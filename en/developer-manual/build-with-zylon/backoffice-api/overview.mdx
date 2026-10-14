@@ -17,15 +17,17 @@ Unlike Workspace API routes, Backoffice routes documented here do not use the `/
 
 ## Authentication and permissions
 
-Backoffice API requests require an account token or account session with at least the `operator` role.
+Backoffice API requests require an account token or account session with at least the `operator` role. An account token can use `Read.All` when its owner role also grants the requested Backoffice permission; `Read.All` never elevates the owner. `ReadWrite.All` also includes read access.
 
 ```bash
 -H "Authorization: Bearer {API_TOKEN}"
 ```
 
 <Note>
-Workspace-only tokens are not enough for Backoffice endpoints.
+Workspace-only tokens are not enough for Backoffice endpoints. Interactive sessions continue to use their role permissions and are not restricted by API token scopes.
 </Note>
+
+See [Token Management](/en/developer-manual/get-started/token-management) for the complete scope model.
 
 ## Available sections
 

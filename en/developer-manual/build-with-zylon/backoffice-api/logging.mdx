@@ -15,15 +15,17 @@ These endpoints are read-only. The documented API exposes `GET` operations for l
 
 | Requirement | Value |
 | --- | --- |
-| Authentication | Account token or account session |
-| Role | At least the `operator` role |
+| Authentication | Account token with `Read.All` or `ReadWrite.All`, or an account session |
+| Role | The token or session owner must have at least the `operator` role |
 
 ```bash
 curl "https://{BASE_URL}/v1/platform/logs?page=0&page_size=50" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-<Note>Workspace-only tokens are not enough for these endpoints.</Note>
+<Note>`Read.All` permits these read-only endpoints only when the owner role also grants the corresponding Backoffice permission. It does not elevate its owner, including a SuperAdmin token. Workspace-only tokens are not enough for these endpoints; interactive sessions are unaffected by token scopes.</Note>
+
+See [Token Management](/en/developer-manual/get-started/token-management) for the complete scope model.
 
 For operator-facing guidance on governance, evidence preservation, and SIEM delivery, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage).
 
@@ -130,6 +132,7 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `ws.thread.delete` | Workspace | Chat deleted. |
 | `ws.interaction.create` | Workspace | Chat message or response created. |
 | `ws.org.update` | Workspace | Organization settings updated. |
+| `ws.member.create` | Workspace | Workspace member created. |
 | `ws.user.create` | Workspace | User created. |
 | `ws.user.enable` | Workspace | User enabled. |
 | `ws.user.disable` | Workspace | User disabled. |

@@ -1,0 +1,559 @@
+---
+title: "Herramienta de ejecución de código"
+description: "Ejecuta comandos bash y edita archivos en un contenedor aislado para analizar datos, generar archivos e iterar sobre soluciones."
+---
+
+La herramienta de ejecución de código permite al asistente ejecutar comandos bash y crear, ver y editar archivos dentro de un contenedor aislado (sandbox), directamente dentro de una solicitud a `/messages`. Úsala para analizar datos subidos, hacer cálculos, transformar documentos o generar archivos como gráficos, hojas de cálculo e informes.
+
+Sigue el mismo modelo que la [herramienta de ejecución de código de Anthropic](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool): el servidor ejecuta todos los comandos, así que nunca tienes que ejecutar código ni enviar bloques `tool_result` por tu cuenta.
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
+- La ejecución de código habilitada en tu instalación. Ver [Ejecución de código](/es/operator-manual/configuration/features/feat-code-execution) en el Manual del operador.
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "code_execution", "type": "code_execution_v1" }`
+- También se acepta la especificación compatible con Anthropic: `{ "name": "code_execution", "type": "code_execution_20250825" }`
+- No requiere `tool_context`
+- Opcional: un ID de `container` para reutilizar un sandbox entre solicitudes
+
+## Inicio rápido
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "messages": [
+      { "role": "user", "content": "Calcula la media y la desviación estándar de [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" }
+    ],
+    "tools": [
+      { "name": "code_execution", "type": "code_execution_v1" }
+    ]
+  }'
+```
+
+Para comprobar la solicitud sin ejecutarla, envía el mismo cuerpo a `POST /api/gpt/v1/messages/validate`.
+
+## Cómo funciona la ejecución de código
+
+Cuando añades la herramienta de ejecución de código a una solicitud:
+
+1. El asistente decide si ejecutar código ayudaría a responder la pregunta.
+2. La herramienta se expande en dos subherramientas que el asistente puede combinar libremente:
+   - `bash_code_execution`: ejecuta comandos de shell.
+   - `text_editor_code_execution`: ve, crea y edita archivos.
+3. Cada operación se ejecuta en el servidor dentro de un contenedor aislado, y los resultados se devuelven al asistente dentro de la misma solicitud.
+4. La respuesta contiene cada llamada a herramienta (`server_tool_use`) y su resultado, seguidos de la respuesta final del asistente.
+5. La respuesta también contiene un objeto `container` de nivel superior. Pasa su `id` en solicitudes posteriores para seguir trabajando en el mismo sandbox.
+
+<Tip>
+En solicitudes dudosas, pídelo explícitamente (por ejemplo, "ejecuta código para verificarlo") para que el asistente use el sandbox en lugar de responder de memoria.
+</Tip>
+
+### Subherramientas
+
+**`bash_code_execution`**
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `command` | string | Obligatorio. El comando de shell que se ejecuta. |
+| `timeout` | integer | Opcional. Tiempo de espera en segundos (por defecto `60`). |
+| `restart` | boolean | Opcional. Reinicia el espacio de trabajo. |
+
+Cada llamada se ejecuta en una shell nueva. Los archivos persisten entre llamadas; las variables de entorno y `cd`, no.
+
+**`text_editor_code_execution`**
+
+| `command` | Parámetros | Descripción |
+|-----------|------------|-------------|
+| `view` | `path`, `view_range` (opcional, `[start, end]`, empezando en 1, `-1` = final del archivo) | Ver un archivo o listar un directorio |
+| `create` | `path`, `file_text` | Crear o sobrescribir un archivo |
+| `str_replace` | `path`, `old_str`, `new_str` | Reemplazar una cadena exacta y única |
+| `insert` | `path`, `insert_line`, `insert_text` | Insertar texto después de una línea (`0` = inicio del archivo) |
+
+Las rutas relativas se resuelven respecto al espacio de trabajo (`/home/agent/workspace/`).
+
+## Contenedores
+
+Un contenedor es un sandbox aislado con su propio sistema de archivos. El contenedor se identifica con un ID de tipo cadena que eliges tú o que asigna el servidor.
+
+### Seleccionar un contenedor
+
+Establece el campo `container` de nivel superior con el ID que quieras usar. Si el contenedor todavía no existe, se crea; si existe, la solicitud lo reutiliza junto con todos sus archivos.
+
+```json
+{
+  "model": "default",
+  "max_tokens": 4096,
+  "container": "sales-analysis-2026-q3",
+  "messages": [{ "role": "user", "content": "..." }],
+  "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+}
+```
+
+<Warning>
+Si omites `container`, el sandbox se asocia al usuario autenticado, de modo que todas las solicitudes de ese usuario sin `container` comparten el mismo sandbox. Usa un ID de `container` explícito y único por conversación o tarea para mantener el trabajo aislado.
+</Warning>
+
+### Leer el contenedor desde la respuesta
+
+Cuando se ejecuta código, la respuesta incluye el contenedor que se ha usado:
+
+```json
+{
+  "id": "msg_...",
+  "type": "message",
+  "role": "assistant",
+  "content": [ ... ],
+  "stop_reason": "end_turn",
+  "container": {
+    "id": "sales-analysis-2026-q3",
+    "expires_at": "2026-10-08T12:30:00Z"
+  }
+}
+```
+
+En streaming, el objeto `container` llega en el evento final `message_delta` como `delta.container`.
+
+### Reutilizar un contenedor
+
+Pasa el mismo ID de `container` en las solicitudes de seguimiento para conservar los archivos creados anteriormente:
+
+```bash
+# Primera solicitud: crear un archivo
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      { "role": "user", "content": "Escribe un número aleatorio en /home/agent/workspace/number.txt" }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+
+# Segunda solicitud: mismo contenedor, el archivo sigue ahí
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      { "role": "user", "content": "Lee /home/agent/workspace/number.txt y eleva el número al cuadrado" }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+```
+
+`expires_at` es un valor móvil que se renueva con cada solicitud. Cuando un contenedor está inactivo, su sandbox se apaga para liberar recursos, pero sus archivos se conservan. La siguiente solicitud con el mismo ID arranca un sandbox nuevo con los mismos archivos. Los paquetes instalados, los procesos en ejecución y el estado de la shell no se conservan.
+
+Para empezar desde cero, usa un ID de `container` nuevo o [elimina los archivos](#eliminar-archivos).
+
+### Estructura del sistema de archivos
+
+| Ruta | Acceso | Propósito |
+|------|--------|---------|
+| `/home/agent/workspace/` | lectura y escritura | Directorio de trabajo. Archivos temporales y resultados intermedios. |
+| `/mnt/user-data/uploads/` | solo lectura | Archivos que subes a través de la [Files API](#trabajar-con-archivos). |
+| `/mnt/user-data/outputs/` | lectura y escritura | Entregables. Los archivos de esta carpeta se pueden listar y descargar a través de la Files API. |
+| `/mnt/skills/` | solo lectura | Skills cargadas para la solicitud, una carpeta por skill. |
+
+<Tip>
+Si tu aplicación espera un archivo generado, pide al asistente que lo guarde en `/mnt/user-data/outputs/` (por ejemplo, "guarda el gráfico como `/mnt/user-data/outputs/chart.png`").
+</Tip>
+
+### Entorno de ejecución
+
+El sandbox incluye Python 3 con las librerías de datos más habituales: pandas, numpy, scipy, scikit-learn, statsmodels, matplotlib, seaborn, pyarrow, openpyxl, xlsxwriter, xlrd, pillow, python-pptx, python-docx, pypdf, pdfplumber, pypdfium2, pdf2image, pdfkit, tabula-py, reportlab, img2pdf, sympy, mpmath, tqdm, python-dateutil, pytz y joblib. Entre las herramientas de línea de comandos se incluyen `unzip`, `unrar`, `7zip`, `bc`, `rg`, `fd` y `sqlite3`.
+
+### Red y seguridad
+
+- **Sin acceso a internet.** El sandbox no puede acceder a internet, por lo que no se pueden instalar paquetes en tiempo de ejecución. Solo están disponibles las librerías preinstaladas.
+- **Acceso a la API de Zylon.** El sandbox puede acceder a la API de Zylon, con estas variables de entorno ya definidas: `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN` y `ANTHROPIC_MODEL`. El código que se ejecuta en el sandbox, como un script que use el SDK de Anthropic, puede llamar al modelo **con los permisos del usuario que envió la solicitud**.
+- **Aislamiento.** Cada contenedor se ejecuta en su propio sandbox, aislado del host y del resto de contenedores.
+
+Tu operador puede permitir el acceso a servicios internos adicionales. Ver [Ejecución de código](/es/operator-manual/configuration/features/feat-code-execution).
+
+## Trabajar con archivos
+
+Usa la Files API para colocar archivos en un contenedor antes de una solicitud, y para listar, descargar y eliminar los archivos que haya generado. Todas las llamadas a la Files API reciben un parámetro de consulta `scope_id`: **es el ID del contenedor**.
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/api/gpt/v1/files?scope_id={container}` | Subir un archivo (multipart) |
+| `PUT` | `/api/gpt/v1/files/{key}?scope_id={container}` | Colocar un archivo en una clave concreta (cuerpo en bruto) |
+| `GET` | `/api/gpt/v1/files?scope_id={container}` | Listar archivos |
+| `GET` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Obtener los metadatos de un archivo |
+| `HEAD` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Comprobar que un archivo existe (metadatos en las cabeceras `X-File-*`) |
+| `GET` | `/api/gpt/v1/files/{file_id}/content?scope_id={container}` | Descargar el contenido de un archivo |
+| `DELETE` | `/api/gpt/v1/files/{file_id}?scope_id={container}` | Eliminar un archivo |
+| `DELETE` | `/api/gpt/v1/files?scope_id={container}&prefix={prefix}` | Eliminar todos los archivos subidos bajo un prefijo |
+
+### Subir archivos
+
+Sube un archivo a la carpeta de subidas del contenedor. Estará disponible para el asistente en `/mnt/user-data/uploads/{filename}`:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@sales.csv"
+```
+
+Respuesta:
+
+```json
+{
+  "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+  "created_at": "2026-10-08T10:30:00Z",
+  "filename": "sales.csv",
+  "mime_type": "text/csv",
+  "size_bytes": 4096,
+  "type": "file",
+  "downloadable": false,
+  "etag": "d41d8cd98f00b204e9800998ecf8427e",
+  "namespace": "session",
+  "scope": { "id": "my-container", "type": "session" }
+}
+```
+
+El `id` es el ID de archivo que usan el resto de endpoints. Es la ruta del sandbox codificada en base64url (en este caso, `/mnt/user-data/uploads/sales.csv`), sin relleno.
+
+Usa el parámetro de consulta `path` para elegir la clave, por ejemplo para organizar los archivos en carpetas. Las carpetas padre se crean automáticamente, y subir a una clave existente la sobrescribe:
+
+```bash
+# Disponible en /mnt/user-data/uploads/data/2026/q3.xlsx
+curl -X POST "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container&path=data/2026/q3.xlsx" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@q3.xlsx"
+```
+
+Una clave que empieza por `outputs/` coloca el archivo en `/mnt/user-data/outputs/`. Las claves deben ser relativas y no pueden contener `..` ni terminar en `/`.
+
+También puedes colocar bytes en bruto en una clave, al estilo de S3:
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/gpt/v1/files/config/settings.json?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-binary @settings.json
+```
+
+### Analizar archivos subidos
+
+Después de subirlo, envía un mensaje con el **mismo ID de contenedor** y haz referencia al archivo por su ruta:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 4096,
+    "container": "my-container",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Analiza /mnt/user-data/uploads/sales.csv. Representa los ingresos mensuales y guarda el gráfico en /mnt/user-data/outputs/revenue.png"
+      }
+    ],
+    "tools": [{ "name": "code_execution", "type": "code_execution_v1" }]
+  }'
+```
+
+### Listar archivos
+
+Lista todos los archivos de un contenedor, tanto los subidos como los generados, ordenados por fecha de creación:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{
+  "data": [
+    {
+      "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+      "filename": "sales.csv",
+      "mime_type": "text/csv",
+      "size_bytes": 4096,
+      "type": "file",
+      "downloadable": false,
+      "scope": { "id": "my-container", "type": "session" }
+    },
+    {
+      "id": "L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw",
+      "filename": "revenue.png",
+      "mime_type": "image/png",
+      "size_bytes": 38211,
+      "type": "file",
+      "downloadable": true,
+      "scope": { "id": "my-container", "type": "session" }
+    }
+  ],
+  "first_id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y",
+  "last_id": "L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw",
+  "has_more": false
+}
+```
+
+`downloadable` es `true` para los archivos de `/mnt/user-data/outputs/` y `false` para los subidos.
+
+Parámetros de consulta opcionales:
+
+| Parámetro | Por defecto | Descripción |
+|-----------|---------|-------------|
+| `limit` | `20` | Tamaño de página (de 1 a 1000) |
+| `after_id` | | Devuelve los archivos posteriores a este ID de archivo (página siguiente) |
+| `before_id` | | Devuelve los archivos anteriores a este ID de archivo (página anterior) |
+| `prefix` | | Solo los archivos cuya clave de subida empieza por este prefijo, por ejemplo `data/2026/` |
+
+### Descargar archivos
+
+Descarga un archivo con su ID:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/files/L21udC91c2VyLWRhdGEvb3V0cHV0cy9yZXZlbnVlLnBuZw/content?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -o revenue.png
+```
+
+Añade `disposition=inline` para abrir el archivo en el navegador en lugar de descargarlo.
+
+El ID de archivo es la ruta del sandbox codificada en base64url, así que también puedes construirlo tú mismo:
+
+```bash
+FILE_ID=$(printf '/mnt/user-data/outputs/revenue.png' | base64 | tr '+/' '-_' | tr -d '=')
+```
+
+```python
+import base64
+
+file_id = base64.urlsafe_b64encode(b"/mnt/user-data/outputs/revenue.png").decode().rstrip("=")
+```
+
+### Eliminar archivos
+
+Elimina un archivo, ya sea uno subido, una salida generada o un archivo del espacio de trabajo:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/gpt/v1/files/L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y?scope_id=my-container" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{ "id": "L21udC91c2VyLWRhdGEvdXBsb2Fkcy9zYWxlcy5jc3Y", "type": "file_deleted" }
+```
+
+Elimina todos los archivos subidos bajo un prefijo. Termina el prefijo en `/` para no eliminar claves hermanas que comparten el mismo texto:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/gpt/v1/files?scope_id=my-container&prefix=data/2026/" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+```json
+{ "prefix": "data/2026/", "deleted_count": 3, "type": "prefix_deleted" }
+```
+
+### Ejemplo completo
+
+```python
+import base64
+import requests
+
+BASE = "https://{BASE_URL}/api/gpt/v1"
+HEADERS = {"Authorization": "Bearer {API_TOKEN}"}
+CONTAINER = "sales-analysis-2026-q3"
+
+# 1. Subir el archivo de entrada
+with open("sales.csv", "rb") as f:
+    requests.post(f"{BASE}/files", params={"scope_id": CONTAINER},
+                  headers=HEADERS, files={"file": f}).raise_for_status()
+
+# 2. Pedir al asistente que lo analice en el mismo contenedor
+response = requests.post(f"{BASE}/messages", headers=HEADERS, json={
+    "model": "default",
+    "max_tokens": 4096,
+    "container": CONTAINER,
+    "messages": [{
+        "role": "user",
+        "content": "Analiza /mnt/user-data/uploads/sales.csv y guarda un gráfico de ingresos "
+                   "en /mnt/user-data/outputs/revenue.png",
+    }],
+    "tools": [{"name": "code_execution", "type": "code_execution_v1"}],
+}).json()
+print(response["content"][-1]["text"])
+
+# 3. Descargar todas las salidas generadas
+files = requests.get(f"{BASE}/files", params={"scope_id": CONTAINER}, headers=HEADERS).json()
+for item in files["data"]:
+    if item["downloadable"]:
+        content = requests.get(f"{BASE}/files/{item['id']}/content",
+                               params={"scope_id": CONTAINER}, headers=HEADERS)
+        with open(item["filename"], "wb") as out:
+            out.write(content.content)
+
+# 4. Limpiar
+for item in files["data"]:
+    requests.delete(f"{BASE}/files/{item['id']}", params={"scope_id": CONTAINER}, headers=HEADERS)
+```
+
+## Ejecución de código en la Workspace API
+
+Cuando usas la [Workspace API](/es/developer-manual/build-with-zylon/workspace-api/overview) en lugar de llamar directamente a la API de ZylonGPT, Zylon gestiona el contenedor por ti:
+
+- **El contenedor es el hilo del chat.** Cada hilo tiene su propio sandbox, y el campo `container` toma el ID del hilo. Los archivos persisten durante toda la vida del hilo, y los hilos no pueden ver los archivos de otros hilos.
+- **La ejecución de código se añade automáticamente** cuando la solicitud usa Skills. También puedes habilitarla explícitamente añadiendo las herramientas de ejecución de código a `pgpt.tools`.
+- **Los archivos generados se convierten en artefactos.** Cuando el asistente presenta un archivo, Zylon lo guarda como artefacto en el proyecto y lo devuelve en el stream como un bloque `zylon-resource`, para que los usuarios puedan previsualizarlo y descargarlo.
+
+Usa los endpoints del hilo para gestionar los archivos del sandbox de un hilo:
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/api/v1/app/thread/{threadId}/upload-file` | Subir un archivo (campo multipart `file`, `path` opcional) a `/mnt/user-data/uploads/` |
+| `PUT` | `/api/v1/app/thread/{threadId}/put-file/{path}` | Colocar bytes en bruto en una clave |
+| `GET` | `/api/v1/app/thread/{threadId}/download-file?path={path}` | Descargar un archivo por su ruta en el sandbox, por ejemplo `/mnt/user-data/outputs/chart.png` |
+
+```bash
+# Subir un archivo al sandbox del hilo
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadId}/upload-file" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -F "file=@sales.csv"
+
+# Descargar un archivo generado
+curl "https://{BASE_URL}/api/v1/app/thread/{threadId}/download-file?path=/mnt/user-data/outputs/revenue.png" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -o revenue.png
+```
+
+<Note>
+Las descargas dependen de la configuración de tu organización: los archivos generados (`outputs/`) requieren que estén habilitadas las descargas de recursos generados, y los archivos subidos (`uploads/`) requieren que estén habilitadas las descargas de recursos subidos.
+</Note>
+
+## Formato de respuesta
+
+Cada llamada a una subherramienta aparece como un bloque `server_tool_use` seguido de su bloque de resultado.
+
+### Comando bash
+
+```json
+{
+  "type": "server_tool_use",
+  "id": "srvtoolu_01B3C4D5E6F7G8H9I0J1K2L3",
+  "name": "bash_code_execution",
+  "input": { "command": "ls -la /mnt/user-data/uploads" }
+},
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01B3C4D5E6F7G8H9I0J1K2L3",
+  "content": {
+    "type": "bash_code_execution_result",
+    "stdout": "total 8\n-rw-r--r-- 1 agent agent 4096 Oct  8 10:30 sales.csv",
+    "stderr": "",
+    "return_code": 0
+  }
+}
+```
+
+Un `return_code` distinto de cero no es un error: significa que el comando se ejecutó y falló, y el asistente puede leer `stderr` y volver a intentarlo.
+
+### Operaciones con archivos
+
+**Ver:**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01C4D5E6F7G8H9I0J1K2L3M4",
+  "content": {
+    "type": "text_editor_code_execution_view_result",
+    "file_type": "text",
+    "content": "{\n  \"setting\": \"value\",\n  \"debug\": true\n}",
+    "num_lines": 4,
+    "start_line": 1,
+    "total_lines": 4
+  }
+}
+```
+
+**Crear:**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01D5E6F7G8H9I0J1K2L3M4N5",
+  "content": {
+    "type": "text_editor_code_execution_create_result",
+    "is_file_update": false
+  }
+}
+```
+
+**Editar (`str_replace` e `insert`):**
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01E6F7G8H9I0J1K2L3M4N5O6",
+  "content": {
+    "type": "text_editor_code_execution_str_replace_result",
+    "old_start": 3,
+    "old_lines": 1,
+    "new_start": 3,
+    "new_lines": 1,
+    "lines": ["-  \"debug\": true", "+  \"debug\": false"]
+  }
+}
+```
+
+### Errores
+
+Cuando una herramienta no puede ejecutarse, su resultado contiene un bloque de error:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_01VfmxgZ46TiHbmXgy928hQR",
+  "content": {
+    "type": "bash_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": {
+      "code": "unavailable",
+      "explanation": "File not found: /home/agent/workspace/missing.txt"
+    }
+  }
+}
+```
+
+`detail.explanation` contiene el motivo subyacente. Es una extensión de Zylon y se omite en las respuestas compatibles con Anthropic.
+
+| Situación | Comportamiento |
+|-----------|----------|
+| El comando supera su tiempo de espera | `return_code: 124`, `stderr: "Command timed out after 60s."` |
+| Salida mayor que el límite (1 MiB por defecto) | La salida se trunca y termina en `...[truncated]` |
+| El archivo no existe, o `old_str` no aparece o no es único | Bloque de error con el motivo en `detail.explanation` |
+| Escritura en una carpeta de solo lectura (`uploads`, `skills`) | Bloque de error: `Path '...' is in a read-only mount` |
+| Ruta fuera de las carpetas del sandbox | Bloque de error: `Path '...' does not match any session mount` |
+| Ejecución de código no habilitada en el servidor | Bloque de error: `code_execution provider is not configured.` |
+
+## Consejos
+
+- Usa un ID de `container` por conversación o tarea, y reutilízalo en todas las solicitudes de seguimiento y llamadas a la Files API.
+- Pide que los entregables se guarden en `/mnt/user-data/outputs/` para poder listarlos y descargarlos.
+- Combina la ejecución de código con otras herramientas, como [Web Fetch](/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool) o [Búsqueda semántica](/es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool), para incorporar datos al análisis.
+- Elimina los archivos subidos y las salidas que ya no necesites: los archivos permanecen en el contenedor hasta que los borras.
+
+## Próximos pasos
+
+- Descubre cómo los mensajes devuelven bloques de herramientas: [Mensajes](/es/developer-manual/build-with-zylon/working-with-messages)
+- Gestiona turnos de larga duración: [Motivos de parada](/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons)

@@ -42,10 +42,21 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 
 ### Integration OAuth login redirects
 
+Use `project_id` to create a project integration, or omit it to create an organization integration as an `AppAdmin` or higher. The optional `connector_name` sets its display name.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `project_id` | No | Project that will own the integration. Omit it for an organization integration. |
+| Query | `connector_name` | No | Display name for the new integration artifact. |
+</Accordion>
+
 <Tabs>
   <Tab title="Confluence login">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/login"
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/confluence/login?project_id={projectID}&connector_name=Confluence" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -57,7 +68,9 @@ Location: https://auth.atlassian.com/authorize?client_id=...&redirect_uri=...
   </Tab>
   <Tab title="SharePoint login">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/login"
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/sharepoint/login?project_id={projectID}&connector_name=SharePoint" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -71,10 +84,21 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 
 ### Login with a specific integration instance
 
+Pass `integration_artifact_id` to replace the OAuth credentials of an existing integration artifact. Include `project_id` when the integration belongs to a project.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Query | `integration_artifact_id` | Yes | Existing integration artifact whose OAuth credentials will be replaced. |
+| Query | `project_id` | Conditional | Project that owns the integration. Include it for a project integration. |
+</Accordion>
+
 <Tabs>
   <Tab title="Confluence instance">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/login"
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/confluence/login?project_id={projectID}&integration_artifact_id={integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -86,7 +110,9 @@ Location: https://auth.atlassian.com/authorize?client_id=...&state=conf_8a7b6c5d
   </Tab>
   <Tab title="SharePoint instance">
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/login"
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/sharepoint/login?project_id={projectID}&integration_artifact_id={integrationArtifactID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -100,11 +126,18 @@ Location: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_
 
 ### Refresh an integration token
 
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `integrationArtifactID` | Yes | Integration artifact to refresh. |
+</Accordion>
+
 <Tabs>
   <Tab title="Confluence refresh">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationID}/refresh_token" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/integration/confluence/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -115,8 +148,9 @@ curl -X POST "https://{BASE_URL}/api/v1/app/integration/confluence/{integrationI
   </Tab>
   <Tab title="SharePoint refresh">
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/integration/sharepoint/{integrationID}/refresh_token" \
-  -H "Authorization: Bearer {API_TOKEN}"
+curl -X POST "https://{BASE_URL}/api/v1/app/artifact/{integrationArtifactID}/integration/sharepoint/refresh_token" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
 ```
 
 <Accordion title="Example response">
@@ -158,7 +192,7 @@ Location: https://{BASE_URL}/app/login/success
 </Accordion>
 
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/confluence/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/confluence/callback?code=...&state=..."
 ```
 
 <Accordion title="Example response">
@@ -177,7 +211,7 @@ Location: https://{BASE_URL}/app/integrations/confluence
 </Accordion>
 
 ```bash
-curl -i "https://{BASE_URL}/api/v1/app/integration/sharepoint/callback?code=...&state=..."
+curl -i "https://{BASE_URL}/api/v1/app/artifact/integration/sharepoint/callback?code=...&state=..."
 ```
 
 <Accordion title="Example response">
@@ -193,4 +227,4 @@ Location: https://{BASE_URL}/app/integrations/sharepoint
 
 - **302 redirect**: expected for login and callback routes.
 - **401/403**: token missing for refresh.
-- **404**: integration ID not found.
+- **404**: integration artifact or project not found.

@@ -11,7 +11,7 @@ Use `POST /api/v1/auth/register` to create a new credentials-based account.
 
 To use that account in Workspace, complete one of these operations:
 
-- Create a workspace user with the account ID in [Users - Create a user](/en/developer-manual/build-with-zylon/workspace-api/users/user).
+- Create a workspace member with the account ID in [Workspace members - Create a workspace member](/en/developer-manual/build-with-zylon/workspace-api/users/user).
 - Join directly to an organization through `POST /api/v1/account/organization/{orgId}/join`.
 
 ```bash
@@ -22,7 +22,7 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
     "name": "Sasha Patel",
     "email": "sasha@example.com",
     "password": "{password}",
-    "roles": ["Admin"]
+    "roles": ["Workspace"]
   }'
 ```
 
@@ -42,12 +42,8 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
   "state": "Active",
   "email": "sasha@example.com",
   "name": "Sasha Patel",
-  "given_name": null,
-  "family_name": null,
-  "profile_picture": null,
   "provider": "Credentials",
-  "users": null,
-  "roles": ["Admin"],
+  "roles": ["Workspace"],
   "created_at": "2026-02-08T14:12:45Z",
   "updated_at": "2026-02-08T14:12:45Z"
 }
@@ -151,9 +147,13 @@ curl -X POST "https://{BASE_URL}/api/v1/account/token" \
 | `name` | string | No | Human-readable token name. |
 | `revoke_existing` | boolean | No | When `true`, revokes existing tokens according to server policy. Defaults to `false`. |
 | `valid_until` | timestamp | No | Expiration timestamp. Use `null` or omit for no explicit expiration. |
-| `scopes` | string[] | No | Allowed values: `ReadWrite.All`, `Workspace.ReadWrite.All`, `PrivateGPT.ReadWrite.All`. Defaults to `Workspace.ReadWrite.All`. |
-| `gateway_id` | string | No | Gateway ID when creating a gateway-scoped token. |
+| `scopes` | string[] | No | Allowed values: `Read.All`, `ReadWrite.All`, `Workspace.Read.All`, `Workspace.ReadWrite.All`, `PrivateGPT.Read.All`, and `PrivateGPT.ReadWrite.All`. If omitted, defaults to `Workspace.ReadWrite.All`; an explicit empty array returns `400`. |
+| `gateway_id` | string | No | Required when `scopes` includes `PrivateGPT.Read.All` or `PrivateGPT.ReadWrite.All`. |
 </Accordion>
+
+Scopes on the same token are combined, then intersected with the owner account's role permissions. A token cannot elevate its owner, including a SuperAdmin token. Scope restrictions apply to API tokens only and do not change interactive sessions. See [Token Management](/en/developer-manual/get-started/token-management) for the access provided by each scope.
+
+`Read.All` can be created without `gateway_id`, but its ZylonGPT read grants are usable only when the token carries that gateway context. In contrast, account-token creation returns `400` when either dedicated `PrivateGPT.*` scope is requested without `gateway_id`.
 
 <Accordion title="Example response">
 ```json
@@ -194,5 +194,6 @@ curl -X DELETE "https://{BASE_URL}/api/v1/account/token/{token_hash}" \
 ## Errors and edge cases
 
 - **401/403**: missing or invalid API token.
+- **400**: `scopes` is explicitly empty, a PrivateGPT scope has no `gateway_id`, or a gateway token request contains a non-PrivateGPT scope.
 - **429**: too many login attempts.
 - **400**: register payload missing required account roles, email, or password.

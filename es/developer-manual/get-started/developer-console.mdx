@@ -19,6 +19,8 @@ Está disponible para:
 
 Los tokens de API se crean dentro de gateways y quedan asociados tanto al gateway como a la cuenta que los crea.
 
+La creación de tokens de gateway acepta `PrivateGPT.Read.All` y `PrivateGPT.ReadWrite.All`. Una lista de scopes legacy vacía explícita se convierte en `PrivateGPT.ReadWrite.All`; cualquier otro scope solicitado devuelve `400`. Consulta [Gestión de tokens](/es/developer-manual/get-started/token-management) para ver el modelo de scopes y la allowlist de solo lectura.
+
 <Info>
 Si solo necesitas acceso a Workspace API, puedes usar el flujo de [Gestión de tokens de Workspace](/es/developer-manual/get-started/token-management).
 </Info>

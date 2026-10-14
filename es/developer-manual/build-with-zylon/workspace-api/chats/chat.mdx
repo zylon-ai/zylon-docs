@@ -5,42 +5,82 @@ description: "Ejecuta chats puntuales sin crear un hilo."
 
 Los endpoints de Chat permiten enviar solicitudes puntuales usando el mismo formato de mensajes, sin crear un hilo ni un registro de interacción.
 
-## Solicitud básica y respuesta
 
-Envía una solicitud puntual con `POST /api/v1/app/chat`.
+## Solicitud basica y respuesta
+
+El endpoint actual devuelve `200` con `Content-Type: text/event-stream`, incluso si `pgpt.stream` es false. No crea un hilo ni una interaccion guardada. Usa el cuerpo con envoltorio para seleccionar un proyecto o artefactos. Se sigue aceptando una solicitud de Messages plana para un chat solo de organizacion.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `pgpt` | Si | Solicitud de Messages con exactamente un mensaje de usuario. `private_gpt` es un alias aceptado. |
+| Body | `project_id` | No | Contexto de proyecto opcional. Omite o envia null para un chat solo de organizacion. |
+| Body | `artifacts` | No | Selecciones de artefactos por alcance descritas arriba. |
+</Accordion>
 
 ```bash
-curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
   -H "Authorization: Bearer {API_TOKEN}" \
   -H "x-org: {org_slug}" \
   -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
   -d '{
-    "messages": [
-      {
-        "role": "user",
-        "content": [
-          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
-        ]
-      }
-    ],
-    "max_tokens": 64,
-    "temperature": 0.3
+    "project_id": "{projectID}",
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Draft a two-sentence update on this week support backlog."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 64,
+      "temperature": 0.3
+    }
   }'
 ```
 
-<Accordion title="Ejemplo de respuesta">
-```json
-{
-  "id": "msg_5f2e1d3c4b6a7c8d",
-  "role": "assistant",
-  "content": [
-    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
-  ]
-}
+Consume los eventos de mensaje hasta `done`; esta operacion no emite un evento `interaction` guardado. La desconexion cancela la solicitud activa. Consulta [Messages](/es/developer-manual/build-with-zylon/working-with-messages) para los campos anidados de solicitud y respuesta.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
 ```
 </Accordion>
 
+Las selecciones de artefactos usan el mismo [modelo por alcance que las interacciones de hilo](/es/developer-manual/build-with-zylon/workspace-api/chats/threads#seleccionar-artefactos).
+
 ## Validar un chat
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Body | `messages` | Si | Mensajes de solicitud de chat, enviados directamente en el nivel superior. No uses el envoltorio `pgpt` en este endpoint. Los campos opcionales de generacion, system y herramientas siguen el modelo de Messages enlazado. |
+</Accordion>
 
 ```bash
 curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
@@ -52,7 +92,10 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
       {
         "role": "user",
         "content": [
-          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+          {
+            "type": "text",
+            "text": "Give me a three-bullet summary of the Q1 support plan."
+          }
         ]
       }
     ],
@@ -61,13 +104,34 @@ curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
   }'
 ```
 
+Devuelve `200` con `valid: true`, o `400` con `valid: false` y el resultado de validacion. Los cuerpos invalidos o los fallos anteriores al resultado devuelven un error API estandar. Los campos nulos del resultado pueden omitirse. Esta operacion comprueba el cuerpo de Messages; el contexto de proyecto, las selecciones de artefactos y los permisos de Workspace se comprueban al ejecutar el chat.
+
 <Accordion title="Ejemplo de respuesta">
-```text
-HTTP/1.1 204 No Content
+```json
+{
+  "valid": true,
+  "request_summary": {
+    "message_count": 1,
+    "has_tools": false,
+    "stream_enabled": false
+  }
+}
 ```
 </Accordion>
 
-## Errores y casos límite
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `valid` | boolean | Si la validacion fue correcta. |
+| `errors` | string[] o null | Errores de validacion. |
+| `warnings` | string[] o null | Avisos no fatales. |
+| `request_summary` | object o null | Resumen opcional de la solicitud comprobada. |
+| `request_summary.message_count` | integer o null | Numero de mensajes de entrada. |
+| `request_summary.has_tools` | boolean o null | Si se enviaron herramientas. |
+| `request_summary.stream_enabled` | boolean o null | Valor solicitado de stream. |
+| `request_summary.tool_choice` | string o null | Modo solicitado de seleccion de herramientas. |
 
-- **400**: esquema inválido (usa `/chat/validate`).
-- **413**: cuerpo de la petición demasiado grande.
+## Errores y casos limite
+
+- **400**: solicitud invalida, selectores de artefactos invalidos o numero de mensajes de usuario distinto de uno.
+- **403**: permisos insuficientes del espacio de trabajo o proyecto.
+- Tambien debes procesar los errores del stream despues de iniciar la respuesta HTTP.

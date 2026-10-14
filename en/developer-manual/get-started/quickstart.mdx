@@ -112,7 +112,7 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
     ```json
     {
       "id": "acct_6c8a1f3b2d4e5f7a",
-      "email": "sasha@auroralabs.com",
+      "email": "sasha@example.com",
       "provider": "Credentials",
       "roles": ["AppAdmin"]
     }
@@ -146,16 +146,20 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
 
   <Step title="Upload an artifact">
     ```bash
-    curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/artifact" \
+    printf 'Q1 support summary.\n' > q1-support-summary.txt
+
+    curl -X POST "https://{BASE_URL}/api/v1/app/artifact" \
       -H "Authorization: Bearer {API_TOKEN}" \
       -H "x-org: {org_slug}" \
+      -F 'project_id={projectID}' \
       -F 'type=Document' \
       -F 'name=Q1 Support Summary' \
       -F 'props={
         "content_type":"text/plain",
-        "file_name":"q1-support-summary.txt"
+        "file_name":"q1-support-summary.txt",
+        "content_length":20
       };type=application/json' \
-      -F 'fileData=@./q1-support-summary.txt;type=text/plain'
+      -F 'file_data=@./q1-support-summary.txt;type=text/plain'
     ```
 
     Example response:
@@ -166,9 +170,10 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
       "project_id": "proj_7a5c3e1b9d2f4a6c",
       "name": "Q1 Support Summary",
       "type": "Document",
-      "state": "Ready",
-      "ingest_status": "Done",
-      "has_content": true
+      "source": "User",
+      "state": "Published",
+      "ingest_status": "NotStarted",
+      "keep_file_after_ingestion": true
     }
     ```
   </Step>
@@ -235,7 +240,7 @@ Workspace requests under `/api/v1/app/*` require the `x-org` header to target th
 
 ## Troubleshooting
 
-- **401/403**: your token is invalid, expired, or issued for the wrong flow. Use [Workspace Token Management](/en/developer-manual/get-started/token-management) for Workspace-only access, or [Backoffice Developer Console](/en/developer-manual/get-started/developer-console) for a cross-API token.
+- **401/403**: your token is invalid, expired, lacks the required scope, or was issued for the wrong flow. Use [Workspace Token Management](/en/developer-manual/get-started/token-management) for Workspace access, or [Backoffice Developer Console](/en/developer-manual/get-started/developer-console) for a token that works across Workspace, ZylonGPT, and Backoffice APIs.
 - **404**: Check your base URL. For ZylonGPT, use `https://{BASE_URL}/api/gpt/v1/`.
 - **400 (model not found)**: Use `"model": "default"` unless you’ve been given a specific model name.
 - **405**: You’re using the wrong method. `/messages` is `POST`.

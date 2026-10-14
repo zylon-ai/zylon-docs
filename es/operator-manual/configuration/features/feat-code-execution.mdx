@@ -1,0 +1,106 @@
+---
+title: "Ejecución de código"
+description: "Permite que el asistente ejecute código y trabaje con archivos en sandboxes aislados."
+---
+
+<Note>**Característica en Beta**</Note>
+
+La ejecución de código permite al asistente ejecutar comandos bash y crear, editar y presentar archivos dentro de un sandbox aislado. Cada hilo de chat (o `container` de la API) tiene su propio sandbox, que crea bajo demanda el servicio OpenSandbox incluido en el mismo clúster de Kubernetes.
+
+Los usuarios la ven en el Workspace cuando trabajan con Skills o generan archivos. Los desarrolladores pueden usarla a través de la API; ver [Herramienta de ejecución de código](/es/developer-manual/build-with-zylon/tools/built-in/code-execution-tool).
+
+### Configuración
+
+| Clave | Por defecto | Valores | Descripción |
+|-----|---------|--------|-------------|
+| `features.codeExecution.enabled` | `true` | `true \| false` | Habilita la ejecución de código |
+| `features.codeExecution.timeout` | `60` | segundos | Tiempo de espera por defecto para cada comando que se ejecuta en el sandbox |
+| `external.opensandbox.sessionTTLSeconds` | `600` | segundos | Tiempo que un sandbox inactivo se mantiene en ejecución antes de apagarse. Los archivos se conservan; la siguiente solicitud arranca un sandbox nuevo con los mismos archivos. |
+
+### Ejemplo
+
+```yaml
+features:
+    codeExecution:
+        enabled: true
+        timeout: 60
+```
+
+Para desactivar la ejecución de código:
+
+```yaml
+features:
+    codeExecution:
+        enabled: false
+```
+
+### Cómo funciona
+
+- **Un sandbox por hilo.** Cada sandbox es un pod en el namespace `opensandbox-runtimes`, que se crea cuando el asistente ejecuta código por primera vez en un hilo y se apaga tras `sessionTTLSeconds` de inactividad.
+- **Archivos persistentes.** Los archivos subidos, las salidas y los archivos del espacio de trabajo se almacenan en el bucket `sessions` del almacenamiento de objetos de la plataforma, por lo que sobreviven a los reinicios del sandbox y a las actualizaciones de la plataforma.
+- **Imágenes descargadas previamente.** Las imágenes del sandbox se descargan durante la instalación y la actualización, así que no se necesita acceso al registro cuando arranca un sandbox. Esto también funciona en instalaciones airgapped.
+
+### Acceso a la red
+
+Los sandboxes no tienen acceso a internet. Por defecto, un sandbox de ejecución de código solo puede acceder a:
+
+- DNS.
+- La API de Zylon, para que el código del sandbox pueda llamar al modelo con los permisos del usuario que envió la solicitud.
+
+Para que los sandboxes puedan acceder a otros servicios dentro del clúster, como una base de datos o una API internas, añádelos a `external.opensandbox.codeExecution.internal.services`. Cada entrada es un peer de NetworkPolicy de Kubernetes:
+
+```yaml
+external:
+    opensandbox:
+        codeExecution:
+            internal:
+                services:
+                    - namespaceSelector:
+                          matchLabels:
+                              kubernetes.io/metadata.name: analytics
+                      podSelector:
+                          matchLabels:
+                              app: postgres
+```
+
+<Warning>
+El código del sandbox lo escribe el modelo de IA. Permite únicamente servicios que no te importe exponer a cualquier usuario que pueda chatear con el asistente.
+</Warning>
+
+### Recursos
+
+Por defecto, los sandboxes no tienen límites de CPU ni de memoria. Para limitar el total de recursos que pueden usar los sandboxes, habilita la cuota y el rango de límites para el namespace de los sandboxes:
+
+```yaml
+opensandbox:
+    runtime:
+        resourceQuota:
+            enabled: true    # Total para todos los sandboxes: 50 pods, 20 CPU, 40Gi de memoria (límites)
+        limitRange:
+            enabled: true    # Por sandbox: 1 CPU, 512Mi de memoria por defecto
+```
+
+### Imágenes del sandbox
+
+| Clave | Por defecto |
+|-----|---------|
+| `external.opensandbox.codeExecution.image.repository` | `zylon-sandbox-templates/code-execution` |
+| `external.opensandbox.codeExecution.image.tag` | `1.1.0` |
+
+La imagen incluye Python 3 con las librerías de datos más habituales (pandas, numpy, matplotlib, openpyxl, python-docx, pypdf, entre otras) y herramientas de línea de comandos como `unzip`, `rg` y `sqlite3`.
+
+### Resolución de problemas
+
+Comprueba los sandboxes que están en ejecución:
+
+```bash
+sudo kubectl get pods -n opensandbox-runtimes
+```
+
+Revisa los logs del servidor de OpenSandbox:
+
+```bash
+sudo kubectl logs -n opensandbox deploy/opensandbox-server --tail=200
+```
+
+Si el asistente informa de `code_execution provider is not configured.`, asegúrate de que `features.codeExecution.enabled` es `true` y ejecuta `sudo zylon-cli sync`.

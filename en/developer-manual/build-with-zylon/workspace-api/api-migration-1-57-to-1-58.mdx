@@ -1,0 +1,1332 @@
+---
+title: "API migration 1.57 -> 1.58"
+description: "Migrate existing Workspace API integrations to the 1.58 routes, request bodies, and response models."
+noindex: true
+---
+
+Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs, plus the new [server tool content blocks](#server-tool-content-blocks) returned in chat messages by both the Workspace and ZylonGPT APIs.
+
+<Warning>
+Legacy routes are deprecated in 1.58, with removal planned for 1.59. Review the route, body, and response changes below before upgrading your integration.
+
+**If your integration uses user or account IDs, migrate the affected identity mappings even if requests still work.** Review where you store, compare, or pass them. Creator fields and filters now use account IDs. Both are UUIDs, so API calls may still succeed while returning IDs that no longer match your stored records or application logic. Update affected mappings, lookups, comparisons, and filters. Membership-specific routes and fields still use workspace-member IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+</Warning>
+
+## Prerequisites
+
+- An API token and your Zylon hostname. See [Workspace Token Management](/en/developer-manual/get-started/token-management).
+- Send `Authorization: Bearer {API_TOKEN}` and `x-org: {org_slug}` for workspace requests.
+- Send `Content-Type: application/json` for JSON bodies. Let your HTTP client set the boundary for multipart requests.
+
+Paths in the tables below are relative to `https://{BASE_URL}/api/v1`.
+
+## Artifact routes
+
+Replace the project or organization artifact prefix with `/app/artifact`. Supply project ownership or filtering explicitly where needed.
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/project/{projectID}/artifact` or `/app/organization/artifact` | `/app/artifact` |
+| `GET`, `PUT`, `DELETE` | Either old prefix + `/{artifactID}` | `/app/artifact/{artifactID}` |
+| `POST` | Either old prefix + `/validate` | `/app/artifact/validate` |
+| `POST` | Either old prefix + `/{artifactID}/validate` | `/app/artifact/{artifactID}/validate` |
+| `GET` | Either old prefix + `/{artifactID}/download` | `/app/artifact/{artifactID}/download` |
+| `GET` | `/app/project/{projectID}/artifact/{artifactID}/parsed-content` | `/app/artifact/{artifactID}/parsed-content` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/retry` | `/app/artifact/{artifactID}/retry` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/sync` | `/app/artifact/{artifactID}/sync` |
+| `POST` | `/app/project/{projectID}/artifact/{artifactID}/ingest` | `/app/artifact/{artifactID}/ingest` |
+| `PUT`, `DELETE` | `/app/project/{projectID}/artifact/bulk` | `/app/artifact/bulk` |
+
+<Accordion title="Endpoint parameters">
+
+| Operation | What to change |
+| --- | --- |
+| List | Move the old path `projectID` to the `project_id` query parameter. Keep `x-org` to select the workspace. |
+| Create, create-validation, retry | Move the old path `projectID` to the body as `project_id`. Omit it, or send `null`, for organization artifacts. |
+| Ingest | Send `project_id` in the provider-specific JSON body. Keep the existing provider parameters. |
+| Other ID-based operations | The artifact ID identifies its ownership. Keep the existing operation-specific parameters. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/artifact?project_id={projectID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+When using `x-org`, do not also send `organization_id`. Without `x-org`, specifying `organization_id` requires an Operator or SuperAdmin. Creating organization artifacts requires AppAdmin or higher; `Link` artifacts require a project.
+
+### Creation bodies
+
+The current JSON create field `content` contains **Base64-encoded file or text bytes**. It replaces the old plain-text `raw_content` input. For example, UTF-8 `Hello` becomes `SGVsbG8=`.
+
+<Tabs>
+<Tab title="1.57 request">
+
+`POST /app/project/{projectID}/artifact`
+
+```json
+{
+  "type": "SmartDoc",
+  "name": "Draft",
+  "raw_content": "Hello",
+  "props": {}
+}
+```
+
+</Tab>
+<Tab title="1.58 request">
+
+`POST /app/artifact`
+
+```json
+{
+  "project_id": "{projectID}",
+  "type": "SmartDoc",
+  "name": "Draft",
+  "content": "SGVsbG8=",
+  "props": {}
+}
+```
+
+</Tab>
+</Tabs>
+
+<Accordion title="Request body changes">
+
+| Field | Migration |
+| --- | --- |
+| `raw_content` | Replace with Base64-encoded `content` on current JSON create, create-validation, and retry requests. |
+| `file_data` | Keep this multipart file field, including for skill uploads. Add `project_id` as a multipart form field when creating in a project. |
+| `project_id` | New location for the old path selector. Optional string or `null`; required for project ownership. |
+| `organization_id` | Omit when sending `x-org`. Available without that header to authorized Operator/SuperAdmin callers. |
+| `props`, `private_props`, `integration_id` | Use these canonical names. Existing aliases `config`, `private_config` (create only), and `integration_artifact_id` remain accepted. |
+| `source` | Defaults to `User`. Clients cannot set `Assistant` or `System`. |
+
+</Accordion>
+
+Other type-specific fields retain their current rules. See the complete [artifact request fields and types](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#artifact-request-fields).
+
+### Update bodies
+
+The old update `content` was **Base64 binary editor state**. The current JSON update `content` is **plain UTF-8 text**, such as Markdown. Export the editor document to Markdown; merely decoding its Base64 bytes does not produce document text.
+
+<Tabs>
+<Tab title="1.57 request">
+
+`PUT /app/project/{projectID}/artifact/{artifactID}`
+
+```json
+{
+  "content": "{BASE64_EDITOR_STATE}",
+  "plain_text_content": "Hello"
+}
+```
+
+`{BASE64_EDITOR_STATE}` represents your existing encoded editor document.
+
+</Tab>
+<Tab title="1.58 request">
+
+`PUT /app/artifact/{artifactID}`
+
+```json
+{
+  "content": "Hello"
+}
+```
+
+</Tab>
+</Tabs>
+
+<Warning>
+Create and update use different encodings: **Base64 for JSON creation, plain text for JSON updates**. Do not send the old editor-state string to the current update route; it would be treated as literal text.
+</Warning>
+
+The same update format applies to update-validation and each `artifacts[].update` entry in bulk updates. Bulk entries still use `artifactId` and `update`. Remove `plain_text_content`; it was separate search text, and current search text is derived from the document. For file replacement, use multipart `file_data` on the current update route. See [updating artifacts](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#update-an-artifact).
+
+### What legacy artifact requests still support
+
+- JSON creation, validation, and retry accept `raw_content`; multipart creation also accepts file bytes. Legacy creation takes the project from the URL and rejects body `project_id`, `organization_id`, and new JSON `content`.
+- Legacy JSON updates convert Base64 editor state to Markdown before saving. This requires the deployment's document conversion service to be available. Binary content can be supplied with or without `plain_text_content`; that field alone does not replace document content.
+- Legacy update, update-validation, and bulk update accept JSON only. Use the current endpoint for multipart replacement.
+- A create request combining `raw_content` and a file is rejected: both cannot be preserved in the single current content field. Send one content representation.
+- Unknown fields and invalid legacy field types are rejected. Organization creation accepts only scopes for the selected organization.
+
+### Artifact responses and selection
+
+Legacy artifact responses keep `has_content`, always `false`: this field described the old binary editor content, not whether a file exists. Original editor bytes cannot be reconstructed, so `content` is null/omitted.
+
+On legacy artifact detail requests, add `include_content=true` to receive available UTF-8 text as `raw_content`. The default is `false`; lists and mutation responses do not include text. Whitespace and empty text are preserved. Non-text files and invalid UTF-8 have no `raw_content`. Current download permissions apply; disabled downloads return `403`, and missing stored files return the current download error.
+
+<Accordion title="Legacy content fields (partial response)">
+
+```json
+{
+  "has_content": false,
+  "raw_content": "# Current document"
+}
+```
+
+Null fields are omitted. No Base64 editor `content` is generated from the text.
+
+</Accordion>
+
+Current artifact responses omit these legacy content fields. Use `/app/artifact/{artifactID}/download` for stored content. `/app/artifact/{artifactID}/parsed-content` returns extracted text and requires an initialized vector index. Download returns a presigned URL by default; `Content-Disposition: attachment` returns file bytes. Both modes are also supported on legacy download URLs.
+
+Artifact `created_by` now represents an **account**. Update code that reads creator details or compares creator IDs; see [account IDs and renamed fields](#account-ids-and-renamed-fields).
+
+`scopes[].ws_auto_select` and `scopes[].enabled` already existed in released 1.57 versions and remain supported, including `enabled: false`. The older top-level `ws_auto_select` flag is not accepted. Skill uploads still use `file_data`; there is no separate skill-body migration here. See [artifact scopes](/en/developer-manual/build-with-zylon/workspace-api/content/artifacts#add-update-or-remove-a-scope).
+
+## Workspace members
+
+User data is unified at the **account** level: identity, name, email, and profile picture belong to the account. The former user becomes a **workspace membership**, holding the account's roles, permissions, and active/inactive state within that workspace.
+
+Replace `/app/user` with `/app/member`. IDs in these paths remain **workspace-member IDs**, not account IDs.
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET`, `POST` | `/app/user` | `/app/member` |
+| `GET`, `PUT` | `/app/user/{wsMemberId}` | `/app/member/{wsMemberId}` |
+| `POST` | `/app/user/{wsMemberId}/activate` or `/deactivate` | `/app/member/{wsMemberId}/activate` or `/deactivate` |
+| `GET` | `/app/user/{wsMemberId}/project` | `/app/member/{wsMemberId}/project` |
+| `GET` | `/app/user/{wsMemberId}/latest-artifacts` | `/app/member/{wsMemberId}/latest-artifacts` |
+
+Legacy `/app/user` list, detail, create, role-update, activate, and deactivate responses still expose top-level `name`, `email`, and available `profile_picture`, taken from the account's current profile. Membership `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at` remain available. Removed job-position data cannot be recovered and is null/omitted. These response fields do not restore profile updates through the old member route.
+
+`GET /app/me` keeps its URL but returns the new member model too. Names, email, and profile pictures are account data; they are no longer top-level member fields. Request `include=Account` on member list, member details, or `/app/me` to receive the nested account.
+
+<Accordion title="Endpoint parameters">
+
+| Operation | Request |
+| --- | --- |
+| `POST /app/member` | Required `account_id` string and `role` string. The old `user_info` input is not restored. |
+| `PUT /app/member/{wsMemberId}` | Required `role` string. Profile fields are no longer updated here, including through the legacy URL. |
+| Member list | Optional `state`: comma-separated `Active`, `Inactive`; both included by default. The old `order_by`/`order` sorting contract is not retained. |
+| Member reads | Optional `include=Account`. |
+
+Workspace roles: `AppGuest`, `AppMember`, `AppAdmin`, `AppOwner`.
+
+</Accordion>
+
+Update account profile fields with `POST /account/{accountId}` (`me` is accepted for your own account), instead of the member update endpoint. The former `job_position_name` and `job_position_description` member fields are removed; they are not part of the account model.
+
+<Accordion title="Current member response">
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Workspace-member ID. |
+| `org_id` | string | Organization ID. |
+| `account_id` | string | Account ID; distinct from the member ID. |
+| `state` | string | `Active` or `Inactive`. |
+| `roles` | string[] | Workspace roles. |
+| `created_at` | timestamp | Server-generated membership creation time. |
+| `account` | object or null | Account details when requested. See the full [member and account response example](/en/developer-manual/build-with-zylon/workspace-api/users/user#get-the-current-workspace-member). |
+
+</Accordion>
+
+## Account IDs and renamed fields
+
+The field-name aliases below are temporary. **Creator IDs and objects now refer to accounts, including on legacy artifact URLs.** Update stored ID comparisons and `created_by` filters; workspace-member IDs are not converted automatically. Shared project, thread, interaction, issue, and account responses retain their current field names.
+
+| Where | Old | Current / required action |
+| --- | --- | --- |
+| Project member create/update entries | `user_id` | Use `ws_member_id`; the old name remains an input alias. The value is still a workspace-member ID. |
+| Chat request metadata (Workspace and ZylonGPT) | `metadata.user_id` | Use `metadata.ws_member_id`; `user_id` remains an input alias. Send only one name. The value remains a workspace-member ID, not an account ID. |
+| Project ownership transfer | `old_owner_id`, `new_owner_id` | Use `old_owner_ws_member_id`, `new_owner_ws_member_id`; old names remain input aliases. |
+| Artifact, thread, interaction, issue `include` queries | `User` | Use `Account`; `User` remains an input alias. |
+| Account-list `include` query | `Users` | Use `WorkspaceMembers`; `Users` remains an input alias. |
+| Account response memberships | `users` | Read `workspace_members`. |
+| Project member response | `user` | Read `account`; member `id` remains a workspace-member ID. |
+| Artifact, thread, interaction, issue `created_by` response | Workspace member | Read an account object and its account ID. |
+| Artifact `created_by` filter | Workspace-member ID | Send an account ID. No ID conversion is provided. |
+| Issue `created_by` filter | Workspace-member IDs | Send comma-separated account IDs. No ID conversion is provided. |
+
+See [project members](/en/developer-manual/build-with-zylon/workspace-api/projects/project-member), [ownership transfer](/en/developer-manual/build-with-zylon/workspace-api/projects/project), and [issue filters](/en/developer-manual/build-with-zylon/workspace-api/general/issues) for complete current bodies and responses.
+
+## Chats and threads
+
+### Move project chat to the unified route
+
+Replace `POST /app/project/{projectID}/chat` with `POST /app/chat` and move the project selector into the body. Use a wrapped `pgpt` message request (`private_gpt` remains an input alias). The current route also accepts a legacy flat message request for workspace context, but project and artifact selectors require the wrapper. `/app/chat/validate` takes the flat message request.
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "project_id": "{projectID}",
+    "pgpt": {
+      "messages": [{ "role": "user", "content": "Summarize the project." }]
+    }
+  }'
+```
+
+<Accordion title="Endpoint parameters">
+
+| Type | Name | Required | Migration |
+| --- | --- | --- | --- |
+| Body | `project_id` | No | Former path selector. Supply it for project context; omit it for workspace context. |
+| Body | `pgpt` | Yes | Message request. See [Messages](/en/developer-manual/build-with-zylon/working-with-messages). |
+| Body | `artifacts` | No | Scoped selection object described below. |
+
+</Accordion>
+
+<Warning>
+The current `/app/chat` response is **always SSE**, including when `pgpt.stream` is `false`. The retained project-chat URL returns JSON when that flag is `false` and SSE when it is `true`. Update clients that expect a JSON response before switching URLs. No removal version is assigned to the project-chat alias.
+</Warning>
+
+For explicit artifact selection, use `artifacts.document`, `artifacts.connector`, `artifacts.skill`, or `artifacts.agent_flow`. Each is an array of selectors with `scope` (`organization` or `project`), optional `all_artifacts`, and optional `artifacts_ids` (note the plural spelling). For example:
+
+```json
+{
+  "artifacts": {
+    "document": [
+      { "scope": "project", "artifacts_ids": ["{artifactID}"] }
+    ]
+  }
+}
+```
+
+This is a partial request body to combine with `pgpt` and, for project scope, `project_id`. Do not send the old reference examples' top-level `artifact_ids` or `all_artifacts`: unknown fields are ignored, so they do not select artifacts. A category cannot repeat the same scope or combine `all_artifacts: true` with nonempty `artifacts_ids`. See [chat requests](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#one-shot-chat).
+
+### Thread files and read state
+
+1.58 adds raw file writes with `PUT /app/thread/{threadID}/put-file/{path...}`. Send bytes as the body. Multipart `POST /app/thread/{threadID}/upload-file` still uses `file` and now accepts optional `path` and `namespace`. Uploads, raw writes, and downloads select `session` (default), `artifacts`, or `skills` with `namespace`; downloads also accept `disposition=attachment` (default) or `inline`. See [thread files](/en/developer-manual/build-with-zylon/workspace-api/chats/threads#thread-files) for upload, download, and MDX artifact conversion.
+
+On project thread lists, request `include=ReadState` to receive `read_state.last_read_at` and `read_state.has_unread_response`. A new thread created by another account may also count as unread. Listing interactions with `GET /app/thread/{threadID}/interaction` now advances the caller's read checkpoint through the completed responses returned. Clients that poll this endpoint can therefore clear unread state; account for that side effect in notification and polling logic.
+
+## Filesystem requests
+
+| Method | Deprecated route | Current route |
+| --- | --- | --- |
+| `GET` | `/app/project/{projectID}/artifact/{integrationArtifactID}/files` | `/app/artifact/{integrationArtifactID}/files` |
+| `POST` | `/app/project/{projectID}/artifact/integration/filesystem/validate` | `/app/artifact/integration/filesystem/validate` |
+
+Credential validation requires the **current nested body on both URLs**. Flat legacy credentials are not adapted.
+
+<Accordion title="Request body">
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `organization_id` | string | Yes | Must match the authenticated workspace. Required for this operation even when sending `x-org`. |
+| `project_id` | string or null | No | Supply the project explicitly; project validation requires Project Admin. Without it, workspace AppAdmin or higher is required. |
+| `credentials` | object | Yes | Nested credential fields below. |
+| `credentials.username` | string | Yes | Filesystem username. |
+| `credentials.password` | string | Yes | Filesystem password. |
+
+</Accordion>
+
+```json
+{
+  "organization_id": "{orgId}",
+  "project_id": "{projectID}",
+  "credentials": {
+    "username": "***",
+    "password": "***"
+  }
+}
+```
+
+This operation returns a boolean. See [filesystem validation](/en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem#validate-credentials) for the complete request example. Integration ingestion uses the unified artifact `/ingest` route and a body `project_id`, as described above.
+
+## Server tool content blocks
+
+In 1.57, every tool call in a message came back as a `tool_use` block followed by a `tool_result` block. That was true whether Zylon ran the tool or your application did. In 1.58, tools that **Zylon runs on the server** use the Anthropic Messages API server tool format instead. Tools that **your application runs** (custom tools) have not changed and still use `tool_use` and `tool_result`.
+
+The change affects message content in streamed events, stored thread interactions, and `/messages` responses. Update any code that finds tool calls by checking `type == "tool_use"` or `type == "tool_result"`.
+
+| 1.57 tool name | 1.58 tool name | 1.58 call block | 1.58 result block |
+| --- | --- | --- | --- |
+| `web_search` | `web_search` | `server_tool_use` | `web_search_tool_result` |
+| `web_extract` (`web_fetch` in the ZylonGPT API) | Unchanged | `server_tool_use` | `web_fetch_tool_result` |
+| `bash` | `bash_code_execution` | `server_tool_use` | `bash_code_execution_tool_result` |
+| `view`, `create`, `str_replace`, `insert` | `text_editor_code_execution`, with the operation in `input.command` | `server_tool_use` | `text_editor_code_execution_tool_result` |
+| `semantic_search`, `summarize`, `tabular_analysis`, `database_query`, `present_files`, `present_server`, skill tools, MCP tools | Unchanged | `server_tool_use` | `server_tool_result` |
+| Custom tools your application runs | Unchanged | `tool_use` (unchanged) | `tool_result` (unchanged) |
+
+- `server_tool_use.name` is the tool `name` from the request. Workspace chats send the web fetch tool as `web_extract`, so its calls appear as `web_extract`; ZylonGPT API clients see whichever name they sent (`web_extract` or `web_fetch`). Match on the result block type (`web_fetch_tool_result`) rather than the name.
+- Server tool call IDs start with `srvtoolu_`. Client tool call IDs start with `tool_`. The result's `tool_use_id` points to the call ID, as it did before.
+- Zylon has already run server tools, so do not send results back for them. `stop_reason: "tool_use"` still applies only to tools your application runs.
+- The block shapes follow the [Anthropic server tool format](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools), so Anthropic SDKs can parse them directly. Ignore any fields you do not recognize, because Zylon may add extra ones.
+
+### Migration rules
+
+- **Generic server tools** (`server_tool_result`): only the block `type` values and the ID prefix change. `content` and `is_error` work as before, so you can reuse your 1.57 parser.
+- **Web and code execution tools**: `content` is now a typed object (or a list of typed objects for web search) instead of a list of `text` blocks. These blocks have **no `is_error` field**. To detect a failure, check whether `content.type` ends in `_error`, then read `content.error_code`.
+- **Failures that 1.57 returned as text**: in 1.57, the text editor tools reported failures as a successful `tool_result` whose text started with `Error:`. In 1.58, they return an error object.
+- **Non-zero exit codes**: a bash command that exits with a non-zero code is not an error in either version. In 1.58, read `return_code` instead of parsing `exit_code:` from the text.
+
+| What you read in 1.57 | Where to read it in 1.58 |
+| --- | --- |
+| `tool_use.name` | `server_tool_use.name` (see the name table above) |
+| `tool_use.input` | `server_tool_use.input` (text editor calls add `command`) |
+| `tool_result.is_error: true` | `server_tool_result.is_error: true`, or `content.type` ending in `_error` for typed results |
+| `exit_code`, `stdout`, `stderr` lines in the bash text | `content.return_code`, `content.stdout`, `content.stderr` |
+| Text editor text output | `content` typed by command: `view`, `create`, or `str_replace` result |
+| Web search text list | `content[]` of `web_search_result` (`url`, `title`, `encrypted_content`, `page_age`) |
+| Web fetch Markdown text | `content.content.source.data` |
+
+### Migration examples by tool
+
+Each example shows the call block and the result block for a successful call and a failed call. The IDs, inputs, and result text are only examples.
+
+<AccordionGroup>
+<Accordion title="web_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1a2b",
+    "content": [
+      {
+        "type": "text",
+        "text": "1. Quarterly Report\nDescription: Support metrics for Q3\nURL: https://example.com/report\nAge: 2 days ago\nContent: Support backlog dropped 8%.\n"
+      }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1a2b",
+  "content": "Web search provider timed out",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "web_search_tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "web_search_result",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "encrypted_content": "Support backlog dropped 8%.",
+        "page_age": "2 days ago"
+      }
+    ]
+  }
+]
+```
+
+Zylon runs the search itself, so `encrypted_content` contains the result text as plain text, not encrypted data.
+
+Error (`content` is an object, not a list):
+
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": { "type": "web_search_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "support backlog report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "source",
+        "sources": [
+          {
+            "object": "context.website",
+            "url": "https://example.com/report",
+            "title": "Quarterly Report",
+            "description": "Support metrics for Q3",
+            "content": "Support backlog dropped 8%."
+          }
+        ]
+      },
+      { "type": "text", "text": "Support backlog dropped 8%." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": [{ "type": "text", "text": "Web search error: Web search provider timed out" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="web_extract (web fetch)">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_3c4d",
+  "content": "403 Forbidden",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
+  {
+    "type": "web_fetch_tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": {
+      "type": "web_fetch_result",
+      "url": "https://example.com",
+      "retrieved_at": "2026-09-24T10:00:00Z",
+      "content": {
+        "type": "document",
+        "title": "Example",
+        "source": {
+          "type": "text",
+          "media_type": "text/plain",
+          "data": "# Example page\n\nWelcome to the example page."
+        }
+      }
+    }
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "web_fetch_tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": { "type": "web_fetch_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Possible `error_code` values: `invalid_tool_input`, `url_too_long`, `url_not_allowed`, `url_not_in_prior_context`, `url_not_accessible`, `unsupported_content_type`, `too_many_requests`, `max_uses_exceeded`, `unavailable`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": [{ "type": "text", "text": "# Example page\n\nWelcome to the example page." }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": [{ "type": "text", "text": "Web fetch error: 403 Forbidden" }],
+  "is_error": true
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="bash → bash_code_execution">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5e6f", "name": "bash", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5e6f",
+    "content": [{ "type": "text", "text": "exit_code: 0\n\nstdout:\nreport.csv\n" }],
+    "is_error": false
+  }
+]
+```
+
+A command with a non-zero exit code:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": [{ "type": "text", "text": "exit_code: 2\n\nstderr:\nls: cannot access 'missing': No such file or directory\n" }],
+  "is_error": false
+}
+```
+
+Error (the tool could not run):
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_5e6f",
+  "content": "code_execution provider is not configured.",
+  "is_error": true
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5e6f", "name": "bash_code_execution", "input": { "command": "ls /tmp/outputs" } },
+  {
+    "type": "bash_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_5e6f",
+    "content": {
+      "type": "bash_code_execution_result",
+      "stdout": "report.csv\n",
+      "stderr": "",
+      "return_code": 0
+    }
+  }
+]
+```
+
+A command with a non-zero exit code:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_result",
+    "stdout": "",
+    "stderr": "ls: cannot access 'missing': No such file or directory\n",
+    "return_code": 2
+  }
+}
+```
+
+Error (the tool could not run):
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": { "type": "bash_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+Possible `error_code` values: `unavailable`, `execution_time_exceeded`, `invalid_tool_input`, `too_many_requests`, `output_file_too_large`, `file_not_found`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+Successful results are the same as without the extension. Error objects also include `detail`, which contains the underlying error:
+
+```json
+{
+  "type": "bash_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_5e6f",
+  "content": {
+    "type": "bash_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "code_execution provider is not configured." }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="view, create, str_replace, insert → text_editor_code_execution">
+
+In 1.57, each operation was a separate tool. In 1.58, they are all `text_editor_code_execution`, and the operation is given in `input.command`. The other input fields keep their names. For `insert`, 1.58 accepts both `insert_text` and `new_str`.
+
+| 1.57 call | 1.58 call |
+| --- | --- |
+| `view` `{ "path" }` | `text_editor_code_execution` `{ "command": "view", "path" }` |
+| `create` `{ "path", "file_text" }` | `text_editor_code_execution` `{ "command": "create", "path", "file_text" }` |
+| `str_replace` `{ "path", "old_str", "new_str" }` | `text_editor_code_execution` `{ "command": "str_replace", "path", "old_str", "new_str" }` |
+| `insert` `{ "path", "insert_line", "new_str" }` | `text_editor_code_execution` `{ "command": "insert", "path", "insert_line", "insert_text" }` |
+
+| Command | 1.57 result text | 1.58 `content.type` |
+| --- | --- | --- |
+| `view` | Numbered file lines | `text_editor_code_execution_view_result` |
+| `create` | `Created <path>` | `text_editor_code_execution_create_result` |
+| `str_replace` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+| `insert` | `Updated <path>` | `text_editor_code_execution_str_replace_result` |
+
+<Tabs>
+<Tab title="1.57">
+
+`view`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8b", "name": "view", "input": { "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7a8b",
+    "content": [{ "type": "text", "text": "1: total = 0\n2: print(total)" }],
+    "is_error": false
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8c", "name": "create", "input": { "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8c", "content": [{ "type": "text", "text": "Created /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8d", "name": "str_replace", "input": { "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8d", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+`insert`:
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7a8e", "name": "insert", "input": { "path": "/tmp/outputs/app.py", "insert_line": 1, "new_str": "print(total)" } },
+  { "type": "tool_result", "tool_use_id": "tool_7a8e", "content": [{ "type": "text", "text": "Updated /tmp/outputs/app.py" }], "is_error": false }
+]
+```
+
+Error. File errors came back as a successful result whose text started with `Error:`:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_7a8b",
+  "content": [{ "type": "text", "text": "Error: File not found: /tmp/outputs/missing.py" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+`view`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8b", "name": "text_editor_code_execution", "input": { "command": "view", "path": "/tmp/outputs/app.py" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8b",
+    "content": {
+      "type": "text_editor_code_execution_view_result",
+      "file_type": "text",
+      "content": "total = 0\nprint(total)",
+      "num_lines": 2,
+      "start_line": 1,
+      "total_lines": 2
+    }
+  }
+]
+```
+
+`create`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8c", "name": "text_editor_code_execution", "input": { "command": "create", "path": "/tmp/outputs/app.py", "file_text": "total = 0\n" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8c",
+    "content": { "type": "text_editor_code_execution_create_result", "is_file_update": false }
+  }
+]
+```
+
+`str_replace`:
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8d", "name": "text_editor_code_execution", "input": { "command": "str_replace", "path": "/tmp/outputs/app.py", "old_str": "total = 0", "new_str": "total = 100" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8d",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 1,
+      "old_lines": 1,
+      "new_start": 1,
+      "new_lines": 1,
+      "lines": ["- total = 0", "+ total = 100"]
+    }
+  }
+]
+```
+
+`insert` (returns a `str_replace` result with `old_lines: 0`):
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7a8e", "name": "text_editor_code_execution", "input": { "command": "insert", "path": "/tmp/outputs/app.py", "insert_line": 1, "insert_text": "print(total)" } },
+  {
+    "type": "text_editor_code_execution_tool_result",
+    "tool_use_id": "srvtoolu_7a8e",
+    "content": {
+      "type": "text_editor_code_execution_str_replace_result",
+      "old_start": 2,
+      "old_lines": 0,
+      "new_start": 2,
+      "new_lines": 1,
+      "lines": ["+ print(total)"]
+    }
+  }
+]
+```
+
+Error. File errors now return an error object:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": { "type": "text_editor_code_execution_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+The error codes are the same as for `bash_code_execution`.
+
+</Tab>
+<Tab title="1.58 with Zylon extension">
+
+Successful results are the same as without the extension. Error objects also include `detail`, which contains the underlying error:
+
+```json
+{
+  "type": "text_editor_code_execution_tool_result",
+  "tool_use_id": "srvtoolu_7a8b",
+  "content": {
+    "type": "text_editor_code_execution_tool_result_error",
+    "error_code": "unavailable",
+    "detail": { "code": "execution_failed", "explanation": "File not found: /tmp/outputs/missing.py" }
+  }
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="semantic_search">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "Customers reported duplicate charges..." }] },
+      { "type": "text", "text": "Customers reported duplicate charges after the plan change." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+`source` blocks are Zylon-specific. They are returned only when the Zylon extension is enabled.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="summarize">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1e2f", "name": "summarize", "input": { "instructions": "Summarize in three bullets" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1e2f",
+    "content": [{ "type": "text", "text": "- Revenue grew 12%\n- Churn fell to 3%\n- Two new regions launched" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_1e2f", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="tabular_analysis">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3a4b", "name": "tabular_analysis", "input": { "query": "Total sales by region" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3a4b",
+    "content": [{ "type": "text", "text": "region,total\nNorth,1200\nSouth,950" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3a4b", "content": "context_filter is required", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="database_query">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5c6d", "name": "database_query", "input": { "query": "How many open tickets are there?" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nopen_tickets\n42" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_files">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_7e8f", "name": "present_files", "input": { "filepaths": ["/tmp/outputs/report.csv"] } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_7e8f",
+    "content": [
+      { "type": "local_resource", "file_path": "/tmp/outputs/report.csv", "file_id": "L3RtcC9vdXRwdXRzL3JlcG9ydC5jc3Y", "name": "report", "mime_type": "text/csv" },
+      { "type": "text", "text": "Presented 1 file(s): report.csv" }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_7e8f", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+In both versions, a file that cannot be presented adds an `Error presenting <path>: ...` text block, and the result keeps `is_error: false`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="present_server">
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9a0b", "name": "present_server", "input": { "port": 8000, "service_name": "Dashboard" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9a0b",
+    "content": [
+      { "type": "resource_link", "uri": "https://app-8000.example.com/", "name": "Dashboard", "mime_type": "text/html" },
+      { "type": "text", "text": "The service 'Dashboard' is available at https://app-8000.example.com/." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9a0b", "content": "code_execution provider is not configured.", "is_error": true }
+```
+
+If the sandbox cannot expose the port, both versions return a successful result that contains only the text `No HTTP endpoint is available for port 8000. ...`.
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Skill tools (load_skill, unload_skill, list_skills)">
+
+Skill tools return JSON as text. If a skill is not found, the tool returns an `error` key in the JSON and keeps `is_error: false`.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "tool_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1c2d", "name": "load_skill", "input": { "name": "pdf-report" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_1c2d",
+    "content": [{ "type": "text", "text": "{\"name\": \"pdf-report\", \"skill_id\": \"skl_123\", \"version\": 2, \"loaded\": true}" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "server_tool_result",
+  "tool_use_id": "srvtoolu_1c2d",
+  "content": [{ "type": "text", "text": "{\"error\": \"Skill 'pdf-report' not found in current skill_filter\"}" }],
+  "is_error": false
+}
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="MCP tools">
+
+MCP tools keep the MCP server's tool name and return the content blocks the MCP server produced.
+
+<Tabs>
+<Tab title="1.57">
+
+```json
+[
+  { "type": "tool_use", "id": "tool_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "tool_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+<Tab title="1.58">
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3e4f", "name": "create_issue", "input": { "title": "Login fails on Safari" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_3e4f",
+    "content": [{ "type": "text", "text": "Created issue #128" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_3e4f", "content": "MCP server returned 401 Unauthorized", "is_error": true }
+```
+
+</Tab>
+</Tabs>
+
+</Accordion>
+<Accordion title="Custom tools (unchanged)">
+
+Nothing changes for tools that your application defines and runs. The response stops with `stop_reason: "tool_use"`, your application runs the tool, and it sends back a `tool_result` block, as in 1.57.
+
+```json
+[
+  { "type": "tool_use", "id": "tool_5a6b", "name": "get_weather", "input": { "city": "Madrid" } }
+]
+```
+
+```json
+{ "type": "tool_result", "tool_use_id": "tool_5a6b", "content": [{ "type": "text", "text": "24°C, sunny" }], "is_error": false }
+```
+
+</Accordion>
+</AccordionGroup>
+
+### Requests with the Zylon extension enabled
+
+When a request enables the Zylon extension (`system.extensions` includes `zylon`):
+
+- `web_search` and `web_fetch` results are returned as a plain `tool_result` block, as the examples above show. The call block is still `server_tool_use`, and the call ID still starts with `srvtoolu_`.
+- Error objects in `bash_code_execution_tool_result` and `text_editor_code_execution_tool_result` include a `detail` field that contains the underlying error.
+- Zylon-specific blocks, such as `source`, are kept in `server_tool_result` content.
+
+### Sending conversation history
+
+You can send `server_tool_use` and server tool result blocks back in `messages` exactly as you received them. Zylon converts them internally, so if you forward previous assistant turns unchanged, you do not need to change anything. History that uses the 1.57 `tool_use` and `tool_result` blocks is still accepted.
+
+## Before upgrading your client
+
+1. Replace deprecated URLs and move project selectors to the appropriate query or body fields.
+2. Use Base64 bytes for JSON artifact creation, plain text for updates, and `file_data` for multipart files.
+3. Update response readers for account/member separation and removed inline artifact content. Audit stored user/account IDs, joins, comparisons, and filters even when existing calls succeed.
+4. Replace creator filters with account IDs and use canonical field/include names.
+5. Update message parsers to handle `server_tool_use` and the server tool result blocks, and only return `tool_result` for your own custom tools.
+6. Adapt chat wrappers, scoped artifact selectors, SSE handling, thread files, and read-state polling.
+7. Test against 1.58, including role permissions, validation, content conversion, and filesystem validation. Legacy URLs use current authorization, response, and service behavior; they do not recreate every 1.57 behavior.

@@ -9,7 +9,7 @@ Las antiguas rutas `/app/user` y el modelo de perfil de miembro cambian en 1.58.
 
 Usa la API de miembros del espacio de trabajo para gestionar la membresía de una cuenta en un espacio de trabajo. Una cuenta representa a una persona en Zylon, mientras que un miembro almacena el estado y los roles de esa cuenta dentro del espacio de trabajo.
 
-Las respuestas de miembro contienen `id`, `org_id`, `account_id`, `state`, `roles` y `created_at`. Usa `include=Account` en los endpoints compatibles para incluir la cuenta relacionada en `account`.
+Las respuestas de miembro contienen `id`, `org_id`, `account_id`, `state`, `roles` y `created_at`. `id` es el ID de miembro del espacio de trabajo; `account_id` identifica la cuenta asociada y está disponible sin `include`. Conserva ambos valores separados. Si guardaste un ID de usuario antiguo para comparaciones o filtros de creador, sigue la [migración de IDs de usuario guardados](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados). Usa `include=Account` en los endpoints compatibles para incluir la cuenta relacionada en `account`.
 
 `GET /api/v1/account/{accountId}` incluye las membresías de la cuenta en `workspace_members`. Para los listados de cuentas, solicita la misma relación con `GET /api/v1/account?include=WorkspaceMembers`. Los objetos `account` anidados que devuelven los endpoints de miembros la omiten.
 

@@ -14,9 +14,124 @@ Zylon supports internal log storage and external log delivery through syslog and
 - Delivered events can be filtered by action patterns and organization IDs.
 - Stored logs stay in the customer's Zylon deployment unless external log delivery through syslog or HTTP is enabled.
 
-Configure these settings through the Zylon Helm values YAML. The chart maps values to backend runtime settings internally; customer configuration should use the YAML keys shown here.
+For CLI-managed installations, edit `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync` to apply changes. For installations managed directly with Helm, use the same keys in your Zylon Helm values YAML. The chart maps these values to backend runtime settings internally.
 
 For governance, auditability, EU AI Act traceability support, evidence preservation, and retention guidance, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage). For manual log retrieval, see [Backoffice API: Logging](/en/developer-manual/build-with-zylon/backoffice-api/logging).
+
+## Send logs to your SIEM
+
+For a custom SIEM with an HTTPS JSON ingestion endpoint, start with HTTP delivery below. If your collector accepts syslog or CEF, use the [syslog configuration](#syslog-delivery) instead.
+
+Internal storage (`logging.storage.enabled`) is enabled by default. External syslog and HTTP delivery are disabled by default. Enabling storage alone does not send events to your SIEM. Delivery forwards newly emitted events; it does not automatically replay stored history. Use the [Backoffice Logging API](/en/developer-manual/build-with-zylon/backoffice-api/logging) to retrieve historical records.
+
+### 1. Prepare your collector
+
+Create an HTTPS endpoint reachable from the Zylon backend that accepts `POST` requests with JSON log records. Return an HTTP `2xx` response after accepting a request. If your endpoint requires bearer authentication, prepare its ingestion token.
+
+The HTTP payload uses the schema marker `zylon.canonical_json.v1`. A single-event request contains a JSON object; multi-event batches contain a JSON array. The example below sets `maxEvents: 1` so you can validate one record at a time. To use the default batch size of `25` later, make sure your collector also accepts arrays.
+
+The HTTP envelope contains `schema`, `severity`, `outcome`, `actor`, and `log`. Map `log.event`, `log.action`, `log.id`, and `log.start_timestamp` to your SIEM fields. These fields are nested under `log`, rather than at the top level. Deduplicate retries using `log.id`.
+
+<Accordion title="Delivery metadata and actor identifiers">
+
+| Field | Values and meaning |
+| --- | --- |
+| `severity` | `low`, `medium`, `high`, `critical`. Assigned from the event action, family, and outcome. The current 1.58 mappings use `low`, `medium`, and `high`; `critical` is also a schema value. |
+| `outcome` | `success` or `failure` for the original event, not the collector delivery. A non-null `log.error` or a security event status code of `400` or higher produces `failure`; otherwise it is `success`. |
+| `actor` | Always contains `actor_type`, `actor_id`, and `actor_display`. An unidentified actor uses literal values rather than omitted fields. |
+
+Actor selection uses the first matching row:
+
+| `actor.actor_type` | Selected when | `actor.actor_id` |
+| --- | --- | --- |
+| `api_token` | `log.token_id` is present. | The token ID. |
+| `user` | No token ID; `log.account_id` is present. | `log.ws_member_id` when present, otherwise `log.account_id`. |
+| `system` | No token or account ID; `log.system_event` is `true`. | Literal `system`. |
+| `unknown` | None of the preceding conditions match. | Literal `unknown`. |
+
+For token/user actors, `actor_display` is the nonblank `log.account_email`, falling back to the selected actor ID. System/unknown actors use their literal value for display too. A workspace-member ID or email alone does not select `user`; token/account identity takes precedence over `system_event`.
+
+**Use `log.account_id` for account correlation and `log.ws_member_id` for workspace-member correlation, when available.** A `user` actor ID can identify either record type; do not treat it as an account ID in every event. `actor_display` is a display label, not a stable join key.
+
+If an action has no specific severity mapping, successful Backoffice events default to `medium` and other successful events to `low`; failed Backoffice events default to `high` and other failures to `medium`. An `unknown` actor does not imply an unknown outcome or change severity.
+
+</Accordion>
+
+<Accordion title="Example HTTP event (selected fields)">
+```json
+{
+  "schema": "zylon.canonical_json.v1",
+  "severity": "low",
+  "outcome": "success",
+  "actor": {
+    "actor_type": "user",
+    "actor_id": "01985a4d-3c21-7000-8003-0e10dd81d901",
+    "actor_display": "operator@example.com"
+  },
+  "log": {
+    "id": "01985a4d-3c21-7000-8003-0e10dd81d902",
+    "event": "zylon.workspace",
+    "action": "ws.project.create",
+    "request_id": "example-request",
+    "start_timestamp": "2026-10-14T10:00:00Z",
+    "end_timestamp": "2026-10-14T10:00:00Z"
+  }
+}
+```
+</Accordion>
+
+Validate your parser with a received test event. Optional fields can be absent, and `action` is not present on every event. With batching enabled, accept both a single object and an array, depending on the number of events ready to send.
+
+<Note>
+Gateway chat request-message and response capture (`features.audit.enabled`) is enabled by default. Forwarded records can contain that captured chat content. Review [Audit Log configuration](/en/operator-manual/configuration/features/feat-audit) before enabling delivery. The API's `include` parameter does not filter forwarded records.
+</Note>
+
+### 2. Configure Zylon
+
+Merge this example into `/etc/zylon/zylon-conf.yaml`, preserving your existing settings. Replace the URL and token with your collector's values; the token belongs to your SIEM, not to the Zylon Backoffice API. If your collector does not require bearer authentication, omit the `auth` block.
+
+```yaml
+logging:
+  storage:
+    enabled: true
+  delivery:
+    http:
+      enabled: true
+      format: "canonical_json"
+      endpoint:
+        url: "https://siem.example.com/ingest/zylon"
+        method: "POST"
+      auth:
+        type: "bearer"
+        token: "replace-with-siem-ingestion-token"
+      delivery:
+        batch:
+          maxEvents: 1
+```
+
+Leave action and organization filters empty for the first test so they do not exclude the event you generate. Keep the queue, retry, and failure-policy defaults unless your collector needs different behavior. See [HTTP delivery](#http-delivery) for the complete reference.
+
+### 3. Apply the configuration
+
+```bash
+sudo zylon-cli sync
+```
+
+For deployments managed directly with Helm, apply the values through your normal Helm deployment process. See [Configuration Overview](/en/operator-manual/configuration) for the CLI workflow.
+
+### 4. Verify a new event
+
+After applying the configuration, create a test project in the Workspace. Inspect the incoming request at your collector and confirm the schema marker `zylon.canonical_json.v1` and `log.action: "ws.project.create"` are present. Then confirm the record appears in your SIEM's search or event view.
+
+If the event does not arrive, check backend delivery warnings, endpoint reachability, collector responses, authentication, and filters. HTTP `4xx` responses are not retried; fix the collector URL, authentication, headers, or parser before repeating the test. Use [Troubleshooting](#troubleshooting) below for other symptoms.
+
+<Note>
+The default `failurePolicy: "drop"` can drop events when the delivery queue is full. External delivery has no disk-backed spool. Keep internal storage enabled for investigation and verify your collector's retention separately.
+</Note>
+
+### 5. Choose internal and SIEM retention
+
+Stored-log cleanup is disabled by default: logs are not automatically deleted after `180` days. To enable scheduled deletion, use [Log-only cleanup](#configure-cleanup-for-stored-logs-only). Configure retention for copies in your SIEM separately.
 
 ## At a glance
 
@@ -70,6 +185,7 @@ Scheduler settings:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables the cleanup scheduler. |
 | `cron` | `0 3 * * *` | cron expression | Cleanup schedule. Shared with hard delete cleanup. |
+| `minimumIntervalMinutes` | `1440` | integer minutes | Helm default minimum interval accepted for the cron schedule. A more frequent cron is rejected unless this setting is reduced. |
 | `timezone` | `UTC` | time zone | Time zone used by the cleanup schedule. Shared with hard delete cleanup. If the runtime setting is omitted outside Helm, the backend uses the server JVM time zone. |
 
 Under `logging`:
@@ -77,7 +193,7 @@ Under `logging`:
 | Key | Default | Values | Description |
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables stored log cleanup. |
-| `deleteAfterDays` | `180` | integer days | Deletes stored log records older than this threshold. |
+| `deleteAfterDays` | `180` | positive integer days | Permanently deletes stored logs persisted before the retention cutoff. |
 
 <Note>
 External collectors such as SIEM platforms, syslog receivers, HTTP collectors, and data lakes have independent retention settings.
@@ -89,6 +205,34 @@ Stored log cleanup is off by default. The `180` day value applies only after bot
 
 <Warning>
 Log retention cleanup uses the same cleanup cron and timezone settings as hard delete cleanup. Review [Hard delete cron configuration](/en/operator-manual/configuration/cron-tasks/hard-delete) before changing the shared cleanup schedule.
+</Warning>
+
+### Configure cleanup for stored logs only
+
+Merge this example into your configuration only when you want to enable internal log deletion. It schedules daily checks at `03:00 UTC` with a `180`-day retention window:
+
+```yaml
+zylonBackend:
+  scheduler:
+    cleanup:
+      enabled: true
+      cron: "0 3 * * *"
+      timezone: "UTC"
+      minimumIntervalMinutes: 1440
+      workspace:
+        enabled: false
+      logging:
+        enabled: true
+        deleteAfterDays: 180
+```
+Both `cleanup.enabled` and `cleanup.logging.enabled` must be `true`. Setting `workspace.enabled: false` keeps Workspace hard deletion disabled in this example; the Helm default is `true`, so review this flag before enabling the shared scheduler. Preserve your existing Workspace cleanup policy if you already use it.
+
+After applying the configuration with `sudo zylon-cli sync`, each scheduled run permanently deletes records persisted more than `180` days earlier, including their related log details. Age uses the stored record's `created_at` timestamp, assigned when new logs are persisted. Historical records migrated from older versions may use their event start time. Eligible records remain until a successful cleanup run. Cleanup applies across all organizations and log families; external delivery filters do not limit deletion.
+
+To stop log cleanup, set `zylonBackend.scheduler.cleanup.logging.enabled: false`. Disabling `logging.storage.enabled` stops new persistence; it does not erase existing records. Cleanup does not delete copies already sent to your SIEM or change its retention policy.
+
+<Warning>
+Use a positive whole number for `cleanup.logging.deleteAfterDays`. `0` does not mean unlimited retention: it makes existing logs eligible for deletion. Negative values can also delete recent records. Disable cleanup with its `enabled` flag instead.
 </Warning>
 
 ## Syslog delivery
@@ -133,10 +277,10 @@ Under `logging.delivery.syslog`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables syslog delivery. |
 | `format` | `rfc5424_json` | `rfc5424_json`, `cef` | Syslog payload format. |
-| `host` | empty | hostname or IP | Required collector host. |
-| `port` | `6514` | valid TCP/UDP port | Collector port. |
-| `transport` | `tls` | `tls`, `tcp`, `udp` | Socket transport. |
-| `framing` | `newline` | `newline`, `octet_counting` | Stream framing for TCP/TLS. Ignored for UDP. |
+| `endpoint.host` | empty | hostname or IP | Required collector host. |
+| `endpoint.port` | `6514` | valid TCP/UDP port | Collector port. |
+| `endpoint.transport` | `tls` | `tls`, `tcp`, `udp` | Socket transport. |
+| `endpoint.framing` | `newline` | `newline`, `octet_counting` | Stream framing for TCP/TLS. Ignored for UDP. |
 
 <Accordion title="Optional syslog keys">
 Optional filter, delivery, queue, batch, and TLS settings are configured under their matching nested blocks in `logging.delivery.syslog`.
@@ -226,6 +370,8 @@ logging:
         caFile: "/etc/zylon/certs/syslog-ca.pem"
 ```
 
+The full example limits delivery to matching Workspace and Backoffice actions in one organization. Remove or revise those filters if you also need security events or gateway events without an action or organization ID.
+
 ### Syslog simplified example
 
 ```yaml
@@ -258,9 +404,9 @@ Under `logging.delivery.http`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables HTTP delivery. |
 | `format` | `canonical_json` | `canonical_json` | HTTP payload format. |
-| `url` | empty | URL | Required when HTTP delivery is enabled. |
-| `method` | `POST` | `POST` | HTTP method. |
-| `headers` | `[]` | YAML list | Static outbound headers. Supports `Header=Value` and `Header: Value`. |
+| `endpoint.url` | empty | URL | Required when HTTP delivery is enabled. |
+| `endpoint.method` | `POST` | `POST` | HTTP method. |
+| `headers` | `[]` | YAML list, up to 5 entries | Static outbound headers. Supports `Header=Value` and `Header: Value`. |
 
 <Accordion title="Optional HTTP keys">
 Optional authentication, filter, delivery, queue, and batch settings are configured under their matching nested blocks in `logging.delivery.http`.
@@ -292,7 +438,7 @@ Under `delivery.retry`:
 | Key | Default | Values | Description |
 | --- | --- | --- | --- |
 | `enabled` | `true` | `true`, `false` | Enables HTTP retry. |
-| `maxAttempts` | `3` | positive integer | Maximum request attempts when retry is enabled. |
+| `maxAttempts` | `3` | positive integer | Total request attempts, including the initial attempt, when retry is enabled. |
 | `backoffSeconds` | `3` | non-negative integer | Sleep between retry attempts. |
 
 Under `delivery.queue`:
@@ -328,9 +474,7 @@ logging:
         - "X-Collector-Token=replace-me"
         - "X-Customer: default"
       filters:
-        includeActionPatterns:
-          - "zylon.gateway.*"
-          - "ws.*"
+        includeActionPatterns: []
         excludeActionPatterns: []
         includeOrgIds: []
       delivery:
@@ -367,7 +511,7 @@ Syslog and HTTP delivery use the same filter behavior under `filters`.
 
 | Key | Default | Values | Description |
 | --- | --- | --- | --- |
-| `includeActionPatterns` | `[]` | wildcard list | If non-empty, only matching action names are delivered. `*` matches any number of characters. Matching is case-sensitive and covers the full action string. |
+| `includeActionPatterns` | `[]` | wildcard list | If non-empty, only matching action names are delivered; logs without an action are excluded. `*` matches any number of characters. Matching is case-sensitive and covers the full action string. |
 | `excludeActionPatterns` | `[]` | wildcard list | Matching action names are excluded before include filters are evaluated. |
 | `includeOrgIds` | `[]` | organization UUID list | If non-empty, only logs for matching organization IDs are delivered. Logs without `organization_id` are not delivered. |
 
@@ -408,7 +552,7 @@ Delivered payload schemas use markers such as `zylon.rfc5424_json.v1` and `zylon
 `failurePolicy: "block"` can slow requests when the delivery queue is full. Use it only after sizing queues and confirming collector availability.
 </Warning>
 
-Disk-backed external delivery spooling is not implemented.
+These policies control queue backpressure only. `block` does not guarantee delivery: failed batches can still be discarded after non-retryable responses or exhausted retries. Disk-backed external delivery spooling and automatic replay from internal storage are not implemented.
 
 ## Queue and batching
 
@@ -445,7 +589,7 @@ HTTP delivery reuses one HTTP client and retries failed requests according to re
 | `maxAttempts` | Maximum attempts for one delivery. |
 | `backoffSeconds` | Sleep between attempts. |
 
-HTTP retries network exceptions and HTTP `5xx` responses. HTTP `4xx` responses are treated as client errors and are not retried.
+HTTP retries network exceptions and HTTP `5xx` responses. HTTP `4xx` responses, including `429`, are not retried. After a non-retryable failure or exhausted retries, the failed batch is discarded and a delivery warning is logged; it is not automatically recovered from internal storage.
 
 ## TLS configuration
 
@@ -480,14 +624,14 @@ For reconnect testing, stop the collector, trigger events, restart the collector
 
 | Symptom | What to check |
 | --- | --- |
-| No events arrive | `enabled`, endpoint host or URL, port, collector reachability, and backend logs. |
+| No events arrive | `logging.delivery.http.enabled` or `logging.delivery.syslog.enabled`, nested `endpoint` settings, collector reachability, filters, and backend logs. Apply changes with `sudo zylon-cli sync` on CLI-managed installations. |
 | Syslog startup fails | Missing host, invalid port, unsupported format/transport/framing, or unreadable CA file. |
 | TLS connection fails | Certificate verification, CA file, collector certificate, and hostname. |
 | CEF events are not parsed | `format: "cef"`, collector input type, and port. |
 | Requests slow down | `failurePolicy: "block"`, queue size, collector throughput, and backend logs. |
 | Missing events during bursts | Queue size, batch settings, collector throughput, and whether `failurePolicy: "drop"` is acceptable. |
 | Events do not reconnect after outage | Reconnect enabled setting, backoff setting, and backend logs. |
-| HTTP delivery fails | Endpoint URL, method, bearer token, static headers, retry settings, and backend logs. |
+| HTTP delivery fails | `endpoint.url`, `endpoint.method`, collector bearer token, static headers, retry settings, and backend logs. Confirm the collector accepts JSON arrays for multi-event batches, or set `delivery.batch.maxEvents: 1`. |
 | HTTP keeps failing without retry | Collector HTTP `4xx` responses. Fix auth, URL, headers, or collector route. |
 | Retention is shorter than expected | Log cleanup settings, DB retention/backup policy, and downstream collector retention. |
 

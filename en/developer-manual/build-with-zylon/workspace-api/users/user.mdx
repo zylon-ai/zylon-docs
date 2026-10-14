@@ -9,7 +9,7 @@ The former `/app/user` routes and member profile model change in 1.58. See [API 
 
 Use the Workspace Members API to manage an account's membership in a workspace. An account represents a person across Zylon, while a workspace member stores that account's workspace-specific state and roles.
 
-Workspace member responses contain `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at`. Pass `include=Account` on supported endpoints to include the related account as `account`.
+Workspace member responses contain `id`, `org_id`, `account_id`, `state`, `roles`, and `created_at`. `id` is the workspace-member ID; `account_id` identifies the linked account and is available without `include`. Keep both values separate. If you previously saved a legacy user ID for creator comparisons or filters, follow [saved user-ID migration](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrate-saved-user-ids). Pass `include=Account` on supported endpoints to include the related account as `account`.
 
 `GET /api/v1/account/{accountId}` includes the account's memberships in `workspace_members`. For account lists, request the same relationship with `GET /api/v1/account?include=WorkspaceMembers`. Nested `account` objects returned by the member endpoints omit it.
 

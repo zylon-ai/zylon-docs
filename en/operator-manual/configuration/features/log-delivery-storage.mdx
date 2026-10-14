@@ -32,6 +32,31 @@ The HTTP payload uses the schema marker `zylon.canonical_json.v1`. A single-even
 
 The HTTP envelope contains `schema`, `severity`, `outcome`, `actor`, and `log`. Map `log.event`, `log.action`, `log.id`, and `log.start_timestamp` to your SIEM fields. These fields are nested under `log`, rather than at the top level. Deduplicate retries using `log.id`.
 
+<Accordion title="Delivery metadata and actor identifiers">
+
+| Field | Values and meaning |
+| --- | --- |
+| `severity` | `low`, `medium`, `high`, `critical`. Assigned from the event action, family, and outcome. The current 1.58 mappings use `low`, `medium`, and `high`; `critical` is also a schema value. |
+| `outcome` | `success` or `failure` for the original event, not the collector delivery. A non-null `log.error` or a security event status code of `400` or higher produces `failure`; otherwise it is `success`. |
+| `actor` | Always contains `actor_type`, `actor_id`, and `actor_display`. An unidentified actor uses literal values rather than omitted fields. |
+
+Actor selection uses the first matching row:
+
+| `actor.actor_type` | Selected when | `actor.actor_id` |
+| --- | --- | --- |
+| `api_token` | `log.token_id` is present. | The token ID. |
+| `user` | No token ID; `log.account_id` is present. | `log.ws_member_id` when present, otherwise `log.account_id`. |
+| `system` | No token or account ID; `log.system_event` is `true`. | Literal `system`. |
+| `unknown` | None of the preceding conditions match. | Literal `unknown`. |
+
+For token/user actors, `actor_display` is the nonblank `log.account_email`, falling back to the selected actor ID. System/unknown actors use their literal value for display too. A workspace-member ID or email alone does not select `user`; token/account identity takes precedence over `system_event`.
+
+**Use `log.account_id` for account correlation and `log.ws_member_id` for workspace-member correlation, when available.** A `user` actor ID can identify either record type; do not treat it as an account ID in every event. `actor_display` is a display label, not a stable join key.
+
+If an action has no specific severity mapping, successful Backoffice events default to `medium` and other successful events to `low`; failed Backoffice events default to `high` and other failures to `medium`. An `unknown` actor does not imply an unknown outcome or change severity.
+
+</Accordion>
+
 <Accordion title="Example HTTP event (selected fields)">
 ```json
 {

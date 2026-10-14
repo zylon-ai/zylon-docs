@@ -32,6 +32,31 @@ El payload HTTP usa el marcador de esquema `zylon.canonical_json.v1`. Una solici
 
 El sobre HTTP contiene `schema`, `severity`, `outcome`, `actor` y `log`. Mapea `log.event`, `log.action`, `log.id` y `log.start_timestamp` a los campos de tu SIEM. Estos campos están anidados bajo `log`, no en el nivel superior. Deduplica los reintentos usando `log.id`.
 
+<Accordion title="Metadatos de entrega e identificadores de actor">
+
+| Campo | Valores y significado |
+| --- | --- |
+| `severity` | `low`, `medium`, `high`, `critical`. Se asigna según la acción, familia y resultado del evento. Los mapeos actuales de 1.58 usan `low`, `medium` y `high`; `critical` también es un valor del esquema. |
+| `outcome` | `success` o `failure` del evento original, no de la entrega al colector. Un `log.error` no nulo o un código de estado de evento de seguridad de `400` o superior produce `failure`; en los demás casos es `success`. |
+| `actor` | Siempre contiene `actor_type`, `actor_id` y `actor_display`. Un actor no identificado usa valores literales en lugar de campos omitidos. |
+
+La selección de actor usa la primera fila que coincide:
+
+| `actor.actor_type` | Se selecciona cuando | `actor.actor_id` |
+| --- | --- | --- |
+| `api_token` | Existe `log.token_id`. | El ID del token. |
+| `user` | No hay ID de token; existe `log.account_id`. | `log.ws_member_id` si existe; en caso contrario, `log.account_id`. |
+| `system` | No hay ID de token ni de cuenta; `log.system_event` es `true`. | Literal `system`. |
+| `unknown` | No coincide ninguna condición anterior. | Literal `unknown`. |
+
+Para actores de token/usuario, `actor_display` es `log.account_email` si no está vacío ni contiene solo espacios; en caso contrario, el ID de actor seleccionado. Los actores de sistema/desconocidos también usan su valor literal como etiqueta. Un ID de miembro o correo por sí solo no selecciona `user`; la identidad de token/cuenta tiene prioridad sobre `system_event`.
+
+**Usa `log.account_id` para correlacionar cuentas y `log.ws_member_id` para correlacionar miembros del espacio de trabajo, cuando estén disponibles.** Un ID de actor `user` puede identificar cualquiera de esos dos tipos de registro; no lo trates siempre como un ID de cuenta. `actor_display` es una etiqueta, no una clave estable para relacionar registros.
+
+Si una acción no tiene un mapeo específico de severidad, los eventos correctos de Backoffice usan `medium` y los demás eventos correctos usan `low`; los fallos de Backoffice usan `high` y los demás fallos usan `medium`. Un actor `unknown` no implica un resultado desconocido ni cambia la severidad.
+
+</Accordion>
+
 <Accordion title="Ejemplo de evento HTTP (campos seleccionados)">
 ```json
 {

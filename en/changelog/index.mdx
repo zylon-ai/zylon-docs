@@ -8,15 +8,13 @@ title: "Changelog"
 
     Use Zylon CLI **2.9.0 or later**. After installation completes and all pods are ready, preview the Skill and Document backfill with `backfill-projections --dry-run`, run the backfill, then apply `configure --max-pods 200`. Changing the pod limit briefly interrupts all Zylon services. Follow the complete [1.58 upgrade guide](/en/changelog/guides/1-58-0).
 
-    **The backfill cannot be undone.** Artifact records rewritten by the migration receive new last-modified dates (`updated_at`); their creation dates (`created_at`) are preserved. There is no option to preserve the old modification dates while migrating those records. Skipped artifacts and dry runs are not changed.
-
     **API migration is required for affected integrations.** Creator fields now identify **accounts**; membership operations still use **workspace-member IDs**. Migrate affected calls and update saved ID mappings even if legacy URLs still work. Review the [1.57 → 1.58 API migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
   </Danger>
 
   ## 💼 Workspace
   ### ✨ Features
 
-  - **Code execution — Beta**: Enabled by default in standard 1.58 deployments. Run code in an isolated sandbox to analyze files, perform calculations, and generate spreadsheets, charts, and reports. If an operator disables it in Workspace, chat and other available tools keep working, but the assistant cannot run code or complete Skill steps that require it. The Workspace flag does not globally disable code execution through the ZylonGPT API. See [Code execution](/en/user-manual/tools/code-execution) and [operator configuration](/en/operator-manual/configuration/features/feat-code-execution#when-disabled).
+  - **Code execution — Beta**: Enabled by default in standard 1.58 deployments. Run code in an isolated sandbox to analyze files, perform calculations, and generate spreadsheets, charts, and reports. If an operator disables it in Workspace, chat and other available tools keep working, but the assistant cannot run code or complete Skill steps that require it. See [Code execution](/en/user-manual/tools/code-execution) and [operator configuration](/en/operator-manual/configuration/features/feat-code-execution#when-disabled).
   - **Skills creator and editor**: Create reusable Skills with chat or edit their instructions directly. To create one with chat, first install **Skill Creator** from your organization's library into your project, then choose **Skills > New Skill > Create with Chat**. Follow the [step-by-step guide](/en/user-manual/skills/creating-a-skill), including how to install and use the generated Skill.
   - **Generated files in AI Documents**: Files created through code execution can be saved as project artifacts and accessed through the existing preview and download experience.
   - **Tool execution timeline**: Inspect expandable execution steps, tool descriptions, elapsed time, command output, and errors.
@@ -43,22 +41,14 @@ title: "Changelog"
 
   - **Artifact verification**: CLI downloads are checked against release checksums.
   - **Safer backup and restore**: Workloads shut down cleanly before data is copied or replaced, and scheduling resumes afterward. See [backup and restore](/en/operator-manual/operations/backup).
-  - **Updated licensing**: Replaced the Replicated dependency with the new licensing service.
   - **Updated n8n**: Upgraded the bundled n8n deployment and fixed MCP ingress compatibility.
 
   ### 🐛 Bug Fixes
 
-  - Linked-file search results now identify the accessible destination project without exposing the original project's metadata.
+  - Linked-file search results now identify the accessible destination project.
   - Improved document-reader fallback, PDF extraction, and spreadsheet and table parsing.
   - Improved MCP connection validation and OAuth credential refresh during conversations.
   - Improved generated-file handling, missing-file errors, and enforcement of organization download policies.
-
-  ## 📚 Documentation
-
-  - Added English and Spanish guides covering code execution, sandbox files, deployment configuration, and updated API response formats.
-  - Expanded migration examples and clarified legacy compatibility limits, account/member IDs, creator filters, and saved identity mappings.
-  - Clarified [SIEM setup](/en/operator-manual/configuration/features/log-delivery-storage), log delivery versus database storage, audit capture, actor identity, and delivery limitations.
-  - Documented opt-in [cron cleanup](/en/operator-manual/configuration/cron-tasks/hard-delete), retention settings, deletion timing, and the independence of Zylon log retention from SIEM retention.
 </Update>
 
 <Update label="1.57.0" description="August 17, 2026">

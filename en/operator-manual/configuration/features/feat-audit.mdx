@@ -2,7 +2,7 @@
 title: "Audit Log"
 ---
 
-Enable Audit Log events and traces.
+Enable Audit Log events and traces with `features.audit.enabled`. This controls audit event generation. `logging.storage.enabled` controls internal persistence; `logging.delivery.syslog.enabled` and `logging.delivery.http.enabled` control external delivery separately. Audit events and storage are enabled by default; external delivery is disabled by default.
 
 Audit events are emitted when the audit feature flag is enabled. Persisted audit history also requires internal log storage. Retention, syslog delivery, and HTTP delivery are configured through [Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage).
 
@@ -25,4 +25,6 @@ logging:
     enabled: true
 ```
 
-Configure log retention and optional syslog or HTTP delivery in [Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage).
+For CLI-managed installations, merge these settings into `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync`.
+
+To connect a SIEM, follow [Send logs to your SIEM](/en/operator-manual/configuration/features/log-delivery-storage#send-logs-to-your-siem), which includes collector setup, delivery configuration, and a test event. Enabling the settings above alone does not forward logs externally.

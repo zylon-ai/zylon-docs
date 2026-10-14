@@ -2,7 +2,7 @@
 title: "Registro de Auditoría"
 ---
 
-Habilita eventos y trazas del Registro de Auditoría.
+Habilita eventos y trazas del Registro de Auditoría con `features.audit.enabled`. Este ajuste controla la generación de eventos de auditoría. `logging.storage.enabled` controla la persistencia interna; `logging.delivery.syslog.enabled` y `logging.delivery.http.enabled` controlan por separado la entrega externa. La auditoría y el almacenamiento están habilitados por defecto; la entrega externa está deshabilitada por defecto.
 
 Los eventos de auditoria se emiten cuando el flag de auditoria esta habilitado. El historial de auditoria persistido tambien requiere almacenamiento interno de logs. La retencion, la entrega por syslog y la entrega por HTTP se configuran en [Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).
 
@@ -25,4 +25,6 @@ logging:
     enabled: true
 ```
 
-Configure la retencion de logs y la entrega opcional por syslog o HTTP en [Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage).
+Para instalaciones gestionadas con la CLI, combina estos ajustes con `/etc/zylon/zylon-conf.yaml` y ejecuta `sudo zylon-cli sync`.
+
+Para conectar un SIEM, sigue [Enviar logs a tu SIEM](/es/operator-manual/configuration/features/log-delivery-storage#enviar-logs-a-tu-siem), que incluye preparación del colector, configuración de entrega y un evento de prueba. Habilitar solo los ajustes anteriores no reenvía logs externamente.

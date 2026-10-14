@@ -10,7 +10,7 @@ It follows the same model as the [Anthropic code execution tool](https://platfor
 ## Prerequisites
 
 - An API token. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console).
-- Code execution enabled on your installation. See [Code Execution](/en/operator-manual/configuration/features/feat-code-execution) in the Operator Manual.
+- A configured code-execution provider, included by default in standard Zylon 1.58 deployments. For Workspace API requests, the Workspace code-execution feature must also be enabled. See [Code Execution](/en/operator-manual/configuration/features/feat-code-execution) for configuration and disabled behavior.
 
 ## Requirements
 
@@ -413,7 +413,7 @@ for item in files["data"]:
 When you use the [Workspace API](/en/developer-manual/build-with-zylon/workspace-api/overview) instead of calling the ZylonGPT API directly, Zylon manages the container for you:
 
 - **The container is the chat thread.** Each thread gets its own sandbox, and the `container` field is set to the thread ID. Files persist for the life of the thread, and threads can't see each other's files.
-- **Code execution is added automatically** when the request uses Skills. You can also enable it explicitly by adding the code execution tools to `pgpt.tools`.
+- **Code execution is added automatically** when the request uses Skills and the Workspace feature is enabled. You can also request it explicitly through `pgpt.tools`. If `features.codeExecution.enabled` is `false`, Workspace removes these tools, including explicitly requested ones. This flag does not globally disable the ZylonGPT API provider; see [When disabled](/en/operator-manual/configuration/features/feat-code-execution#when-disabled).
 - **Generated files become artifacts.** When the assistant presents a file, Zylon saves it as an artifact in the project and returns it in the stream as a `zylon-resource` block, so users can preview and download it.
 
 Use the thread endpoints to manage the files in a thread's sandbox:
@@ -544,7 +544,7 @@ When a tool can't run, its result contains an error block:
 | File doesn't exist, `old_str` missing or not unique | Error block with the reason in `detail.explanation` |
 | Writing to a read-only folder (`uploads`, `skills`) | Error block: `Path '...' is in a read-only mount` |
 | Path outside the sandbox folders | Error block: `Path '...' does not match any session mount` |
-| Code execution not enabled on the server | Error block: `code_execution provider is not configured.` |
+| No code-execution provider configured in GPT | Error block: `code_execution provider is not configured.` |
 
 ## Tips
 

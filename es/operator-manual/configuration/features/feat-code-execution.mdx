@@ -9,11 +9,13 @@ La ejecución de código permite al asistente ejecutar comandos bash y crear, ed
 
 Los usuarios la ven en el Workspace cuando trabajan con Skills o generan archivos. Los desarrolladores pueden usarla a través de la API; ver [Herramienta de ejecución de código](/es/developer-manual/build-with-zylon/tools/built-in/code-execution-tool).
 
+La ejecución de código está **habilitada por defecto en los despliegues estándar de Zylon 1.58**. Los operadores pueden controlar su disponibilidad en el chat del Workspace con la siguiente configuración.
+
 ### Configuración
 
 | Clave | Por defecto | Valores | Descripción |
 |-----|---------|--------|-------------|
-| `features.codeExecution.enabled` | `true` | `true \| false` | Habilita la ejecución de código |
+| `features.codeExecution.enabled` | `true` | `true \| false` | Permite las herramientas de ejecución de código en el chat del Workspace; consulta [Cuando está desactivada](#cuando-está-desactivada) para las limitaciones de la API |
 | `features.codeExecution.timeout` | `60` | segundos | Tiempo de espera por defecto para cada comando que se ejecuta en el sandbox |
 | `external.opensandbox.sessionTTLSeconds` | `600` | segundos | Tiempo que un sandbox inactivo se mantiene en ejecución antes de apagarse. Los archivos se conservan; la siguiente solicitud arranca un sandbox nuevo con los mismos archivos. |
 
@@ -26,13 +28,21 @@ features:
         timeout: 60
 ```
 
-Para desactivar la ejecución de código:
+Para desactivar las herramientas de ejecución de código en el chat del Workspace:
 
 ```yaml
 features:
     codeExecution:
         enabled: false
 ```
+
+### Cuando está desactivada
+
+Después de configurar `features.codeExecution.enabled: false`, ejecuta `sudo zylon-cli sync` para aplicar el cambio. El chat del Workspace elimina las herramientas de ejecución de código antes de enviar las solicitudes al modelo, incluso cuando una Skill las añadiría. El chat normal y las demás herramientas disponibles siguen funcionando; los pasos de una Skill que requieren ejecutar código no pueden ejecutarse a través de ese flujo de chat.
+
+<Warning>
+En Zylon 1.58, este flag **no desactiva globalmente la ejecución de código a través de la API de ZylonGPT** ni elimina el servicio OpenSandbox. El proveedor de GPT se configura por separado y usa OpenSandbox por defecto. Este flag controla el Workspace; la ejecución de código por API puede seguir disponible.
+</Warning>
 
 ### Cómo funciona
 
@@ -103,4 +113,6 @@ Revisa los logs del servidor de OpenSandbox:
 sudo kubectl logs -n opensandbox deploy/opensandbox-server --tail=200
 ```
 
-Si el asistente informa de `code_execution provider is not configured.`, asegúrate de que `features.codeExecution.enabled` es `true` y ejecuta `sudo zylon-cli sync`.
+Si la ejecución de código no está disponible en el chat del Workspace, comprueba `features.codeExecution.enabled` y ejecuta `sudo zylon-cli sync` después de cambiarlo.
+
+El error `code_execution provider is not configured.` significa que falta el proveedor de ejecución de código de GPT. Comprueba la configuración del proveedor de GPT y el servicio OpenSandbox; este error no es el resultado esperado de desactivar únicamente el flag del Workspace.

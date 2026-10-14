@@ -232,7 +232,9 @@ watch sudo kubectl get pods -n zylon
 Run the same commands for every installation type. No internet access is needed.
 
 <Warning>
-  The backfill rewrites existing Skills and Documents and cannot be undone. Always run it with `--dry-run` first and check the output before running it for real.
+  The backfill rewrites existing Skills and Documents and cannot be undone. **Artifact records rewritten by the migration receive a new last-modified date (`updated_at`) at the time of the backfill. Their creation date (`created_at`) is preserved.** There is no option to preserve the old modification dates while migrating those records; skipped artifacts and `--dry-run` are not changed. Date-based ordering and external systems tracking modification dates may therefore treat migrated artifacts as recently updated.
+
+  Always run it with `--dry-run` first and check the output before running it for real.
 </Warning>
 
 ```bash

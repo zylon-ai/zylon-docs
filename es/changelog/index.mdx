@@ -5,9 +5,59 @@ title: "Registro de cambios"
   <Danger>
     **⚠️ Acción requerida antes de actualizar a la versión 1.58.X**
 
-    Sigue la [guía de migración 1.58](/es/changelog/guides/1-58-0) completa antes de actualizar.
+    Usa Zylon CLI **2.9.0 o posterior**. Cuando termine la instalación y todos los pods estén listos, previsualiza el backfill de Skills y Documentos con `backfill-projections --dry-run`, ejecuta el backfill y después aplica `configure --max-pods 200`. Cambiar el límite de pods interrumpe brevemente todos los servicios de Zylon. Sigue la [guía de actualización a 1.58](/es/changelog/guides/1-58-0) completa.
+
+    **El backfill no se puede deshacer.** Los registros de artefactos que la migración reescribe reciben nuevas fechas de última modificación (`updated_at`); sus fechas de creación (`created_at`) se conservan. No hay una opción para conservar las fechas de modificación anteriores al migrar esos registros. Los artefactos omitidos y los dry runs no se modifican.
+
+    **Las integraciones afectadas deben migrar su uso de la API.** Los campos de creador identifican ahora **cuentas**; las operaciones de pertenencia siguen usando **IDs de miembros del workspace**. Migra las llamadas afectadas y actualiza los mapas de IDs guardados aunque las URLs legacy sigan funcionando. Revisa la [guía de migración de API de 1.57 a 1.58](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
   </Danger>
 
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Ejecución de código — Beta**: Habilitada por defecto en los despliegues estándar de 1.58. Ejecuta código en un sandbox aislado para analizar archivos, realizar cálculos y generar hojas de cálculo, gráficos e informes. Si un operador la desactiva en Workspace, el chat y las demás herramientas disponibles siguen funcionando, pero el asistente no puede ejecutar código ni completar los pasos de una Skill que lo requieran. El flag del Workspace no desactiva globalmente la ejecución de código a través de la API de ZylonGPT. Consulta [Ejecución de código](/es/user-manual/tools/code-execution) y la [configuración del operador](/es/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
+  - **Creador y editor de Skills**: Crea Skills reutilizables con el chat o edita sus instrucciones directamente. Para crear una con el chat, instala primero **Skill Creator** desde la biblioteca de tu organización en tu proyecto y elige **Skills > New Skill > Create with Chat**. Sigue la [guía paso a paso](/es/user-manual/skills/creating-a-skill), que también explica cómo instalar y usar la Skill generada.
+  - **Archivos generados en Documentos AI**: Los archivos creados mediante ejecución de código pueden guardarse como artefactos del proyecto y usarse con la experiencia existente de previsualización y descarga.
+  - **Cronología de ejecución de herramientas**: Consulta pasos desplegables, descripciones, tiempo empleado, salida de comandos y errores.
+  - **Indicadores de chats sin leer**: Identifica en el menú lateral los chats que contienen respuestas del asistente sin leer.
+  - **Modo oscuro y preferencias compartidas**: Ampliado el soporte de temas en Workspace y Backoffice, con preferencias de cuenta compartidas entre ambos.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Gestor de conectores**: Consulta y filtra conectores entre organizaciones, identifica su proyecto y creador y revoca credenciales conservando los archivos importados.
+  - **System Monitor**: Consulta en directo el uso de CPU, RAM, disco, GPU y VRAM, además de las colas de modelos, solicitudes de inferencia activas y velocidad de generación de tokens. Requiere habilitar System Monitor. Consulta [System Monitor](/es/operator-manual/backoffice/system-monitor).
+  - **Soporte de idiomas**: Añadidas preferencias de idioma en Backoffice y traducciones al español.
+
+  ## 🔌 APIs para desarrolladores
+  ### ✨ Novedades
+
+  - **APIs unificadas**: Consolidadas las rutas de artefactos y separados los perfiles de cuenta de las pertenencias al workspace. Las rutas legacy de artefactos, integraciones y miembros quedan obsoletas en 1.58, con eliminación prevista para 1.59. Consulta la [guía de migración de API](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para los límites de compatibilidad y ejemplos.
+  - **Tokens de API de solo lectura**: Elige permisos de lectura o de lectura y escritura al crear tokens de Workspace y gateway. Consulta [gestión de tokens](/es/developer-manual/get-started/token-management).
+  - **Respuestas de herramientas actualizadas**: Las herramientas integradas usan `server_tool_use` y bloques de resultado tipados. Las herramientas personalizadas mantienen su flujo de herramientas del cliente. Consulta los [ejemplos de migración](/es/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#bloques-de-herramientas-de-servidor).
+  - **Omnisearch ampliado**: Añadidos filtros de recurso, proyecto, tipo de artefacto y fecha, además de búsqueda en texto generado por IA. Consulta la [API de búsqueda](/es/developer-manual/build-with-zylon/workspace-api/general/search).
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Verificación de artefactos**: Las descargas de la CLI se comprueban con los checksums de la versión.
+  - **Backup y restauración más seguros**: Las cargas de trabajo se detienen de forma ordenada antes de copiar o reemplazar los datos, y después se reanuda la programación. Consulta [backup y restauración](/es/operator-manual/operations/backup).
+  - **Licencias actualizadas**: Sustituida la dependencia de Replicated por el nuevo servicio de licencias.
+  - **n8n actualizado**: Actualizado el despliegue de n8n incluido y corregida la compatibilidad del ingress MCP.
+
+  ### 🐛 Correcciones
+
+  - Los resultados de búsqueda de archivos enlazados identifican el proyecto de destino accesible sin exponer los metadatos del proyecto original.
+  - Mejorada la recuperación ante fallos del lector de documentos, la extracción de PDF y el procesamiento de hojas de cálculo y tablas.
+  - Mejoradas la validación de conexiones MCP y la renovación de credenciales OAuth durante las conversaciones.
+  - Mejorados el tratamiento de archivos generados, los errores de archivos ausentes y la aplicación de las políticas de descarga de la organización.
+
+  ## 📚 Documentación
+
+  - Añadidas guías en inglés y español sobre ejecución de código, archivos del sandbox, configuración del despliegue y formatos de respuesta de API actualizados.
+  - Ampliados los ejemplos de migración y aclarados los límites de compatibilidad legacy, los IDs de cuenta y miembro, los filtros de creador y los mapas de identidad guardados.
+  - Aclaradas la [configuración de SIEM](/es/operator-manual/configuration/features/log-delivery-storage), la entrega de logs frente al almacenamiento en base de datos, la captura de auditoría, la identidad del actor y las limitaciones de entrega.
+  - Documentadas la [limpieza por cron opcional](/es/operator-manual/configuration/cron-tasks/hard-delete), la retención, el momento de borrado y la independencia entre la retención de logs de Zylon y la del SIEM.
 </Update>
 
 <Update label="1.57.0" description="August 17, 2026">

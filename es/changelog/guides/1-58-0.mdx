@@ -231,7 +231,9 @@ watch sudo kubectl get pods -n zylon
 Ejecuta los mismos comandos en todos los tipos de instalación. No necesita acceso a internet.
 
 <Warning>
-  El backfill reescribe las Skills y Documentos existentes y no se puede deshacer. Ejecútalo siempre primero con `--dry-run` y revisa la salida antes de ejecutarlo de verdad.
+  El backfill reescribe las Skills y Documentos existentes y no se puede deshacer. **Los registros de artefactos que la migración reescribe reciben una nueva fecha de última modificación (`updated_at`) en el momento del backfill. Su fecha de creación (`created_at`) se conserva.** No hay una opción para conservar las fechas de modificación anteriores al migrar esos registros; los artefactos omitidos y `--dry-run` no se modifican. La ordenación por fecha y los sistemas externos que siguen las fechas de modificación pueden considerar que los artefactos migrados se han actualizado recientemente.
+
+  Ejecútalo siempre primero con `--dry-run` y revisa la salida antes de ejecutarlo de verdad.
 </Warning>
 
 ```bash

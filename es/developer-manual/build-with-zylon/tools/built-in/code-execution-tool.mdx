@@ -10,7 +10,7 @@ Sigue el mismo modelo que la [herramienta de ejecución de código de Anthropic]
 ## Requisitos previos
 
 - Un token de API. Ver [Backoffice Developer Console](/es/developer-manual/get-started/developer-console).
-- La ejecución de código habilitada en tu instalación. Ver [Ejecución de código](/es/operator-manual/configuration/features/feat-code-execution) en el Manual del operador.
+- Un proveedor de ejecución de código configurado, incluido por defecto en los despliegues estándar de Zylon 1.58. Para las solicitudes de la API del Workspace, también debe estar habilitada la funcionalidad del Workspace. Consulta [Ejecución de código](/es/operator-manual/configuration/features/feat-code-execution) para la configuración y el comportamiento al desactivarla.
 
 ## Requisitos
 
@@ -413,7 +413,7 @@ for item in files["data"]:
 Cuando usas la [Workspace API](/es/developer-manual/build-with-zylon/workspace-api/overview) en lugar de llamar directamente a la API de ZylonGPT, Zylon gestiona el contenedor por ti:
 
 - **El contenedor es el hilo del chat.** Cada hilo tiene su propio sandbox, y el campo `container` toma el ID del hilo. Los archivos persisten durante toda la vida del hilo, y los hilos no pueden ver los archivos de otros hilos.
-- **La ejecución de código se añade automáticamente** cuando la solicitud usa Skills. También puedes habilitarla explícitamente añadiendo las herramientas de ejecución de código a `pgpt.tools`.
+- **La ejecución de código se añade automáticamente** cuando la solicitud usa Skills y la funcionalidad del Workspace está habilitada. También puedes solicitarla explícitamente mediante `pgpt.tools`. Si `features.codeExecution.enabled` es `false`, el Workspace elimina estas herramientas, incluidas las solicitadas explícitamente. Este flag no desactiva globalmente el proveedor de la API de ZylonGPT; consulta [Cuando está desactivada](/es/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
 - **Los archivos generados se convierten en artefactos.** Cuando el asistente presenta un archivo, Zylon lo guarda como artefacto en el proyecto y lo devuelve en el stream como un bloque `zylon-resource`, para que los usuarios puedan previsualizarlo y descargarlo.
 
 Usa los endpoints del hilo para gestionar los archivos del sandbox de un hilo:
@@ -544,7 +544,7 @@ Cuando una herramienta no puede ejecutarse, su resultado contiene un bloque de e
 | El archivo no existe, o `old_str` no aparece o no es único | Bloque de error con el motivo en `detail.explanation` |
 | Escritura en una carpeta de solo lectura (`uploads`, `skills`) | Bloque de error: `Path '...' is in a read-only mount` |
 | Ruta fuera de las carpetas del sandbox | Bloque de error: `Path '...' does not match any session mount` |
-| Ejecución de código no habilitada en el servidor | Bloque de error: `code_execution provider is not configured.` |
+| No hay un proveedor de ejecución de código configurado en GPT | Bloque de error: `code_execution provider is not configured.` |
 
 ## Consejos
 

@@ -52,6 +52,37 @@ Example response:
 
 To run the request, send the same body to `POST /messages`.
 
+## Response blocks
+
+Zylon runs this tool on the server. The response contains a `server_tool_use` block with the call, followed by a `server_tool_result` block with the result. The call ID starts with `srvtoolu_`. Don't send a `tool_result` back for it.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing dashboard release" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "The billing dashboard release added invoice exports..." }] },
+      { "type": "text", "text": "The billing dashboard release added invoice exports and fixed three bugs." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+`source` blocks are Zylon-specific. They are returned only when the Zylon extension is enabled.
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+`is_error` is `true` when the tool fails, and `content` holds the error message.
+
+See [Migrating from 1.57 to 1.58](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for the full list of server tool blocks.
+
 ## Tips
 
 - Keep `tool_context` narrow (use a single collection and the smallest set of artifacts you need).

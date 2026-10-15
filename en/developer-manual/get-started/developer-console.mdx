@@ -4,7 +4,7 @@ description: API token management for developers.
 ---
 
 ## Overview
-Developer Console is the Backoffice area used for Gateway token management.
+Developer Console is the Backoffice area used for API token workflows.
 
 Tokens generated in Developer Console are the recommended option when you need one token that works across:
 
@@ -18,6 +18,8 @@ It is available to:
 - Accounts with **Operator** role when they also belong to a gateway
 
 API tokens are created within gateways and are tied to both the gateway and the account that created them.
+
+Gateway token creation accepts `PrivateGPT.Read.All` and `PrivateGPT.ReadWrite.All`. An explicit empty legacy scope list maps to `PrivateGPT.ReadWrite.All`; any other requested scope returns `400`. See [Token Management](/en/developer-manual/get-started/token-management) for the scope model and the read-only allowlist.
 
 <Info>
 If you only need Workspace API access, you can use the Workspace-only flow in [Workspace Token Management](/en/developer-manual/get-started/token-management).

@@ -98,3 +98,28 @@ Usa esta página para seleccionar el flujo de token adecuado para tu integració
     </Warning>
   </Tab>
 </Tabs>
+
+## Scopes de token de API
+
+La creación de tokens de cuenta acepta estos seis valores serializados de scope:
+
+| Scope | Acceso |
+| --- | --- |
+| `Read.All` | Lectura de cuentas, tokens, gateways, Backoffice/metadatos y Workspace, búsqueda en Workspace y allowlist de solo lectura de ZylonGPT cuando el token incluye `gateway_id`. |
+| `ReadWrite.All` | Lectura y escritura en las APIs, según los roles de la cuenta propietaria. |
+| `Workspace.Read.All` | Lecturas y búsquedas de Workspace; las mutaciones de Workspace devuelven `403`. |
+| `Workspace.ReadWrite.All` | Operaciones de lectura y escritura de Workspace. |
+| `PrivateGPT.Read.All` | Solo la allowlist de ZylonGPT de lectura para el gateway seleccionado. |
+| `PrivateGPT.ReadWrite.All` | Operaciones de lectura y escritura de ZylonGPT para el gateway seleccionado. |
+
+Si un token tiene varios scopes, sus permisos se combinan. Después, los permisos efectivos se limitan a los permisos de la cuenta y el rol propietarios del token. Un scope amplio no puede elevar a su propietario y un token de API de solo lectura sigue restringido aunque su propietario sea SuperAdmin. Estas restricciones de scope solo se aplican a tokens de API; las sesiones interactivas no cambian.
+
+<Note>
+  Si una solicitud de token de cuenta omite `scopes`, se usa `Workspace.ReadWrite.All` por defecto. Enviar un array `scopes` vacío de forma explícita devuelve `400`. Tanto `PrivateGPT.Read.All` como `PrivateGPT.ReadWrite.All` requieren `gateway_id`.
+</Note>
+
+`Read.All` no requiere `gateway_id` al crear el token. Sin ese contexto de gateway, el token puede usar sus demás permisos de lectura, pero no puede llamar a ZylonGPT.
+
+La creación de tokens de gateway solo acepta `PrivateGPT.Read.All` y `PrivateGPT.ReadWrite.All`; solicitar otro scope devuelve `400`. Por compatibilidad, el endpoint de tokens de gateway convierte una lista de scopes legacy vacía explícita en `PrivateGPT.ReadWrite.All`.
+
+Consulta la [visión general de ZylonGPT API](/es/developer-manual/build-with-zylon/zylon-gpt-api/overview) para ver la lista de endpoints de solo lectura y los requisitos de lectura y escritura.

@@ -9,9 +9,9 @@ Usa estos endpoints para autenticar con credenciales y cerrar sesión. Para los 
 
 Usa `POST /api/v1/auth/register` para crear una cuenta con credenciales.
 
-Para usar esa cuenta en Workspace, necesitas al menos un usuario de workspace:
+Para usar esa cuenta en Workspace, necesitas al menos un miembro del espacio de trabajo:
 
-- Crea un usuario de workspace con el account ID en [Usuarios - Crear un usuario](/es/developer-manual/build-with-zylon/workspace-api/users/user).
+- Crea un miembro del espacio de trabajo con el ID de la cuenta en [Miembros del espacio de trabajo - Crear un miembro del espacio de trabajo](/es/developer-manual/build-with-zylon/workspace-api/users/user).
 - Añade membresías/roles adicionales con `POST /api/v1/account/organization/{orgId}/join`.
 
 ```bash
@@ -22,7 +22,7 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
     "name": "Sasha Patel",
     "email": "sasha@example.com",
     "password": "{password}",
-    "roles": ["Admin"]
+    "roles": ["Workspace"]
   }'
 ```
 
@@ -42,12 +42,8 @@ curl -X POST "https://{BASE_URL}/api/v1/auth/register" \
   "state": "Active",
   "email": "sasha@example.com",
   "name": "Sasha Patel",
-  "given_name": null,
-  "family_name": null,
-  "profile_picture": null,
   "provider": "Credentials",
-  "users": null,
-  "roles": ["Admin"],
+  "roles": ["Workspace"],
   "created_at": "2026-02-08T14:12:45Z",
   "updated_at": "2026-02-08T14:12:45Z"
 }
@@ -151,9 +147,13 @@ curl -X POST "https://{BASE_URL}/api/v1/account/token" \
 | `name` | string | No | Nombre legible del token. |
 | `revoke_existing` | boolean | No | Si es `true`, revoca tokens existentes según la política del servidor. Por defecto es `false`. |
 | `valid_until` | timestamp | No | Fecha de expiración. Usa `null` u omítelo si no hay expiración explícita. |
-| `scopes` | string[] | No | Valores permitidos: `ReadWrite.All`, `Workspace.ReadWrite.All`, `PrivateGPT.ReadWrite.All`. Por defecto es `Workspace.ReadWrite.All`. |
-| `gateway_id` | string | No | Gateway ID al crear un token asociado a un gateway. |
+| `scopes` | string[] | No | Valores permitidos: `Read.All`, `ReadWrite.All`, `Workspace.Read.All`, `Workspace.ReadWrite.All`, `PrivateGPT.Read.All` y `PrivateGPT.ReadWrite.All`. Si se omite, usa `Workspace.ReadWrite.All` por defecto; un array vacío explícito devuelve `400`. |
+| `gateway_id` | string | No | Obligatorio si `scopes` incluye `PrivateGPT.Read.All` o `PrivateGPT.ReadWrite.All`. |
 </Accordion>
+
+Los scopes de un mismo token se combinan y después se intersectan con los permisos de rol de la cuenta propietaria. Un token no puede elevar a su propietario, incluidos los tokens de SuperAdmin. Las restricciones de scope solo se aplican a tokens de API y no cambian las sesiones interactivas. Consulta [Gestión de tokens](/es/developer-manual/get-started/token-management) para ver el acceso de cada scope.
+
+`Read.All` puede crearse sin `gateway_id`, pero sus permisos de lectura de ZylonGPT solo se pueden usar cuando el token incluye ese contexto de gateway. En cambio, la creación de tokens de cuenta devuelve `400` si se solicita cualquiera de los scopes `PrivateGPT.*` dedicados sin `gateway_id`.
 
 <Accordion title="Ejemplo de respuesta">
 ```json
@@ -194,5 +194,6 @@ curl -X DELETE "https://{BASE_URL}/api/v1/account/token/{token_hash}" \
 ## Errores y casos límite
 
 - **401/403**: token inválido o ausente.
+- **400**: `scopes` está vacío de forma explícita, falta `gateway_id` para un scope de PrivateGPT o una solicitud de token de gateway incluye un scope que no es de PrivateGPT.
 - **429**: demasiados intentos de inicio de sesión.
 - **400**: el registro no incluye roles de cuenta, email o contraseña obligatorios.

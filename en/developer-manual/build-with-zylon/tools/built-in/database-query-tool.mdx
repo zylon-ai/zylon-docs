@@ -52,6 +52,32 @@ Example response:
 
 To run the request, send the same body to `POST /messages` and set `tool_choice` to `{ \"type\": \"auto\" }`.
 
+## Response blocks
+
+Zylon runs this tool on the server. The response contains a `server_tool_use` block with the call, followed by a `server_tool_result` block with the result. The call ID starts with `srvtoolu_`. Don't send a `tool_result` back for it.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5c6d", "name": "database_query", "input": { "query": "Total Q1 subscriptions by plan" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nplan,subscriptions\nPro,320\nTeam,145" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+`is_error` is `true` when the tool fails, and `content` holds the error message.
+
+See [Migrating from 1.57 to 1.58](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for the full list of server tool blocks.
+
 ## Tips
 
 - Use a read-only database user.

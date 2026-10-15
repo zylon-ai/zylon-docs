@@ -40,6 +40,21 @@ By default, only the last 10 backups are preserved.
 
 **During the backup process, Zylon will be offline.** Depending on the amount of documents you have uploaded this process might take several minutes.
 
+### How Zylon is stopped during backup and restore
+
+Before copying or replacing any data, `zylon-cli backup` and `zylon-cli restore` cordon and drain the node, so every Zylon pod shuts down cleanly. Only then is k0s stopped. When the data is copied or restored, k0s is started again and the node is uncordoned, so the pods are scheduled back automatically.
+
+- Draining usually takes one to two minutes.
+- After the command finishes, Zylon still needs a few more minutes to be fully available, mainly while the AI models load. Check progress with `sudo k0s kubectl get pods -n zylon`.
+
+<Warning>
+    If a backup or restore is interrupted (for example, the process is killed or the SSH session drops), the node can stay cordoned. Zylon pods then remain in `Pending` and Zylon stays offline, even after a reboot. To bring Zylon back, uncordon the node:
+
+    ```bash
+    sudo k0s kubectl uncordon $(sudo k0s kubectl get nodes -o name)
+    ```
+</Warning>
+
 ### Putting backups on schedule
 
 You can add this backups on a schedule automatically, run `sudo crontab -e` to open the cron editor and add the backup like

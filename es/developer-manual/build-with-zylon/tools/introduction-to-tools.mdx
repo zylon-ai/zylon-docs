@@ -62,6 +62,7 @@ Zylon incluye herramientas integradas:
 | `web_extract_v1` | Extraer una URL del mensaje | No |
 | `web_search_v1` | Buscar en la web | No |
 | `database_query_v1` | Consultar una BD SQL | Sí (`sql_database`) |
+| `code_execution_v1` | Ejecutar comandos bash y editar archivos en un contenedor aislado | No |
 
 Guías:
 
@@ -70,6 +71,33 @@ Guías:
 - [Herramienta Web Fetch](/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
 - [Herramienta Web Search](/es/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
 - [Herramienta de consulta a base de datos](/es/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
+- [Herramienta de ejecución de código](/es/developer-manual/build-with-zylon/tools/built-in/code-execution-tool)
+
+### Cómo se devuelven los resultados de las herramientas integradas
+
+Zylon ejecuta las herramientas integradas en el servidor, dentro de la misma solicitud. Cada llamada aparece en la respuesta como un bloque `server_tool_use` (prefijo de ID `srvtoolu_`), seguido de su bloque de resultado:
+
+| Herramienta | Bloque de resultado |
+| --- | --- |
+| `semantic_search`, `tabular_analysis`, `database_query`, `summarize`, `present_files`, skills, herramientas MCP | `server_tool_result` (`content`, `is_error`) |
+| `web_search` | `web_search_tool_result` |
+| `web_fetch` | `web_fetch_tool_result` |
+| Ejecución de código: `bash_code_execution` | `bash_code_execution_tool_result` |
+| Ejecución de código: `text_editor_code_execution` | `text_editor_code_execution_tool_result` |
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [{ "type": "text", "text": "Customers reported duplicate charges after the plan change." }],
+    "is_error": false
+  }
+]
+```
+
+No envíes resultados de vuelta para las herramientas integradas: Zylon ya las ha ejecutado. `stop_reason: "tool_use"` y los bloques `tool_result` solo se aplican a las [herramientas personalizadas](#herramientas-personalizadas). Cada guía de herramienta muestra su formato de resultado.
 
 ## Herramientas personalizadas
 

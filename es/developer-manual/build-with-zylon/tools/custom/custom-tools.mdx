@@ -57,3 +57,7 @@ Ejemplo de respuesta:
 ```
 
 Para ejecutar, envía el mismo cuerpo a `POST /messages`. Cuando el asistente devuelva un `tool_use`, ejecuta la herramienta y responde con un bloque `tool_result`.
+
+<Note>
+Solo las herramientas personalizadas usan `tool_use` y `tool_result`. Las herramientas integradas se ejecutan en el servidor y devuelven bloques `server_tool_use` seguidos de su resultado; no envíes resultados de vuelta para ellas. Consulta [Cómo se devuelven los resultados de las herramientas integradas](/es/developer-manual/build-with-zylon/tools/introduction-to-tools#cómo-se-devuelven-los-resultados-de-las-herramientas-integradas).
+</Note>

@@ -57,3 +57,7 @@ Example response:
 ```
 
 To run the request, send the same body to `POST /messages`. When the assistant returns a `tool_use` block, execute your tool and include a `tool_result` block in the next message.
+
+<Note>
+Only custom tools use `tool_use` and `tool_result`. Built-in tools run on the server and return `server_tool_use` blocks followed by their result; don't send results back for them. See [How built-in tool results are returned](/en/developer-manual/build-with-zylon/tools/introduction-to-tools#how-built-in-tool-results-are-returned).
+</Note>

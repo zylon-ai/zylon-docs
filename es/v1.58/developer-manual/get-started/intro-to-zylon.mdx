@@ -7,10 +7,11 @@ import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
 
 <UpcomingRelease />
 
-Zylon es una plataforma de IA autohospedada que se ejecuta en tu infraestructura. Ofrece endpoints de Messages compatibles con Anthropic para interactuar con el modelo y una Workspace API para gestionar organizaciones y proyectos. En esta documentación usarás **dos APIs**:
+Zylon es una plataforma de IA autohospedada que se ejecuta en tu infraestructura. Ofrece endpoints de Messages compatibles con Anthropic para interactuar con el modelo, una Workspace API para gestionar organizaciones y proyectos, y una Backoffice API para tareas operativas. En esta documentación usarás **tres APIs**:
 
 - **API de ZylonGPT**: la capa de IA para respuestas del modelo, herramientas y chat con contenido.
 - **Workspace API**: la API de administración para organizaciones, usuarios, proyectos e integraciones.
+- **Backoffice API**: la API operativa para tareas de Backoffice, como recuperar registros manualmente.
 
 ## Elige tu flujo de token
 
@@ -36,5 +37,8 @@ Usa el flujo de token que corresponda a tu integración:
 
   <Card title="Workspace API" icon="building" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/overview">
     Administra organizaciones, usuarios, proyectos e integraciones.
+  </Card>
+  <Card title="Backoffice API" icon="shield" href="/es/v1.58/developer-manual/build-with-zylon/backoffice-api/overview">
+    Recupera datos operativos, como los registros de Zylon.
   </Card>
 </CardGroup>

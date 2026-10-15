@@ -22,7 +22,7 @@ Esta guía cubre la instalación de Zylon para entornos con acceso limitado a in
 
 <InstallationPrerequisites />
 - [ ] Servidor proxy configurado con credenciales (si es requerido)
-- [ ] El equipo de red ha añadido a lista blanca los dominios y puertos requeridos (ver [Acceso de Red Requerido](/es/v1.58/operator-manual/installation/semi-airgap#required-network-access))
+- [ ] El equipo de red ha añadido a lista blanca los dominios y puertos requeridos (ver [Acceso de Red Requerido](/es/v1.58/operator-manual/installation/semi-airgap#acceso-de-red-requerido))
 - [ ] Las reglas del firewall permiten conexiones a través del proxy
 - [ ] Certificado SSL válido para tu dominio (Let's Encrypt típicamente no funcionará en redes restringidas)
 
@@ -101,6 +101,7 @@ Tu firewall debe permitir acceso a estos dominios:
   </Step>
 
   <Step title="Configurar Zylon">
+    <span id="configure-zylon" style={{ display: "block", scrollMarginTop: "8rem" }} />
     _Tiempo estimado: 10min_
 
     <InstallationConfig />
@@ -108,7 +109,7 @@ Tu firewall debe permitir acceso a estos dominios:
     <Tabs>
       <Tab title="Configuración Automática">
         Si ejecutaste `sudo zylon-cli config init`, toda la configuración está establecida.
-        Revisa `/etc/zylon/zylon-conf.yaml` para confirmar la configuración. Puedes obtener más información sobre qué configuraciones son requeridas en la sección [Configuración Manual](#manual-configuration).
+        Revisa `/etc/zylon/zylon-conf.yaml` para confirmar la configuración. Puedes obtener más información sobre qué configuraciones son requeridas en la sección [Configuración Manual](#configuraci%C3%B3n-manual).
 
         <Info>
           Si necesitas volver a ejecutar el asistente de configuración, ejecuta:
@@ -145,14 +146,7 @@ Tu firewall debe permitir acceso a estos dominios:
         
         Consulta la [Guía de Configuración de Proxy](/es/v1.58/operator-manual/configuration/network/proxy) para configurar los ajustes de proxy en tu configuración.
 
-        **Desactivar Let's Encrypt**
 
-        Edita `/etc/zylon/zylon-conf.yaml` y **elimina** estas líneas:
-
-        ```yaml
-        certManagerAnnotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        ```
       </Tab>
     </Tabs>
 

@@ -49,7 +49,14 @@
                 "tab": "Home",
                 "icon": "house",
                 "pages": [
-                  "en/index"
+                  "en/v1.57/index",
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.57/quickstart"
+                    ]
+                  }
                 ]
               },
               {
@@ -59,44 +66,44 @@
                   {
                     "group": "About Zylon Workspace",
                     "pages": [
-                      "en/user-manual/what-is-zylon-workspace",
-                      "en/user-manual/first-day-faqs",
-                      "en/user-manual/quick-start-guide"
+                      "en/v1.57/user-manual/what-is-zylon-workspace",
+                      "en/v1.57/user-manual/first-day-faqs",
+                      "en/v1.57/user-manual/quick-start-guide"
                     ]
                   },
                   {
                     "group": "Admin Tools",
                     "pages": [
-                      "en/user-manual/workspace-look-and-feel",
-                      "en/user-manual/adding-company-context",
-                      "en/user-manual/block-resource-downloads",
-                      "en/user-manual/engagement-analytics",
-                      "en/user-manual/managing-organization-skills"
+                      "en/v1.57/user-manual/workspace-look-and-feel",
+                      "en/v1.57/user-manual/adding-company-context",
+                      "en/v1.57/user-manual/block-resource-downloads",
+                      "en/v1.57/user-manual/engagement-analytics",
+                      "en/v1.57/user-manual/managing-organization-skills"
                     ]
                   },
                   {
                     "group": "Projects",
                     "pages": [
-                      "en/user-manual/creating-a-project",
-                      "en/user-manual/adding-custom-instructions",
-                      "en/user-manual/sharing-with-colleagues"
+                      "en/v1.57/user-manual/creating-a-project",
+                      "en/v1.57/user-manual/adding-custom-instructions",
+                      "en/v1.57/user-manual/sharing-with-colleagues"
                     ]
                   },
                   {
                     "group": "Knowledge Bases",
                     "pages": [
-                      "en/user-manual/uploading-files",
-                      "en/user-manual/roles-and-permissions",
-                      "en/user-manual/linking-knowledge-bases",
+                      "en/v1.57/user-manual/uploading-files",
+                      "en/v1.57/user-manual/roles-and-permissions",
+                      "en/v1.57/user-manual/linking-knowledge-bases",
                       {
                         "group": "External Connectors",
                         "pages": [
-                          "en/user-manual/connectors/google-drive",
-                          "en/user-manual/connectors/sharepoint",
-                          "en/user-manual/connectors/confluence",
-                          "en/user-manual/connectors/confluence-server",
-                          "en/user-manual/connectors/file-system",
-                          "en/user-manual/connectors/claromentis"
+                          "en/v1.57/user-manual/connectors/google-drive",
+                          "en/v1.57/user-manual/connectors/sharepoint",
+                          "en/v1.57/user-manual/connectors/confluence",
+                          "en/v1.57/user-manual/connectors/confluence-server",
+                          "en/v1.57/user-manual/connectors/file-system",
+                          "en/v1.57/user-manual/connectors/claromentis"
                         ]
                       }
                     ]
@@ -104,53 +111,53 @@
                   {
                     "group": "Skills",
                     "pages": [
-                      "en/user-manual/skills/introduction-to-skills",
-                      "en/user-manual/skills/creating-a-skill",
-                      "en/user-manual/skills/installing-from-organization",
-                      "en/user-manual/skills/using-skills-in-chat"
+                      "en/v1.57/user-manual/skills/introduction-to-skills",
+                      "en/v1.57/user-manual/skills/creating-a-skill",
+                      "en/v1.57/user-manual/skills/installing-from-organization",
+                      "en/v1.57/user-manual/skills/using-skills-in-chat"
                     ]
                   },
                   {
                     "group": "Search",
                     "pages": [
-                      "en/user-manual/search-workspace-content",
-                      "en/user-manual/search-company-documents"
+                      "en/v1.57/user-manual/search-workspace-content",
+                      "en/v1.57/user-manual/search-company-documents"
                     ]
                   },
                   {
                     "group": "Chat Assistant",
                     "pages": [
-                      "en/user-manual/when-to-use-chat-assistant",
-                      "en/user-manual/querying-company-documents",
+                      "en/v1.57/user-manual/when-to-use-chat-assistant",
+                      "en/v1.57/user-manual/querying-company-documents",
                       {
                         "group": "Using Tools",
                         "pages": [
-                          "en/user-manual/tools/introduction-to-tools",
-                          "en/user-manual/tools/extended-thinking",
-                          "en/user-manual/tools/numeric-analysis",
-                          "en/user-manual/tools/database-connector",
-                          "en/user-manual/tools/mcp-connector",
-                          "en/user-manual/tools/attachments",
-                          "en/user-manual/tools/web-search"
+                          "en/v1.57/user-manual/tools/introduction-to-tools",
+                          "en/v1.57/user-manual/tools/extended-thinking",
+                          "en/v1.57/user-manual/tools/numeric-analysis",
+                          "en/v1.57/user-manual/tools/database-connector",
+                          "en/v1.57/user-manual/tools/mcp-connector",
+                          "en/v1.57/user-manual/tools/attachments",
+                          "en/v1.57/user-manual/tools/web-search"
                         ]
                       },
-                      "en/user-manual/group-chats"
+                      "en/v1.57/user-manual/group-chats"
                     ]
                   },
                   {
                     "group": "AI Documents",
                     "pages": [
-                      "en/user-manual/when-to-use-agent-flows",
-                      "en/user-manual/real-time-collaboration",
-                      "en/user-manual/inline-ai-in-editor",
+                      "en/v1.57/user-manual/when-to-use-agent-flows",
+                      "en/v1.57/user-manual/real-time-collaboration",
+                      "en/v1.57/user-manual/inline-ai-in-editor",
                       {
                         "group": "Available AI Documents",
                         "pages": [
-                          "en/user-manual/agent-flows/summarize-file",
-                          "en/user-manual/agent-flows/answer-in-bulk",
-                          "en/user-manual/agent-flows/generate-draft",
-                          "en/user-manual/agent-flows/open-blank-page",
-                          "en/user-manual/agent-flows/read-and-extract"
+                          "en/v1.57/user-manual/agent-flows/summarize-file",
+                          "en/v1.57/user-manual/agent-flows/answer-in-bulk",
+                          "en/v1.57/user-manual/agent-flows/generate-draft",
+                          "en/v1.57/user-manual/agent-flows/open-blank-page",
+                          "en/v1.57/user-manual/agent-flows/read-and-extract"
                         ]
                       }
                     ]
@@ -158,19 +165,19 @@
                   {
                     "group": "Profile",
                     "pages": [
-                      "en/user-manual/password-recovery"
+                      "en/v1.57/user-manual/password-recovery"
                     ]
                   },
                   {
                     "group": "n8n",
                     "pages": [
-                      "en/user-manual/n8n"
+                      "en/v1.57/user-manual/n8n"
                     ]
                   },
                   {
                     "group": "Security",
                     "pages": [
-                      "en/user-manual/security/authentication-for-sensitive-actions"
+                      "en/v1.57/user-manual/security/authentication-for-sensitive-actions"
                     ]
                   }
                 ]
@@ -183,10 +190,10 @@
                     "group": "First Steps",
                     "icon": "rocket",
                     "pages": [
-                      "en/developer-manual/get-started/intro-to-zylon",
-                      "en/developer-manual/get-started/token-management",
-                      "en/developer-manual/get-started/quickstart",
-                      "en/developer-manual/get-started/developer-console"
+                      "en/v1.57/developer-manual/get-started/intro-to-zylon",
+                      "en/v1.57/developer-manual/get-started/token-management",
+                      "en/v1.57/developer-manual/get-started/quickstart",
+                      "en/v1.57/developer-manual/get-started/developer-console"
                     ]
                   },
                   {
@@ -196,81 +203,81 @@
                       {
                         "group": "ZylonGPT API",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/zylon-gpt-api/overview",
-                          "en/developer-manual/build-with-zylon/working-with-messages",
-                          "en/developer-manual/build-with-zylon/working-with-artifacts",
-                          "en/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
+                          "en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+                          "en/v1.57/developer-manual/build-with-zylon/working-with-messages",
+                          "en/v1.57/developer-manual/build-with-zylon/working-with-artifacts",
+                          "en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
                           {
                             "group": "Tools",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                              "en/v1.57/developer-manual/build-with-zylon/tools/introduction-to-tools",
                               {
                                 "group": "Built-in",
                                 "pages": [
-                                  "en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
-                                  "en/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
-                                  "en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
-                                  "en/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
-                                  "en/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
                                 ]
                               },
                               {
                                 "group": "Custom",
                                 "pages": [
-                                  "en/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                                  "en/v1.57/developer-manual/build-with-zylon/tools/custom/custom-tools"
                                 ]
                               }
                             ]
                           },
-                          "en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
+                          "en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
                         ]
                       },
                       {
                         "group": "Workspace API",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/workspace-api/overview",
+                          "en/v1.57/developer-manual/build-with-zylon/workspace-api/overview",
                           {
                             "group": "General",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/general/overview",
-                              "en/developer-manual/build-with-zylon/workspace-api/general/analytics",
-                              "en/developer-manual/build-with-zylon/workspace-api/general/issues",
-                              "en/developer-manual/build-with-zylon/workspace-api/general/search",
-                              "en/developer-manual/build-with-zylon/workspace-api/general/system"
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/general/overview",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/general/issues",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/general/search",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/general/system"
                             ]
                           },
                           {
                             "group": "Authentication",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/authentication/openid",
-                              "en/developer-manual/build-with-zylon/workspace-api/authentication/auth"
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/auth"
                             ]
                           },
                           {
                             "group": "Users",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/users/user",
-                              "en/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/users/user",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/users/user-organization"
                             ]
                           },
                           {
                             "group": "Projects",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/projects/project",
-                              "en/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project-member"
                             ]
                           },
                           {
                             "group": "Content",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/content/artifacts",
                               {
                                 "group": "Integrations",
                                 "pages": [
-                                  "en/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
-                                  "en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
-                                  "en/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
-                                  "en/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+                                  "en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+                                  "en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+                                  "en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+                                  "en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
                                 ]
                               }
                             ]
@@ -278,7 +285,7 @@
                           {
                             "group": "Chats",
                             "pages": [
-                              "en/developer-manual/build-with-zylon/workspace-api/chats/threads"
+                              "en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/threads"
                             ]
                           }
                         ]
@@ -286,8 +293,8 @@
                       {
                         "group": "Backoffice API",
                         "pages": [
-                          "en/developer-manual/build-with-zylon/backoffice-api/overview",
-                          "en/developer-manual/build-with-zylon/backoffice-api/logging"
+                          "en/v1.57/developer-manual/build-with-zylon/backoffice-api/overview",
+                          "en/v1.57/developer-manual/build-with-zylon/backoffice-api/logging"
                         ]
                       }
                     ]
@@ -295,8 +302,22 @@
                   {
                     "group": "Coding Agents",
                     "pages": [
-                      "en/developer-manual/get-started/opencode-setup",
-                      "en/developer-manual/get-started/claude-code-setup"
+                      "en/v1.57/developer-manual/get-started/opencode-setup",
+                      "en/v1.57/developer-manual/get-started/claude-code-setup"
+                    ]
+                  },
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.57/api-reference/examples/json-output",
+                      "en/v1.57/api-reference/examples/stock_analysis",
+                      "en/v1.57/api-reference/how-to-use",
+                      "en/v1.57/api-reference/introduction",
+                      "en/v1.57/developer-manual/build-with-zylon/async-messages",
+                      "en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/chat",
+                      "en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                      "en/v1.57/developer-manual/build-with-zylon/workspace-api/token-management"
                     ]
                   }
                 ]
@@ -308,101 +329,101 @@
                   {
                     "group": "Getting Started",
                     "pages": [
-                      "en/operator-manual/index"
+                      "en/v1.57/operator-manual/index"
                     ]
                   },
                   {
                     "group": "Installation",
                     "pages": [
-                      "en/operator-manual/installation/index",
-                      "en/operator-manual/installation/hardware-requirements",
-                      "en/operator-manual/installation/online",
-                      "en/operator-manual/installation/semi-airgap",
-                      "en/operator-manual/installation/airgap",
-                      "en/operator-manual/installation/legacy",
-                      "en/operator-manual/installation/uninstall"
+                      "en/v1.57/operator-manual/installation/index",
+                      "en/v1.57/operator-manual/installation/hardware-requirements",
+                      "en/v1.57/operator-manual/installation/online",
+                      "en/v1.57/operator-manual/installation/semi-airgap",
+                      "en/v1.57/operator-manual/installation/airgap",
+                      "en/v1.57/operator-manual/installation/legacy",
+                      "en/v1.57/operator-manual/installation/uninstall"
                     ]
                   },
                   {
                     "group": "Maintenance & Operations",
                     "pages": [
-                      "en/operator-manual/operations/backup",
-                      "en/operator-manual/operations/data-disk",
-                      "en/operator-manual/operations/sys-admin-dashboard"
+                      "en/v1.57/operator-manual/operations/backup",
+                      "en/v1.57/operator-manual/operations/data-disk",
+                      "en/v1.57/operator-manual/operations/sys-admin-dashboard"
                     ]
                   },
                   {
                     "group": "Backoffice",
                     "pages": [
-                      "en/operator-manual/backoffice/introduction",
-                      "en/operator-manual/backoffice/roles-and-permissions",
-                      "en/operator-manual/backoffice/accessing-the-backoffice",
-                      "en/operator-manual/backoffice/platform-backoffice",
-                      "en/operator-manual/backoffice/guardrails",
-                      "en/operator-manual/backoffice/usage-dashboard"
+                      "en/v1.57/operator-manual/backoffice/introduction",
+                      "en/v1.57/operator-manual/backoffice/roles-and-permissions",
+                      "en/v1.57/operator-manual/backoffice/accessing-the-backoffice",
+                      "en/v1.57/operator-manual/backoffice/platform-backoffice",
+                      "en/v1.57/operator-manual/backoffice/guardrails",
+                      "en/v1.57/operator-manual/backoffice/usage-dashboard"
                     ]
                   },
                   {
                     "group": "Configuration",
                     "pages": [
-                      "en/operator-manual/configuration/index",
+                      "en/v1.57/operator-manual/configuration/index",
                       {
                         "group": "AI Presets",
                         "pages": [
-                          "en/operator-manual/ai-presets/getting-started",
-                          "en/operator-manual/ai-presets/presets",
-                          "en/operator-manual/ai-presets/configuration",
-                          "en/operator-manual/ai-presets/advanced-customization",
-                          "en/operator-manual/ai-presets/troubleshooting"
+                          "en/v1.57/operator-manual/ai-presets/getting-started",
+                          "en/v1.57/operator-manual/ai-presets/presets",
+                          "en/v1.57/operator-manual/ai-presets/configuration",
+                          "en/v1.57/operator-manual/ai-presets/advanced-customization",
+                          "en/v1.57/operator-manual/ai-presets/troubleshooting"
                         ]
                       },
                       {
                         "group": "Network & Connectivity",
                         "pages": [
-                          "en/operator-manual/configuration/network/ports-and-dns",
-                          "en/operator-manual/configuration/network/proxy"
+                          "en/v1.57/operator-manual/configuration/network/ports-and-dns",
+                          "en/v1.57/operator-manual/configuration/network/proxy"
                         ]
                       },
                       {
                         "group": "Authentication",
                         "pages": [
-                          "en/operator-manual/openid/google",
-                          "en/operator-manual/openid/microsoft",
-                          "en/operator-manual/authentication/ldap"
+                          "en/v1.57/operator-manual/openid/google",
+                          "en/v1.57/operator-manual/openid/microsoft",
+                          "en/v1.57/operator-manual/authentication/ldap"
                         ]
                       },
                       {
                         "group": "Knowledge Base Connectors",
                         "pages": [
-                          "en/operator-manual/knowledge-base/index",
-                          "en/operator-manual/knowledge-base/google-drive",
-                          "en/operator-manual/knowledge-base/sharepoint",
-                          "en/operator-manual/knowledge-base/confluence",
-                          "en/operator-manual/knowledge-base/confluence-server",
-                          "en/operator-manual/knowledge-base/file-system",
-                          "en/operator-manual/knowledge-base/claromentis"
+                          "en/v1.57/operator-manual/knowledge-base/index",
+                          "en/v1.57/operator-manual/knowledge-base/google-drive",
+                          "en/v1.57/operator-manual/knowledge-base/sharepoint",
+                          "en/v1.57/operator-manual/knowledge-base/confluence",
+                          "en/v1.57/operator-manual/knowledge-base/confluence-server",
+                          "en/v1.57/operator-manual/knowledge-base/file-system",
+                          "en/v1.57/operator-manual/knowledge-base/claromentis"
                         ]
                       },
                       {
                         "group": "Features & Capabilities",
                         "pages": [
-                          "en/operator-manual/configuration/features/feat-mcp",
-                          "en/operator-manual/configuration/features/feat-file-vision",
-                          "en/operator-manual/configuration/features/feat-database",
-                          "en/operator-manual/configuration/features/feat-audit",
-                          "en/operator-manual/configuration/features/log-delivery-storage",
-                          "en/operator-manual/configuration/features/feat-project-custom-instructions",
-                          "en/operator-manual/configuration/features/feat-webextract",
-                          "en/operator-manual/configuration/features/feat-websearch",
-                          "en/operator-manual/configuration/features/feat-multimodal",
-                          "en/operator-manual/configuration/features/authentication-freshness"
+                          "en/v1.57/operator-manual/configuration/features/feat-mcp",
+                          "en/v1.57/operator-manual/configuration/features/feat-file-vision",
+                          "en/v1.57/operator-manual/configuration/features/feat-database",
+                          "en/v1.57/operator-manual/configuration/features/feat-audit",
+                          "en/v1.57/operator-manual/configuration/features/log-delivery-storage",
+                          "en/v1.57/operator-manual/configuration/features/feat-project-custom-instructions",
+                          "en/v1.57/operator-manual/configuration/features/feat-webextract",
+                          "en/v1.57/operator-manual/configuration/features/feat-websearch",
+                          "en/v1.57/operator-manual/configuration/features/feat-multimodal",
+                          "en/v1.57/operator-manual/configuration/features/authentication-freshness"
                         ]
                       },
                       {
                         "group": "Cron Tasks",
                         "pages": [
-                          "en/operator-manual/configuration/cron-tasks/sync",
-                          "en/operator-manual/configuration/cron-tasks/hard-delete"
+                          "en/v1.57/operator-manual/configuration/cron-tasks/sync",
+                          "en/v1.57/operator-manual/configuration/cron-tasks/hard-delete"
                         ]
                       },
                       {
@@ -411,44 +432,52 @@
                           {
                             "group": "Observability",
                             "pages": [
-                              "en/operator-manual/configuration/observability/index",
-                              "en/operator-manual/configuration/observability/platform-metrics",
-                              "en/operator-manual/configuration/observability/destinations",
-                              "en/operator-manual/configuration/observability/external-grafana-dashboard"
+                              "en/v1.57/operator-manual/configuration/observability/index",
+                              "en/v1.57/operator-manual/configuration/observability/platform-metrics",
+                              "en/v1.57/operator-manual/configuration/observability/destinations",
+                              "en/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
                             ]
                           },
-                          "en/operator-manual/configuration/search",
-                          "en/operator-manual/configuration/performance",
-                          "en/operator-manual/configuration/whitelabel",
-                          "en/operator-manual/configuration/n8n"
+                          "en/v1.57/operator-manual/configuration/search",
+                          "en/v1.57/operator-manual/configuration/performance",
+                          "en/v1.57/operator-manual/configuration/whitelabel",
+                          "en/v1.57/operator-manual/configuration/n8n"
                         ]
                       },
-                      "en/operator-manual/configuration/cli"
+                      "en/v1.57/operator-manual/configuration/cli"
                     ]
                   },
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "en/operator-manual/troubleshooting/troubleshoot",
-                      "en/operator-manual/troubleshooting/exporting-logs",
-                      "en/operator-manual/troubleshooting/nvidia-drivers",
-                      "en/operator-manual/troubleshooting/ai"
+                      "en/v1.57/operator-manual/troubleshooting/troubleshoot",
+                      "en/v1.57/operator-manual/troubleshooting/exporting-logs",
+                      "en/v1.57/operator-manual/troubleshooting/nvidia-drivers",
+                      "en/v1.57/operator-manual/troubleshooting/ai"
                     ]
                   },
                   {
                     "group": "Security",
                     "pages": [
-                      "en/operator-manual/instance-hardening/index",
-                      "en/operator-manual/instance-hardening/airgap-your-server",
-                      "en/operator-manual/instance-hardening/disk-encryption",
-                      "en/operator-manual/security/authentication-for-sensitive-actions"
+                      "en/v1.57/operator-manual/instance-hardening/index",
+                      "en/v1.57/operator-manual/instance-hardening/airgap-your-server",
+                      "en/v1.57/operator-manual/instance-hardening/disk-encryption",
+                      "en/v1.57/operator-manual/security/authentication-for-sensitive-actions"
                     ]
                   },
                   {
                     "group": "Auditability & AI Governance",
                     "pages": [
-                      "en/operator-manual/auditability-ai-safety/index",
-                      "en/operator-manual/backoffice/log-delivery-storage"
+                      "en/v1.57/operator-manual/auditability-ai-safety/index",
+                      "en/v1.57/operator-manual/backoffice/log-delivery-storage"
+                    ]
+                  },
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.57/operator-manual/configuration/features/index",
+                      "en/v1.57/operator-manual/low-level"
                     ]
                   }
                 ]
@@ -457,14 +486,25 @@
                 "tab": "Customer Support Manual",
                 "icon": "headphones",
                 "pages": [
-                  "en/customer-support-manual/zendesk-client-manual"
+                  "en/v1.57/customer-support-manual/zendesk-client-manual"
                 ]
               },
               {
                 "tab": "Changelog",
                 "icon": "list",
                 "pages": [
-                  "en/changelog/index"
+                  "en/v1.57/changelog/index",
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.57/changelog/guides/1-43-0",
+                      "en/v1.57/changelog/guides/1-53-0",
+                      "en/v1.57/changelog/guides/1-54-0",
+                      "en/v1.57/changelog/guides/1-55-0",
+                      "en/v1.57/changelog/guides/1-57-0"
+                    ]
+                  }
                 ]
               }
             ]
@@ -476,7 +516,14 @@
                 "tab": "Inicio",
                 "icon": "house",
                 "pages": [
-                  "es/index"
+                  "es/v1.57/index",
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.57/quickstart"
+                    ]
+                  }
                 ]
               },
               {
@@ -486,43 +533,43 @@
                   {
                     "group": "Acerca del Espacio de Trabajo de Zylon",
                     "pages": [
-                      "es/user-manual/what-is-zylon-workspace",
-                      "es/user-manual/first-day-faqs",
-                      "es/user-manual/quick-start-guide"
+                      "es/v1.57/user-manual/what-is-zylon-workspace",
+                      "es/v1.57/user-manual/first-day-faqs",
+                      "es/v1.57/user-manual/quick-start-guide"
                     ]
                   },
                   {
-                    "group": "Herramientas de Administración",
+                    "group": "Herramientas de Administraci\u00f3n",
                     "pages": [
-                      "es/user-manual/workspace-look-and-feel",
-                      "es/user-manual/adding-company-context",
-                      "es/user-manual/engagement-analytics",
-                      "es/user-manual/managing-organization-skills"
+                      "es/v1.57/user-manual/workspace-look-and-feel",
+                      "es/v1.57/user-manual/adding-company-context",
+                      "es/v1.57/user-manual/engagement-analytics",
+                      "es/v1.57/user-manual/managing-organization-skills"
                     ]
                   },
                   {
                     "group": "Proyectos",
                     "pages": [
-                      "es/user-manual/creating-a-project",
-                      "es/user-manual/adding-custom-instructions",
-                      "es/user-manual/sharing-with-colleagues"
+                      "es/v1.57/user-manual/creating-a-project",
+                      "es/v1.57/user-manual/adding-custom-instructions",
+                      "es/v1.57/user-manual/sharing-with-colleagues"
                     ]
                   },
                   {
                     "group": "Bases de Conocimiento",
                     "pages": [
-                      "es/user-manual/uploading-files",
-                      "es/user-manual/roles-and-permissions",
-                      "es/user-manual/linking-knowledge-bases",
+                      "es/v1.57/user-manual/uploading-files",
+                      "es/v1.57/user-manual/roles-and-permissions",
+                      "es/v1.57/user-manual/linking-knowledge-bases",
                       {
                         "group": "Conectores Externos",
                         "pages": [
-                          "es/user-manual/connectors/google-drive",
-                          "es/user-manual/connectors/sharepoint",
-                          "es/user-manual/connectors/confluence",
-                          "es/user-manual/connectors/confluence-server",
-                          "es/user-manual/connectors/file-system",
-                          "es/user-manual/connectors/claromentis"
+                          "es/v1.57/user-manual/connectors/google-drive",
+                          "es/v1.57/user-manual/connectors/sharepoint",
+                          "es/v1.57/user-manual/connectors/confluence",
+                          "es/v1.57/user-manual/connectors/confluence-server",
+                          "es/v1.57/user-manual/connectors/file-system",
+                          "es/v1.57/user-manual/connectors/claromentis"
                         ]
                       }
                     ]
@@ -530,53 +577,53 @@
                   {
                     "group": "Habilidades",
                     "pages": [
-                      "es/user-manual/skills/introduction-to-skills",
-                      "es/user-manual/skills/creating-a-skill",
-                      "es/user-manual/skills/installing-from-organization",
-                      "es/user-manual/skills/using-skills-in-chat"
+                      "es/v1.57/user-manual/skills/introduction-to-skills",
+                      "es/v1.57/user-manual/skills/creating-a-skill",
+                      "es/v1.57/user-manual/skills/installing-from-organization",
+                      "es/v1.57/user-manual/skills/using-skills-in-chat"
                     ]
                   },
                   {
-                    "group": "Búsqueda",
+                    "group": "B\u00fasqueda",
                     "pages": [
-                      "es/user-manual/search-workspace-content",
-                      "es/user-manual/search-company-documents"
+                      "es/v1.57/user-manual/search-workspace-content",
+                      "es/v1.57/user-manual/search-company-documents"
                     ]
                   },
                   {
                     "group": "Asistente de Chat",
                     "pages": [
-                      "es/user-manual/when-to-use-chat-assistant",
-                      "es/user-manual/querying-company-documents",
+                      "es/v1.57/user-manual/when-to-use-chat-assistant",
+                      "es/v1.57/user-manual/querying-company-documents",
                       {
                         "group": "Uso de Herramientas",
                         "pages": [
-                          "es/user-manual/tools/introduction-to-tools",
-                          "es/user-manual/tools/extended-thinking",
-                          "es/user-manual/tools/numeric-analysis",
-                          "es/user-manual/tools/database-connector",
-                          "es/user-manual/tools/mcp-connector",
-                          "es/user-manual/tools/attachments",
-                          "es/user-manual/tools/web-search"
+                          "es/v1.57/user-manual/tools/introduction-to-tools",
+                          "es/v1.57/user-manual/tools/extended-thinking",
+                          "es/v1.57/user-manual/tools/numeric-analysis",
+                          "es/v1.57/user-manual/tools/database-connector",
+                          "es/v1.57/user-manual/tools/mcp-connector",
+                          "es/v1.57/user-manual/tools/attachments",
+                          "es/v1.57/user-manual/tools/web-search"
                         ]
                       },
-                      "es/user-manual/group-chats"
+                      "es/v1.57/user-manual/group-chats"
                     ]
                   },
                   {
                     "group": "Flujos de Agente",
                     "pages": [
-                      "es/user-manual/when-to-use-agent-flows",
-                      "es/user-manual/real-time-collaboration",
-                      "es/user-manual/inline-ai-in-editor",
+                      "es/v1.57/user-manual/when-to-use-agent-flows",
+                      "es/v1.57/user-manual/real-time-collaboration",
+                      "es/v1.57/user-manual/inline-ai-in-editor",
                       {
                         "group": "Flujos de Agente Disponibles",
                         "pages": [
-                          "es/user-manual/agent-flows/summarize-file",
-                          "es/user-manual/agent-flows/answer-in-bulk",
-                          "es/user-manual/agent-flows/generate-draft",
-                          "es/user-manual/agent-flows/open-blank-page",
-                          "es/user-manual/agent-flows/read-and-extract"
+                          "es/v1.57/user-manual/agent-flows/summarize-file",
+                          "es/v1.57/user-manual/agent-flows/answer-in-bulk",
+                          "es/v1.57/user-manual/agent-flows/generate-draft",
+                          "es/v1.57/user-manual/agent-flows/open-blank-page",
+                          "es/v1.57/user-manual/agent-flows/read-and-extract"
                         ]
                       }
                     ]
@@ -584,19 +631,19 @@
                   {
                     "group": "Perfil",
                     "pages": [
-                      "es/user-manual/password-recovery"
+                      "es/v1.57/user-manual/password-recovery"
                     ]
                   },
                   {
                     "group": "n8n",
                     "pages": [
-                      "es/user-manual/n8n"
+                      "es/v1.57/user-manual/n8n"
                     ]
                   },
                   {
                     "group": "Seguridad",
                     "pages": [
-                      "es/user-manual/security/authentication-for-sensitive-actions"
+                      "es/v1.57/user-manual/security/authentication-for-sensitive-actions"
                     ]
                   }
                 ]
@@ -609,10 +656,10 @@
                     "group": "Primeros pasos",
                     "icon": "rocket",
                     "pages": [
-                      "es/developer-manual/get-started/intro-to-zylon",
-                      "es/developer-manual/get-started/token-management",
-                      "es/developer-manual/get-started/quickstart",
-                      "es/developer-manual/get-started/developer-console"
+                      "es/v1.57/developer-manual/get-started/intro-to-zylon",
+                      "es/v1.57/developer-manual/get-started/token-management",
+                      "es/v1.57/developer-manual/get-started/quickstart",
+                      "es/v1.57/developer-manual/get-started/developer-console"
                     ]
                   },
                   {
@@ -622,81 +669,81 @@
                       {
                         "group": "ZylonGPT API",
                         "pages": [
-                          "es/developer-manual/build-with-zylon/zylon-gpt-api/overview",
-                          "es/developer-manual/build-with-zylon/working-with-messages",
-                          "es/developer-manual/build-with-zylon/working-with-artifacts",
-                          "es/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
+                          "es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+                          "es/v1.57/developer-manual/build-with-zylon/working-with-messages",
+                          "es/v1.57/developer-manual/build-with-zylon/working-with-artifacts",
+                          "es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
                           {
                             "group": "Herramientas",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/tools/introduction-to-tools",
+                              "es/v1.57/developer-manual/build-with-zylon/tools/introduction-to-tools",
                               {
                                 "group": "Integradas",
                                 "pages": [
-                                  "es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
-                                  "es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
-                                  "es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
-                                  "es/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
-                                  "es/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
                                 ]
                               },
                               {
                                 "group": "Personalizadas",
                                 "pages": [
-                                  "es/developer-manual/build-with-zylon/tools/custom/custom-tools"
+                                  "es/v1.57/developer-manual/build-with-zylon/tools/custom/custom-tools"
                                 ]
                               }
                             ]
                           },
-                          "es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
+                          "es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
                         ]
                       },
                       {
                         "group": "Workspace API",
                         "pages": [
-                          "es/developer-manual/build-with-zylon/workspace-api/overview",
+                          "es/v1.57/developer-manual/build-with-zylon/workspace-api/overview",
                           {
                             "group": "General",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/general/overview",
-                              "es/developer-manual/build-with-zylon/workspace-api/general/analytics",
-                              "es/developer-manual/build-with-zylon/workspace-api/general/issues",
-                              "es/developer-manual/build-with-zylon/workspace-api/general/search",
-                              "es/developer-manual/build-with-zylon/workspace-api/general/system"
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/general/overview",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/general/analytics",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/general/issues",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/general/search",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/general/system"
                             ]
                           },
                           {
-                            "group": "Autenticación",
+                            "group": "Autenticaci\u00f3n",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/authentication/openid",
-                              "es/developer-manual/build-with-zylon/workspace-api/authentication/auth"
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/auth"
                             ]
                           },
                           {
                             "group": "Usuarios",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/users/user",
-                              "es/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/users/user",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/users/user-organization"
                             ]
                           },
                           {
                             "group": "Proyectos",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/projects/project",
-                              "es/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project-member"
                             ]
                           },
                           {
                             "group": "Contenido",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/content/artifacts",
                               {
                                 "group": "Integraciones",
                                 "pages": [
-                                  "es/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
-                                  "es/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
-                                  "es/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
-                                  "es/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+                                  "es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+                                  "es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+                                  "es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+                                  "es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
                                 ]
                               }
                             ]
@@ -704,9 +751,15 @@
                           {
                             "group": "Chats",
                             "pages": [
-                              "es/developer-manual/build-with-zylon/workspace-api/chats/threads"
+                              "es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/threads"
                             ]
                           }
+                        ]
+                      },
+                      {
+                        "group": "Backoffice API",
+                        "pages": [
+                          "es/v1.57/developer-manual/build-with-zylon/backoffice-api/overview"
                         ]
                       }
                     ]
@@ -714,8 +767,23 @@
                   {
                     "group": "Coding Agents",
                     "pages": [
-                      "es/developer-manual/get-started/opencode-setup",
-                      "es/developer-manual/get-started/claude-code-setup"
+                      "es/v1.57/developer-manual/get-started/opencode-setup",
+                      "es/v1.57/developer-manual/get-started/claude-code-setup"
+                    ]
+                  },
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.57/api-reference/examples/json-output",
+                      "es/v1.57/api-reference/examples/stock_analysis",
+                      "es/v1.57/api-reference/how-to-use",
+                      "es/v1.57/api-reference/introduction",
+                      "es/v1.57/api-reference/zylon-gpt-api",
+                      "es/v1.57/developer-manual/build-with-zylon/async-messages",
+                      "es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/chat",
+                      "es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                      "es/v1.57/developer-manual/build-with-zylon/workspace-api/token-management"
                     ]
                   }
                 ]
@@ -727,163 +795,182 @@
                   {
                     "group": "Primeros pasos",
                     "pages": [
-                      "es/operator-manual/index"
+                      "es/v1.57/operator-manual/index"
                     ]
                   },
                   {
-                    "group": "Instalación",
+                    "group": "Instalaci\u00f3n",
                     "pages": [
-                      "es/operator-manual/installation/index",
-                      "es/operator-manual/installation/hardware-requirements",
-                      "es/operator-manual/installation/online",
-                      "es/operator-manual/installation/semi-airgap",
-                      "es/operator-manual/installation/airgap",
-                      "es/operator-manual/installation/legacy",
-                      "es/operator-manual/installation/uninstall"
+                      "es/v1.57/operator-manual/installation/index",
+                      "es/v1.57/operator-manual/installation/hardware-requirements",
+                      "es/v1.57/operator-manual/installation/online",
+                      "es/v1.57/operator-manual/installation/semi-airgap",
+                      "es/v1.57/operator-manual/installation/airgap",
+                      "es/v1.57/operator-manual/installation/legacy",
+                      "es/v1.57/operator-manual/installation/uninstall"
                     ]
                   },
                   {
                     "group": "Mantenimiento y Operaciones",
                     "pages": [
-                      "es/operator-manual/operations/backup",
-                      "es/operator-manual/operations/data-disk",
-                      "es/operator-manual/operations/sys-admin-dashboard"
+                      "es/v1.57/operator-manual/operations/backup",
+                      "es/v1.57/operator-manual/operations/data-disk",
+                      "es/v1.57/operator-manual/operations/sys-admin-dashboard"
                     ]
                   },
                   {
                     "group": "Backoffice",
                     "pages": [
-                      "es/operator-manual/backoffice/introduction",
-                      "es/operator-manual/backoffice/roles-and-permissions",
-                      "es/operator-manual/backoffice/accessing-the-backoffice",
-                      "es/operator-manual/backoffice/platform-backoffice",
-                      "es/operator-manual/backoffice/guardrails",
-                      "es/operator-manual/backoffice/usage-dashboard"
+                      "es/v1.57/operator-manual/backoffice/introduction",
+                      "es/v1.57/operator-manual/backoffice/roles-and-permissions",
+                      "es/v1.57/operator-manual/backoffice/accessing-the-backoffice",
+                      "es/v1.57/operator-manual/backoffice/platform-backoffice",
+                      "es/v1.57/operator-manual/backoffice/guardrails",
+                      "es/v1.57/operator-manual/backoffice/usage-dashboard"
                     ]
                   },
                   {
-                    "group": "Configuración",
+                    "group": "Configuraci\u00f3n",
                     "pages": [
-                      "es/operator-manual/configuration/index",
+                      "es/v1.57/operator-manual/configuration/index",
                       {
                         "group": "Preajustes de IA",
                         "pages": [
-                          "es/operator-manual/ai-presets/getting-started",
-                          "es/operator-manual/ai-presets/presets",
-                          "es/operator-manual/ai-presets/configuration",
-                          "es/operator-manual/ai-presets/advanced-customization",
-                          "es/operator-manual/ai-presets/troubleshooting"
+                          "es/v1.57/operator-manual/ai-presets/getting-started",
+                          "es/v1.57/operator-manual/ai-presets/presets",
+                          "es/v1.57/operator-manual/ai-presets/configuration",
+                          "es/v1.57/operator-manual/ai-presets/advanced-customization",
+                          "es/v1.57/operator-manual/ai-presets/troubleshooting"
                         ]
                       },
                       {
                         "group": "Red y Conectividad",
                         "pages": [
-                          "es/operator-manual/configuration/network/ports-and-dns",
-                          "es/operator-manual/configuration/network/proxy"
+                          "es/v1.57/operator-manual/configuration/network/ports-and-dns",
+                          "es/v1.57/operator-manual/configuration/network/proxy"
                         ]
                       },
                       {
-                        "group": "Autenticación",
+                        "group": "Autenticaci\u00f3n",
                         "pages": [
-                          "es/operator-manual/openid/google",
-                          "es/operator-manual/openid/microsoft",
-                          "es/operator-manual/authentication/ldap"
+                          "es/v1.57/operator-manual/openid/google",
+                          "es/v1.57/operator-manual/openid/microsoft",
+                          "es/v1.57/operator-manual/authentication/ldap"
                         ]
                       },
                       {
                         "group": "Conectores de Bases de Conocimiento",
                         "pages": [
-                          "es/operator-manual/knowledge-base/index",
-                          "es/operator-manual/knowledge-base/google-drive",
-                          "es/operator-manual/knowledge-base/sharepoint",
-                          "es/operator-manual/knowledge-base/confluence",
-                          "es/operator-manual/knowledge-base/confluence-server",
-                          "es/operator-manual/knowledge-base/file-system",
-                          "es/operator-manual/knowledge-base/claromentis"
+                          "es/v1.57/operator-manual/knowledge-base/index",
+                          "es/v1.57/operator-manual/knowledge-base/google-drive",
+                          "es/v1.57/operator-manual/knowledge-base/sharepoint",
+                          "es/v1.57/operator-manual/knowledge-base/confluence",
+                          "es/v1.57/operator-manual/knowledge-base/confluence-server",
+                          "es/v1.57/operator-manual/knowledge-base/file-system",
+                          "es/v1.57/operator-manual/knowledge-base/claromentis"
                         ]
                       },
                       {
                         "group": "Funciones y Capacidades",
                         "pages": [
-                          "es/operator-manual/configuration/features/feat-mcp",
-                          "es/operator-manual/configuration/features/feat-file-vision",
-                          "es/operator-manual/configuration/features/feat-database",
-                          "es/operator-manual/configuration/features/feat-audit",
-                          "es/operator-manual/configuration/features/log-delivery-storage",
-                          "es/operator-manual/configuration/features/feat-project-custom-instructions",
-                          "es/operator-manual/configuration/features/feat-webextract",
-                          "es/operator-manual/configuration/features/feat-websearch",
-                          "es/operator-manual/configuration/features/feat-multimodal",
-                          "es/operator-manual/configuration/features/authentication-freshness"
+                          "es/v1.57/operator-manual/configuration/features/feat-mcp",
+                          "es/v1.57/operator-manual/configuration/features/feat-file-vision",
+                          "es/v1.57/operator-manual/configuration/features/feat-database",
+                          "es/v1.57/operator-manual/configuration/features/feat-audit",
+                          "es/v1.57/operator-manual/configuration/features/log-delivery-storage",
+                          "es/v1.57/operator-manual/configuration/features/feat-project-custom-instructions",
+                          "es/v1.57/operator-manual/configuration/features/feat-webextract",
+                          "es/v1.57/operator-manual/configuration/features/feat-websearch",
+                          "es/v1.57/operator-manual/configuration/features/feat-multimodal",
+                          "es/v1.57/operator-manual/configuration/features/authentication-freshness"
                         ]
                       },
                       {
                         "group": "Tareas cron",
                         "pages": [
-                          "es/operator-manual/configuration/cron-tasks/sync",
-                          "es/operator-manual/configuration/cron-tasks/hard-delete"
+                          "es/v1.57/operator-manual/configuration/cron-tasks/sync",
+                          "es/v1.57/operator-manual/configuration/cron-tasks/hard-delete"
                         ]
                       },
                       {
-                        "group": "Configuración Avanzada",
+                        "group": "Configuraci\u00f3n Avanzada",
                         "pages": [
                           {
                             "group": "Observabilidad",
                             "pages": [
-                              "es/operator-manual/configuration/observability/index",
-                              "es/operator-manual/configuration/observability/platform-metrics",
-                              "es/operator-manual/configuration/observability/destinations",
-                              "es/operator-manual/configuration/observability/external-grafana-dashboard"
+                              "es/v1.57/operator-manual/configuration/observability/index",
+                              "es/v1.57/operator-manual/configuration/observability/platform-metrics",
+                              "es/v1.57/operator-manual/configuration/observability/destinations",
+                              "es/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
                             ]
                           },
-                          "es/operator-manual/configuration/search",
-                          "es/operator-manual/configuration/performance",
-                          "es/operator-manual/configuration/whitelabel",
-                          "es/operator-manual/configuration/n8n"
+                          "es/v1.57/operator-manual/configuration/search",
+                          "es/v1.57/operator-manual/configuration/performance",
+                          "es/v1.57/operator-manual/configuration/whitelabel",
+                          "es/v1.57/operator-manual/configuration/n8n"
                         ]
                       },
-                      "es/operator-manual/configuration/cli"
+                      "es/v1.57/operator-manual/configuration/cli"
                     ]
                   },
                   {
-                    "group": "Solución de Problemas",
+                    "group": "Soluci\u00f3n de Problemas",
                     "pages": [
-                      "es/operator-manual/troubleshooting/troubleshoot",
-                      "es/operator-manual/troubleshooting/ai",
-                      "es/operator-manual/troubleshooting/exporting-logs",
-                      "es/operator-manual/troubleshooting/nvidia-drivers"
+                      "es/v1.57/operator-manual/troubleshooting/troubleshoot",
+                      "es/v1.57/operator-manual/troubleshooting/ai",
+                      "es/v1.57/operator-manual/troubleshooting/exporting-logs",
+                      "es/v1.57/operator-manual/troubleshooting/nvidia-drivers"
                     ]
                   },
                   {
                     "group": "Seguridad",
                     "pages": [
-                      "es/operator-manual/instance-hardening/index",
-                      "es/operator-manual/instance-hardening/airgap-your-server",
-                      "es/operator-manual/instance-hardening/disk-encryption",
-                      "es/operator-manual/security/authentication-for-sensitive-actions"
+                      "es/v1.57/operator-manual/instance-hardening/index",
+                      "es/v1.57/operator-manual/instance-hardening/airgap-your-server",
+                      "es/v1.57/operator-manual/instance-hardening/disk-encryption",
+                      "es/v1.57/operator-manual/security/authentication-for-sensitive-actions"
                     ]
                   },
                   {
                     "group": "Auditabilidad y gobernanza de IA",
                     "pages": [
-                      "es/operator-manual/auditability-ai-safety/index",
-                      "es/operator-manual/backoffice/log-delivery-storage"
+                      "es/v1.57/operator-manual/auditability-ai-safety/index",
+                      "es/v1.57/operator-manual/backoffice/log-delivery-storage"
+                    ]
+                  },
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.57/operator-manual/configuration/features/index",
+                      "es/v1.57/operator-manual/low-level"
                     ]
                   }
                 ]
               },
               {
-                "tab": "Atención al cliente",
+                "tab": "Atenci\u00f3n al cliente",
                 "icon": "headphones",
                 "pages": [
-                  "es/customer-support-manual/zendesk-client-manual"
+                  "es/v1.57/customer-support-manual/zendesk-client-manual"
                 ]
               },
               {
                 "tab": "Registro de cambios",
                 "icon": "list",
                 "pages": [
-                  "es/changelog/index"
+                  "es/v1.57/changelog/index",
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.57/changelog/guides/1-43-0",
+                      "es/v1.57/changelog/guides/1-53-0",
+                      "es/v1.57/changelog/guides/1-54-0",
+                      "es/v1.57/changelog/guides/1-55-0",
+                      "es/v1.57/changelog/guides/1-57-0"
+                    ]
+                  }
                 ]
               }
             ]
@@ -900,7 +987,14 @@
                 "tab": "Home",
                 "icon": "house",
                 "pages": [
-                  "en/v1.58/index"
+                  "en/v1.58/index",
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.58/quickstart"
+                    ]
+                  }
                 ]
               },
               {
@@ -1152,6 +1246,20 @@
                       "en/v1.58/developer-manual/get-started/opencode-setup",
                       "en/v1.58/developer-manual/get-started/claude-code-setup"
                     ]
+                  },
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.58/api-reference/examples/json-output",
+                      "en/v1.58/api-reference/examples/stock_analysis",
+                      "en/v1.58/api-reference/how-to-use",
+                      "en/v1.58/api-reference/introduction",
+                      "en/v1.58/developer-manual/build-with-zylon/async-messages",
+                      "en/v1.58/developer-manual/build-with-zylon/workspace-api/chats/chat",
+                      "en/v1.58/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                      "en/v1.58/developer-manual/build-with-zylon/workspace-api/token-management"
+                    ]
                   }
                 ]
               },
@@ -1307,6 +1415,14 @@
                       "en/v1.58/operator-manual/auditability-ai-safety/index",
                       "en/v1.58/operator-manual/backoffice/log-delivery-storage"
                     ]
+                  },
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.58/operator-manual/configuration/features/index",
+                      "en/v1.58/operator-manual/low-level"
+                    ]
                   }
                 ]
               },
@@ -1321,7 +1437,19 @@
                 "tab": "Changelog",
                 "icon": "list",
                 "pages": [
-                  "en/v1.58/changelog/index"
+                  "en/v1.58/changelog/index",
+                  {
+                    "group": "Additional pages",
+                    "hidden": true,
+                    "pages": [
+                      "en/v1.58/changelog/guides/1-43-0",
+                      "en/v1.58/changelog/guides/1-53-0",
+                      "en/v1.58/changelog/guides/1-54-0",
+                      "en/v1.58/changelog/guides/1-55-0",
+                      "en/v1.58/changelog/guides/1-57-0",
+                      "en/v1.58/changelog/guides/1-58-0"
+                    ]
+                  }
                 ]
               }
             ]
@@ -1333,7 +1461,14 @@
                 "tab": "Inicio",
                 "icon": "house",
                 "pages": [
-                  "es/v1.58/index"
+                  "es/v1.58/index",
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.58/quickstart"
+                    ]
+                  }
                 ]
               },
               {
@@ -1349,7 +1484,7 @@
                     ]
                   },
                   {
-                    "group": "Herramientas de Administración",
+                    "group": "Herramientas de Administraci\u00f3n",
                     "pages": [
                       "es/v1.58/user-manual/workspace-look-and-feel",
                       "es/v1.58/user-manual/adding-company-context",
@@ -1394,7 +1529,7 @@
                     ]
                   },
                   {
-                    "group": "Búsqueda",
+                    "group": "B\u00fasqueda",
                     "pages": [
                       "es/v1.58/user-manual/search-workspace-content",
                       "es/v1.58/user-manual/search-company-documents"
@@ -1526,7 +1661,7 @@
                             ]
                           },
                           {
-                            "group": "Autenticación",
+                            "group": "Autenticaci\u00f3n",
                             "pages": [
                               "es/v1.58/developer-manual/build-with-zylon/workspace-api/authentication/openid",
                               "es/v1.58/developer-manual/build-with-zylon/workspace-api/authentication/auth"
@@ -1568,6 +1703,12 @@
                             ]
                           }
                         ]
+                      },
+                      {
+                        "group": "Backoffice API",
+                        "pages": [
+                          "es/v1.58/developer-manual/build-with-zylon/backoffice-api/overview"
+                        ]
                       }
                     ]
                   },
@@ -1576,6 +1717,21 @@
                     "pages": [
                       "es/v1.58/developer-manual/get-started/opencode-setup",
                       "es/v1.58/developer-manual/get-started/claude-code-setup"
+                    ]
+                  },
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.58/api-reference/examples/json-output",
+                      "es/v1.58/api-reference/examples/stock_analysis",
+                      "es/v1.58/api-reference/how-to-use",
+                      "es/v1.58/api-reference/introduction",
+                      "es/v1.58/api-reference/zylon-gpt-api",
+                      "es/v1.58/developer-manual/build-with-zylon/async-messages",
+                      "es/v1.58/developer-manual/build-with-zylon/workspace-api/chats/chat",
+                      "es/v1.58/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+                      "es/v1.58/developer-manual/build-with-zylon/workspace-api/token-management"
                     ]
                   }
                 ]
@@ -1591,7 +1747,7 @@
                     ]
                   },
                   {
-                    "group": "Instalación",
+                    "group": "Instalaci\u00f3n",
                     "pages": [
                       "es/v1.58/operator-manual/installation/index",
                       "es/v1.58/operator-manual/installation/hardware-requirements",
@@ -1623,7 +1779,7 @@
                     ]
                   },
                   {
-                    "group": "Configuración",
+                    "group": "Configuraci\u00f3n",
                     "pages": [
                       "es/v1.58/operator-manual/configuration/index",
                       {
@@ -1644,7 +1800,7 @@
                         ]
                       },
                       {
-                        "group": "Autenticación",
+                        "group": "Autenticaci\u00f3n",
                         "pages": [
                           "es/v1.58/operator-manual/openid/google",
                           "es/v1.58/operator-manual/openid/microsoft",
@@ -1689,7 +1845,7 @@
                         ]
                       },
                       {
-                        "group": "Configuración Avanzada",
+                        "group": "Configuraci\u00f3n Avanzada",
                         "pages": [
                           {
                             "group": "Observabilidad",
@@ -1709,7 +1865,7 @@
                     ]
                   },
                   {
-                    "group": "Solución de Problemas",
+                    "group": "Soluci\u00f3n de Problemas",
                     "pages": [
                       "es/v1.58/operator-manual/troubleshooting/troubleshoot",
                       "es/v1.58/operator-manual/troubleshooting/ai",
@@ -1732,11 +1888,19 @@
                       "es/v1.58/operator-manual/auditability-ai-safety/index",
                       "es/v1.58/operator-manual/backoffice/log-delivery-storage"
                     ]
+                  },
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.58/operator-manual/configuration/features/index",
+                      "es/v1.58/operator-manual/low-level"
+                    ]
                   }
                 ]
               },
               {
-                "tab": "Atención al cliente",
+                "tab": "Atenci\u00f3n al cliente",
                 "icon": "headphones",
                 "pages": [
                   "es/v1.58/customer-support-manual/zendesk-client-manual"
@@ -1746,7 +1910,19 @@
                 "tab": "Registro de cambios",
                 "icon": "list",
                 "pages": [
-                  "es/v1.58/changelog/index"
+                  "es/v1.58/changelog/index",
+                  {
+                    "group": "P\u00e1ginas adicionales",
+                    "hidden": true,
+                    "pages": [
+                      "es/v1.58/changelog/guides/1-43-0",
+                      "es/v1.58/changelog/guides/1-53-0",
+                      "es/v1.58/changelog/guides/1-54-0",
+                      "es/v1.58/changelog/guides/1-55-0",
+                      "es/v1.58/changelog/guides/1-57-0",
+                      "es/v1.58/changelog/guides/1-58-0"
+                    ]
+                  }
                 ]
               }
             ]
@@ -1840,6 +2016,1470 @@
     {
       "source": "/es/user-manual/tools/code-execution",
       "destination": "/es/v1.58/user-manual/tools/code-execution"
+    },
+    {
+      "source": "/api-reference/how-to-use",
+      "destination": "/en/v1.57/developer-manual/get-started/intro-to-zylon"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets",
+      "destination": "/en/v1.57/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/ai-presets",
+      "destination": "/en/v1.58/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets",
+      "destination": "/es/v1.57/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/ai-presets",
+      "destination": "/es/v1.58/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/en",
+      "destination": "/en/v1.57"
+    },
+    {
+      "source": "/en/quickstart",
+      "destination": "/en/v1.57/quickstart"
+    },
+    {
+      "source": "/en/operator-manual/low-level",
+      "destination": "/en/v1.57/operator-manual/low-level"
+    },
+    {
+      "source": "/en/operator-manual",
+      "destination": "/en/v1.57/operator-manual"
+    },
+    {
+      "source": "/en/operator-manual/configuration/search",
+      "destination": "/en/v1.57/operator-manual/configuration/search"
+    },
+    {
+      "source": "/en/operator-manual/configuration/cli",
+      "destination": "/en/v1.57/operator-manual/configuration/cli"
+    },
+    {
+      "source": "/en/operator-manual/configuration",
+      "destination": "/en/v1.57/operator-manual/configuration"
+    },
+    {
+      "source": "/en/operator-manual/configuration/n8n",
+      "destination": "/en/v1.57/operator-manual/configuration/n8n"
+    },
+    {
+      "source": "/en/operator-manual/configuration/performance",
+      "destination": "/en/v1.57/operator-manual/configuration/performance"
+    },
+    {
+      "source": "/en/operator-manual/configuration/whitelabel",
+      "destination": "/en/v1.57/operator-manual/configuration/whitelabel"
+    },
+    {
+      "source": "/en/operator-manual/configuration/network/ports-and-dns",
+      "destination": "/en/v1.57/operator-manual/configuration/network/ports-and-dns"
+    },
+    {
+      "source": "/en/operator-manual/configuration/network/proxy",
+      "destination": "/en/v1.57/operator-manual/configuration/network/proxy"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-websearch",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-websearch"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-project-custom-instructions",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-project-custom-instructions"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-multimodal",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-multimodal"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-webextract",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-webextract"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-audit",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-audit"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features",
+      "destination": "/en/v1.57/operator-manual/configuration/features"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-database",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-database"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-mcp",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-mcp"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/log-delivery-storage",
+      "destination": "/en/v1.57/operator-manual/configuration/features/log-delivery-storage"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/feat-file-vision",
+      "destination": "/en/v1.57/operator-manual/configuration/features/feat-file-vision"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/authentication-freshness",
+      "destination": "/en/v1.57/operator-manual/configuration/features/authentication-freshness"
+    },
+    {
+      "source": "/en/operator-manual/configuration/observability/platform-metrics",
+      "destination": "/en/v1.57/operator-manual/configuration/observability/platform-metrics"
+    },
+    {
+      "source": "/en/operator-manual/configuration/observability",
+      "destination": "/en/v1.57/operator-manual/configuration/observability"
+    },
+    {
+      "source": "/en/operator-manual/configuration/observability/external-grafana-dashboard",
+      "destination": "/en/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
+    },
+    {
+      "source": "/en/operator-manual/configuration/observability/destinations",
+      "destination": "/en/v1.57/operator-manual/configuration/observability/destinations"
+    },
+    {
+      "source": "/en/operator-manual/configuration/cron-tasks/hard-delete",
+      "destination": "/en/v1.57/operator-manual/configuration/cron-tasks/hard-delete"
+    },
+    {
+      "source": "/en/operator-manual/configuration/cron-tasks/sync",
+      "destination": "/en/v1.57/operator-manual/configuration/cron-tasks/sync"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets/configuration",
+      "destination": "/en/v1.57/operator-manual/ai-presets/configuration"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets/getting-started",
+      "destination": "/en/v1.57/operator-manual/ai-presets/getting-started"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets/advanced-customization",
+      "destination": "/en/v1.57/operator-manual/ai-presets/advanced-customization"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets/presets",
+      "destination": "/en/v1.57/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/en/operator-manual/ai-presets/troubleshooting",
+      "destination": "/en/v1.57/operator-manual/ai-presets/troubleshooting"
+    },
+    {
+      "source": "/en/operator-manual/security/authentication-for-sensitive-actions",
+      "destination": "/en/v1.57/operator-manual/security/authentication-for-sensitive-actions"
+    },
+    {
+      "source": "/en/operator-manual/installation/hardware-requirements",
+      "destination": "/en/v1.57/operator-manual/installation/hardware-requirements"
+    },
+    {
+      "source": "/en/operator-manual/installation",
+      "destination": "/en/v1.57/operator-manual/installation"
+    },
+    {
+      "source": "/en/operator-manual/installation/legacy",
+      "destination": "/en/v1.57/operator-manual/installation/legacy"
+    },
+    {
+      "source": "/en/operator-manual/installation/airgap",
+      "destination": "/en/v1.57/operator-manual/installation/airgap"
+    },
+    {
+      "source": "/en/operator-manual/installation/online",
+      "destination": "/en/v1.57/operator-manual/installation/online"
+    },
+    {
+      "source": "/en/operator-manual/installation/semi-airgap",
+      "destination": "/en/v1.57/operator-manual/installation/semi-airgap"
+    },
+    {
+      "source": "/en/operator-manual/installation/uninstall",
+      "destination": "/en/v1.57/operator-manual/installation/uninstall"
+    },
+    {
+      "source": "/en/operator-manual/troubleshooting/exporting-logs",
+      "destination": "/en/v1.57/operator-manual/troubleshooting/exporting-logs"
+    },
+    {
+      "source": "/en/operator-manual/troubleshooting/troubleshoot",
+      "destination": "/en/v1.57/operator-manual/troubleshooting/troubleshoot"
+    },
+    {
+      "source": "/en/operator-manual/troubleshooting/nvidia-drivers",
+      "destination": "/en/v1.57/operator-manual/troubleshooting/nvidia-drivers"
+    },
+    {
+      "source": "/en/operator-manual/troubleshooting/ai",
+      "destination": "/en/v1.57/operator-manual/troubleshooting/ai"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/guardrails",
+      "destination": "/en/v1.57/operator-manual/backoffice/guardrails"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/usage-dashboard",
+      "destination": "/en/v1.57/operator-manual/backoffice/usage-dashboard"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/introduction",
+      "destination": "/en/v1.57/operator-manual/backoffice/introduction"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/log-delivery-storage",
+      "destination": "/en/v1.57/operator-manual/backoffice/log-delivery-storage"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/platform-backoffice",
+      "destination": "/en/v1.57/operator-manual/backoffice/platform-backoffice"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/accessing-the-backoffice",
+      "destination": "/en/v1.57/operator-manual/backoffice/accessing-the-backoffice"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/roles-and-permissions",
+      "destination": "/en/v1.57/operator-manual/backoffice/roles-and-permissions"
+    },
+    {
+      "source": "/en/operator-manual/operations/backup",
+      "destination": "/en/v1.57/operator-manual/operations/backup"
+    },
+    {
+      "source": "/en/operator-manual/operations/data-disk",
+      "destination": "/en/v1.57/operator-manual/operations/data-disk"
+    },
+    {
+      "source": "/en/operator-manual/operations/sys-admin-dashboard",
+      "destination": "/en/v1.57/operator-manual/operations/sys-admin-dashboard"
+    },
+    {
+      "source": "/en/operator-manual/instance-hardening/airgap-your-server",
+      "destination": "/en/v1.57/operator-manual/instance-hardening/airgap-your-server"
+    },
+    {
+      "source": "/en/operator-manual/instance-hardening",
+      "destination": "/en/v1.57/operator-manual/instance-hardening"
+    },
+    {
+      "source": "/en/operator-manual/instance-hardening/disk-encryption",
+      "destination": "/en/v1.57/operator-manual/instance-hardening/disk-encryption"
+    },
+    {
+      "source": "/en/operator-manual/openid/microsoft",
+      "destination": "/en/v1.57/operator-manual/openid/microsoft"
+    },
+    {
+      "source": "/en/operator-manual/openid/google",
+      "destination": "/en/v1.57/operator-manual/openid/google"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/file-system",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/file-system"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/sharepoint",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/sharepoint"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/google-drive",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/google-drive"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/claromentis",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/claromentis"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/confluence",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/confluence"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base",
+      "destination": "/en/v1.57/operator-manual/knowledge-base"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/confluence-server",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/confluence-server"
+    },
+    {
+      "source": "/en/operator-manual/auditability-ai-safety",
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety"
+    },
+    {
+      "source": "/en/operator-manual/authentication/ldap",
+      "destination": "/en/v1.57/operator-manual/authentication/ldap"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/working-with-artifacts",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/working-with-artifacts"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/working-with-messages",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/working-with-messages"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/async-messages",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/async-messages"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/overview"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/embeddings"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/introduction-to-tools",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/introduction-to-tools"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/built-in/web-search-tool"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/built-in/database-query-tool",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/tools/custom/custom-tools",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/tools/custom/custom-tools"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/backoffice-api/overview",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/backoffice-api/overview"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/backoffice-api/logging",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/backoffice-api/logging"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/overview",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/overview"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/token-management",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/token-management"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/general/system",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/general/system"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/general/search",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/general/search"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/general/overview",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/general/overview"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/general/issues",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/general/issues"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/general/analytics",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/general/analytics"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/projects/project-member",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/projects/project",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/content/artifacts"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/integrations/claromentis",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/filesystem"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/confluence"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/users/user",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/users/user"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/users/user-organization",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/chats/threads",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/threads"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/chats/chat",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/chat"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/chats/interactions"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/openid"
+    },
+    {
+      "source": "/en/developer-manual/build-with-zylon/workspace-api/authentication/auth",
+      "destination": "/en/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/auth"
+    },
+    {
+      "source": "/en/developer-manual/get-started/developer-console",
+      "destination": "/en/v1.57/developer-manual/get-started/developer-console"
+    },
+    {
+      "source": "/en/developer-manual/get-started/intro-to-zylon",
+      "destination": "/en/v1.57/developer-manual/get-started/intro-to-zylon"
+    },
+    {
+      "source": "/en/developer-manual/get-started/claude-code-setup",
+      "destination": "/en/v1.57/developer-manual/get-started/claude-code-setup"
+    },
+    {
+      "source": "/en/developer-manual/get-started/opencode-setup",
+      "destination": "/en/v1.57/developer-manual/get-started/opencode-setup"
+    },
+    {
+      "source": "/en/developer-manual/get-started/token-management",
+      "destination": "/en/v1.57/developer-manual/get-started/token-management"
+    },
+    {
+      "source": "/en/developer-manual/get-started/quickstart",
+      "destination": "/en/v1.57/developer-manual/get-started/quickstart"
+    },
+    {
+      "source": "/en/changelog",
+      "destination": "/en/v1.57/changelog"
+    },
+    {
+      "source": "/en/changelog/guides/1-43-0",
+      "destination": "/en/v1.57/changelog/guides/1-43-0"
+    },
+    {
+      "source": "/en/changelog/guides/1-53-0",
+      "destination": "/en/v1.57/changelog/guides/1-53-0"
+    },
+    {
+      "source": "/en/changelog/guides/1-55-0",
+      "destination": "/en/v1.57/changelog/guides/1-55-0"
+    },
+    {
+      "source": "/en/changelog/guides/1-57-0",
+      "destination": "/en/v1.57/changelog/guides/1-57-0"
+    },
+    {
+      "source": "/en/changelog/guides/1-54-0",
+      "destination": "/en/v1.57/changelog/guides/1-54-0"
+    },
+    {
+      "source": "/en/api-reference/introduction",
+      "destination": "/en/v1.57/api-reference/introduction"
+    },
+    {
+      "source": "/en/api-reference/how-to-use",
+      "destination": "/en/v1.57/api-reference/how-to-use"
+    },
+    {
+      "source": "/en/api-reference/examples/json-output",
+      "destination": "/en/v1.57/api-reference/examples/json-output"
+    },
+    {
+      "source": "/en/api-reference/examples/stock_analysis",
+      "destination": "/en/v1.57/api-reference/examples/stock_analysis"
+    },
+    {
+      "source": "/en/user-manual/real-time-collaboration",
+      "destination": "/en/v1.57/user-manual/real-time-collaboration"
+    },
+    {
+      "source": "/en/user-manual/adding-custom-instructions",
+      "destination": "/en/v1.57/user-manual/adding-custom-instructions"
+    },
+    {
+      "source": "/en/user-manual/when-to-use-chat-assistant",
+      "destination": "/en/v1.57/user-manual/when-to-use-chat-assistant"
+    },
+    {
+      "source": "/en/user-manual/inline-ai-in-editor",
+      "destination": "/en/v1.57/user-manual/inline-ai-in-editor"
+    },
+    {
+      "source": "/en/user-manual/password-recovery",
+      "destination": "/en/v1.57/user-manual/password-recovery"
+    },
+    {
+      "source": "/en/user-manual/search-company-documents",
+      "destination": "/en/v1.57/user-manual/search-company-documents"
+    },
+    {
+      "source": "/en/user-manual/group-chats",
+      "destination": "/en/v1.57/user-manual/group-chats"
+    },
+    {
+      "source": "/en/user-manual/engagement-analytics",
+      "destination": "/en/v1.57/user-manual/engagement-analytics"
+    },
+    {
+      "source": "/en/user-manual/search-workspace-content",
+      "destination": "/en/v1.57/user-manual/search-workspace-content"
+    },
+    {
+      "source": "/en/user-manual/first-day-faqs",
+      "destination": "/en/v1.57/user-manual/first-day-faqs"
+    },
+    {
+      "source": "/en/user-manual/linking-knowledge-bases",
+      "destination": "/en/v1.57/user-manual/linking-knowledge-bases"
+    },
+    {
+      "source": "/en/user-manual/block-resource-downloads",
+      "destination": "/en/v1.57/user-manual/block-resource-downloads"
+    },
+    {
+      "source": "/en/user-manual/creating-a-project",
+      "destination": "/en/v1.57/user-manual/creating-a-project"
+    },
+    {
+      "source": "/en/user-manual/n8n",
+      "destination": "/en/v1.57/user-manual/n8n"
+    },
+    {
+      "source": "/en/user-manual/querying-company-documents",
+      "destination": "/en/v1.57/user-manual/querying-company-documents"
+    },
+    {
+      "source": "/en/user-manual/quick-start-guide",
+      "destination": "/en/v1.57/user-manual/quick-start-guide"
+    },
+    {
+      "source": "/en/user-manual/managing-organization-skills",
+      "destination": "/en/v1.57/user-manual/managing-organization-skills"
+    },
+    {
+      "source": "/en/user-manual/what-is-zylon-workspace",
+      "destination": "/en/v1.57/user-manual/what-is-zylon-workspace"
+    },
+    {
+      "source": "/en/user-manual/uploading-files",
+      "destination": "/en/v1.57/user-manual/uploading-files"
+    },
+    {
+      "source": "/en/user-manual/when-to-use-agent-flows",
+      "destination": "/en/v1.57/user-manual/when-to-use-agent-flows"
+    },
+    {
+      "source": "/en/user-manual/adding-company-context",
+      "destination": "/en/v1.57/user-manual/adding-company-context"
+    },
+    {
+      "source": "/en/user-manual/sharing-with-colleagues",
+      "destination": "/en/v1.57/user-manual/sharing-with-colleagues"
+    },
+    {
+      "source": "/en/user-manual/workspace-look-and-feel",
+      "destination": "/en/v1.57/user-manual/workspace-look-and-feel"
+    },
+    {
+      "source": "/en/user-manual/roles-and-permissions",
+      "destination": "/en/v1.57/user-manual/roles-and-permissions"
+    },
+    {
+      "source": "/en/user-manual/connectors/file-system",
+      "destination": "/en/v1.57/user-manual/connectors/file-system"
+    },
+    {
+      "source": "/en/user-manual/connectors/sharepoint",
+      "destination": "/en/v1.57/user-manual/connectors/sharepoint"
+    },
+    {
+      "source": "/en/user-manual/connectors/google-drive",
+      "destination": "/en/v1.57/user-manual/connectors/google-drive"
+    },
+    {
+      "source": "/en/user-manual/connectors/claromentis",
+      "destination": "/en/v1.57/user-manual/connectors/claromentis"
+    },
+    {
+      "source": "/en/user-manual/connectors/confluence",
+      "destination": "/en/v1.57/user-manual/connectors/confluence"
+    },
+    {
+      "source": "/en/user-manual/connectors/confluence-server",
+      "destination": "/en/v1.57/user-manual/connectors/confluence-server"
+    },
+    {
+      "source": "/en/user-manual/tools/web-search",
+      "destination": "/en/v1.57/user-manual/tools/web-search"
+    },
+    {
+      "source": "/en/user-manual/tools/attachments",
+      "destination": "/en/v1.57/user-manual/tools/attachments"
+    },
+    {
+      "source": "/en/user-manual/tools/extended-thinking",
+      "destination": "/en/v1.57/user-manual/tools/extended-thinking"
+    },
+    {
+      "source": "/en/user-manual/tools/database-connector",
+      "destination": "/en/v1.57/user-manual/tools/database-connector"
+    },
+    {
+      "source": "/en/user-manual/tools/numeric-analysis",
+      "destination": "/en/v1.57/user-manual/tools/numeric-analysis"
+    },
+    {
+      "source": "/en/user-manual/tools/mcp-connector",
+      "destination": "/en/v1.57/user-manual/tools/mcp-connector"
+    },
+    {
+      "source": "/en/user-manual/tools/introduction-to-tools",
+      "destination": "/en/v1.57/user-manual/tools/introduction-to-tools"
+    },
+    {
+      "source": "/en/user-manual/security/authentication-for-sensitive-actions",
+      "destination": "/en/v1.57/user-manual/security/authentication-for-sensitive-actions"
+    },
+    {
+      "source": "/en/user-manual/skills/installing-from-organization",
+      "destination": "/en/v1.57/user-manual/skills/installing-from-organization"
+    },
+    {
+      "source": "/en/user-manual/skills/using-skills-in-chat",
+      "destination": "/en/v1.57/user-manual/skills/using-skills-in-chat"
+    },
+    {
+      "source": "/en/user-manual/skills/introduction-to-skills",
+      "destination": "/en/v1.57/user-manual/skills/introduction-to-skills"
+    },
+    {
+      "source": "/en/user-manual/skills/creating-a-skill",
+      "destination": "/en/v1.57/user-manual/skills/creating-a-skill"
+    },
+    {
+      "source": "/en/user-manual/agent-flows/read-and-extract",
+      "destination": "/en/v1.57/user-manual/agent-flows/read-and-extract"
+    },
+    {
+      "source": "/en/user-manual/agent-flows/answer-in-bulk",
+      "destination": "/en/v1.57/user-manual/agent-flows/answer-in-bulk"
+    },
+    {
+      "source": "/en/user-manual/agent-flows/open-blank-page",
+      "destination": "/en/v1.57/user-manual/agent-flows/open-blank-page"
+    },
+    {
+      "source": "/en/user-manual/agent-flows/generate-draft",
+      "destination": "/en/v1.57/user-manual/agent-flows/generate-draft"
+    },
+    {
+      "source": "/en/user-manual/agent-flows/summarize-file",
+      "destination": "/en/v1.57/user-manual/agent-flows/summarize-file"
+    },
+    {
+      "source": "/en/customer-support-manual/zendesk-client-manual",
+      "destination": "/en/v1.57/customer-support-manual/zendesk-client-manual"
+    },
+    {
+      "source": "/es",
+      "destination": "/es/v1.57"
+    },
+    {
+      "source": "/es/quickstart",
+      "destination": "/es/v1.57/quickstart"
+    },
+    {
+      "source": "/es/operator-manual/low-level",
+      "destination": "/es/v1.57/operator-manual/low-level"
+    },
+    {
+      "source": "/es/operator-manual",
+      "destination": "/es/v1.57/operator-manual"
+    },
+    {
+      "source": "/es/operator-manual/configuration/search",
+      "destination": "/es/v1.57/operator-manual/configuration/search"
+    },
+    {
+      "source": "/es/operator-manual/configuration/cli",
+      "destination": "/es/v1.57/operator-manual/configuration/cli"
+    },
+    {
+      "source": "/es/operator-manual/configuration",
+      "destination": "/es/v1.57/operator-manual/configuration"
+    },
+    {
+      "source": "/es/operator-manual/configuration/n8n",
+      "destination": "/es/v1.57/operator-manual/configuration/n8n"
+    },
+    {
+      "source": "/es/operator-manual/configuration/performance",
+      "destination": "/es/v1.57/operator-manual/configuration/performance"
+    },
+    {
+      "source": "/es/operator-manual/configuration/whitelabel",
+      "destination": "/es/v1.57/operator-manual/configuration/whitelabel"
+    },
+    {
+      "source": "/es/operator-manual/configuration/network/ports-and-dns",
+      "destination": "/es/v1.57/operator-manual/configuration/network/ports-and-dns"
+    },
+    {
+      "source": "/es/operator-manual/configuration/network/proxy",
+      "destination": "/es/v1.57/operator-manual/configuration/network/proxy"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-websearch",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-websearch"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-project-custom-instructions",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-project-custom-instructions"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-multimodal",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-multimodal"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-webextract",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-webextract"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-audit",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-audit"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features",
+      "destination": "/es/v1.57/operator-manual/configuration/features"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-database",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-database"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-mcp",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-mcp"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/log-delivery-storage",
+      "destination": "/es/v1.57/operator-manual/configuration/features/log-delivery-storage"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-file-vision",
+      "destination": "/es/v1.57/operator-manual/configuration/features/feat-file-vision"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/authentication-freshness",
+      "destination": "/es/v1.57/operator-manual/configuration/features/authentication-freshness"
+    },
+    {
+      "source": "/es/operator-manual/configuration/observability/platform-metrics",
+      "destination": "/es/v1.57/operator-manual/configuration/observability/platform-metrics"
+    },
+    {
+      "source": "/es/operator-manual/configuration/observability",
+      "destination": "/es/v1.57/operator-manual/configuration/observability"
+    },
+    {
+      "source": "/es/operator-manual/configuration/observability/external-grafana-dashboard",
+      "destination": "/es/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
+    },
+    {
+      "source": "/es/operator-manual/configuration/observability/destinations",
+      "destination": "/es/v1.57/operator-manual/configuration/observability/destinations"
+    },
+    {
+      "source": "/es/operator-manual/configuration/cron-tasks/hard-delete",
+      "destination": "/es/v1.57/operator-manual/configuration/cron-tasks/hard-delete"
+    },
+    {
+      "source": "/es/operator-manual/configuration/cron-tasks/sync",
+      "destination": "/es/v1.57/operator-manual/configuration/cron-tasks/sync"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets/configuration",
+      "destination": "/es/v1.57/operator-manual/ai-presets/configuration"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets/getting-started",
+      "destination": "/es/v1.57/operator-manual/ai-presets/getting-started"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets/advanced-customization",
+      "destination": "/es/v1.57/operator-manual/ai-presets/advanced-customization"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets/presets",
+      "destination": "/es/v1.57/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/es/operator-manual/ai-presets/troubleshooting",
+      "destination": "/es/v1.57/operator-manual/ai-presets/troubleshooting"
+    },
+    {
+      "source": "/es/operator-manual/security/authentication-for-sensitive-actions",
+      "destination": "/es/v1.57/operator-manual/security/authentication-for-sensitive-actions"
+    },
+    {
+      "source": "/es/operator-manual/installation/hardware-requirements",
+      "destination": "/es/v1.57/operator-manual/installation/hardware-requirements"
+    },
+    {
+      "source": "/es/operator-manual/installation",
+      "destination": "/es/v1.57/operator-manual/installation"
+    },
+    {
+      "source": "/es/operator-manual/installation/legacy",
+      "destination": "/es/v1.57/operator-manual/installation/legacy"
+    },
+    {
+      "source": "/es/operator-manual/installation/airgap",
+      "destination": "/es/v1.57/operator-manual/installation/airgap"
+    },
+    {
+      "source": "/es/operator-manual/installation/online",
+      "destination": "/es/v1.57/operator-manual/installation/online"
+    },
+    {
+      "source": "/es/operator-manual/installation/semi-airgap",
+      "destination": "/es/v1.57/operator-manual/installation/semi-airgap"
+    },
+    {
+      "source": "/es/operator-manual/installation/uninstall",
+      "destination": "/es/v1.57/operator-manual/installation/uninstall"
+    },
+    {
+      "source": "/es/operator-manual/troubleshooting/exporting-logs",
+      "destination": "/es/v1.57/operator-manual/troubleshooting/exporting-logs"
+    },
+    {
+      "source": "/es/operator-manual/troubleshooting/troubleshoot",
+      "destination": "/es/v1.57/operator-manual/troubleshooting/troubleshoot"
+    },
+    {
+      "source": "/es/operator-manual/troubleshooting/nvidia-drivers",
+      "destination": "/es/v1.57/operator-manual/troubleshooting/nvidia-drivers"
+    },
+    {
+      "source": "/es/operator-manual/troubleshooting/ai",
+      "destination": "/es/v1.57/operator-manual/troubleshooting/ai"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/guardrails",
+      "destination": "/es/v1.57/operator-manual/backoffice/guardrails"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/usage-dashboard",
+      "destination": "/es/v1.57/operator-manual/backoffice/usage-dashboard"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/introduction",
+      "destination": "/es/v1.57/operator-manual/backoffice/introduction"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/log-delivery-storage",
+      "destination": "/es/v1.57/operator-manual/backoffice/log-delivery-storage"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/platform-backoffice",
+      "destination": "/es/v1.57/operator-manual/backoffice/platform-backoffice"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/accessing-the-backoffice",
+      "destination": "/es/v1.57/operator-manual/backoffice/accessing-the-backoffice"
+    },
+    {
+      "source": "/es/operator-manual/backoffice/roles-and-permissions",
+      "destination": "/es/v1.57/operator-manual/backoffice/roles-and-permissions"
+    },
+    {
+      "source": "/es/operator-manual/operations/backup",
+      "destination": "/es/v1.57/operator-manual/operations/backup"
+    },
+    {
+      "source": "/es/operator-manual/operations/data-disk",
+      "destination": "/es/v1.57/operator-manual/operations/data-disk"
+    },
+    {
+      "source": "/es/operator-manual/operations/sys-admin-dashboard",
+      "destination": "/es/v1.57/operator-manual/operations/sys-admin-dashboard"
+    },
+    {
+      "source": "/es/operator-manual/instance-hardening/airgap-your-server",
+      "destination": "/es/v1.57/operator-manual/instance-hardening/airgap-your-server"
+    },
+    {
+      "source": "/es/operator-manual/instance-hardening",
+      "destination": "/es/v1.57/operator-manual/instance-hardening"
+    },
+    {
+      "source": "/es/operator-manual/instance-hardening/disk-encryption",
+      "destination": "/es/v1.57/operator-manual/instance-hardening/disk-encryption"
+    },
+    {
+      "source": "/es/operator-manual/openid/microsoft",
+      "destination": "/es/v1.57/operator-manual/openid/microsoft"
+    },
+    {
+      "source": "/es/operator-manual/openid/google",
+      "destination": "/es/v1.57/operator-manual/openid/google"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/file-system",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/file-system"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/sharepoint",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/sharepoint"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/google-drive",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/google-drive"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/claromentis",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/claromentis"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/confluence",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/confluence"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base",
+      "destination": "/es/v1.57/operator-manual/knowledge-base"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/confluence-server",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/confluence-server"
+    },
+    {
+      "source": "/es/operator-manual/auditability-ai-safety",
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety"
+    },
+    {
+      "source": "/es/operator-manual/authentication/ldap",
+      "destination": "/es/v1.57/operator-manual/authentication/ldap"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/working-with-artifacts",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/working-with-artifacts"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/working-with-messages",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/working-with-messages"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/async-messages",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/async-messages"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/zylon-gpt-api/overview",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/overview"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/zylon-gpt-api/embeddings",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/embeddings"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/introduction-to-tools",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/introduction-to-tools"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/built-in/web-search-tool",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/built-in/web-search-tool"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/built-in/database-query-tool",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/built-in/database-query-tool"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/tools/custom/custom-tools",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/tools/custom/custom-tools"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/backoffice-api/overview",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/backoffice-api/overview"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/overview",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/overview"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/token-management",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/token-management"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/general/system",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/general/system"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/general/search",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/general/search"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/general/overview",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/general/overview"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/general/issues",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/general/issues"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/general/analytics",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/general/analytics"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/projects/project-member",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project-member"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/projects/project",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/projects/project"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/content/artifacts",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/content/artifacts"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/sharepoint"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/integrations/claromentis",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/claromentis"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/integrations/filesystem",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/filesystem"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/integrations/confluence",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/integrations/confluence"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/users/user",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/users/user"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/users/user-organization",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/users/user-organization"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/chats/threads",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/threads"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/chats/chat",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/chat"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/chats/interactions",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/chats/interactions"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/authentication/openid",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/openid"
+    },
+    {
+      "source": "/es/developer-manual/build-with-zylon/workspace-api/authentication/auth",
+      "destination": "/es/v1.57/developer-manual/build-with-zylon/workspace-api/authentication/auth"
+    },
+    {
+      "source": "/es/developer-manual/get-started/developer-console",
+      "destination": "/es/v1.57/developer-manual/get-started/developer-console"
+    },
+    {
+      "source": "/es/developer-manual/get-started/intro-to-zylon",
+      "destination": "/es/v1.57/developer-manual/get-started/intro-to-zylon"
+    },
+    {
+      "source": "/es/developer-manual/get-started/claude-code-setup",
+      "destination": "/es/v1.57/developer-manual/get-started/claude-code-setup"
+    },
+    {
+      "source": "/es/developer-manual/get-started/opencode-setup",
+      "destination": "/es/v1.57/developer-manual/get-started/opencode-setup"
+    },
+    {
+      "source": "/es/developer-manual/get-started/token-management",
+      "destination": "/es/v1.57/developer-manual/get-started/token-management"
+    },
+    {
+      "source": "/es/developer-manual/get-started/quickstart",
+      "destination": "/es/v1.57/developer-manual/get-started/quickstart"
+    },
+    {
+      "source": "/es/changelog",
+      "destination": "/es/v1.57/changelog"
+    },
+    {
+      "source": "/es/changelog/guides/1-43-0",
+      "destination": "/es/v1.57/changelog/guides/1-43-0"
+    },
+    {
+      "source": "/es/changelog/guides/1-53-0",
+      "destination": "/es/v1.57/changelog/guides/1-53-0"
+    },
+    {
+      "source": "/es/changelog/guides/1-55-0",
+      "destination": "/es/v1.57/changelog/guides/1-55-0"
+    },
+    {
+      "source": "/es/changelog/guides/1-57-0",
+      "destination": "/es/v1.57/changelog/guides/1-57-0"
+    },
+    {
+      "source": "/es/changelog/guides/1-54-0",
+      "destination": "/es/v1.57/changelog/guides/1-54-0"
+    },
+    {
+      "source": "/es/api-reference/zylon-gpt-api",
+      "destination": "/es/v1.57/api-reference/zylon-gpt-api"
+    },
+    {
+      "source": "/es/api-reference/introduction",
+      "destination": "/es/v1.57/api-reference/introduction"
+    },
+    {
+      "source": "/es/api-reference/how-to-use",
+      "destination": "/es/v1.57/api-reference/how-to-use"
+    },
+    {
+      "source": "/es/api-reference/examples/json-output",
+      "destination": "/es/v1.57/api-reference/examples/json-output"
+    },
+    {
+      "source": "/es/api-reference/examples/stock_analysis",
+      "destination": "/es/v1.57/api-reference/examples/stock_analysis"
+    },
+    {
+      "source": "/es/user-manual/real-time-collaboration",
+      "destination": "/es/v1.57/user-manual/real-time-collaboration"
+    },
+    {
+      "source": "/es/user-manual/adding-custom-instructions",
+      "destination": "/es/v1.57/user-manual/adding-custom-instructions"
+    },
+    {
+      "source": "/es/user-manual/when-to-use-chat-assistant",
+      "destination": "/es/v1.57/user-manual/when-to-use-chat-assistant"
+    },
+    {
+      "source": "/es/user-manual/inline-ai-in-editor",
+      "destination": "/es/v1.57/user-manual/inline-ai-in-editor"
+    },
+    {
+      "source": "/es/user-manual/password-recovery",
+      "destination": "/es/v1.57/user-manual/password-recovery"
+    },
+    {
+      "source": "/es/user-manual/search-company-documents",
+      "destination": "/es/v1.57/user-manual/search-company-documents"
+    },
+    {
+      "source": "/es/user-manual/group-chats",
+      "destination": "/es/v1.57/user-manual/group-chats"
+    },
+    {
+      "source": "/es/user-manual/engagement-analytics",
+      "destination": "/es/v1.57/user-manual/engagement-analytics"
+    },
+    {
+      "source": "/es/user-manual/search-workspace-content",
+      "destination": "/es/v1.57/user-manual/search-workspace-content"
+    },
+    {
+      "source": "/es/user-manual/first-day-faqs",
+      "destination": "/es/v1.57/user-manual/first-day-faqs"
+    },
+    {
+      "source": "/es/user-manual/linking-knowledge-bases",
+      "destination": "/es/v1.57/user-manual/linking-knowledge-bases"
+    },
+    {
+      "source": "/es/user-manual/creating-a-project",
+      "destination": "/es/v1.57/user-manual/creating-a-project"
+    },
+    {
+      "source": "/es/user-manual/n8n",
+      "destination": "/es/v1.57/user-manual/n8n"
+    },
+    {
+      "source": "/es/user-manual/querying-company-documents",
+      "destination": "/es/v1.57/user-manual/querying-company-documents"
+    },
+    {
+      "source": "/es/user-manual/quick-start-guide",
+      "destination": "/es/v1.57/user-manual/quick-start-guide"
+    },
+    {
+      "source": "/es/user-manual/managing-organization-skills",
+      "destination": "/es/v1.57/user-manual/managing-organization-skills"
+    },
+    {
+      "source": "/es/user-manual/what-is-zylon-workspace",
+      "destination": "/es/v1.57/user-manual/what-is-zylon-workspace"
+    },
+    {
+      "source": "/es/user-manual/uploading-files",
+      "destination": "/es/v1.57/user-manual/uploading-files"
+    },
+    {
+      "source": "/es/user-manual/when-to-use-agent-flows",
+      "destination": "/es/v1.57/user-manual/when-to-use-agent-flows"
+    },
+    {
+      "source": "/es/user-manual/adding-company-context",
+      "destination": "/es/v1.57/user-manual/adding-company-context"
+    },
+    {
+      "source": "/es/user-manual/sharing-with-colleagues",
+      "destination": "/es/v1.57/user-manual/sharing-with-colleagues"
+    },
+    {
+      "source": "/es/user-manual/workspace-look-and-feel",
+      "destination": "/es/v1.57/user-manual/workspace-look-and-feel"
+    },
+    {
+      "source": "/es/user-manual/roles-and-permissions",
+      "destination": "/es/v1.57/user-manual/roles-and-permissions"
+    },
+    {
+      "source": "/es/user-manual/connectors/file-system",
+      "destination": "/es/v1.57/user-manual/connectors/file-system"
+    },
+    {
+      "source": "/es/user-manual/connectors/sharepoint",
+      "destination": "/es/v1.57/user-manual/connectors/sharepoint"
+    },
+    {
+      "source": "/es/user-manual/connectors/google-drive",
+      "destination": "/es/v1.57/user-manual/connectors/google-drive"
+    },
+    {
+      "source": "/es/user-manual/connectors/claromentis",
+      "destination": "/es/v1.57/user-manual/connectors/claromentis"
+    },
+    {
+      "source": "/es/user-manual/connectors/confluence",
+      "destination": "/es/v1.57/user-manual/connectors/confluence"
+    },
+    {
+      "source": "/es/user-manual/connectors/confluence-server",
+      "destination": "/es/v1.57/user-manual/connectors/confluence-server"
+    },
+    {
+      "source": "/es/user-manual/tools/web-search",
+      "destination": "/es/v1.57/user-manual/tools/web-search"
+    },
+    {
+      "source": "/es/user-manual/tools/attachments",
+      "destination": "/es/v1.57/user-manual/tools/attachments"
+    },
+    {
+      "source": "/es/user-manual/tools/extended-thinking",
+      "destination": "/es/v1.57/user-manual/tools/extended-thinking"
+    },
+    {
+      "source": "/es/user-manual/tools/database-connector",
+      "destination": "/es/v1.57/user-manual/tools/database-connector"
+    },
+    {
+      "source": "/es/user-manual/tools/numeric-analysis",
+      "destination": "/es/v1.57/user-manual/tools/numeric-analysis"
+    },
+    {
+      "source": "/es/user-manual/tools/mcp-connector",
+      "destination": "/es/v1.57/user-manual/tools/mcp-connector"
+    },
+    {
+      "source": "/es/user-manual/tools/introduction-to-tools",
+      "destination": "/es/v1.57/user-manual/tools/introduction-to-tools"
+    },
+    {
+      "source": "/es/user-manual/security/authentication-for-sensitive-actions",
+      "destination": "/es/v1.57/user-manual/security/authentication-for-sensitive-actions"
+    },
+    {
+      "source": "/es/user-manual/skills/installing-from-organization",
+      "destination": "/es/v1.57/user-manual/skills/installing-from-organization"
+    },
+    {
+      "source": "/es/user-manual/skills/using-skills-in-chat",
+      "destination": "/es/v1.57/user-manual/skills/using-skills-in-chat"
+    },
+    {
+      "source": "/es/user-manual/skills/introduction-to-skills",
+      "destination": "/es/v1.57/user-manual/skills/introduction-to-skills"
+    },
+    {
+      "source": "/es/user-manual/skills/creating-a-skill",
+      "destination": "/es/v1.57/user-manual/skills/creating-a-skill"
+    },
+    {
+      "source": "/es/user-manual/agent-flows/read-and-extract",
+      "destination": "/es/v1.57/user-manual/agent-flows/read-and-extract"
+    },
+    {
+      "source": "/es/user-manual/agent-flows/answer-in-bulk",
+      "destination": "/es/v1.57/user-manual/agent-flows/answer-in-bulk"
+    },
+    {
+      "source": "/es/user-manual/agent-flows/open-blank-page",
+      "destination": "/es/v1.57/user-manual/agent-flows/open-blank-page"
+    },
+    {
+      "source": "/es/user-manual/agent-flows/generate-draft",
+      "destination": "/es/v1.57/user-manual/agent-flows/generate-draft"
+    },
+    {
+      "source": "/es/user-manual/agent-flows/summarize-file",
+      "destination": "/es/v1.57/user-manual/agent-flows/summarize-file"
+    },
+    {
+      "source": "/es/customer-support-manual/zendesk-client-manual",
+      "destination": "/es/v1.57/customer-support-manual/zendesk-client-manual"
+    },
+    {
+      "source": "/en/index",
+      "destination": "/en/v1.57/"
+    },
+    {
+      "source": "/en/operator-manual/index",
+      "destination": "/en/v1.57/operator-manual"
+    },
+    {
+      "source": "/en/operator-manual/configuration/index",
+      "destination": "/en/v1.57/operator-manual/configuration"
+    },
+    {
+      "source": "/en/operator-manual/configuration/features/index",
+      "destination": "/en/v1.57/operator-manual/configuration/features"
+    },
+    {
+      "source": "/en/operator-manual/configuration/observability/index",
+      "destination": "/en/v1.57/operator-manual/configuration/observability"
+    },
+    {
+      "source": "/en/operator-manual/installation/index",
+      "destination": "/en/v1.57/operator-manual/installation"
+    },
+    {
+      "source": "/en/operator-manual/instance-hardening/index",
+      "destination": "/en/v1.57/operator-manual/instance-hardening"
+    },
+    {
+      "source": "/en/operator-manual/knowledge-base/index",
+      "destination": "/en/v1.57/operator-manual/knowledge-base"
+    },
+    {
+      "source": "/en/operator-manual/auditability-ai-safety/index",
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety"
+    },
+    {
+      "source": "/en/changelog/index",
+      "destination": "/en/v1.57/changelog"
+    },
+    {
+      "source": "/es/index",
+      "destination": "/es/v1.57/"
+    },
+    {
+      "source": "/es/operator-manual/index",
+      "destination": "/es/v1.57/operator-manual"
+    },
+    {
+      "source": "/es/operator-manual/configuration/index",
+      "destination": "/es/v1.57/operator-manual/configuration"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/index",
+      "destination": "/es/v1.57/operator-manual/configuration/features"
+    },
+    {
+      "source": "/es/operator-manual/configuration/observability/index",
+      "destination": "/es/v1.57/operator-manual/configuration/observability"
+    },
+    {
+      "source": "/es/operator-manual/installation/index",
+      "destination": "/es/v1.57/operator-manual/installation"
+    },
+    {
+      "source": "/es/operator-manual/instance-hardening/index",
+      "destination": "/es/v1.57/operator-manual/instance-hardening"
+    },
+    {
+      "source": "/es/operator-manual/knowledge-base/index",
+      "destination": "/es/v1.57/operator-manual/knowledge-base"
+    },
+    {
+      "source": "/es/operator-manual/auditability-ai-safety/index",
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety"
+    },
+    {
+      "source": "/es/changelog/index",
+      "destination": "/es/v1.57/changelog"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/ai-presets",
+      "destination": "/en/v1.57/operator-manual/ai-presets/presets"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/ai-presets",
+      "destination": "/es/v1.57/operator-manual/ai-presets/presets"
     }
   ]
 }

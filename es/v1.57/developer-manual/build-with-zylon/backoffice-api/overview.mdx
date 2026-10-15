@@ -1,0 +1,40 @@
+---
+title: "Visión general de Backoffice API"
+description: "API de Backoffice para operaciones y tareas a nivel de plataforma."
+---
+
+La Backoffice API ofrece endpoints a nivel de plataforma para operadores autorizados y procesos de automatización. Úsala para tareas operativas que quedan fuera de la Workspace API, como recuperar registros de Zylon para investigar incidencias o exportarlos.
+
+## URL base
+
+Los endpoints de Backoffice se sirven desde la raíz de la plataforma:
+
+```http
+https://{BASE_URL}
+```
+
+A diferencia de la Workspace API, estos endpoints no usan el prefijo de workspace `/api/v1/app`.
+
+## Autenticación y permisos
+
+Las solicitudes requieren un token de cuenta o una sesión de cuenta con, al menos, el rol `operator`.
+
+```bash
+-H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Note>
+Los tokens exclusivos de Workspace no son suficientes para los endpoints de Backoffice.
+</Note>
+
+Consulta [Gestión de tokens](/es/v1.57/developer-manual/get-started/token-management) para elegir el flujo de autenticación adecuado.
+
+## Secciones disponibles
+
+<CardGroup cols={2}>
+  <Card title="Registros (guía en inglés)" icon="list" href="/en/v1.57/developer-manual/build-with-zylon/backoffice-api/logging">
+    Recupera registros almacenados de plataforma, gateway, seguridad, workspace y uso de IA. Esta referencia de endpoints está disponible en inglés.
+  </Card>
+</CardGroup>
+
+Para consultar la entrega al SIEM, la conservación y las evidencias de auditoría en español, ve a [Registro y entrega de logs](/es/v1.57/operator-manual/backoffice/log-delivery-storage).

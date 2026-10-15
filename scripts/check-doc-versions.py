@@ -25,17 +25,29 @@ def pages(node):
 
 
 def main():
-    versions = json.loads((ROOT / "docs.json").read_text())["navigation"]["versions"]
+    config = json.loads((ROOT / "docs.json").read_text())
+    versions = config["navigation"]["versions"]
     assert versions[0]["version"] == "1.57" and versions[0]["default"] is True
     assert versions[1]["version"] == "1.58 (Upcoming release)"
     counts = []
     for version, upcoming in zip(versions, (False, True)):
         references = list(pages(version))
         for page in references:
-            assert any(page.startswith(lang + ("/v1.58/" if upcoming else "/")) for lang in ("en", "es")), page
+            assert any(page.startswith(lang + ("/v1.58/" if upcoming else "/v1.57/")) for lang in ("en", "es")), page
             if not upcoming:
                 assert "/v1.58/" not in page, page
             assert (ROOT / (page + ".mdx")).is_file() or (ROOT / page / "index.mdx").is_file(), page
+        expected = {
+            path.relative_to(ROOT).as_posix().removesuffix(".mdx")
+            for lang in ("en", "es")
+            for path in (ROOT / lang / ("v1.58" if upcoming else "v1.57")).rglob("*.mdx")
+            if upcoming or "/v1.58/" not in path.relative_to(ROOT).as_posix()
+        }
+        assert not (expected - set(references)), ("Unregistered pages lose version context", expected - set(references))
+        for lang in ("en", "es"):
+            base = lang + ("/v1.58" if upcoming else "/v1.57")
+            home = (ROOT / base / "index.mdx").read_text()
+            assert f'href="/{base}/developer-manual/get-started/intro-to-zylon"' in home, base
         counts.append(len(references))
 
     preview_pages = [path for lang in ("en", "es") for path in (ROOT / lang / "v1.58").rglob("*.mdx")]
@@ -51,12 +63,24 @@ def main():
             assert snippet.startswith("/snippets/" + PREVIEW), (path, snippet)
             assert (ROOT / snippet.lstrip("/")).is_file(), (path, snippet)
 
+    redirects = {entry["source"]: entry["destination"] for entry in config["redirects"]}
+    assert len(redirects) == len(config["redirects"]), "Duplicate redirect sources"
+    for source, destination in redirects.items():
+        assert destination not in redirects, ("Redirect chain", source, destination)
+        target = ROOT / destination.lstrip("/")
+        assert target.with_suffix(".mdx").is_file() or (target / "index.mdx").is_file(), (source, destination)
+    for lang in ("en", "es"):
+        for path in (ROOT / lang / "v1.57").rglob("*.mdx"):
+            relative = path.relative_to(ROOT / lang / "v1.57").as_posix().removesuffix(".mdx")
+            old = "/" + lang + "/" + relative
+            assert redirects.get(old, "").startswith("/" + lang + "/v1.57/"), old
+
     for prefix in ("", PREVIEW):
         for name in ("workspace", "pgpt"):
             spec = json.loads((ROOT / prefix / "api-reference" / (name + ".json")).read_text())
             assert "openapi" in spec and "paths" in spec, (prefix, name)
     print(f"OK: {counts[0]} stable / {counts[1]} upcoming navigation entries; "
-          f"{len(preview_pages)} preview pages, {len(snippets)} snippets, four API specs.")
+          f"{len(preview_pages)} preview pages, {len(snippets)} snippets, four API specs; {len(redirects)} redirects.")
 
 
 if __name__ == "__main__":

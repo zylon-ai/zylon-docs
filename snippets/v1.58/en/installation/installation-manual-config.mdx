@@ -111,3 +111,14 @@ ingress:
 ```
 
 If you're in a private network or need to use a custom certificate, see [Disable Let's Encrypt](#disable-lets-encrypt) below.
+
+<span id="disable-lets-encrypt" style={{ display: "block", scrollMarginTop: "8rem" }} />
+
+**Disable Let's Encrypt**
+
+Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines from the `ingress` section:
+
+```yaml
+certManagerAnnotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```

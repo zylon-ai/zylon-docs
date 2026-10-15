@@ -101,6 +101,7 @@ Your firewall must allow access to these domains:
   </Step>
 
   <Step title="Configure Zylon">
+    <span id="configure-zylon" style={{ display: "block", scrollMarginTop: "8rem" }} />
     _Estimated time: 10min_
 
     <InstallationConfig />
@@ -145,14 +146,7 @@ Your firewall must allow access to these domains:
         
         Refer to the [Proxy Configuration Guide](/en/v1.58/operator-manual/configuration/network/proxy) to set up proxy settings in your configuration.
 
-        **Disable Let's Encrypt**
 
-        Edit `/etc/zylon/zylon-conf.yaml` and **remove** these lines:
-
-        ```yaml
-        certManagerAnnotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        ```
       </Tab>
     </Tabs>
 

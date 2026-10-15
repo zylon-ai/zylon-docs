@@ -1,0 +1,243 @@
+---
+title: "n8n"
+---
+
+<Tip>
+n8n support is available starting from Zylon 1.52
+</Tip>
+
+## n8n Integration
+
+[n8n](https://n8n.io/) is a workflow automation tool now integrated into Zylon, enabling you to create flows by connecting different services and systems. The deployment and configuration of n8n are automatically managed by Zylon, requiring minimal user setup.
+
+### Important Considerations
+- **Version management**: Zylon manages the deployed n8n version to ensure compatibility with the rest of the system. Manual n8n updates are not available.
+- **Access**: n8n is available at its own subdomain (for default: `https://n8n.your-zylon-instance.com`)
+- **User management**: User management in n8n is independent from Zylon users. Users must be created and managed directly within the n8n interface.
+
+### Configuration
+
+To enable n8n in your environment, you only need to modify the corresponding option in the `/etc/zylon/zylon-conf.yaml` file:
+
+```yaml
+n8n:
+  enabled: true  # Set to false to disable n8n
+  host: ""  # Specify a custom host if needed.
+  publicApi:
+    enabled: false  # Enable n8n's public REST API
+  externalConnection:
+    enabled: false  # Allow outbound connections to n8n services
+  license:
+    key: ""  # n8n license key
+    type: ""  # License type (community or enterprise)
+```
+
+<Info>
+n8n's public API allows you to manage workflows, executions, credentials, 
+and other resources programmatically through REST endpoints ([API Documentation](https://docs.n8n.io/api/))
+</Info>
+
+<Warning>
+  The `license` fields only apply when `externalConnection.enabled` is set to `true` and an internet connection is available.
+</Warning>
+
+<Warning>
+  In Semi/Full AirGap, `externalConnection.enabled` will always be `false` regardless of the configured value.
+</Warning>
+
+### SSL Certificates Configuration (Optional)
+
+<Warning>
+This section is only necessary if you are not using Let's Encrypt certificates
+</Warning>
+
+If your Zylon installation uses manual SSL certificates (not Let's Encrypt), you will need to create an additional Kubernetes secret specifically for n8n.
+
+#### Create a Secret for n8n
+
+Once you have your certificate files ready (`tls.crt` and `tls.key`), create a secret in the Kubernetes cluster specifically for n8n:
+
+```bash
+# Create the n8n SSL secret
+sudo k0s kubectl create secret tls zylon-tls-n8n --key tls.key --cert tls.crt -n zylon
+
+# Verify the secret was created correctly
+sudo k0s kubectl describe secret zylon-tls-n8n -n zylon
+```
+
+After creating the secret, reload the configuration:
+
+```bash
+sudo zylon-cli sync
+```
+
+Your n8n instance will now use HTTPS with the configured SSL certificates.
+
+### External Connections
+
+When external connections are disabled, certain n8n functionalities are automatically deactivated:
+
+- **Community packages**: Installation of packages from the NPM registry is disabled
+- **Workflow templates**: Community workflow templates are disabled
+- **License activation**: Licenses are not validated and will not work in this mode
+
+These restrictions ensure that n8n operates without external dependencies.
+
+### Proxy Configuration
+
+n8n uses Zylon's global proxy configuration. The system automatically manages proxy certificates and endpoints, so no additional n8n-specific configuration is required.
+
+If your organization uses a proxy, configure it following the [proxy configuration guide](/en/v1.57/operator-manual/configuration/network/proxy).
+
+### Troubleshooting
+
+#### DNS
+
+If you experience DNS resolution problems with n8n (e.g., slow or failing lookups for internal services), you may need to adjust the `dnsConfig.options.ndots` setting.
+To apply custom DNS settings, add the following to your configuration:
+
+```yaml
+n8n:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1" # Default is 5
+```
+
+After making changes, run `sudo zylon-cli sync` to apply them.
+
+#### Certificate rejection
+If you have a custom certificate n8n may reject it. To avoid TLS verification on internal calls you can set up the following flag
+```yaml
+n8n:
+  tlsRejectUnauthorized: 0  # Default is 1
+```
+After making changes, run `sudo zylon-cli sync` to apply them.
+
+## Backup Management
+
+n8n uses PostgreSQL as its database, which means all n8n information is automatically included in Zylon's standard database backups. For more information about backup management, see the [Zylon backup documentation](/en/v1.57/operator-manual/operations/backup).
+For specific use cases involving workflow migration or transfer between environments, see the [Workflow Import and Export](#workflow-import-and-export) section.
+
+## Apply Configuration
+
+After modifying the configuration file, apply the changes:
+
+```bash
+sudo zylon-cli sync
+```
+
+## Workflow Import and Export
+
+n8n provides CLI commands that allow selective export and import of entities. These commands are especially useful for:
+
+- **Migration from other environments**: If you want to migrate n8n information to Zylon from another existing environment
+- **Selective import**: Export specific workflows from other environments and import them into Zylon without needing to migrate the entire instance
+
+<Info>
+For more information about CLI commands, see the [official n8n documentation](https://docs.n8n.io/hosting/cli-commands/).
+</Info>
+
+### Basic Export Commands
+
+**Export all workflows:**
+```bash
+n8n export:workflow --all --output=/home/node/.n8n/workflows.json
+```
+
+**Export a specific workflow:**
+```bash
+n8n export:workflow --id=42 --output=/home/node/.n8n/workflow-42.json
+```
+
+**Export credentials:**
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json
+```
+
+**Export decrypted credentials:**
+```bash
+n8n export:credentials --all --output=/home/node/.n8n/credentials.json --decrypted
+```
+
+<Tip>
+Use the `--decrypted` option when migrating between instances with different encryption keys.
+</Tip>
+
+**Export complete instance:**
+```bash
+n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=true
+```
+
+### Basic Import Commands
+
+**Import workflows:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflows.json
+```
+
+**Import a specific workflow:**
+```bash
+n8n import:workflow --input=/home/node/.n8n/workflow-42.json
+```
+
+**Import credentials:**
+```bash
+n8n import:credentials --input=/home/node/.n8n/credentials.json
+```
+
+**Import all instance:**
+<Nota>
+It is expected that the database is empty before the import; this can be enforced with the --truncateTables parameter.
+</Nota>
+<Warning>
+Only works if the export database type matches the target database type. Zylon n8n uses PostgreSQL.
+</Warning>
+
+**Import complete instance:**
+```bash
+n8n import:entities --inputDir ./outputs --truncateTables true
+```
+
+### Transfer Files from Your Local Machine
+
+If you need to import workflows, credentials or other files located on your local machine, you must first transfer them to the n8n pod:
+
+#### 1. Get the Persistent Volume ID
+
+```bash
+# Get the n8n Persistent Volume ID
+N8N_PV_ID=$(kubectl get pvc zylon-n8n-data -o jsonpath='{.spec.volumeName}' -n zylon)
+
+# Build the directory path
+N8N_PV_DIR="/var/zylon/data/$N8N_PV_ID"
+
+# View the result
+echo $N8N_PV_DIR
+```
+
+#### 2. Copy Files to the Volume
+
+```bash
+# Copy file from your local machine
+sudo cp /local/path/workflows.json $N8N_PV_DIR/
+```
+
+#### 3. Access the Pod and Verify the File
+
+```bash
+kubectl exec -it deployment/zylon-n8n -n zylon -- /bin/sh
+# Inside the pod, verify the file is available
+ls /home/node/.n8n/
+```
+
+### Important Notes
+
+<Warning>
+Exported entities retain their original IDs, so importing them will overwrite existing entities with the same ID.
+</Warning>
+
+<Warning>
+Export files must be located in an accessible directory within the pod, typically `/home/node/.n8n/`.
+</Warning>
+

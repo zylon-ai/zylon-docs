@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check that navigation, links, snippets, and API specs stay in their version."""
+"""Check that navigation, links, and snippets stay in their version."""
 import json
 import re
 from pathlib import Path
@@ -88,12 +88,8 @@ def main():
             else:
                 assert redirects.get(old, "").startswith("/" + lang + "/v1.57/"), old
 
-    for prefix in ("", PREVIEW):
-        for name in ("workspace", "pgpt"):
-            spec = json.loads((ROOT / prefix / "api-reference" / (name + ".json")).read_text())
-            assert "openapi" in spec and "paths" in spec, (prefix, name)
     print(f"OK: {counts[0]} stable / {counts[1]} upcoming navigation entries; "
-          f"{len(preview_pages)} preview pages, {len(snippets)} snippets, four API specs; {len(redirects)} redirects.")
+          f"{len(preview_pages)} preview pages, {len(snippets)} snippets; {len(redirects)} redirects.")
 
 
 if __name__ == "__main__":

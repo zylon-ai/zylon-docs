@@ -9,7 +9,7 @@ Cuando se eliminan chats, proyectos, archivos u organizaciones en Zylon, siguen 
 
 ## Configuracion predeterminada
 
-La limpieza programada está deshabilitada por defecto. Los valores de Helm configuran una programación diaria a las `03:00 UTC` y un umbral de retención de Workspace de `14` días, que se usa al habilitar la limpieza. Helm define `timezone: "UTC"`; si se omite la zona horaria del runtime fuera de Helm, se usa la de la máquina servidor.
+Por defecto, la limpieza revisa elementos todos los dias a las `03:00`, y los elementos pasan a ser elegibles para borrado permanente despues de `14` dias. Si `timezone` no esta definido, Zylon usa la zona horaria predeterminada de la maquina servidor.
 
 La limpieza de logs almacenados usa el mismo programador de limpieza. Esta desactivada por defecto; cuando se activa, el umbral predeterminado de retencion de logs almacenados es `180` dias.
 
@@ -17,10 +17,8 @@ La limpieza de logs almacenados usa el mismo programador de limpieza. Esta desac
 zylonBackend:
   scheduler:
     cleanup:
-      enabled: false
+      enabled: true
       cron: "0 3 * * *"
-      timezone: "UTC"
-      minimumIntervalMinutes: 1440
       workspace:
         enabled: true
       deleteAfterDays: 14
@@ -50,7 +48,7 @@ zylonBackend:
         deleteAfterDays: 180
 ```
 
-`enabled` activa o desactiva las revisiones programadas de limpieza. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos y logs almacenados, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `workspace.enabled` activa o desactiva el borrado permanente de datos de workspace. `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o un elemento eliminado previamente se elimine de forma definitiva por la ejecucion del cron. `logging.enabled` activa o desactiva la limpieza de logs almacenados, y `logging.deleteAfterDays` elimina registros de log almacenados con mas antiguedad que ese umbral. Helm usa `UTC` por defecto; si se omite la zona horaria del runtime fuera de Helm, se usa la de la máquina servidor.
+`enabled` activa o desactiva las revisiones programadas de limpieza. `cron` determina cada cuanto tiempo el sistema revisa elementos inactivos y logs almacenados, `timezone` define de forma opcional la zona horaria usada para interpretar la expresion cron y `workspace.enabled` activa o desactiva el borrado permanente de datos de workspace. `deleteAfterDays` es el numero de dias que deben pasar antes de que un elemento inactivo o un elemento eliminado previamente se elimine de forma definitiva por la ejecucion del cron. `logging.enabled` activa o desactiva la limpieza de logs almacenados, y `logging.deleteAfterDays` elimina registros de log almacenados con mas antiguedad que ese umbral. Si `timezone` se omite, se usa la zona horaria predeterminada de la maquina servidor.
 
 <Tip>
   Sugerimos configurar una [zona horaria IANA](#valores-de-zona-horaria) que coincida con la zona horaria de la empresa.
@@ -83,7 +81,7 @@ Ejemplos:
 
 ### Valores de zona horaria
 
-`zylonBackend.scheduler.cleanup.timezone` usa `UTC` por defecto en Helm. Si se omite el ajuste del runtime fuera de Helm, el cron usa la zona horaria de la máquina servidor. El cron también debe cumplir `minimumIntervalMinutes`, cuyo valor predeterminado en Helm es `1440`; un cron más frecuente se rechaza salvo que se reduzca ese valor.
+`zylonBackend.scheduler.cleanup.timezone` es opcional. Si no se define, el cron de limpieza se ejecuta en la zona horaria predeterminada de la maquina servidor.
 
 Cuando configure `zylonBackend.scheduler.cleanup.timezone`, use un identificador IANA valido. Ejemplos comunes:
 
@@ -104,7 +102,7 @@ Para `zylonBackend.scheduler.cleanup.deleteAfterDays`, use un numero entero posi
 Para `zylonBackend.scheduler.cleanup.logging.deleteAfterDays`, use un numero entero positivo de dias. El valor predeterminado es `180` dias, aproximadamente seis meses.
 
 <Warning>
-  Usa ventanas de retención positivas según la política de tu empresa. Para logs almacenados, `logging.deleteAfterDays: 0` no deshabilita el borrado: hace que los logs existentes sean elegibles para limpieza. Para deshabilitar la limpieza de logs, configura `logging.enabled: false`. Para retener logs sin borrado permanente de Workspace, sigue [Limpieza solo de logs](/es/operator-manual/configuration/features/log-delivery-storage#configurar-limpieza-solo-de-logs).
+  El valor minimo admitido para `deleteAfterDays` es `1` dia. Configure este valor segun la politica de eliminacion o retencion de su empresa antes de habilitar el borrado permanente.
 </Warning>
 
 ## Acceso antes del borrado permanente

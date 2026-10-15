@@ -1,0 +1,17 @@
+The Zylon CLI will speed up the time it takes to get everything ready, it will take care of installing drivers, updating Zylon and configuring the system.
+To install it, SSH into the machine where you want to install Zylon and run:
+
+```bash
+# ssh <user>@<host-ip>
+sudo curl -sL get.zylon.ai | sh
+```
+
+Verify the installation:
+
+```bash
+sudo zylon-cli version
+```
+
+<Note>
+  Root access is required for CLI operations as it manages system-level dependencies and configurations.
+</Note>

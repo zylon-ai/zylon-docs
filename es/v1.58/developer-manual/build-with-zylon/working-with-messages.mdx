@@ -1,0 +1,484 @@
+---
+title: "Mensajes"
+description: "Peticiones de Messages con patrones síncronos, streaming y asíncronos."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Messages es el núcleo de ZylonGPT: envías un historial de conversación y Zylon devuelve el siguiente mensaje del asistente como **lista de bloques de contenido**.
+
+## Requisitos previos
+
+- Un token de API. Consulta [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+`PrivateGPT.Read.All` permite `POST /messages` síncrono, `POST /messages/validate` y los demás endpoints de la [allowlist de solo lectura de ZylonGPT](/es/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/overview). `Read.All` permite las mismas llamadas solo cuando el token de cuenta incluye `gateway_id`; sin contexto de gateway, no puede llamar a ZylonGPT. El acceso efectivo también depende de los permisos de rol del propietario del token.
+
+## Solicitud y respuesta básica
+
+Envía un mensaje y recibe una respuesta.
+
+<Tabs>
+  <Tab title="Mensaje único">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "temperature": 0,
+    "messages": [
+      { "role": "user", "content": "Write a one-sentence status update about deploying a billing dashboard and fixing three bugs." }
+    ]
+  }'
+```
+  </Tab>
+
+  <Tab title="Bloques de contenido">
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "temperature": 0,
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Write a one-sentence status update about deploying a billing dashboard and fixing three bugs." }
+        ]
+      }
+    ]
+  }'
+```
+  </Tab>
+</Tabs>
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T13:23:16.876744Z",
+      "stop_timestamp": "2026-02-06T13:23:16.975362Z",
+      "text": "Deployed the new billing dashboard and resolved three bugs successfully."
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 95,
+    "output_tokens": 16
+  }
+}
+```
+</Accordion>
+
+## Formato de mensajes
+
+El mismo cuerpo de mensaje se usa en ZylonGPT y en el campo `pgpt` de las peticiones de chat/interacción de Workspace. Envía el contenido de la conversación; el modelo o gateway seleccionado determina qué opciones admite. `model` y `max_tokens` son opciones que admiten null, no campos obligatorios para todos los modelos. Indicarlos explícitamente hace predecibles la selección de modelo y el límite de salida; valida las peticiones con tu gateway.
+
+<Accordion title="Cuerpo de la petición">
+
+| Campo | Tipo / valor por defecto | Descripción |
+| --- | --- | --- |
+| `messages` | message[]; `[]` | Historial de conversación. Cada mensaje tiene `role` (`user` o `assistant`) y `content` (cadena o array de bloques). Crear una interacción de Workspace requiere exactamente un mensaje de usuario. |
+| `model` | string o null | Nombre del modelo, normalmente `default`; Valida su omisión con el gateway seleccionado. |
+| `max_tokens` | integer o null | Límite de tokens de salida, sujeto a la validación del modelo. |
+| `stream` | boolean; `false` | Messages de ZylonGPT devuelve JSON por defecto y SSE con `true`. Las rutas actuales `/app/chat` y de interacción de Workspace transmiten por streaming independientemente del indicador. |
+| `system` | string, object, object[] o null | Texto y configuración del sistema; campos anidados abajo. |
+| `tools` | object[] o null | Definiciones de herramientas. Consulta [Herramientas](/es/v1.58/developer-manual/build-with-zylon/tools/introduction-to-tools). |
+| `tool_choice` | object o null | Selección y validación de herramientas, descritas abajo. |
+| `tool_context` | object[] o null | Contexto tipado, como `ingested_artifact` o `sql_database`; consulta la guía de la herramienta correspondiente. |
+| `mcp_servers` | object[] o null | Configuración de servidores MCP. Cada uno requiere `url`; `name` y `tool_configuration` son opcionales. |
+| `thinking` | object o null | `enabled` es `false` por defecto; `type` (string) y `budget_tokens` (integer) son opcionales. |
+| `output_config` | object o null | `effort`: `low`, `medium`, `high` o `max`; `format` opcional, descrito abajo. |
+| `cache_control` | object o null | Si se incluye, requiere `type` de tipo string. Su soporte depende del modelo. |
+| `temperature`, `min_p`, `top_p` | number o null | Opciones de muestreo; los rangos admitidos dependen del modelo. |
+| `top_k` | integer o null | Opción de muestreo. |
+| `repetition_penalty`, `presence_penalty`, `frequency_penalty` | number o null | Opciones de penalización de tokens. |
+| `seed` | integer o null | Semilla de muestreo opcional. |
+| `priority` | integer o null | Prioridad de petición opcional. |
+| `stop_sequences` | string[]; `[]` | Límites personalizados de generación. |
+| `metadata` | object; `{}` | `ws_member_id` es una cadena opcional que admite null. Usa un ID de miembro, no de cuenta. `user_id` sigue siendo un alias de entrada; envía solo un nombre. |
+| `service_tier` | string; `auto` | `auto` o `standard_only`. |
+| `inference_geo` | string o null | Preferencia opcional de ubicación de inferencia. |
+| `container` | string o null | ID opcional de un contenedor existente. |
+| `message_id`, `correlation_id` | string o null | Identificadores opcionales de mensaje y correlación. |
+
+Los campos que admiten null pueden omitirse. Una opción que no admite null pero tiene valor por defecto puede omitirse; no envíes `null`.
+
+</Accordion>
+
+<Accordion title="Sistema, selección de herramientas y salida estructurada">
+
+| Objeto | Campo | Tipo / valor por defecto |
+| --- | --- | --- |
+| `system` | `text` | Cadena opcional. |
+| `system` | `citations` | Objeto; `enabled` es `false` por defecto y `known_citations` es un array opcional de citas. |
+| `system` | `blob_visibility` | `binary`, `internal` o `public`, opcional. |
+| `system` | `extensions` | string[] opcional; actualmente admite `zylon`. |
+| `system` | `prompt` | Objeto con booleanos `tools`, `citations`, `thinking`, `code_execution` y `skills`; todos son `false` por defecto. |
+| `tool_choice` | `type` | String; `auto`. |
+| `tool_choice` | `name` | Cadena opcional que identifica una herramienta. |
+| `tool_choice` | `disable_parallel_tool_use` | Boolean; `false`. |
+| `tool_choice` | `validation_mode` | `eager` o `lazy`; `lazy`. |
+| `output_config.format` | `type` | `json_schema` obligatorio. |
+| `output_config.format` | `schema` | Objeto JSON Schema obligatorio. |
+
+`response_format` está obsoleto; usa `output_config.format`. Mueve `thinking.effort` a `output_config.effort`. Sustituye `system.use_default_prompt` por los indicadores individuales de `system.prompt`; el indicador antiguo con `true` activa todas las categorías de prompt.
+
+</Accordion>
+
+<Accordion title="Campos de respuesta del mensaje">
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id`, `type`, `role`, `model` | string | ID de mensaje, tipo `message`, rol `assistant` y modelo seleccionado. |
+| `created` | integer | Milisegundos desde epoch. |
+| `content` | object[] | Bloques de contenido. Consulta los [bloques de herramientas de servidor de 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#bloques-de-herramientas-de-servidor). |
+| `stop_reason` | string o null | `end_turn`, `max_tokens`, `stop_sequence`, `tool_use`, `pause_turn` o `refusal`. |
+| `interaction_stop_reason` | string o null | Resultado global de la interacción: `stop`, `error`, `cancelled` o `refusal`. |
+| `stop_details` | object o null | `type` obligatorio; `category` y `explanation` opcionales. |
+| `container` | object o null | `id` obligatorio; `expires_at` opcional de tipo string. |
+| `usage` | object | `input_tokens` y `output_tokens` (por defecto `0`); uso de caché y herramientas opcional, descrito abajo. |
+| `errors` | object[] | Detalles de errores cuando estén disponibles. |
+
+`usage` puede incluir `cache_creation_input_tokens`, `cache_read_input_tokens`, `inference_geo`, `service_tier`, `cache_creation` (`ephemeral_1m_input_tokens`, `ephemeral_1h_input_tokens`, `ephemeral_5m_input_tokens`) y `server_tool_use` (`web_fetch_requests`, `web_search_requests`). Los contadores de esos objetos anidados son `0` por defecto. Los campos que admiten null pueden omitirse en la respuesta. No hay un campo `stop_sequence` en el nivel superior; usa `stop_reason: "stop_sequence"`. Consulta [Motivos de parada](/es/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons).
+
+</Accordion>
+
+## Validar una solicitud
+
+Usa `/messages/validate` para comprobar la forma del cuerpo de la petición antes de enviar una solicitud real. Devuelve `valid: true` o una lista de errores de validación.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Validate this payload." }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+## Conversaciones con varios turnos
+
+Incluye turnos anteriores en `messages`:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 16,
+    "temperature": 0,
+    "messages": [
+      { "role": "user", "content": "My name is Ada." },
+      { "role": "assistant", "content": "Nice to meet you." },
+      { "role": "user", "content": "What is my name? Reply with only the name, no punctuation." }
+    ]
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_9b14c8fd514741d29a0dff8996ca9213",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T10:34:12.924887Z",
+      "stop_timestamp": "2026-02-06T10:34:12.974785Z",
+      "text": "Ada"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 135, "output_tokens": 2 }
+}
+```
+</Accordion>
+
+## Prompts del sistema
+
+Usa el campo `system` a nivel superior para controlar el comportamiento:
+
+{/* <!-- ADDED FOR CLARITY --> */}
+<Callout type="tip">
+  Prefiere el campo <code>system</code> de nivel superior para que las instrucciones se apliquen de forma consistente.
+</Callout>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 8,
+    "temperature": 0,
+    "system": { "text": "You are a support agent. Reply with only a short ticket title." },
+    "messages": [
+      { "role": "user", "content": "The login button on mobile does not work." }
+    ]
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_4e328dc4baeb42b8a18dc0c4abd89468",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T13:37:36.368426Z",
+      "stop_timestamp": "2026-02-06T13:37:36.446733Z",
+      "text": "Mobile login button not working"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 100, "output_tokens": 6 }
+}
+```
+</Accordion>
+
+## JSON estructurado (json_schema)
+
+Si necesitas salida legible por máquina, usa `output_config.format.type` = `json_schema` e incluye el esquema en `output_config.format.schema`.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "system": {
+      "text": "Return ONLY valid JSON."
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "We deployed the billing dashboard. Return a status and the next step."
+      }
+    ],
+    "output_config": {
+      "format": {
+        "type": "json_schema",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "next_step": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "next_step"
+          ]
+        }
+      }
+    }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_eaf35004b4654234be5e767ea09e72e6",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T13:39:44.864978Z",
+      "stop_timestamp": "2026-02-06T13:39:45.412991Z",
+      "text": "{\"status\":\"success\",\"next_step\":\"Monitor adoption and collect feedback.\"}"
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 98, "output_tokens": 16 }
+}
+```
+</Accordion>
+
+## Streaming (SSE)
+
+Configura `stream: true` para recibir eventos `text/event-stream`.
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/gpt/v1/messages" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "model": "default",
+    "stream": true,
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Give a three-word tagline for a productivity app." }
+    ]
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de eventos">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_b55d29718361410bad4f80f8f67c6b72","type":"message","role":"assistant","content":[],"model":"private-gpt","usage":{}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","content_block":{"type":"text","start_timestamp":"2026-02-06T13:18:37.331257Z","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","delta":{"type":"text_delta","text":"Focus"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044","delta":{"type":"text_delta","text":" fast daily"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","stop_timestamp":"2026-02-06T13:18:37.417617Z","index":0,"block_id":"block_019c331ac11375cea03f7e0fb7a2a044"}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"input_tokens":90,"output_tokens":3}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+</Accordion>
+
+## Mensajes asíncronos
+
+<Warning>
+Las rutas de inicio, streaming, estado, cancelación y eliminación de mensajes asíncronos requieren `PrivateGPT.ReadWrite.All` o `ReadWrite.All`. Los tokens de solo lectura reciben `403` en todo el ciclo de vida asíncrono.
+</Warning>
+
+Los mensajes asíncronos usan **el mismo cuerpo** que los mensajes síncronos: solo cambia el endpoint. La diferencia principal está en la **respuesta**: los mensajes síncronos devuelven el mensaje completo, y los asíncronos devuelven un `message_id` para hacer streaming o consultar el estado.
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Forma de la respuesta: síncrona vs asíncrona">
+<Tabs>
+  <Tab title="Respuesta síncrona">
+```json
+{
+  "id": "msg_abf981cf3f1c449eacb7a85c064ca505",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "start_timestamp": "2026-02-06T13:23:16.876744Z",
+      "stop_timestamp": "2026-02-06T13:23:16.975362Z",
+      "text": "Deployed the new billing dashboard and resolved three bugs successfully."
+    }
+  ],
+  "model": "private-gpt",
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 95,
+    "output_tokens": 16
+  }
+}
+```
+  </Tab>
+  <Tab title="Respuesta asíncrona">
+```json
+{
+  "message_id": "1cc8ed5e-fc7a-45e1-baf4-0b916ed32290",
+  "status": "pending",
+  "message": "Request initiated successfully"
+}
+```
+  </Tab>
+</Tabs>
+</Accordion>
+
+### Iniciar un mensaje asíncrono
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/async" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 32,
+    "messages": [
+      { "role": "user", "content": "Say only: async ok" }
+    ]
+  }'
+```
+
+### Streaming o consulta de estado
+
+Streaming:
+
+```bash
+curl -N "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Accept: text/event-stream"
+```
+
+Consulta de estado:
+
+```bash
+curl "https://{BASE_URL}/api/gpt/v1/messages/async/{message_id}/status" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+### Cancelar o eliminar
+
+- Cancelar: `POST /messages/async/{message_id}/cancel`
+- Eliminar: `DELETE /messages/async/{message_id}/delete`
+
+## Errores comunes
+
+- **Método incorrecto**: `/messages` es `POST`, no `GET`.
+- **Falta de autenticación**: incluye `Authorization: Bearer ...`.
+- **Base URL incorrecta**: usa `https://{BASE_URL}/api/gpt/v1/`.
+- **Cuerpo inválido**: usa `POST /messages/validate` para validar.
+- **Paradas o errores inesperados**: revisa [Motivos de parada](/es/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/handling-stop-reasons) para causas y soluciones.
+
+## Próximos pasos
+
+<CardGroup cols={2}>
+  <Card title="Herramientas" icon="toolbox" href="/es/v1.58/developer-manual/build-with-zylon/tools/introduction-to-tools">
+    Deja que Zylon use herramientas integradas y personalizadas durante un mensaje.
+  </Card>
+
+  <Card title="Artefactos" icon="file" href="/es/v1.58/developer-manual/build-with-zylon/working-with-artifacts">
+    Ingiere texto, archivos o URI en colecciones reutilizables.
+  </Card>
+</CardGroup>

@@ -10,15 +10,6 @@ Uso: `sudo zylon-cli admin-password`
 
 Llama al backend para generar una contraseña temporal para `admin@zylon.ai` y la imprime en stdout. Úsalo después de ejecutar `seed` para obtener la contraseña de inicio de sesión inicial del administrador.
 
-## backfill-projections
-Rellenar las proyecciones de Skills y Documentos (necesario al actualizar a Zylon v1.58)
-
-Uso: `sudo zylon-cli backfill-projections --help`
-
-**Banderas:**
-
-- `--dry-run`: Mostrar qué se rellenaría sin escribir ningún cambio
-
 ## backup
 Crear una copia de seguridad
 
@@ -40,21 +31,6 @@ Uso: `sudo zylon-cli completion`
 Administrar configuración
 
 Uso: `sudo zylon-cli config`
-
-## configure
-Cambiar ajustes del clúster y aplicarlos al nodo en ejecución
-
-<Danger>
- Cambiar --max-pods reinicia k0s, todos los servicios de Zylon estarán brevemente no disponibles.
-</Danger>
-
-Uso: `sudo zylon-cli configure --max-pods 200`
-
-`--max-pods` solo edita `/etc/k0s/k0s.yaml` cuando coincide con el formato generado por zylon-cli; si no, explica cómo hacerlo manualmente.
-
-**Banderas:**
-
-- `--max-pods`: Número máximo de pods que puede ejecutar el kubelet de k0s
 
 ## create-api-token
 Crear un token API para Zylon

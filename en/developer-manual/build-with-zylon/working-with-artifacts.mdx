@@ -16,12 +16,8 @@ Artifacts can be created from:
 
 ## Prerequisites
 
-- An API token with the required write scope. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console) or [Token Management](/en/developer-manual/get-started/token-management).
+- An API token. See [Backoffice Developer Console](/en/developer-manual/get-started/developer-console).
 - Your Zylon hostname (replace `{BASE_URL}` in the examples).
-
-<Warning>
-Every ZylonGPT artifact operation—including ingest, list, content retrieval, task status, and delete—requires a read-write scope. `PrivateGPT.Read.All` and `Read.All` with `gateway_id` return `403` for all artifact routes. A `Read.All` token without gateway context cannot call ZylonGPT at all.
-</Warning>
 
 ## Basic request and response
 
@@ -56,7 +52,14 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
       "object": "ingest.document",
       "artifact": "docs_text_artifact_sync",
       "doc_metadata": {
-        "file_name": "release_notes.txt"
+        "file_name": "release_notes.txt",
+        "source": "docs",
+        "headers": [],
+        "artifact_id": "docs_text_artifact_sync",
+        "collection": "019c7569-f1f3-74da-8017-35d4a11f93ca",
+        "llm_model": "default",
+        "embed_model": "default",
+        "hash": "faf6da679814136cb7cef94532397948cd2cd303b25f91a527af53227e9da99d"
       }
     }
   ]
@@ -64,32 +67,9 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest" \
 ```
 </Accordion>
 
-<Accordion title="Sync ingest response fields">
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `object`, `model` | string | Response kind and model. |
-| `data` | object[] | Ingested document references. |
-| `data[].object`, `data[].artifact` | string | Document kind and artifact ID. |
-| `data[].doc_metadata` | object | Optional nullable string fields: `window`, `original_text`, `page_label`, `file_name`, `doc_id`. |
-| `callback.properties` | JSON or null | Optional returned metadata; this is a literal top-level key, not a nested object. |
-
-Nullable fields may be omitted. Arbitrary upstream document metadata is not included in the synchronous ingest response.
-
-</Accordion>
-
 ## Async ingest
 
-Use `POST /artifacts/ingest/async` for larger payloads or when ingest may take longer. Wrap the sync ingest payload in `ingest_body` and include the required `callback` object. Use `callback: {}` when polling without callback configuration. The response returns a `task_id` you can poll.
-
-<Accordion title="Endpoint parameters">
-
-| Type | Name | Required | Notes |
-| --- | --- | --- | --- |
-| Body | `ingest_body` | Yes | Sync ingest body with required `collection`, `artifact`, and `input`; optional `metadata`. |
-| Body | `callback` | Yes | Callback object; `{}` is accepted. Optional `properties` carries correlation data. |
-
-</Accordion>
+Use `POST /artifacts/ingest/async` for larger payloads or when ingest may take longer. The payload is the same as sync ingest, wrapped in `ingest_body`, and the response returns a `task_id` you can poll.
 
 <Tabs>
   <Tab title="Text">
@@ -109,8 +89,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "release_notes.txt",
         "source": "docs"
       }
-    },
-    "callback": {}
+    }
   }'
 ```
   </Tab>
@@ -132,8 +111,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "onboarding_checklist.txt",
         "source": "docs"
       }
-    },
-    "callback": {}
+    }
   }'
 ```
   </Tab>
@@ -155,8 +133,7 @@ curl -X POST "https://{BASE_URL}/api/gpt/v1/artifacts/ingest/async" \
         "file_name": "example.html",
         "source": "docs"
       }
-    },
-    "callback": {}
+    }
   }'
 ```
   </Tab>

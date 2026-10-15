@@ -1,0 +1,44 @@
+---
+title: "Overview"
+description: "Backoffice API endpoints for operational and platform-level workflows."
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+The Backoffice API exposes platform-level endpoints for authorized operators and automation jobs. Use it for operational workflows that are outside the Workspace API, such as manually retrieving Zylon logs for investigation or export.
+
+## Base URL
+
+Backoffice endpoints are served from the platform root:
+
+```http
+https://{BASE_URL}
+```
+
+Unlike Workspace API routes, Backoffice routes documented here do not use the `/api/v1/app` workspace prefix.
+
+## Authentication and permissions
+
+Backoffice API requests require an account token or account session with at least the `operator` role. An account token can use `Read.All` when its owner role also grants the requested Backoffice permission; `Read.All` never elevates the owner. `ReadWrite.All` also includes read access.
+
+```bash
+-H "Authorization: Bearer {API_TOKEN}"
+```
+
+<Note>
+Workspace-only tokens are not enough for Backoffice endpoints. Interactive sessions continue to use their role permissions and are not restricted by API token scopes.
+</Note>
+
+See [Token Management](/en/v1.58/developer-manual/get-started/token-management) for the complete scope model.
+
+## Available sections
+
+<CardGroup cols={2}>
+  <Card title="Logging" icon="list" href="/en/v1.58/developer-manual/build-with-zylon/backoffice-api/logging">
+    Retrieve stored platform, gateway, security, workspace, and AI usage logs.
+  </Card>
+</CardGroup>
+
+For governance, auditability, evidence preservation, and retention guidance, see [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/v1.58/operator-manual/backoffice/log-delivery-storage).

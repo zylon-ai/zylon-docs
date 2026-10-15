@@ -1,0 +1,98 @@
+---
+title: "Web Search tool"
+description: "Search the web from a natural language query."
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Use Web Search when you need the assistant to run a quick web query and return results.
+
+## Prerequisites
+
+- An API token. See [Backoffice Developer Console](/en/v1.58/developer-manual/get-started/developer-console).
+
+## Requirements
+
+- Tool spec: `{ "name": "web_search", "type": "web_search_v1" }`
+- No `tool_context` required
+
+## Basic request and response
+
+This example validates a request that enables the web search tool:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Find recent updates about the EU AI Act." }
+    ],
+    "tools": [
+      { "name": "web_search", "type": "web_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Example response:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+To run the request, send the same body to `POST /messages`.
+
+## Response blocks
+
+Zylon runs this tool on the server. The response contains a `server_tool_use` block with the call, followed by a `web_search_tool_result` block with the result. The call ID starts with `srvtoolu_`. Don't send a `tool_result` back for it.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_1a2b", "name": "web_search", "input": { "query": "EU AI Act recent updates" } },
+  {
+    "type": "web_search_tool_result",
+    "tool_use_id": "srvtoolu_1a2b",
+    "content": [
+      {
+        "type": "web_search_result",
+        "url": "https://example.com/eu-ai-act",
+        "title": "EU AI Act: what changed this month",
+        "encrypted_content": "The European Commission published new guidance...",
+        "page_age": "2 days ago"
+      }
+    ]
+  }
+]
+```
+
+Zylon runs the search itself, so `encrypted_content` contains the result text as plain text, not encrypted data.
+
+Error:
+
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "srvtoolu_1a2b",
+  "content": { "type": "web_search_tool_result_error", "error_code": "unavailable" }
+}
+```
+
+These blocks have no `is_error` field. To detect a failure, check whether `content.type` ends in `_error`, then read `content.error_code`.
+
+With the Zylon extension enabled (`system.extensions` includes `zylon`), the result is returned as a plain `tool_result` block with `text` content instead.
+
+See [Migrating from 1.57 to 1.58](/en/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for the full list of server tool blocks.
+
+## Tips
+
+- Use a focused query to reduce noisy results.
+- Combine with a system prompt to control summarization style.
+
+## Next steps
+
+- Learn how messages return tool blocks: [Messages](/en/v1.58/developer-manual/build-with-zylon/working-with-messages)

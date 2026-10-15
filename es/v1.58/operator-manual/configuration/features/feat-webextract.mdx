@@ -1,0 +1,38 @@
+---
+title: "Extracción Web"
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Note>**Característica en Alpha**</Note>
+
+Cuando se proporciona una URL, la IA tiene capacidades para extraer y analizar contenido.
+
+### Configuración
+
+| Clave      | Por Defecto | Valores          | Descripción                              |
+| -------- | ------- | --------------- | ---------------------------------------- |
+| `enabled`| `false` | `true \| false` | Habilita la extracción y análisis de páginas web |
+| `timeout` | `15` | Entero positivo | Tiempo de espera en segundos para cada extracción web |
+| `poolSize` | `5` | Entero positivo | Número de instancias de navegador que se mantienen en el pool |
+| `poolIdleTimeout` | `300` | Entero positivo | Segundos antes de que una instancia inactiva se termine |
+| `poolMaxPages` | `5` | Entero positivo | Máximo de páginas concurrentes por instancia de navegador |
+
+### Ejemplo
+
+```yaml
+features:
+    webExtract:
+        enabled: true
+        timeout: 15
+        poolSize: 5
+        poolIdleTimeout: 300
+        poolMaxPages: 5
+```
+
+
+### Uso
+
+Cuando está habilitada, esta característica permite a Zylon extraer y analizar contenido de páginas web, habilitando capacidades de análisis de contenido y extracción de datos.

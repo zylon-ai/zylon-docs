@@ -1,0 +1,156 @@
+---
+title: "Referencia de Presets de IA"
+description: "Referencia completa de presets de IA disponibles incluyendo configuraciones base, alternativas, experimentales y deprecadas"
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Establece el preset de IA en tu archivo de configuración de Zylon usando la propiedad `ai.preset`. La configuración por defecto usa una configuración de 24GB.
+
+## Presets Base
+
+Los presets base proporcionan configuraciones estándar optimizadas para cargas de trabajo de IA de propósito general.
+
+| Preset         | Memoria GPU Requerida | Ejemplos de Hardware Compatible  | Modelos                                                      |
+|----------------|---------------------|-------------------------------|--------------------------------------------------------------|
+| `baseline-32g` | 32GB                | RTX 5090                      | cyankiwi/qwen3.5-9b-awq-4bit, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-48g` | 48GB                | RTX A6000, A40, L40, L40s     | txn545/qwen3.5-35b-a3b-nvfp4, mixedbread-ai/mxbai-embed-large-v1      |
+| `baseline-96g` | 96GB                | A100 80GB, H100, A6000 (dual) | nvidia/Qwen3.8-27B-NVFP4, mixedbread-ai/mxbai-embed-large-v1      |
+
+### Ejemplo de Configuración
+
+```yaml
+ai:
+  preset: "baseline-48g"  # Para un sistema con L40s (48GB)
+```
+
+<Tip>
+Elige el preset que coincida con la capacidad de memoria de tu GPU. Siempre selecciona un preset que coincida o sea menor que tu VRAM disponible.
+</Tip>
+
+## Presets Alternativos
+
+Zylon proporciona presets alternativos que ofrecen configuraciones especializadas intercambiando ciertas capacidades por otras. Estos son opcionales y solo deben usarse cuando tienes requisitos específicos que difieren de los presets estándar.
+
+### Alternativa Optimizada para Throughput
+
+Este preset utiliza un modelo más pequeño y ligero que genera tokens significativamente más rápido. Aunque puede no igualar al modelo estándar en calidad y profundidad de razonamiento, pero a cambio ofrece respuestas notablemente más rápidas.
+
+**Cuándo usar:**
+
+- Principalmente manejas consultas sencillas o directas
+- Tienes un alto número de usuarios concurrentes y necesitas tiempos de respuesta rápidos
+- La velocidad de generación importa más que la máxima calidad de respuesta
+
+| Preset                              | Memoria GPU Requerida | Modelos                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-throughput-96g` | 96GB (A100 80GB, H100, A6000 dual) | txn545/qwen3.5-35b-a3b-nvfp4, mixedbread-ai/mxbai-embed-large-v1      |
+
+### Alternativa de Modelo Grande
+
+Este preset utiliza un modelo más grande y capaz, con mayor conocimiento intrínseco. La contrapartida es una ventana de contexto más reducida.
+
+**Cuándo usar:**
+
+- Necesitas mayor rendimiento en tareas complejas o especializadas
+- El conocimiento intrínseco del modelo es prioritario
+- Puedes trabajar con una ventana de contexto más pequeña
+
+| Preset                              | Memoria GPU Requerida | Modelos                                                      |
+|-------------------------------------|---------------------|--------------------------------------------------------------|
+| `baseline-large-96g` | 96GB (A100 80GB, H100, A6000 dual) | cyankiwi/Qwen3.5-122B-A10B--4bit, mixedbread-ai/mxbai-embed-large-v1      |
+
+### Ejemplo de Configuración
+
+```yaml
+ai:
+  preset: "alternatives.baseline-throughput-96g"
+```
+
+<Info>
+Cada preset alternativo implica una compensación. Considera tu caso de uso específico — volumen de usuarios, complejidad de las consultas y necesidades de contexto — antes de cambiar del preset estándar.
+</Info>
+
+## Presets Experimentales
+
+<Warning>
+Los presets experimentales están en desarrollo activo y pueden no ser estables. Usa solo en entornos de prueba.
+</Warning>
+
+Los presets experimentales proporcionan acceso a modelos y configuraciones de vanguardia que están siendo evaluados para futuras versiones. Estos presets pueden tener características de rendimiento o estabilidad diferentes comparados con los presets base.
+
+| Preset                     | Memoria GPU Requerida | Familia de Modelo | Estado | Modelos                                                                            |
+|----------------------------|---------------------|--------------|--------|------------------------------------------------------------------------------------|
+| `experimental.mistral-24g` | 24GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.mistral-48g` | 48GB                | Mistral      | Beta   | mistralai/mistral-small-24b-instruct-2501-awq, mixedbread-ai/mxbai-embed-large-v1 |
+| `experimental.gpt-oss-24g` | 24GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gpt-oss-48g` | 48GB                | GPT-OSS      | Beta   | openai/gpt-oss-20b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gpt-oss-96g` | 96GB                | GPT-OSS      | Beta   | openai/gpt-oss-120b, mixedbread-ai/mxbai-embed-large-v1                            |
+| `experimental.gemma-24g`   | 24GB                | Gemma 3      | Alpha  | google/gemma-3n-e4b-it, mixedbread-ai/mxbai-embed-large-v1                        |
+| `mistral-3-instruct-24g`   | 24GB                | Mistral      | Alpha  |cyankiwi/ministral-3-14b-instruct-2512-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+| `mistral-3-instruct-48g`   | 48GB                | Mistral      | Alpha  |cyankiwi/ministral-3-14b-instruct-2512-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+| `mistral-3-reasoning-24g`   | 24GB                | Mistral      | Alpha  |cyankiwi/ministral-3-14b-reasoning-2512-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+| `mistral-3-reasoning-48g`   | 48GB                | Mistral      | Alpha  |cyankiwi/ministral-3-14b-reasoning-2512-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+| `nemotron-3-nano-48g`   | 48GB                | Nemotron      | Alpha  |stelterlab/nvidia-nemotron-3-nano-30b-a3b-awq, mixedbread-ai/mxbai-embed-large-v1|
+| `glm-47-flash-32g`   | 32GB                | GLM      | Alpha  |cyankiwi/glm-4.7-flash-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+| `glm-47-flash-48g`   | 48GB                | GLM      | Alpha  |cyankiwi/glm-4.7-flash-awq-4bit, mixedbread-ai/mxbai-embed-large-v1|
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "experimental.gpt-oss-24g"
+```
+
+### Notas Importantes Sobre Presets Experimentales
+
+- Los presets experimentales pueden ser eliminados o cambiados significativamente entre versiones
+- El rendimiento y la estabilidad no están garantizados
+- No recomendados para entornos de producción
+- Pueden requerir parámetros de configuración adicionales
+- El soporte puede ser limitado
+
+## Presets Deprecados
+
+<Warning>
+Los presets deprecados se mantienen solo para compatibilidad hacia atrás y no recibirán actualizaciones.
+</Warning>
+
+Para clientes que requieren configuraciones más antiguas, los presets deprecados están disponibles pero no se recomiendan para nuevas instalaciones.
+
+| Preset                                  | Memoria GPU | Descripción                              |
+|-----------------------------------------|-------------|------------------------------------------|
+| `deprecated.24g.20250710`               | 24GB        | Configuración Pre-Qwen 3                 |
+| `deprecated.24g.20260327`               | 24GB        | Configuración Pre-Qwen 3.5               |
+| `deprecated.32g.20250710`               | 32GB        | Configuración Pre-Qwen 3                 |
+| `deprecated.32g.20260327`               | 32GB        | Configuración Pre-Qwen 3.5               |
+| `deprecated.48g.20250710`               | 48GB        | Configuración Pre-Qwen 3                 |
+| `deprecated.48g.20260327`               | 48GB        | Configuración Pre-Qwen 3.5               |
+| `deprecated.48g.20260327-context`       | 48GB        | Configuración optimizada para contexto Pre-Qwen 3.5 |
+| `deprecated.48g.20260327-vision`        | 48GB        | Configuración optimizada para visión Pre-Qwen 3.5 |
+| `deprecated.96g.20250710`               | 96GB        | Configuración Pre-Qwen 3                 |
+| `deprecated.96g.20260327`               | 96GB        | Configuración Pre-Qwen 3.5               |
+| `deprecated.96g.20260327-context`       | 96GB        | Configuración optimizada para contexto Pre-Qwen 3.5 |
+| `deprecated.96g.20260327-vision`        | 96GB        | Configuración optimizada para visión Pre-Qwen 3.5 |
+| `deprecated.96g.qwen3-32b-96g`          | 96GB        | Configuración Qwen 3 32B Pre-Qwen 3.5   |
+| `deprecated.96g.20261008`               | 96GB        | Configuración Pre-Qwen 3.8 (Qwen 3.5 27B) |
+
+**Ejemplo de Configuración:**
+
+```yaml
+ai:
+  preset: "deprecated.24g.20260327"
+```
+
+### Migración desde Presets Deprecados
+
+Si estás usando un preset deprecado, recomendamos encarecidamente migrar a presets base o alternativos actuales:
+
+1. Revisa los [presets base](#base-presets) para encontrar una configuración equivalente
+2. Prueba el nuevo preset en un entorno de staging
+3. Actualiza tu configuración de producción
+4. Monitorea el rendimiento y ajusta si es necesario
+
+La migración proporciona acceso a modelos mejorados, mejor rendimiento y soporte continuo.

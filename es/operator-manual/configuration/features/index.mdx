@@ -14,8 +14,6 @@ features:
     enabled: true
   mcp:
     enabled: true
-  systemMonitor:
-    enabled: false
   webExtract:
     enabled: false
   webSearch:
@@ -27,7 +25,7 @@ features:
 
 <CardGroup cols={2}>
   <Card title="Registro de auditoría" icon="list" href="/es/operator-manual/configuration/features/feat-audit">
-    Configura la captura de mensajes de solicitud y respuestas del chat del gateway
+    Almacena eventos y trazas del Registro de Auditoría
   </Card>
   <Card title="Entrega y almacenamiento de logs" icon="truck" href="/es/operator-manual/configuration/features/log-delivery-storage">
     Configura almacenamiento interno, entrega por syslog y entrega por HTTP.
@@ -43,9 +41,6 @@ features:
   </Card>
   <Card title="Conector de herramienta MCP" icon="plug" href="/es/operator-manual/configuration/features/feat-mcp">
     <Badge color="orange" size="xs">Alpha</Badge> Muestra la herramienta conectora MCP en los chats.
-  </Card>
-  <Card title="Monitor del sistema" icon="gauge-high" href="/es/operator-manual/configuration/features/feat-system-monitor">
-    Muestra métricas en vivo de recursos del host y servicio de modelos en Backoffice.
   </Card>
   <Card title="Procesamiento de archivos con visión" icon="image" href="/es/operator-manual/configuration/features/feat-file-vision">
     <Badge color="orange" size="xs">Alpha</Badge> Configura el procesamiento con visión para archivos PPTX y Docling.

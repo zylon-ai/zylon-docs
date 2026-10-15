@@ -2,59 +2,6 @@
 title: "Changelog"
 ---
 
-<Update label="1.58.0" description="TBD">
-  <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
-    Upcoming release
-  </span>
-
-  <Danger>
-    **⚠️ Action required before updating to version 1.58.X**
-
-    Use Zylon CLI **2.9.0 or later**. After installation completes and all pods are ready, preview the Skill and Document backfill with `backfill-projections --dry-run`, run the backfill, then apply `configure --max-pods 200`. Changing the pod limit briefly interrupts all Zylon services. Follow the complete [1.58 upgrade guide](/en/changelog/guides/1-58-0).
-
-    **API migration is required for affected integrations.** Creator fields now identify **accounts**; membership operations still use **workspace-member IDs**. Migrate affected calls and update saved ID mappings even if legacy URLs still work. Review the [1.57 → 1.58 API migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
-  </Danger>
-
-  ## 💼 Workspace
-  ### ✨ Features
-
-  - **Code execution — Beta**: Enabled by default in standard 1.58 deployments. Run code in an isolated sandbox to analyze files, perform calculations, and generate spreadsheets, charts, and reports. If an operator disables it in Workspace, chat and other available tools keep working, but the assistant cannot run code or complete Skill steps that require it. See [Code execution](/en/user-manual/tools/code-execution) and [operator configuration](/en/operator-manual/configuration/features/feat-code-execution#when-disabled).
-  - **Skills creator and editor**: Create reusable Skills with chat or edit their instructions directly. To create one with chat, first install **Skill Creator** from your organization's library into your project, then choose **Skills > New Skill > Create with Chat**. Follow the [step-by-step guide](/en/user-manual/skills/creating-a-skill), including how to install and use the generated Skill.
-  - **Generated files in AI Documents**: Files created through code execution can be saved as project artifacts and accessed through the existing preview and download experience.
-  - **Tool execution timeline**: Inspect expandable execution steps, tool descriptions, elapsed time, command output, and errors.
-  - **Unread chat indicators**: Identify chats containing unread assistant responses directly from the sidebar.
-  - **Dark mode and shared preferences**: Expanded theme support across Workspace and Backoffice, with account preferences shared between both.
-
-  ## 🛠️ Backoffice
-  ### ✨ Features
-
-  - **Connector Manager**: Inspect and filter connectors across organizations, view their project and creator, and revoke credentials while preserving imported files.
-  - **System Monitor**: View live CPU, RAM, disk, GPU, and VRAM usage alongside model queues, active inference requests, and token-generation rates. Requires System Monitor enablement. See [System Monitor](/en/operator-manual/backoffice/system-monitor).
-  - **Language support**: Added Backoffice language preferences and Spanish translations.
-
-  ## 🔌 Developer APIs
-  ### ✨ Features
-
-  - **Unified APIs**: Consolidated artifact routes and separated account profiles from workspace memberships. Legacy artifact, integration, and member routes are deprecated in 1.58, with removal planned for 1.59. See the [API migration guide](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) for compatibility limits and examples.
-  - **Read-only API tokens**: Choose Read or Read & Write permissions when creating Workspace and gateway tokens. See [token management](/en/developer-manual/get-started/token-management).
-  - **Updated tool responses**: Built-in tools use `server_tool_use` and typed result blocks. Custom tools retain their client tool flow. See [server tool migration examples](/en/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#server-tool-content-blocks).
-  - **Expanded Omnisearch**: Added resource, project, artifact-type, and date filters, plus search support for AI-generated text. See [Search API](/en/developer-manual/build-with-zylon/workspace-api/general/search).
-
-  ## 🛠️ Platform
-  ### ✨ Features
-
-  - **Artifact verification**: CLI downloads are checked against release checksums.
-  - **Safer backup and restore**: Workloads shut down cleanly before data is copied or replaced, and scheduling resumes afterward. See [backup and restore](/en/operator-manual/operations/backup).
-  - **Updated n8n**: Upgraded the bundled n8n deployment and fixed MCP ingress compatibility.
-
-  ### 🐛 Bug Fixes
-
-  - Linked-file search results now identify the accessible destination project.
-  - Improved document-reader fallback, PDF extraction, and spreadsheet and table parsing.
-  - Improved MCP connection validation and OAuth credential refresh during conversations.
-  - Improved generated-file handling, missing-file errors, and enforcement of organization download policies.
-</Update>
-
 <Update label="1.57.0" description="August 17, 2026">
   <Danger>
     **⚠️ Action required before updating to version 1.57.X**

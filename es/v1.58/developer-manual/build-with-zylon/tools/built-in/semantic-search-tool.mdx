@@ -1,0 +1,98 @@
+---
+title: "Herramienta de búsqueda semántica"
+description: "Busca en artefactos ingeridos durante un mensaje."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Usa Semantic Search cuando quieras recuperar información de artefactos ingeridos (documentos, notas, PDFs, HTML, etc.).
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+- Artefactos ingeridos para buscar.
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "semantic_search", "type": "semantic_search_v1" }`
+- `tool_context`: al menos un `ingested_artifact` con `context_filter`.
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida una petición que habilita Semantic Search:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What shipped in the latest billing dashboard release?" }
+    ],
+    "tools": [
+      { "name": "semantic_search", "type": "semantic_search_v1" }
+    ],
+    "tool_choice": { "type": "auto" },
+    "tool_context": [
+      {
+        "type": "ingested_artifact",
+        "context_filter": {
+          "collection": "{collectionID}"
+        }
+      }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
+
+## Bloques de respuesta
+
+Zylon ejecuta esta herramienta en el servidor. La respuesta contiene un bloque `server_tool_use` con la llamada, seguido de un bloque `server_tool_result` con el resultado. El ID de la llamada empieza por `srvtoolu_`. No envíes un `tool_result` de vuelta para ella.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing dashboard release" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [
+      { "type": "source", "sources": [{ "object": "context.chunk", "id": "chunk_1", "text": "The billing dashboard release added invoice exports..." }] },
+      { "type": "text", "text": "The billing dashboard release added invoice exports and fixed three bugs." }
+    ],
+    "is_error": false
+  }
+]
+```
+
+Los bloques `source` son específicos de Zylon. Solo se devuelven cuando la extensión Zylon está activada.
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_9c0d", "content": "context_filter is required", "is_error": true }
+```
+
+`is_error` es `true` cuando la herramienta falla, y `content` contiene el mensaje de error.
+
+Consulta [Migración de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para ver la lista completa de bloques de herramientas de servidor.
+
+## Consejos
+
+- Mantén `tool_context` acotado.
+- Si los resultados no son relevantes, ingesta texto más depurado.
+
+## Próximos pasos
+
+- Ingesta de artefactos: [Artefactos](/es/v1.58/developer-manual/build-with-zylon/working-with-artifacts)
+- Formato de mensajes: [Mensajes](/es/v1.58/developer-manual/build-with-zylon/working-with-messages)

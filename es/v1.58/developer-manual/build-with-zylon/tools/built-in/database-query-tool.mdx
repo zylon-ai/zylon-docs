@@ -1,0 +1,92 @@
+---
+title: "Herramienta de consulta a base de datos"
+description: "Consulta una base SQL desde lenguaje natural."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Usa Database Query para traducir lenguaje natural a SQL sobre una conexión configurada.
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+- Una cadena de conexión a la base de datos.
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "database_query", "type": "database_query_v1" }`
+- `tool_context`: un contexto `sql_database` con `connection_string`
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida el cuerpo de la petición y usa `tool_choice: none` para no conectar durante la validación.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 128,
+    "messages": [
+      { "role": "user", "content": "What were total Q1 subscriptions by plan?" }
+    ],
+    "tools": [
+      { "name": "database_query", "type": "database_query_v1" }
+    ],
+    "tool_choice": { "type": "none" },
+    "tool_context": [
+      {
+        "type": "sql_database",
+        "connection_string": "postgresql://{username}:{password}@db.example.com:5432/analytics",
+        "schemas": ["public"],
+        "ssl": true
+      }
+    ]
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages` y cambia `tool_choice` a `{ \"type\": \"auto\" }`.
+
+## Bloques de respuesta
+
+Zylon ejecuta esta herramienta en el servidor. La respuesta contiene un bloque `server_tool_use` con la llamada, seguido de un bloque `server_tool_result` con el resultado. El ID de la llamada empieza por `srvtoolu_`. No envíes un `tool_result` de vuelta para ella.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_5c6d", "name": "database_query", "input": { "query": "Total Q1 subscriptions by plan" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_5c6d",
+    "content": [{ "type": "text", "text": "Query result: \nplan,subscriptions\nPro,320\nTeam,145" }],
+    "is_error": false
+  }
+]
+```
+
+Error:
+
+```json
+{ "type": "server_tool_result", "tool_use_id": "srvtoolu_5c6d", "content": "At least one SQL database artifact is required.", "is_error": true }
+```
+
+`is_error` es `true` cuando la herramienta falla, y `content` contiene el mensaje de error.
+
+Consulta [Migración de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para ver la lista completa de bloques de herramientas de servidor.
+
+## Consejos
+
+- Usa un usuario de solo lectura.
+- Limita los esquemas (`schemas`) para acelerar la inspección.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/v1.58/developer-manual/build-with-zylon/working-with-messages)

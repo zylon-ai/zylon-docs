@@ -1,8 +1,10 @@
 #!/bin/bash
-current_dir=$(pwd)
+set -e
 
-cd $(dirname $0) || exit 1
-cd api-reference || exit 1
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
+# Demo tracks the upcoming release. Never overwrite the frozen 1.57 specs.
+cd "$script_dir/v1.58/api-reference" || exit 1
 
 host=$1
 token=$2
@@ -23,8 +25,8 @@ mint openapi-check pgpt.json || exit 1
 
 # Process the specs to update server URLs
 echo "Processing OpenAPI specs to update environment placeholders"
-$current_dir/process-spec.sh workspace.json workspace.json || exit 1
-$current_dir/process-spec.sh pgpt.json pgpt.json || exit 1
+"$script_dir/process-spec.sh" workspace.json workspace.json || exit 1
+"$script_dir/process-spec.sh" pgpt.json pgpt.json || exit 1
 
 mint openapi-check workspace.json || exit 1
 mint openapi-check pgpt.json || exit 1

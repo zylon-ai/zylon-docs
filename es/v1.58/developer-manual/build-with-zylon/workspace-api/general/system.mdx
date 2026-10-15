@@ -1,0 +1,32 @@
+---
+title: "Sistema"
+description: "Comprobaciones de salud para la disponibilidad del workspace."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Usa estos endpoints para verificar el estado del sistema.
+
+## Solicitud básica y respuesta
+
+Usa la comprobación de salud con `GET /api/health` para verificar la disponibilidad.
+
+```bash
+curl "https://{BASE_URL}/api/health"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "status": "ok",
+  "uptime": "3d 04:12:33",
+  "commit": "9f1c2a3"
+}
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **503**: comprobación de salud no disponible.

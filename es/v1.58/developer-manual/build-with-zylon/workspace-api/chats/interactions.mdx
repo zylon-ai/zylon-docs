@@ -1,0 +1,233 @@
+---
+title: "Interacciones"
+description: "Ejecuta y administra interacciones dentro de un hilo."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Las interacciones son intercambios individuales dentro de un hilo. Puedes crearlas, consultar detalles, cancelar trabajos en curso o ver el streaming de la salida.
+
+
+<Note>
+En 1.58, `created_by.id` identifica una cuenta. Si tu cliente lo compara con un ID de usuario del espacio de trabajo guardado, migra ese mapeo mediante la [API actual de miembros](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados). Los alias conservados no restauran la identidad antigua del creador.
+</Note>
+
+## Solicitud basica y respuesta
+
+Crea un turno con `POST /api/v1/app/thread/{threadID}/interaction`. El servidor incorpora el historial del hilo; envia solo el nuevo mensaje de usuario. La respuesta es `200` SSE, no un objeto JSON de interaccion.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo; se toma de la URL. |
+| Body | `thread_id` | No | Opcional; el ID de hilo de la URL tiene prioridad. |
+| Body | `pgpt` | Si | Exactamente un mensaje en `messages`, con `role: "user"`. Usa los campos de solicitud de Messages. |
+| Body | `artifacts` | No | Selecciones por alcance; consulta Seleccionar artefactos. |
+| Body | `agent` | No | `Default` (predeterminado) o `ProjectDeepResearch`. |
+</Accordion>
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
+  }'
+```
+
+El stream siguiente esta abreviado. Lee el evento inicial `interaction` para obtener el ID de la interaccion guardada y procesa los eventos de mensaje hasta `done`.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
+## Obtener una interaccion
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "{interactionID}",
+  "project_id": "{projectID}",
+  "thread_id": "{threadID}",
+  "state": "Completed",
+  "user_input": {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "Summarize the artifact in three bullets."
+      }
+    ]
+  },
+  "assistant_output": {
+    "id": "msg_example",
+    "type": "message",
+    "role": "assistant",
+    "created": 1770556870000,
+    "model": "default",
+    "stop_reason": "end_turn",
+    "content": [
+      {
+        "type": "text",
+        "text": "Ticket volume decreased this week."
+      }
+    ],
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 52
+    },
+    "errors": []
+  },
+  "artifacts": {
+    "document": [
+      {
+        "scope": "project",
+        "artifacts_ids": [
+          "{artifactID}"
+        ]
+      }
+    ]
+  },
+  "created_at": "2026-02-08T14:41:10Z",
+  "pgpt": {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Summarize the artifact in three bullets."
+          }
+        ]
+      }
+    ],
+    "max_tokens": 120,
+    "temperature": 0.2
+  }
+}
+```
+</Accordion>
+
+### Campos de respuesta de interaccion
+
+Los campos nulos pueden omitirse. Los mensajes anidados siguen [Messages](/es/v1.58/developer-manual/build-with-zylon/working-with-messages) y las cuentas siguen [Miembros del espacio de trabajo](/es/v1.58/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Campo | Tipo | Significado |
+| --- | --- | --- |
+| `id` | string | ID de interaccion generado por el servidor. |
+| `project_id` | string | Proyecto de la interaccion. |
+| `thread_id` | string or null | Hilo al que pertenece, cuando existe. |
+| `state` | string | `Processing`, `Completed`, `Error`. |
+| `user_input` | object | Mensaje del usuario: `role` y bloques `content`. |
+| `assistant_output` | object or null | Mensaje del asistente cuando existe; consulta el modelo de respuesta de Messages. |
+| `artifacts` | object or null | Selecciones de artefactos descritas abajo. |
+| `created_at` | timestamp | Fecha de creacion generada por el servidor. |
+| `created_by` | object or null | Datos de cuenta al pedir `include=Account` en la lista de interacciones. El ID del creador es un ID de cuenta. |
+| `pgpt` | object or null | Solicitud de chat guardada; consulta el modelo de solicitud de Messages. |
+
+Las selecciones siguen el [modelo de artefactos por alcance](/es/v1.58/developer-manual/build-with-zylon/workspace-api/chats/threads#seleccionar-artefactos).
+
+## Cancelar o eliminar una interaccion
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+Cancelar devuelve `204 No Content`. Eliminar devuelve `200` con la interaccion eliminada en el modelo de respuesta anterior.
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+## Streaming de una interaccion
+
+```bash
+curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Accept: text/event-stream"
+```
+
+El stream empieza desde el principio mientras existan eventos disponibles. Procesa `interaction`, eventos de mensaje, `error` y el evento final `done`; un stream no disponible o caducado puede informar del error dentro de SSE.
+
+El stream siguiente esta abreviado. Lee el evento inicial `interaction` para obtener el ID de la interaccion guardada y procesa los eventos de mensaje hasta `done`.
+
+<Accordion title="Ejemplo de stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
+## Errores y casos limite
+
+- **400**: la solicitud debe contener exactamente un mensaje de usuario; selecciones de artefactos invalidas.
+- **403**: permisos de proyecto insuficientes.
+- **404**: interaccion no encontrada en operaciones de detalle o modificacion.
+- **409**: la interaccion ya esta completada al cancelar.

@@ -1,0 +1,110 @@
+---
+title: "Proxy"
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Tip>
+Proxy support is available starting from Zylon 1.48 and CLI version 1.23
+</Tip>
+
+If your Zylon installation is running in a LAN network that requires a proxy for internet access,
+follow these steps to configure the proxy settings.
+
+<Steps>
+  <Step title="Determine your proxy type">
+    There are two types of proxies:
+
+    **SSL Inspection Proxy:**
+    - Intercepts and inspects HTTPS traffic
+    - Decrypts traffic using its own SSL certificate, then re-encrypts it
+    - Allows deep packet inspection and content filtering
+
+    **Transparent Proxy:**
+    - Forwards HTTPS traffic without inspecting it
+    - Does not modify SSL/TLS certificates
+    - Acts as a simple pass-through for encrypted connections
+
+    To determine which type you have, run the following command, replacing `your-proxy-address:port` with your proxy details:
+    ```bash
+    curl -x your-proxy-address:port -v https://example.com 2>&1 | grep -A 5 "Server certificate" | grep "issuer:"
+    ```
+
+    Look at the output:
+
+    - If you get an **SSL error**, you have an **SSL inspection proxy**
+    - If the command succeeds, check the `issuer` field:
+      - If the issuer is a public certificate authority (DigiCert, Let's Encrypt, etc.), 
+        you have a **transparent proxy**
+      - If the issuer is your organization's internal CA or proxy server name, 
+        you have an **SSL inspection proxy**
+  </Step>
+
+  <Step title="Configure the proxy settings">
+    Edit `/etc/zylon/zylon-conf.yaml` based on your proxy type:
+
+    <Tabs>
+      <Tab title="SSL Inspection Proxy">
+        ```yaml
+        proxy:
+          enabled: true
+          httpProxy: "http://your-proxy-address:port"
+          httpsProxy: "http://your-proxy-address:port"
+          noProxy: "your,no,proxy,exceptions"
+          crt: |-
+            -----BEGIN CERTIFICATE-----
+            MIIDoTCCAomgAwIBAgIGEAHcBPNvMA0GCSqGSIb3DQEBCwUAMCgxEjAQBgNVBAMM
+            ...
+            ipRF9TO2AlABfLmTR7uN8o0Opc92
+            -----END CERTIFICATE-----
+        ```
+
+        <Tip>
+        To obtain your proxy CA certificate, you can try running:
+        ```bash
+        echo | openssl s_client -showcerts -connect your-proxy-address:port 2>/dev/null | openssl x509
+        ```
+
+        Note that this may not work with all proxy providers. If it fails, contact your network administrator 
+        for the CA certificate.
+        </Tip>
+      </Tab>
+
+      <Tab title="Transparent Proxy">
+        ```yaml
+        proxy:
+          enabled: true
+          httpProxy: "http://your-proxy-address:port"
+          httpsProxy: "http://your-proxy-address:port"
+          noProxy: "your,no,proxy,exceptions"
+
+        replicated:
+          privateCASecret: ~
+        ```
+        <Danger>
+        Do not set the `crt` field for transparent proxies. If you require SSL inspection capabilities, you must reconfigure your proxy infrastructure for SSL inspection and then follow the instructions in the <b>SSL Inspection Proxy</b> tab above.
+        </Danger>
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Apply the configuration">
+    Run the sync command to apply the changes:
+    ```bash
+    sudo zylon-cli sync
+    ```
+  </Step>
+
+  <Step title="Restart services (optional, if your cluster was already running)">
+    If the cluster was running before applying the proxy settings, restart the k0s controller and 
+    recreate the Zylon pods:
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl restart k0scontroller
+    # Wait a few seconds until the cluster starts again
+    kubectl delete pods -n zylon --all
+    ```
+  </Step>
+</Steps>

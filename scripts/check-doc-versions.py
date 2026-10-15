@@ -36,9 +36,9 @@ def main():
             assert any(page.startswith(lang + ("/v1.58/" if upcoming else "/v1.57/")) for lang in ("en", "es")), page
             if not upcoming:
                 assert "/v1.58/" not in page, page
-            assert (ROOT / (page + ".mdx")).is_file() or (ROOT / page / "index.mdx").is_file(), page
+            assert (ROOT / (page + ".mdx")).is_file(), ("Navigation must match the canonical source filename", page)
         expected = {
-            path.relative_to(ROOT).as_posix().removesuffix(".mdx")
+            path.relative_to(ROOT).as_posix().removesuffix(".mdx").removesuffix("/index")
             for lang in ("en", "es")
             for path in (ROOT / lang / ("v1.58" if upcoming else "v1.57")).rglob("*.mdx")
             if upcoming or "/v1.58/" not in path.relative_to(ROOT).as_posix()
@@ -46,15 +46,25 @@ def main():
         assert not (expected - set(references)), ("Unregistered pages lose version context", expected - set(references))
         for lang in ("en", "es"):
             base = lang + ("/v1.58" if upcoming else "/v1.57")
-            home = (ROOT / base / "index.mdx").read_text()
+            home = (ROOT / base / "overview.mdx").read_text()
             assert f'href="/{base}/developer-manual/get-started/intro-to-zylon"' in home, base
+        assert len(references) == len(set(references)), "Duplicate canonical navigation references"
+        assert not any(page.endswith("/index") for page in references), "Navigation must use canonical paths"
         counts.append(len(references))
+
+    relative_pages = [{re.sub(r"/v1\.5[78]/", "/", page) for page in pages(v)} for v in versions]
+    assert relative_pages[0] == relative_pages[1], "Every page needs an equivalent article or availability page"
 
     preview_pages = [path for lang in ("en", "es") for path in (ROOT / lang / "v1.58").rglob("*.mdx")]
     snippets = list((ROOT / "snippets" / PREVIEW).rglob("*.mdx"))
     for path in preview_pages + snippets:
         text = path.read_text()
-        # The notice intentionally links back to stable documentation.
+        # Notices and historical upgrade guides explicitly identify their stable target.
+        if path.name == "1-57-0.mdx":
+            lang = path.relative_to(ROOT).parts[0]
+            stable_presets = f"/{lang}/v1.57/operator-manual/ai-presets/presets"
+            assert stable_presets in text, path
+            text = text.replace(stable_presets, f"/{lang}/v1.58/operator-manual/ai-presets/presets")
         if path.name != "upcoming-release.mdx":
             assert not re.search(r'\]\(/(?:en|es)(?:/(?!v1\.58/)|\))|href=["\']/(?:en|es)/(?!v1\.58/)', text), path
         if path in preview_pages:
@@ -73,7 +83,10 @@ def main():
         for path in (ROOT / lang / "v1.57").rglob("*.mdx"):
             relative = path.relative_to(ROOT / lang / "v1.57").as_posix().removesuffix(".mdx")
             old = "/" + lang + "/" + relative
-            assert redirects.get(old, "").startswith("/" + lang + "/v1.57/"), old
+            if "version-availability" in path.read_text():
+                assert redirects.get(old) == old.replace("/" + lang + "/", "/" + lang + "/v1.58/", 1), old
+            else:
+                assert redirects.get(old, "").startswith("/" + lang + "/v1.57/"), old
 
     for prefix in ("", PREVIEW):
         for name in ("workspace", "pgpt"):

@@ -35,3 +35,5 @@ mint dev --port 3010 --no-open
 ```
 
 Check version and language switching, an existing 1.57 API page, the matching 1.58 page, the migration guide, and an installation page with imported snippets. When 1.58 ships, change its selector label to `1.58`, move `default: true` to it, and remove the upcoming-release notice imports/usages from its pages. Update the expected default, label, and notice checks in `scripts/check-doc-versions.py` at the same time. Preserve the 1.57 URLs, compatibility redirects, and snapshots.
+
+Home pages use an explicit `overview` slug, and navigation entries omit `/index`, so Mintlify can match equivalent pages when switching releases. Root and `/index` URLs remain compatibility redirects. Hidden 1.57 landing pages explain topics first documented in 1.58 and link to that release, without asserting feature availability in 1.57. Historical 1.57 upgrade guides explicitly link to the frozen 1.57 preset reference even when read from the 1.58 snapshot.

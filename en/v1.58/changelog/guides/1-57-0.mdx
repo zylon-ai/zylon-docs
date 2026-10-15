@@ -7,6 +7,12 @@ import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
 
 <UpcomingRelease />
 
+### Before you start: identify the 1.57 models
+
+Check `ai.preset` in `/etc/zylon/zylon-conf.yaml` on the machine you are upgrading. Find that preset in the [1.57 AI Presets Reference](/en/v1.57/operator-manual/ai-presets/presets); its **Models** column lists the model IDs you need, including the embedding model. For a custom preset, use the model IDs in your preset configuration.
+
+Replace `<model_id>` throughout this guide with one of those IDs. Repeat each model download command for **every model required by your preset**. For a full-airgap installation, use the same IDs on the online and offline machines. This guide upgrades to **1.57**, so use the linked 1.57 reference even if you are reading it from the upcoming documentation.
+
 ### Step 1: Download the model and upgrade
 
 Follow the steps for your installation type.
@@ -31,7 +37,7 @@ Follow the steps for your installation type.
         ```
       </Step>
       <Step title="Download the model">
-        Replace `<model_id>` with the value from the table above.
+        Use the model IDs identified before these steps; download each required model.
 
         ```bash
         sudo zylon-cli models download <model_id>

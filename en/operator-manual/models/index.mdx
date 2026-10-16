@@ -1,0 +1,26 @@
+---
+title: "Overview"
+description: "Experimental models you can deploy with Zylon and how to configure each one"
+---
+
+import { LABELS } from "/snippets/models/labels.mdx";
+import { ZylonFamilyGrid } from "/snippets/components/zylon-models.mdx";
+import { qwen } from "/snippets/models/qwen.mdx";
+import { laguna } from "/snippets/models/laguna.mdx";
+import { glm } from "/snippets/models/glm.mdx";
+import { deepseek } from "/snippets/models/deepseek.mdx";
+import { minimax } from "/snippets/models/minimax.mdx";
+import { gemma } from "/snippets/models/gemma.mdx";
+
+Pick a model and the hardware you have, then copy the configuration into your Zylon configuration file. Each option also lists the models to download for airgap and semi-airgap installations and the first Zylon version that supports it.
+
+<ZylonFamilyGrid families={[qwen, laguna, glm, deepseek, minimax, gemma]} t={LABELS.en} base="/en/operator-manual/models" />
+
+## How the hardware is sized
+
+- **48GB, 96GB, 560GB, 1120GB**: total GPU memory needed. Set `ai.gpuCount` to the number of GPUs: the model is split across all of them, so their combined memory must reach that size (for example 4 x 141GB for 560GB).
+- **DGX Spark**: one NVIDIA DGX Spark.
+
+Models ship as NVFP4: Blackwell GPUs run them natively, older GPUs such as Hopper run them more slowly. Where a model also has an AWQ or GPTQ build, set `ai.quantization: awq` or `gptq` to use it instead.
+
+All presets, including base, alternative and deprecated ones, are listed in the [AI presets reference](/en/operator-manual/ai-presets/presets).

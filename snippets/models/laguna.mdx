@@ -1,0 +1,112 @@
+{/* Model catalogue data (Laguna). Operator-facing only: config to paste, hardware, airgap downloads,
+    minimum Zylon version. Source of truth: zylon-chart charts/zylon/setups/presets/experimental/**.
+    deps[].size: 48g | 96g | 560g | 1120g | dgx. deps[].gpus: example ai.gpuCount (null = omit).
+    deps[].min: Zylon version, or "unreleased". notes/quant keys are labelled in labels.mdx. */}
+
+export const laguna = {
+  "id": "laguna",
+  "name": "Laguna",
+  "vendor": "Poolside",
+  "license": "OpenMDW-1.1",
+  "models": [
+    {
+      "id": "laguna-xs-2-1",
+      "name": "Laguna XS 2.1",
+      "vision": false,
+      "kv": true,
+      "quant": [],
+      "downloads": [
+        "poolside/Laguna-XS-2.1-NVFP4",
+        "poolside/Laguna-XS-2.1-DFlash-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.laguna-xs-2-1-48g",
+          "use": "chat",
+          "size": "48g",
+          "gpus": null,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.laguna-xs-2-1-48g",
+          "use": "code",
+          "size": "48g",
+          "gpus": null,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "laguna-s-2-1",
+      "name": "Laguna S 2.1",
+      "vision": false,
+      "kv": true,
+      "quant": [],
+      "downloads": [
+        "poolside/Laguna-S-2.1-NVFP4",
+        "poolside/Laguna-S-2.1-DFlash-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.laguna-s-2-1-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.laguna-s-2-1-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.laguna-s-2-1-dgx",
+          "use": "code",
+          "size": "dgx",
+          "gpus": null,
+          "notes": [
+            "platformElsewhere"
+          ],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "laguna-m-1",
+      "name": "Laguna M.1",
+      "vision": false,
+      "kv": true,
+      "quant": [],
+      "downloads": [
+        "poolside/Laguna-M.1-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.laguna-m-1-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.laguna-m-1-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    }
+  ]
+};

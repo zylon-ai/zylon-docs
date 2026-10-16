@@ -1,0 +1,45 @@
+{/* Model catalogue data (MiniMax M3). Operator-facing only: config to paste, hardware, airgap downloads,
+    minimum Zylon version. Source of truth: zylon-chart charts/zylon/setups/presets/experimental/**.
+    deps[].size: 48g | 96g | 560g | 1120g | dgx. deps[].gpus: example ai.gpuCount (null = omit).
+    deps[].min: Zylon version, or "unreleased". notes/quant keys are labelled in labels.mdx. */}
+
+export const minimax = {
+  "id": "minimax",
+  "name": "MiniMax M3",
+  "vendor": "MiniMax",
+  "license": "MiniMax Model License",
+  "models": [
+    {
+      "id": "minimax-m3",
+      "name": "MiniMax M3",
+      "vision": false,
+      "kv": true,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/MiniMax-M3-NVFP4",
+        "Inferact/MiniMax-M3-EAGLE3-GQA",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.minimax-m3-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.minimax-m3-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    }
+  ]
+};

@@ -1,0 +1,131 @@
+{/* Model catalogue data (DeepSeek V4). Operator-facing only: config to paste, hardware, airgap downloads,
+    minimum Zylon version. Source of truth: zylon-chart charts/zylon/setups/presets/experimental/**.
+    deps[].size: 48g | 96g | 560g | 1120g | dgx. deps[].gpus: example ai.gpuCount (null = omit).
+    deps[].min: Zylon version, or "unreleased". notes/quant keys are labelled in labels.mdx. */}
+
+export const deepseek = {
+  "id": "deepseek",
+  "name": "DeepSeek V4",
+  "vendor": "DeepSeek",
+  "license": "MIT",
+  "models": [
+    {
+      "id": "deepseek-v4-flash",
+      "name": "DeepSeek V4 Flash",
+      "vision": false,
+      "kv": true,
+      "quant": [
+        "gptq"
+      ],
+      "downloads": [
+        "nvidia/DeepSeek-V4-Flash-0731-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.deepseek-v4-flash-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.deepseek-v4-flash-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "deepseek-v4-flash-vision",
+      "name": "DeepSeek V4 Flash Vision",
+      "vision": true,
+      "kv": true,
+      "quant": [],
+      "downloads": [
+        "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.deepseek-v4-flash-vision-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [
+            "fp8Only"
+          ],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "deepseek-v4-1-flash",
+      "name": "DeepSeek V4.1 Flash",
+      "vision": false,
+      "kv": true,
+      "quant": [
+        "gptq"
+      ],
+      "downloads": [
+        "nvidia/DeepSeek-V4.1-Flash-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.deepseek-v4-1-flash-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [
+            "ram256"
+          ],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.deepseek-v4-1-flash-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [
+            "ram256"
+          ],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4 Pro",
+      "vision": false,
+      "kv": true,
+      "quant": [],
+      "downloads": [
+        "nvidia/DeepSeek-V4-Pro-0813-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.deepseek-v4-pro-1120g",
+          "use": "chat",
+          "size": "1120g",
+          "gpus": 8,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.deepseek-v4-pro-1120g",
+          "use": "code",
+          "size": "1120g",
+          "gpus": 8,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    }
+  ]
+};

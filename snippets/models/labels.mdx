@@ -1,0 +1,34 @@
+{/* UI labels for the model catalogue, per language. */}
+
+export const LABELS = {
+  en: {
+    chat: "Chat", code: "Coding agents", dgx: "DGX Spark",
+    hardware: "Hardware", gpuMemory: "GPU memory in total", spark: "One NVIDIA DGX Spark (128GB unified memory)",
+    config: "Configuration", downloads: "Models to download (airgap and semi-airgap)", available: "Available from Zylon",
+    vision: "Images", textOnly: "Text only", quantAlso: "Also available with",
+    quantNote: "set ai.quantization to load the 4-bit integer build instead of NVFP4",
+    models: "models", model: "model",
+    notes: {
+      platformElsewhere: "The model uses almost all of the Spark's memory: run the Zylon platform on another host.",
+      fitsWithPlatform: "Fits on the same Spark as the Zylon platform.",
+      fp8Only: "Only an FP8 build exists, so ai.quantization does not apply.",
+      ram256: "The node needs at least 256GB of RAM (part of the model is kept in host memory).",
+      textOnly: "Text only on DGX Spark.",
+    },
+  },
+  es: {
+    chat: "Chat", code: "Agentes de programación", dgx: "DGX Spark",
+    hardware: "Hardware", gpuMemory: "de memoria GPU en total", spark: "Un NVIDIA DGX Spark (128GB de memoria unificada)",
+    config: "Configuración", downloads: "Modelos a descargar (airgap y semi-airgap)", available: "Disponible desde Zylon",
+    vision: "Imágenes", textOnly: "Solo texto", quantAlso: "También disponible en",
+    quantNote: "configura ai.quantization para cargar la versión entera de 4 bits en lugar de NVFP4",
+    models: "modelos", model: "modelo",
+    notes: {
+      platformElsewhere: "El modelo ocupa casi toda la memoria del Spark: ejecuta la plataforma Zylon en otro equipo.",
+      fitsWithPlatform: "Cabe en el mismo Spark que la plataforma Zylon.",
+      fp8Only: "Solo existe una versión FP8, así que ai.quantization no se aplica.",
+      ram256: "El nodo necesita al menos 256GB de RAM (parte del modelo se mantiene en la memoria del host).",
+      textOnly: "Solo texto en DGX Spark.",
+    },
+  },
+};

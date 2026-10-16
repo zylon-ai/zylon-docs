@@ -1,0 +1,61 @@
+{/* Model catalogue data (Gemma 4). Operator-facing only: config to paste, hardware, airgap downloads,
+    minimum Zylon version. Source of truth: zylon-chart charts/zylon/setups/presets/experimental/**.
+    deps[].size: 48g | 96g | 560g | 1120g | dgx. deps[].gpus: example ai.gpuCount (null = omit).
+    deps[].min: Zylon version, or "unreleased". notes/quant keys are labelled in labels.mdx. */}
+
+export const gemma = {
+  "id": "gemma",
+  "name": "Gemma 4",
+  "vendor": "Google",
+  "license": "Gemma Terms of Use",
+  "models": [
+    {
+      "id": "gemma-4-26b-a4b",
+      "name": "Gemma 4 26B A4B",
+      "vision": true,
+      "kv": true,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/Gemma-4-26B-A4B-NVFP4",
+        "google/gemma-4-26B-A4B-it-assistant",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.gemma-4-26b-a4b-48g",
+          "use": "chat",
+          "size": "48g",
+          "gpus": null,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-31b",
+      "name": "Gemma 4 31B",
+      "vision": true,
+      "kv": true,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/Gemma-4-31B-IT-NVFP4",
+        "google/gemma-4-31B-it-assistant",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.gemma-4-31b-96g",
+          "use": "chat",
+          "size": "96g",
+          "gpus": null,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    }
+  ]
+};

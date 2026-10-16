@@ -1,0 +1,106 @@
+{/* Model catalogue data (GLM 5). Operator-facing only: config to paste, hardware, airgap downloads,
+    minimum Zylon version. Source of truth: zylon-chart charts/zylon/setups/presets/experimental/**.
+    deps[].size: 48g | 96g | 560g | 1120g | dgx. deps[].gpus: example ai.gpuCount (null = omit).
+    deps[].min: Zylon version, or "unreleased". notes/quant keys are labelled in labels.mdx. */}
+
+export const glm = {
+  "id": "glm",
+  "name": "GLM 5",
+  "vendor": "Z.ai",
+  "license": "MIT",
+  "models": [
+    {
+      "id": "glm-5-2",
+      "name": "GLM-5.2",
+      "vision": false,
+      "kv": true,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/GLM-5.2-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.glm-5-2-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.glm-5-2-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "glm-5-3",
+      "name": "GLM-5.3",
+      "vision": false,
+      "kv": true,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/GLM-5.3-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.glm-5-3-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.glm-5-3-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    },
+    {
+      "id": "glm-5-3-flash",
+      "name": "GLM-5.3 Flash",
+      "vision": true,
+      "kv": false,
+      "quant": [
+        "awq"
+      ],
+      "downloads": [
+        "nvidia/GLM-5.3-Flash-NVFP4",
+        "mixedbread-ai/mxbai-embed-large-v1"
+      ],
+      "deps": [
+        {
+          "preset": "experimental.chat.glm-5-3-flash-560g",
+          "use": "chat",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        },
+        {
+          "preset": "experimental.code.glm-5-3-flash-560g",
+          "use": "code",
+          "size": "560g",
+          "gpus": 4,
+          "notes": [],
+          "min": "1.59"
+        }
+      ]
+    }
+  ]
+};

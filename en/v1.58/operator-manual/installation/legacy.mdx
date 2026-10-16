@@ -98,7 +98,8 @@ ai:
 # We will use this to identify your company in our anonymous metrics
 # You can set any identifier, if you have multiple installations
 # make the identifier different, for example, company, and company-test
-companyIdentifier: "your-company"
+global:
+  companyIdentifier: "your-company"
 
 # Enable anonymous metrics and crash reporting
 observability:
@@ -131,7 +132,7 @@ Fill in each required parameter using the values that match your environment:
 | `license.email`     | Your registered email  | Provided during registration                                                       |
 | `license.id`        | Your license key       | Received from Zylon team via email                                                 |
 | `ai.preset`         | Your hardware capacity | [See AI Presets →](/en/v1.58/operator-manual/ai-presets/presets) |
-| `companyIdentifier` | Your company name      | e.g., `acme-corp`                                                                  |
+| `global.companyIdentifier` | Your company name      | e.g., `acme-corp`                                                                  |
 | `ingress.host`      | Your domain            | e.g., `zylon.company.com`                                                          |
 | `ingress.enabled`   | `true`                 | Must be `true`                                                                     |
 

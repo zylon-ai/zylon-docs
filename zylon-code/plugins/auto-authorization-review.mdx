@@ -1,0 +1,30 @@
+---
+title: "Auto Authorization Review"
+description: "Understand the experimental same-model permission review before choosing it."
+noindex: true
+---
+
+This supplied experimental bundle starts disabled. It adds an **Auto review** access choice; enabling the bundle does not select that choice for your conversation.
+
+## Enable for a task
+
+1. Enable **Auto Authorization Review** under Plugins → Official.
+2. Open the conversation's permission picker.
+3. Select **Auto review** and read its confirmation.
+4. Confirm only if you accept the stated behavior; check the active access label.
+
+<Warning>
+Auto review runs without a sandbox. The same model as the current agent reviews native tool calls and PTC inner calls. It can wrongly allow or deny an action and consumes additional tokens. Calls it denies return to you for approval or rejection.
+</Warning>
+
+The review is not an independent security verifier. A tool's external service and operating-system restrictions still apply, and the model cannot guarantee that a requested action is harmless.
+
+## Return to another policy
+
+Select an ordinary [permission preset](/zylon-code/configuration/permissions) and verify it before continuing. Resolve an active Auto selection before disabling its provider; do not assume disabling silently converts it to Full access.
+
+Use this feature only for a task whose files, commands and external effects you understand. Inspect approvals and tool results, including rejected calls, in the conversation.
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/auto-authorization-review)

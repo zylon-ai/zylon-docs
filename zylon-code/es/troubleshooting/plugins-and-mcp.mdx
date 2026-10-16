@@ -1,0 +1,27 @@
+---
+title: "Problemas de plugins y MCPs"
+description: "Recupera instalación, activación, autenticación y descubrimiento sin descartar datos."
+noindex: true
+---
+
+Instalar un paquete, activarlo y utilizar sus herramientas son pasos diferentes. Empieza por el mensaje de la tarjeta del plugin o del servidor MCP.
+
+| Problema | Qué hacer |
+| --- | --- |
+| El paquete se ha descargado, pero no aparece la función | Comprueba que sea un paquete compatible, actívalo y revisa si necesita un proveedor adicional. |
+| Falla la instalación | Revisa la fuente, la versión y los avisos de scripts. Conserva la salida del instalador. |
+| Falla la activación | Consulta los campos y componentes que faltan y sigue el aviso de reinicio. |
+| No se puede crear un MCP | Comprueba la URL exacta o el ejecutable y sus argumentos, además de las credenciales. |
+| Falla o se cancela OAuth | Reintenta la creación o el inicio de sesión. Comprueba que el servidor admita el registro público y PKCE. |
+| La última prueba pasó, pero falla una llamada | Vuelve a probar la conexión y revisa los permisos de la tarea. |
+| Una mención impide enviar | Actualiza la referencia si el servidor se ha renombrado, eliminado o desactivado. |
+
+Para un comando local, comprueba que el ejecutable exista y que cada argumento esté en su campo. Para HTTP, utiliza la dirección MCP del servicio, no su página principal. Revisa los registros antes de compartirlos.
+
+Reactivar el gestor recupera los servidores guardados. Eliminar un servidor borra su configuración y credenciales. Puedes exportar los ajustes sin secretos, pero esta versión no permite importarlos desde el gestor.
+
+Después de corregir un modo personalizado, prueba una conversación nueva. Consulta [Gestionar plugins](/zylon-code/es/plugins/managing-plugins) y [MCPs](/zylon-code/es/plugins/mcp) para los pasos completos.
+
+---
+
+[Read this page in English](/zylon-code/troubleshooting/plugins-and-mcp)

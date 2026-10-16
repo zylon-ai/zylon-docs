@@ -1,0 +1,33 @@
+---
+title: "Plan mode"
+description: "Explore a task, review an implementation plan and explicitly transition to execution."
+noindex: true
+---
+
+Plan mode lets you investigate a task and review a proposal before implementation. It is available in Standard, PTC and Creator.
+
+## Request a plan
+
+Choose **Plan** in the **+** menu or enter `/plan`, then explain the outcome:
+
+> Plan how to add pagination to the search results. Inspect the existing API and components. Propose changes, edge cases, tests and completion criteria. Do not implement it yet.
+
+The agent should inspect the project without modifying it and ask about decisions it cannot resolve from the available information. Answering these questions does not approve implementation.
+
+## Review and proceed
+
+The plan appears with a review interaction. Check scope, assumptions, affected files and validation. Use its controls to approve implementation or request revisions.
+
+If that interaction is unavailable, leave planning through the available controls and check the indicator before requesting execution. Agreement in the chat alone does not end the planning state.
+
+## Select permissions too
+
+Tools can remain available while planning. Choose an appropriate [permission preset](/zylon-code/configuration/permissions), such as Read Only, when you want execution restrictions during the investigation. Minimal does not include integrated planning.
+
+<Frame caption="Drafting a planning request with /plan">
+  <img src="/images/zylon-code/screenshots/modes-plan-mode-en.jpg" alt="Drafting a planning request with /plan" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/modes/plan-mode)

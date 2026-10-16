@@ -1,0 +1,30 @@
+---
+title: "Problemas de herramientas y permisos"
+description: "Encuentra la causa de herramientas ausentes, acciones bloqueadas y fallos de ejecución."
+noindex: true
+---
+
+Despliega la tarjeta de la herramienta que ha fallado y lee la acción solicitada y su resultado antes de cambiar permisos.
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| Falta una herramienta | Comprueba el modo y los plugins activados. Confirma que su proveedor esté configurado. |
+| Se bloquea una escritura | Abre el selector de permisos y revisa la ruta de destino y las restricciones de acceso. |
+| No se encuentra un comando | Comprueba que el ejecutable esté instalado y disponible para la aplicación en este ordenador. |
+| Se agota el tiempo de un comando | Revisa su límite y consulta la lista de procesos para saber si sigue funcionando. |
+| Una edición no encuentra el texto | Pide al agente que vuelva a leer el archivo actual antes de reintentar. |
+| No se puede utilizar una captura | Elige un modelo compatible con imágenes y comprueba el proveedor de control. |
+| Falla una vista previa de Office | Conserva el archivo editable y revisa las opciones de vista previa y conversión de tu versión. |
+| Tú puedes navegar, pero el agente no | Configura la automatización: abrir el panel de navegador no la activa. |
+
+## Recupera sin ampliar el acceso por defecto
+
+Pide una comprobación más pequeña de solo lectura o una explicación del requisito que falta. Más acceso no añade un proveedor ni corrige una API incompatible.
+
+Antes de reintentar, revisa archivos y procesos para saber qué acciones se han completado. Aprueba únicamente la operación cuyo destino y efectos aceptes.
+
+Consulta [Permisos](/zylon-code/es/configuration/permissions), [Shell](/zylon-code/es/tools/shell-and-jobs), [Documentos](/zylon-code/es/tools/documents) y la guía del plugin afectado. Si se ha recortado la salida, acota la petición para obtener el resultado que falta.
+
+---
+
+[Read this page in English](/zylon-code/troubleshooting/tools-and-permissions)

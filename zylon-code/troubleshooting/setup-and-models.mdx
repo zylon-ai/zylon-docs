@@ -1,0 +1,25 @@
+---
+title: "Setup and model problems"
+description: "Diagnose startup, authentication, discovery and model request failures."
+noindex: true
+---
+
+Start with the operation that failed and its exact error. Opening the application, saving a connection, listing models and completing a model task are separate checks.
+
+| Symptom | What to do |
+| --- | --- |
+| The application does not open | Confirm you have the build for your system and follow the supplied installation instructions. Keep any startup error for support. |
+| Zylon cannot verify or save a connection | Check the developer token and full API URL, then retry. Failed verification keeps the previous settings, token and catalog. |
+| A saved Zylon connection fails during a task | Open Settings → Models and check the full API URL, gateway token and Anthropic Messages support. |
+| No models appear after discovery | Refresh the list and check the server protocol. Try a small task with the configured model to test access. |
+| The saved model is unavailable | Configure its provider or choose another model in the composer. |
+| An image is rejected | Check the model's image option and the actual server's image support. |
+| A proxy or certificate error appears | Ask the administrator to check proxy and trusted-certificate settings, then restart the application. |
+
+Use a small read-only task to test both a reply and a tool call. Save the error text with secrets removed. Keep tokens in credential fields rather than pasting them into a conversation.
+
+If your project list is empty, check your [data location](/zylon-code/configuration/data-and-backups) before resetting anything. Continue with [connection setup](/zylon-code/getting-started/connect-to-zylon) or [network guidance](/zylon-code/advanced/network-and-offline) for the affected area.
+
+---
+
+[Leer esta página en español](/zylon-code/es/troubleshooting/setup-and-models)

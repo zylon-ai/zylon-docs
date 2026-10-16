@@ -1,0 +1,34 @@
+---
+title: "Permisos y autorizaciones"
+description: "Elige el acceso de la tarea y responde a las solicitudes de autorización."
+noindex: true
+---
+
+Los permisos determinan qué operaciones puede realizar el agente. Elige una opción en el cuadro de mensajes o escribe `/permission`. En los ajustes generales puedes establecer el valor predeterminado de las conversaciones nuevas.
+
+| Permiso | Cuándo utilizarlo |
+| --- | --- |
+| Solo lectura | Investigar un proyecto sin las escrituras habituales en sus archivos. Algunas operaciones aún pueden requerir autorización. |
+| Escritura en el espacio de trabajo | Editar dentro del proyecto con las restricciones y autorizaciones configuradas. |
+| Acceso completo | Trabajar con acceso más amplio cuando entiendas y aceptes los efectos de la tarea. |
+| Revisión automática | Dejar que el plugin experimental revise las acciones solicitadas; lee antes su [guía](/zylon-code/es/plugins/auto-authorization-review). |
+
+Un **sandbox** es una restricción de ejecución que limita el acceso a archivos, procesos o la red. El permiso combina esas restricciones con las reglas para pedir autorización. Su aplicación puede variar según el sistema operativo y la configuración de tu organización.
+
+## Responde a una solicitud
+
+Lee la acción, los archivos afectados, el destino externo y el motivo. Apruébala si sus efectos corresponden a tu tarea. Si no, recházala y pide al agente que continúe con el acceso que ya tiene.
+
+Elegir Acceso completo muestra una confirmación. Comprueba después la etiqueta activa. La revisión automática necesita que actives su plugin y la selecciones para la conversación.
+
+## Planificación y acceso
+
+El [modo de planificación](/zylon-code/es/modes/plan-mode) pide al agente que investigue y proponga los cambios antes de implementarlos. Las herramientas pueden seguir disponibles. Selecciona también Solo lectura si quieres limitar su ejecución durante la investigación.
+
+<Frame caption="Elegir los permisos de una tarea">
+  <img src="/images/zylon-code/screenshots/configuration-permissions-es.jpg" alt="Elegir los permisos de una tarea" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/configuration/permissions)

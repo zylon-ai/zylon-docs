@@ -1,0 +1,31 @@
+---
+title: "Slash commands"
+description: "Look up built-in composer actions and their prerequisites."
+noindex: true
+---
+
+Type `/` or use **+** to open the command menu. Your mode and enabled plugins determine which commands appear. User-invocable skills share the menu but are separate instruction documents.
+
+| Command / action | Purpose |
+| --- | --- |
+| `/model` | Select a model from the configured providers. |
+| `/permission` | Select the current session's access preset. |
+| `/plan` | Enter planning with a task; supported rich presets only. |
+| `/goal` | Add/manage an objective through the goal interaction. |
+| `/compact` | Compact active model context where the mode supports it. |
+| `/export` | Open the selected conversation's download workflow. |
+| `/feedback` | Open feedback input when the feature is available. |
+| `/skill-name` | Load a user-invocable installed skill. |
+| File action | Add an attachment through the same composer menu. |
+
+## Invocation
+
+Choose a row and follow its popup/input. Some commands execute directly; others open a selector or require arguments. A recognized command failure is not silently converted into an ordinary prompt. Check the displayed error and retained draft before retrying.
+
+Attachments are accepted only by commands that declare support. If refused, keep the draft/attachments and choose a supported route. A skill name colliding with an application command remains the command.
+
+Localized menu labels can differ from literal command names. Use the actual suggestions in your interface and the canonical names above for examples. Optional plugins can add commands; inspect their guide rather than assuming every deployment has the same list.
+
+---
+
+[Leer esta página en español](/zylon-code/es/reference/commands)

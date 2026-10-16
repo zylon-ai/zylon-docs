@@ -52,7 +52,10 @@ def validate_normalized_redirects(redirects):
 
 def main():
     config = json.loads((ROOT / "docs.json").read_text())
-    versions = config["navigation"]["versions"]
+    navigation = config["navigation"]
+    if "products" in navigation:
+        navigation = next(product for product in navigation["products"] if product["product"] == "Zylon")
+    versions = navigation["versions"]
     assert versions[0]["version"] == "1.57" and versions[0]["default"] is True
     assert versions[1]["version"] == "1.58 (Upcoming release)"
     counts = []

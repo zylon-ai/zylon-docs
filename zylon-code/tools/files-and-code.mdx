@@ -1,0 +1,29 @@
+---
+title: "Files and code"
+description: "Ask for focused reads, searches and edits, then inspect their exact results."
+noindex: true
+---
+
+The normal presets provide tools for listing/searching paths, reading text, viewing supported images, writing files and replacing text. Minimal performs file work through its shell instead.
+
+## Investigate
+
+> Find where the login form validates email addresses. Read the relevant implementation and tests. Report the files and line references without editing them.
+
+Specify a subfolder or filename pattern when possible. Search results can be capped; an incomplete listing does not prove that no other matches exist. Ask the agent to narrow the query when output is truncated.
+
+## Make a change
+
+> Update the validation message in the existing implementation. Preserve unrelated changes and run the focused test. Show the resulting diff.
+
+The agent should inspect the current file before editing. If you changed it in another editor during the task, tell the agent to re-read it. Unique text replacement can fail when the expected text is absent or appears more than once; that needs a new read, not repeated blind edits.
+
+Relative paths resolve from the working project. Files outside it need the appropriate access. An `@` mention does not bypass that restriction. Image reading also requires image-capable model metadata.
+
+## Verify
+
+Open the file and [review its diff](/zylon-code/everyday-use/reviewing-results). The optional [Zylon Diff Review](/zylon-code/plugins/diff) panel also lets you keep or revert changes and send comments to the agent. File tools write immediately when permitted; there is no implicit commit or automatic rollback on Stop. Use the project's normal tests and version-control workflow before releasing a change.
+
+---
+
+[Leer esta página en español](/zylon-code/es/tools/files-and-code)

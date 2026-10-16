@@ -1,0 +1,45 @@
+---
+title: "Hardening: trabajar con agentes de forma más fiable"
+description: "Prepara el proyecto, las instrucciones y las comprobaciones para que el agente tenga menos cosas que adivinar."
+noindex: true
+---
+
+Un agente puede editar bien un archivo y, aun así, resolver el problema equivocado. También puede entender lo que le pides y fallar porque falta una dependencia, una prueba no comprueba lo que debería o la información útil se ha perdido en una conversación larga. Cambiar de modelo no resuelve por sí solo todos estos problemas.
+
+**Hardening** consiste en preparar el proyecto y la forma de trabajar para que el agente tenga menos cosas que adivinar y puedas detectar sus errores. En esta sección hablamos de fiabilidad y de medidas de control: tareas claras, contexto útil, herramientas que funcionen, comprobaciones independientes y una forma de retomar el trabajo sin perder información.
+
+## ¿Qué es un harness?
+
+El **modelo** propone texto y llamadas a herramientas. El **harness** es el software que lo rodea: le proporciona instrucciones y contexto, ejecuta las herramientas permitidas, devuelve sus resultados y gestiona la conversación. Zylon Code ofrece ese entorno mediante modos, herramientas, permisos, plugins y sesiones. Las instrucciones del proyecto, sus comandos de prueba y la definición de cada tarea completan la preparación.
+
+Un mensaje puede pedir al agente que ejecute una prueba. Los permisos determinan qué operaciones puede realizar. La prueba comprueba un comportamiento concreto. Son funciones distintas: escribir «ten cuidado» no sustituye los controles de acceso ni las comprobaciones que puedes ejecutar.
+
+## Un ejemplo para toda la sección
+
+Imagina un buscador que muestra un error cuando la consulta está vacía. Queremos que una consulta vacía o formada solo por espacios muestre todos los elementos, conserve su orden y no estropee los filtros habituales.
+
+Usaremos este caso para explicar cómo definir la tarea, encontrar el código relevante, comprobar el resultado y dejar información suficiente para la siguiente sesión. Los nombres de archivos y los comandos son ejemplos; utiliza los que tenga tu proyecto.
+
+| Parte de la preparación | Qué evita en este ejemplo |
+| --- | --- |
+| Una tarea precisa | Cambiar la ordenación o rediseñar el buscador sin necesidad |
+| Contexto relevante del proyecto | Corregir una función con un nombre parecido que la pantalla no utiliza |
+| Un comando de prueba que funcione | Confundir la falta de un entorno de ejecución con un fallo del código |
+| Una prueba específica del fallo | Dar el trabajo por terminado sin comprobar la consulta vacía |
+| Una revisión de cambios y un resumen para continuar | Perder de vista ediciones ajenas o comprobaciones pendientes |
+
+## Empieza con lo que necesitas
+
+No hace falta añadir un plugin ni escribir un archivo enorme de instrucciones. Empieza con una tarea acotada, los archivos relevantes, un comando de comprobación existente y un informe final que distinga lo observado de lo supuesto. Añade más estructura cuando un fallo recurrente te indique qué falta.
+
+Esto resulta especialmente útil con modelos pequeños: reducir las decisiones innecesarias puede facilitar que completen una tarea y que tú la revises. No les da capacidades que no tienen. Compara los resultados en tus propias tareas y cambia de modelo o pide ayuda a una persona si el trabajo sigue atascado.
+
+Los capítulos siguen el orden de una tarea real. Léelos una vez de principio a fin y vuelve después a la técnica que necesites. Empieza por [definir bien la tarea](/zylon-code/es/hardening/task-briefs).
+
+## Fuentes y lecturas recomendadas
+
+Esta sección toma como referencia las 14 lecciones de [Learn Harness Engineering, de Walkinglabs](https://walkinglabs.github.io/learn-harness-engineering/es/). Adaptamos las ideas a Zylon Code, con ejemplos propios. Puedes empezar por [por qué fallan los agentes](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-01-why-capable-agents-still-fail/) y [qué hace un harness](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-02-what-a-harness-actually-is/). Las demostraciones y las cifras del curso son ilustrativas; no garantizan el rendimiento de Zylon ni de tu modelo.
+
+---
+
+[Read this page in English](/zylon-code/hardening/overview)

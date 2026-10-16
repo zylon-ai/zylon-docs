@@ -1,0 +1,35 @@
+---
+title: "Tareas automatizadas"
+description: "Programa trabajo local y comprueba su entrega y resultado."
+noindex: true
+---
+
+Las tareas automatizadas programan trabajo local para más adelante o de forma recurrente. Están incluidas, pero desactivadas en una instalación nueva. Activa **Plugins → Oficiales → Tareas automatizadas** y sigue los avisos de reinicio.
+
+## Crea una tarea
+
+Selecciona **Tareas automatizadas → Nueva**. Se abre una conversación donde puedes pedir la programación:
+
+> Crea una tarea llamada Revisión diaria. Cada día laborable a las 09:00, con zona horaria Europe/Madrid, lee la lista del proyecto e informa del trabajo pendiente. No edites archivos.
+
+Comprueba en la tarjeta guardada la instrucción, repetición, zona horaria, próxima ejecución y conversación asociada. Utiliza **Reglas** para editarla y **Registros de entrega** para consultar los mensajes programados.
+
+## Mantén Zylon Code abierto
+
+La aplicación debe seguir funcionando y el ordenador tiene que estar despierto. No hay un ejecutor en la nube ni encendido automático. El trabajo continúa en la conversación original con su modelo y credenciales.
+
+Utiliza una zona como `Europe/Madrid`. Una hora diaria sigue los cambios de horario de verano; un intervalo de 24 horas no. Los intervalos deben ser de al menos 60 segundos. Tras un retraso o reinicio, una tarea recurrente envía solo el último mensaje pendiente; una tarea única puede llegar tarde.
+
+## Detén o elimina
+
+No hay pausa individual. Desactivar el paquete conserva los registros y reactivarlo puede enviar un mensaje que haya quedado pendiente. **Eliminar tarea** borra la tarea y sus registros tras confirmar, pero mantiene la conversación.
+
+Un registro de entrega indica que se ha añadido el mensaje programado, no que el agente haya terminado el trabajo. Revisa el resultado en el chat. Si la ejecución falla, no hay un temporizador de reintento independiente; recuperarse de un cierre inesperado puede duplicar una entrega.
+
+<Frame caption="Una tarea automatizada de ejemplo programada para 2099">
+  <img src="/images/zylon-code/screenshots/plugins-automation-tasks-es.jpg" alt="Una tarea automatizada de ejemplo programada para 2099" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/plugins/automation-tasks)

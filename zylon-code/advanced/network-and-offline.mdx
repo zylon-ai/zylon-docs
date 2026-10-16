@@ -1,0 +1,25 @@
+---
+title: "Network and offline operation"
+description: "Prepare proxies, certificates and dependencies without treating an internal gateway as offline proof."
+noindex: true
+---
+
+Zylon Code can connect to an internal model gateway. Tools, plugins and project commands may still need other network services. Your organization's configuration determines whether the application can work without public internet access.
+
+## Corporate proxies and certificates
+
+If your network uses a proxy or TLS inspection, ask your administrator to prepare the application's connection settings and trusted certificates. Restart Zylon Code after changing its launch environment. A browser that opens the gateway does not confirm the application's model connection uses the same proxy or certificate trust.
+
+The local runtime reads `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` and `NO_PROXY` at startup. Its proxy path supports HTTP proxies and host/domain exclusions, with direct loopback access. It does not support SOCKS or CIDR exclusions through this path.
+
+Additional certificate trust can use `NODE_EXTRA_CA_CERTS` in the approved launch environment. Keep certificate verification enabled. Commands and MCP processes can inherit proxy variables, so avoid printing their values when collecting diagnostics.
+
+## Working without public internet
+
+Ask for an installation prepared for your network. Required model services, document tools, browser components and plugin sources must be available locally or on an approved internal service.
+
+Check startup, a model task, tool use and reopening a conversation in that environment. See [Privacy](/zylon-code/configuration/privacy) for possible destinations and [Availability](/zylon-code/reference/availability) for optional features.
+
+---
+
+[Leer esta página en español](/zylon-code/es/advanced/network-and-offline)

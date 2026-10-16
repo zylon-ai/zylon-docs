@@ -1,0 +1,34 @@
+---
+title: "Permissions and approvals"
+description: "Choose task access and respond to approval requests."
+noindex: true
+---
+
+Permissions determine which operations the agent may perform. Choose a preset in the composer or enter `/permission`. In General settings, you can set a default for future conversations.
+
+| Preset | When to use it |
+| --- | --- |
+| Read Only | Investigate a project without ordinary writes to its files. Some operations can still require approval. |
+| Workspace Write | Edit within the project under the configured sandbox and approval policy. |
+| Full access | Run with broader access when you understand and accept the task's effects. |
+| Auto review | Let the optional experimental plugin review requested actions; read its [guide](/zylon-code/plugins/auto-authorization-review) first. |
+
+A **sandbox** is an execution restriction that limits access to files, processes or the network. The preset combines these restrictions with rules for requesting approval. Enforcement can vary by operating system and your organization's configuration.
+
+## Respond to an approval
+
+Read the requested action, affected files, external destination and reason. Approve it if those effects match your task, or reject it and ask the agent to continue within its current access.
+
+Selecting Full access shows a confirmation. Check the active label afterward. Auto review requires both its enabled plugin and your selection in the conversation.
+
+## Planning and access
+
+[Plan mode](/zylon-code/modes/plan-mode) asks the agent to investigate and propose changes before implementing them. Its tools can remain available. Select Read Only as well when you want execution restrictions during that investigation.
+
+<Frame caption="Choosing a task’s permissions">
+  <img src="/images/zylon-code/screenshots/configuration-permissions-en.jpg" alt="Choosing a task’s permissions" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/configuration/permissions)

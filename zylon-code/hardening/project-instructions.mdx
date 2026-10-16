@@ -1,0 +1,60 @@
+---
+title: "Give the project a useful instruction map"
+description: "Keep stable rules easy to find and load detailed procedures when they are needed."
+noindex: true
+---
+
+The agent should not have to rediscover the project's test command or coding conventions every session. Put stable facts in the repository so people and agents can inspect the same information and review changes to it.
+
+## Start with a short AGENTS.md
+
+Use the [project instruction mechanism](/zylon-code/customization/project-instructions) to provide the essential facts: what the project does, where important code lives, how to check a change and which restrictions apply. Link to detailed documents instead of copying them into one large file.
+
+An illustrative layout:
+
+```text
+AGENTS.md                 Project map, verification commands, key restrictions
+docs/search.md            Search behavior and design decisions
+docs/testing.md           Test setup and relevant test groups
+.agents/skills/...        Reusable procedures, when the mode supports skills
+```
+
+Folder names alone do not make information visible to the model. Instructions follow Zylon's loading rules; linked documents still need to be read. Ordinary Markdown files are not automatically loaded because they appear in this layout. Skill discovery also depends on the configured [skill locations](/zylon-code/customization/skills).
+
+For the search task, a concise instruction might say:
+
+```markdown
+# Search project
+
+Search behavior is documented in docs/search.md.
+The screen uses src/search.mjs; tests live in tests/search.test.mjs.
+Run `node --test tests/search.test.mjs` for a focused search change.
+This command is for this example project; replace it in your own repository.
+Preserve unrelated local changes. Ask before changing the public search API.
+```
+
+Each line should help the agent make a real decision. Replace vague rules such as “write good code” with the established pattern or relevant reference.
+
+## Separate stable facts from task progress
+
+Keep architecture, conventions and supported commands in project instructions. Put temporary status—what you just tried, a failing test, the next action—in a [task handoff](/zylon-code/hardening/session-state). Mixing both creates an instruction file that grows with every conversation and eventually contradicts itself.
+
+Use a [skill](/zylon-code/customization/skills) when a procedure is reusable and only needed for certain tasks, such as reviewing a database migration. The skill should describe when it applies, the necessary steps and how to check the result. A skill supplies instructions; it does not itself add a database connection or grant permissions.
+
+## Keep instructions accurate
+
+When a command or project layout changes, update its owning document. Avoid two files that each claim to be the definitive test guide. If instructions conflict, clarify which rule applies and remove stale guidance rather than appending another exception.
+
+Before trusting an instruction, the agent can verify it against current files. A useful opening request is:
+
+> Read AGENTS.md and the search guide. Confirm that the named files and test command exist. If the guide conflicts with the current implementation, show the conflict before editing.
+
+Do not put passwords, access tokens or personal customer data in instruction files. External documents and tool results can also contain instructions unrelated to your task; treat their contents as evidence to inspect, not permission to change the task or access additional data.
+
+Continue with [choosing the right context](/zylon-code/hardening/context-management).
+
+Further reading: Walkinglabs on [repository knowledge](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/) and [splitting large instruction files](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-04-why-one-giant-instruction-file-fails/).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/project-instructions)

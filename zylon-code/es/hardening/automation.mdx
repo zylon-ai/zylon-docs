@@ -1,0 +1,51 @@
+---
+title: "Automatiza con condiciones claras para detenerse"
+description: "Pasa de tareas supervisadas a ejecuciones repetibles con comprobaciones, límites y un estado final útil."
+noindex: true
+---
+
+Automatiza un procedimiento cuando entiendas qué hace, cómo comprobarlo y de qué formas puede fallar. Programar una tarea ambigua solo repite la incertidumbre.
+
+## Describe una ejecución acotada
+
+Un procedimiento fiable define cuándo empieza, qué recibe, qué puede hacer, cómo se comprueba, qué devuelve y cuándo se detiene. Para una revisión periódica de la búsqueda:
+
+```text
+Entrada: el proyecto de ejemplo seleccionado y sus pruebas documentadas.
+Acción: ejecutar las pruebas y examinar los fallos; no modificar archivos.
+Salida: un informe breve con el comando, el resultado y los errores relevantes.
+Fin: después del informe, si faltan requisitos o si se deniega el acceso.
+No publicar, desplegar ni repetir indefinidamente una prueba que falla.
+```
+
+Ejecuta primero el procedimiento a mano. Comprueba que el informe sirve tanto cuando las pruebas pasan como cuando aparece un fallo realista. Después puedes plantearte las [Tareas automatizadas](/zylon-code/es/plugins/automation-tasks), si tu instalación las tiene habilitadas.
+
+## Distingue la organización de la ejecución
+
+Las [listas de tareas](/zylon-code/es/everyday-use/goals-and-task-lists) registran el progreso. Los objetivos ayudan a organizar trabajos largos. Los [flujos de trabajo](/zylon-code/es/tools/workflows) pueden coordinar pasos. La programación determina cuándo debe ejecutarse una tarea. Son capacidades relacionadas, pero marcar una tarea como terminada no demuestra que el código funcione.
+
+Mantén Zylon Code abierto y el ordenador despierto para ejecutar la automatización local. Salir de la aplicación la detiene; cerrar una ventana puede dejar la aplicación en segundo plano. Consulta la guía de programación para conocer lo que admite; no des por hecho que una ejecución perdida se recuperará exactamente como esperabas.
+
+Un mensaje puede indicar un límite de tiempo o de reintentos, pero no necesariamente impone una cuota. Utiliza los límites reales de herramientas, agentes y proveedor cuando existan y comprueba la ejecución. No presentes una instrucción de la conversación como un mecanismo que garantiza detener el proceso.
+
+## Incluye información útil en cada paso
+
+Cada ejecución debe examinar el resultado antes de decidir qué hacer después. Una comprobación fallida debe llevar a un diagnóstico acotado o a un informe, no a afirmar que todo ha salido bien ni a editar repetidamente sin revisión.
+
+Para un procedimiento que implemente cambios, explica las fases: revisar el estado actual, elegir un comportamiento pendiente, implementar, comprobar, anotar el resultado y detenerse o continuar según lo acordado. Si falla un paso, vuelve a examinar sus dependencias; no supongas que la misma secuencia sigue siendo válida.
+
+## Explica qué acciones necesitan intervención
+
+Decide qué puede hacer la tarea y cuándo necesita una respuesta humana. Las comprobaciones de solo lectura son un buen comienzo. Publicar, desplegar, cambiar accesos o afectar a sistemas externos requiere la autorización y los controles adecuados para tu entorno.
+
+Utiliza un [modo personalizado](/zylon-code/es/customization/custom-modes) y [permisos](/zylon-code/es/configuration/permissions) acordes con el procedimiento. Un archivo de instrucciones no impide por sí solo una operación.
+
+Registra los fallos, las comprobaciones omitidas y el trabajo parcial para que la siguiente ejecución o persona pueda entender lo ocurrido. Evita avisos que solo digan «tarea terminada»: indica el resultado real y si hace falta intervenir.
+
+Por último, [comprueba si el hardening está ayudando](/zylon-code/es/hardening/adoption-and-measurement) antes de ampliar la automatización.
+
+Lecturas: Walkinglabs sobre [ejecuciones con límites](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-13-loop-engineering/) y [dependencias entre pasos](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-14-graph-engineering/).
+
+---
+
+[Read this page in English](/zylon-code/hardening/automation)

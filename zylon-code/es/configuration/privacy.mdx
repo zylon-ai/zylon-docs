@@ -1,0 +1,30 @@
+---
+title: "Privacidad y servicios externos"
+description: "Comprende el almacenamiento local y los datos que utilizan modelos, herramientas y plugins."
+noindex: true
+---
+
+Zylon Code guarda las conversaciones y los ajustes de proyecto en tu ordenador. Las peticiones al modelo se envían al proveedor que configures. Pueden incluir tus mensajes, instrucciones, contenido relevante de archivos, resultados de herramientas e imágenes compatibles.
+
+## Dónde pueden enviarse los datos
+
+| Función | Destino |
+| --- | --- |
+| Conexión de modelos de Zylon | El gateway configurado y los servicios que ejecutan sus modelos. |
+| Otro proveedor | El servicio de modelos de ese proveedor. |
+| MCP | El servidor conectado o los servicios que utilice un comando MCP local. |
+| Lectura y búsqueda web | La página solicitada o el proveedor de búsqueda. |
+| Instalación de plugins | El registro de paquetes o la fuente elegida. |
+| Comandos y acciones del navegador | Los servicios que utilice el comando o la página. |
+
+Trabajar con una aplicación local no significa que toda la tarea se procese en tu ordenador. Un gateway interno tampoco impide que una herramienta o un plugin contacte con otro servicio. [Red y funcionamiento sin conexión](/zylon-code/es/advanced/network-and-offline) explica las restricciones gestionadas por la organización.
+
+## Antes de utilizar datos sensibles
+
+Usa los proveedores y las integraciones que apruebe tu organización. Guarda los tokens en los campos protegidos. Revisa exportaciones, capturas, resultados de comandos y archivos de diagnóstico antes de compartirlos.
+
+Los plugins de terceros ejecutan código local y pueden realizar sus propias peticiones de red. Comprueba sus requisitos y la política de datos del proveedor antes de activarlos. [Permisos](/zylon-code/es/configuration/permissions) explica cómo limitar las operaciones de una tarea.
+
+---
+
+[Read this page in English](/zylon-code/configuration/privacy)

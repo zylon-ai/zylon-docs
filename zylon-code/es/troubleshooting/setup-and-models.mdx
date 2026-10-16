@@ -1,0 +1,25 @@
+---
+title: "Problemas de inicio y modelos"
+description: "Diagnostica inicio, autenticación, descubrimiento y peticiones al modelo."
+noindex: true
+---
+
+Empieza por la operación que ha fallado y su error exacto. Abrir la aplicación, guardar una conexión, consultar modelos y completar una tarea son comprobaciones distintas.
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| La aplicación no se abre | Comprueba que tienes la versión para tu sistema y sigue las instrucciones de instalación. Conserva el error de inicio para soporte. |
+| Zylon no puede verificar o guardar una conexión | Revisa el token de desarrollador y la URL de API completa e inténtalo de nuevo. Una verificación fallida conserva los ajustes, el token y el catálogo anteriores. |
+| La conexión de Zylon se guarda, pero falla la tarea | Abre Ajustes → Modelos y comprueba la URL de API completa, el token del gateway y la compatibilidad con Anthropic Messages. |
+| No aparecen modelos tras la consulta | Actualiza la lista y comprueba el protocolo del servidor. Prueba una tarea pequeña con el modelo configurado para confirmar el acceso. |
+| El modelo guardado no está disponible | Configura su proveedor o elige otro en el cuadro de mensajes. |
+| Se rechaza una imagen | Revisa la opción de imagen del modelo y la compatibilidad real del servidor. |
+| Aparece un error de proxy o certificado | Pide al administrador que compruebe el proxy y los certificados de confianza. Después reinicia la aplicación. |
+
+Utiliza una tarea pequeña de solo lectura para probar tanto la respuesta como una llamada a herramientas. Guarda el error sin secretos. Mantén los tokens en sus campos de credenciales, sin pegarlos en la conversación.
+
+Si la lista de proyectos está vacía, comprueba la [ubicación de los datos](/zylon-code/es/configuration/data-and-backups) antes de restablecer nada. Consulta [Conexión](/zylon-code/es/getting-started/connect-to-zylon) o [Red](/zylon-code/es/advanced/network-and-offline) según el problema.
+
+---
+
+[Read this page in English](/zylon-code/troubleshooting/setup-and-models)

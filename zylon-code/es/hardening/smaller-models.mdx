@@ -1,0 +1,55 @@
+---
+title: "Facilita el trabajo de los modelos pequeños"
+description: "Reduce las decisiones innecesarias y comprueba los resultados en tus propios proyectos."
+noindex: true
+---
+
+Un modelo pequeño puede encajar si necesitas ejecución local, menor latencia o un consumo de recursos limitado. Su tamaño no basta para saber si puede completar tu tarea: también importan las herramientas admitidas, el entrenamiento, el proveedor y el proyecto. Elige un [modelo compatible](/zylon-code/es/models/choosing-a-model) y compruébalo con trabajo representativo.
+
+Las siguientes prácticas son puntos de partida que conviene probar. No garantizan el éxito ni convierten un modelo pequeño en otro más capaz.
+
+## Reduce lo que tiene que deducir
+
+Proporciona un resultado concreto, los archivos relevantes, un patrón existente y una comprobación. Para el ejemplo del buscador:
+
+> Modifica la función de filtrado existente para que las consultas vacías o con espacios devuelvan todos los elementos en su orden actual. No cambies cómo se filtran las consultas con texto. Sigue el estilo de las pruebas, añade los casos que faltan y ejecuta el comando específico documentado en AGENTS.md.
+
+Es más fácil de comprobar que «mejora el buscador». Si sigue siendo demasiado amplio, separa la investigación, la implementación y la revisión en pasos claros, conservando las decisiones entre ellos.
+
+Puedes señalar una implementación cercana como ejemplo si viene al caso. Explica qué debe seguir el agente —tratamiento de errores, tipo de retorno u organización de pruebas—, en lugar de pedir que copie el archivo entero. Un mal ejemplo también puede orientarlo hacia un comportamiento incorrecto.
+
+## Utiliza instrucciones breves y coherentes
+
+Aporta las reglas que se aplican cuando hagan falta. Evita mensajes largos llenos de excepciones hipotéticas y advertencias repetidas. Pide la siguiente acción que puedas observar y su resultado, en lugar de un plan enorme para todas las posibilidades.
+
+Un formato sencillo para el informe permite detectar omisiones:
+
+```text
+Resultado: implementado / bloqueado
+Archivos modificados:
+Comprobaciones ejecutadas y resultados:
+Requisitos que faltan por verificar:
+Siguiente paso, si hace falta:
+```
+
+Estructurar la respuesta facilita leerla; no convierte su contenido en verdad. Contrasta los comandos y los cambios reales. No necesitas pedir el razonamiento interno privado del agente: bastan explicaciones breves de las decisiones y los datos que las apoyan.
+
+## Utiliza las herramientas necesarias
+
+Empieza con un [modo](/zylon-code/es/modes/overview) adecuado. Si el modelo tiene dificultades con un catálogo amplio, prueba un [modo personalizado](/zylon-code/es/customization/custom-modes) más reducido que conserve las capacidades necesarias para terminar. Abre una conversación nueva con ese modo y lleva el resumen de la tarea; cambiar el modo predeterminado no reconfigura una conversación existente. La compatibilidad importa: escribir el nombre de una herramienta como texto no equivale a ejecutarla.
+
+Devuelve información concreta: la comprobación fallida y el error relevante resultan más útiles que un registro enorme. Para trabajos largos, divide el objetivo en resultados que puedas verificar por separado y deja un [resumen para continuar](/zylon-code/es/hardening/session-state) entre ellos.
+
+## Cambia de enfoque cuando haga falta
+
+Si las llamadas a herramientas siguen siendo inválidas, las decisiones de arquitectura se contradicen o el mismo fallo persiste tras varias correcciones acotadas, cambia de enfoque. Aporta los datos que falten, elige otro modelo compatible o pide ayuda a una persona. Añadir más instrucciones o más agentes no siempre resuelve el problema.
+
+Compara las mismas tareas con las mismas comprobaciones antes de decidir que una mejora funciona. Cuenta los fallos, las correcciones y tu tiempo de revisión: responder rápido no equivale a terminar el trabajo.
+
+Continúa con [la delegación y la revisión independiente](/zylon-code/es/hardening/agents-and-review).
+
+Lecturas: [Building effective agents, de Anthropic](https://www.anthropic.com/engineering/building-effective-agents), sobre procedimientos sencillos y herramientas claras, y [Lost in the Middle](https://arxiv.org/abs/2307.03172), sobre las limitaciones del contexto largo. Son referencias para prácticas que puedes evaluar, no una receta fija para todos los modelos.
+
+---
+
+[Read this page in English](/zylon-code/hardening/smaller-models)

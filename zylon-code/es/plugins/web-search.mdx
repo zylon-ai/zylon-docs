@@ -1,0 +1,25 @@
+---
+title: "Búsqueda web opcional"
+description: "Configura Exa o Perplexity; leer URLs no activa la búsqueda."
+noindex: true
+---
+
+La búsqueda web ayuda al agente a encontrar fuentes cuando aún no conoces su URL. Empieza desactivada. Las integraciones opcionales de Exa y Perplexity utilizan servicios externos y sus propias credenciales.
+
+## Prepara la búsqueda
+
+Pide a Creador o al administrador que configure un proveedor compatible y active la búsqueda en el modo correspondiente. Poder leer una URL no la activa. La interfaz predeterminada de Zylon no ofrece un interruptor de búsqueda listo en Modelos.
+
+Facilita las credenciales mediante la configuración aprobada. Exa puede utilizar `EXA_API_KEY`; Perplexity, `PERPLEXITY_API_KEY`. Los límites y los ajustes de las peticiones dependen del proveedor elegido.
+
+## Comprueba que los resultados sean útiles
+
+> Busca fuentes primarias actuales sobre la función que te describa. Devuelve sus URL, las fechas de publicación disponibles y una explicación breve de cómo se aplica cada fuente.
+
+Consulta el resultado de `web_search` y abre alguna fuente. Un error de autenticación, cuota o conexión es distinto de no encontrar resultados relevantes.
+
+Para desactivar la búsqueda, hay que retirar o cambiar la selección del proveedor y la capacidad del modo de forma coherente. Si ya conoces la URL, utiliza [Leer páginas web](/zylon-code/es/tools/web).
+
+---
+
+[Read this page in English](/zylon-code/plugins/web-search)

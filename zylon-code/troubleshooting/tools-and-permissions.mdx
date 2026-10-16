@@ -1,0 +1,30 @@
+---
+title: "Tool and permission problems"
+description: "Find the cause of missing tools, blocked actions and execution failures."
+noindex: true
+---
+
+Expand the failed tool card and read the requested action and result before changing permissions.
+
+| Symptom | What to do |
+| --- | --- |
+| A tool is missing | Check the current mode and enabled plugins; confirm that its provider was configured. |
+| A write is blocked | Open the permission picker and check the target path and access restrictions. |
+| A command cannot be found | Check that the executable is installed and available to the application on this computer. |
+| A command times out | Read the command limit and check the job list to see whether it is still running. |
+| An edit cannot match text | Ask the agent to read the current file again before retrying. |
+| A screenshot cannot be used | Choose an image-capable model and check the control provider. |
+| An Office preview fails | Keep the editable file and check the preview/conversion support for your build. |
+| You can browse but the agent cannot | Configure browser automation; opening a browser panel alone does not supply it. |
+
+## Recover without unnecessary access
+
+Ask for a smaller read-only check or a clear explanation of the missing prerequisite. More access will not supply a missing provider or fix an unsupported API.
+
+Before retrying, inspect files and jobs to see which actions completed. Approve only the requested action whose target and effects you accept.
+
+Use [Permissions](/zylon-code/configuration/permissions), [Shell](/zylon-code/tools/shell-and-jobs), [Documents](/zylon-code/tools/documents) and the affected plugin's guide for the next step. When output is shortened, narrow the request to obtain the missing result.
+
+---
+
+[Leer esta página en español](/zylon-code/es/troubleshooting/tools-and-permissions)

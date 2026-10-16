@@ -1,0 +1,27 @@
+---
+title: "Creator"
+description: "Ask the agent to build, install and verify a custom capability."
+noindex: true
+---
+
+Creator helps you build tools, interface features and custom modes. It includes Standard's general capabilities plus tools for inspecting the installed application and creating extensions.
+
+## Describe the feature
+
+Start a new Creator conversation and state its behavior, settings, permissions and a way to check it:
+
+> Create a mode named Review that inspects changes and reports issues without editing files. Install it as a local plugin bundle. Verify its tools in a new conversation and explain how to disable it.
+
+Ask for a working installation and a check, so you can review the feature rather than only its generated source. Creator should inspect available APIs and report any installation or activation error.
+
+## Review and keep the result
+
+Inspect the generated files and installation request. Find the bundle in Plugins, start a new task using it and check the expected behavior. Existing conversations keep the tools they started with.
+
+Keep the source and instructions for reinstalling, updating and disabling the feature. A generated plugin runs local code and needs compatibility checks when the application changes.
+
+Continue with [Custom modes](/zylon-code/customization/custom-modes), [Custom tools](/zylon-code/customization/custom-tools) or [Custom plugins](/zylon-code/customization/custom-plugins).
+
+---
+
+[Leer esta página en español](/zylon-code/es/modes/creator)

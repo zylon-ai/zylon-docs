@@ -1,0 +1,35 @@
+---
+title: "Manage plugins"
+description: "Install bundles and control their activation, configuration and removal."
+noindex: true
+---
+
+Open **Plugins** in the sidebar to enable supplied features, install bundles and open feature settings. Shell, Agent execution and Subagent cards open their configuration pages.
+
+## Enable an included feature
+
+Use its switch and follow any restart notice. When the feature changes the agent's tools, start a new conversation to check it. Each feature's guide explains what happens to its data when disabled.
+
+## Install a bundle
+
+1. Choose the installation action.
+2. Enter the supported source: a package and version, Git source, tarball or absolute local bundle folder.
+3. Review the code-trust and installation-script prompts.
+4. Finish installation, then enable the bundle or choose **Enable now** if offered.
+5. Check for activation errors and try its documented feature.
+
+Use packages prepared for the Zylon Code plugin manager. Downloading a general library does not make it an agent feature. Integrations such as browser control can also need provider configuration from Creator or your administrator.
+
+## Update or remove
+
+Keep the bundle's source and configuration before updating it. Follow its instructions for reinstalling a version and restarting. Disable or uninstall it through Plugins; data retention and credential removal depend on the feature.
+
+The default package source is the official npm registry. Your organization can configure another registry. If installation or activation fails, use [Plugin and MCP problems](/zylon-code/troubleshooting/plugins-and-mcp).
+
+<Frame caption="Official plugins and their activation controls">
+  <img src="/images/zylon-code/screenshots/plugins-managing-plugins-en.jpg" alt="Official plugins and their activation controls" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/managing-plugins)

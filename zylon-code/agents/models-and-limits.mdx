@@ -1,0 +1,34 @@
+---
+title: "Agent models and limits"
+description: "Set delegation limits and choose the models agents may use."
+noindex: true
+---
+
+Open **Plugins → Official → Subagent** to set delegation limits and the models agents may choose. External agent applications need separate setup.
+
+| Setting | Meaning |
+| --- | --- |
+| Maximum recursion depth | Limits nested delegation for tools that inherit this setting; a tool with its own depth setting takes precedence. |
+| Parallelism limit | Limits active local agents that support follow-up messages under one main agent, excluding the main agent itself. External and one-shot runs have separate behavior. |
+| Model selection | Allows the agent to choose among explicitly selected routes. |
+| Allowed routes | The specific provider and model each agent may use. |
+
+## Save a configuration
+
+Enter valid whole-number limits, enable model selection only if needed and select at least one route. Save. Leaving the page discards unsaved edits. Saved-but-unavailable routes remain visible and removable; they do not become usable simply because they are listed.
+
+A conflict means the configuration changed after the draft was loaded. Reload the affected draft and review the current settings instead of overwriting them blindly. The two settings sections can report independent save failures.
+
+Model selection and the allowed provider/model combinations are recorded when a new main conversation starts. Later settings changes do not rewrite that conversation’s recorded policy or the policy inherited by its children. Start a new conversation to use newly allowed models.
+
+Depth changes apply at the next delegation attempt for tools that inherit this setting. The parallelism limit is checked when starting or resuming a local agent: lowering it leaves existing agents running and blocks additional starts until capacity is available.
+
+## Choose practical limits
+
+More parallel agents increase simultaneous model calls and machine load. Use independent scopes and small limits first. Limit changes do not make shared files safe for concurrent editing. Tell the parent which model and expected outcome to use when the task requires consistency.
+
+For separately installed Codex or Claude Code applications, use [external agents](/zylon-code/advanced/external-agents).
+
+---
+
+[Leer esta página en español](/zylon-code/es/agents/models-and-limits)

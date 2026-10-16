@@ -1,0 +1,35 @@
+---
+title: "Review results"
+description: "Check changed files, tool output and deliverables before accepting the agent’s work."
+noindex: true
+---
+
+Check the changed files and tool results alongside the final answer. They show what actually happened and help you spot a failed command or an incomplete change.
+
+## Review changed files
+
+The changed-files card summarizes changes recorded during the turn. Open a file to compare the previous and new content in unified or side-by-side view. Line wrapping helps when a line is too long to read.
+
+The recorded diff describes the captured change. Opening the file separately shows its current content, which may include later edits. For a complete repository review, also check Git's current diff.
+
+With [Zylon Diff Review](/zylon-code/plugins/diff) enabled, open Pending changes to keep or revert changes and stage comments for your next message. The edits are already on disk; the panel reviews them after the write.
+
+## Read the checks
+
+Expand the command or tool card and inspect its output and exit status. Notice failed, cancelled or skipped checks. If a check is missing, request it:
+
+> Run the existing test for the behavior you changed. Show its result and explain any check you could not run.
+
+## Inspect deliverables
+
+Open generated files in the preview panel or their usual application. For a document, check layout as well as text; for a spreadsheet, check formulas and totals. Ask for the format you need, such as an editable workbook and a PDF.
+
+To request a revision, describe the problem you observed and the expected result. Stop and Archive do not restore changed files; use Git or your normal backups when you need to undo work. Next, explore [Panels](/zylon-code/everyday-use/panels).
+
+<Frame caption="Reviewing a task’s results and file changes">
+  <img src="/images/zylon-code/screenshots/everyday-use-reviewing-results-en.jpg" alt="Reviewing a task’s results and file changes" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/everyday-use/reviewing-results)

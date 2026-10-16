@@ -1,0 +1,41 @@
+---
+title: "Other providers and local models"
+description: "Connect another model service or a local server."
+noindex: true
+---
+
+Open **Settings → Models** to configure a model connection. For your company gateway, follow [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon). Other provider cards and custom connections depend on your application build.
+
+## Use a listed provider
+
+Open its card, enter the API key and save. The key field starts blank; leaving it blank when editing keeps the saved key. Select a model afterward and test a small task.
+
+Edit the connection URL or model list only if the card offers those controls and the provider requires the change.
+
+## Connect a custom or local service
+
+1. Add a custom provider with a unique ID and a recognizable name.
+2. Enter its **Base URL** and the API protocol the server supports.
+3. Enter any required key in the credential field.
+4. Use **Fetch available models**, select models and save. If discovery fails, add the server's exact model IDs manually.
+5. Select a model and ask it to complete a small read-only task using a tool.
+
+**Chat Completions**, **Responses** and **Anthropic Messages** are different API protocols. Use the one your server implements; “OpenAI-compatible” alone does not identify which to choose.
+
+A local model needs a separately running model server that your computer can reach. In a connection URL, `localhost` means this computer.
+
+## Check model capabilities
+
+A connection can offer both reasoning and non-reasoning models. Select the model first, then check its composer menu for **Effort**. Refresh the connection’s model list after the server changes its advertised capabilities. Available levels belong to each model; they are not a setting shared by every provider. See [Reasoning capabilities](/zylon-code/models/model-options) for details.
+
+## Edit or remove a connection
+
+Deleting a provider can leave a conversation's saved model unavailable. Select another deliberately. [Model options](/zylon-code/models/model-options) explains image support and capacity settings; [troubleshooting](/zylon-code/troubleshooting/setup-and-models) covers connection errors.
+
+<Frame caption="Configuring a custom model provider">
+  <img src="/images/zylon-code/screenshots/models-providers-en.jpg" alt="Configuring a custom model provider" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/models/providers)

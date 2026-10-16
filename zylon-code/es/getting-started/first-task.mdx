@@ -1,0 +1,60 @@
+---
+title: "Tu primera tarea"
+description: "Corrige un fallo pequeño y reproducible y comprueba el resultado antes de trabajar en tu proyecto."
+noindex: true
+---
+
+Empieza con un cambio pequeño que puedas comprobar. En este tutorial, una función permite añadir una reserva cuando la tienda ya está llena. El resultado esperado es sencillo: aceptar reservas mientras queden plazas y rechazarlas al alcanzar el aforo.
+
+## 1. Abre el proyecto de ejemplo
+
+Conecta un modelo siguiendo [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Descarga el [proyecto de ejemplo](/files/zylon-code/first-task-project.zip), descomprímelo y selecciona su carpeta en Zylon Code. Elige **Estándar**. El proyecto no tiene dependencias de terceros y utiliza Node.js para las pruebas. Si no se encuentra el entorno de ejecución al lanzar el comando, pide al agente que examine lo disponible e indique qué falta antes de continuar.
+
+También puedes utilizar tu repositorio. Guarda primero el trabajo que ya tengas y sustituye los archivos, el comportamiento y el comando de los mensajes siguientes por los de tu proyecto.
+
+## 2. Investiga sin editar
+
+Selecciona el permiso **Solo lectura** y envía:
+
+```text
+Lee AGENTS.md, src/capacity.mjs y tests/capacity.test.mjs.
+Resultado esperado: canReserve(9, 10) devuelve true y canReserve(10, 10), false.
+Ejecuta las pruebas existentes si el entorno lo permite. Explica qué caso falla,
+por qué y cuál sería la corrección más pequeña. No edites archivos, instales
+dependencias ni cambies permisos. Si no puedes comprobar algo, indica el bloqueo.
+```
+
+Abre las tarjetas de herramientas para ver qué archivos ha leído y la salida real de las pruebas. El caso de aforo completo debe fallar con el código inicial. Si aparece un error de comando o de permisos, resuelve esa preparación antes de interpretarlo como un fallo del código.
+
+## 3. Pide una corrección acotada
+
+Selecciona **Escritura en el espacio de trabajo** y envía:
+
+```text
+Corrige canReserve para que rechace una reserva cuando las reservas actuales
+igualen o superen el aforo. Conserva la aceptación mientras queden plazas.
+Limita el cambio a src/capacity.mjs y añade una prueba específica del exceso
+de aforo si hace falta. Ejecuta npm test. No añadas dependencias, refactorices
+código ajeno a la tarea ni publiques nada.
+Terminado significa que pasan los cuatro casos de prueba y que los cambios
+solo afectan a este comportamiento. Indica archivos, comando, resultado y
+cualquier parte que no hayas podido verificar.
+```
+
+Los cuatro casos del ejemplo son: quedan plazas, aforo completo, aforo superado y tienda vacía con capacidad. Revisa las solicitudes de aprobación teniendo en cuenta la tarea. Si el agente pregunta algo, responde con los controles que aparezcan. Puedes [detenerlo o darle nuevas indicaciones mientras trabaja](/zylon-code/es/everyday-use/conversations).
+
+## 4. Comprueba el resultado
+
+Lee la salida de las pruebas y revisa las ediciones. Una respuesta que diga que todo ha salido bien no demuestra que la función funcione. Si habías habilitado [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff), abre **Cambios pendientes** para examinar el archivo o añadir un comentario. Las ediciones ya están guardadas en disco: **Conservar** las acepta para la revisión y **Revertir** restaura el contenido anterior registrado.
+
+Comprueba que la comparación del aforo ha cambiado como esperabas, que pasan las cuatro pruebas y que se conservan los archivos ajenos a la tarea. Si una comprobación no se ha ejecutado, sigue pendiente.
+
+Cuando conozcas este recorrido, aplícalo a un proyecto real con un síntoma concreto y una comprobación de finalización. Continúa con [Uso diario](/zylon-code/es/everyday-use/projects) y después aprende a mejorar tus peticiones y comprobaciones en [Hardening](/zylon-code/es/hardening/overview).
+
+<Frame caption="Una tarea de ejemplo terminada, con operaciones de archivos y resultados de pruebas">
+  <img src="/images/zylon-code/screenshots/getting-started-first-task-es.jpg" alt="Zylon Code Desktop con la corrección del aforo, los resultados de herramientas y el informe final en español" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/getting-started/first-task)

@@ -1,0 +1,48 @@
+---
+title: "Utilizar y crear habilidades"
+description: "Utiliza instrucciones reutilizables y crea un SKILL.md para tu proyecto."
+noindex: true
+---
+
+Una habilidad, o *skill*, reúne las instrucciones de una tarea que repites. Puede incluir scripts, referencias y otros recursos. El agente carga esas instrucciones y utiliza sus herramientas para seguirlas; la habilidad no añade por sí sola una función ejecutable.
+
+## Utiliza una habilidad
+
+Escribe `/` y elígela de las sugerencias, o escribe `/nombre`. El modelo también puede seleccionar habilidades cuando sus instrucciones lo permiten. La tarjeta **Instrucciones** muestra el texto cargado.
+
+Si una habilidad tiene el mismo nombre que un comando integrado, prevalece el comando. Mínimo no incluye habilidades de serie.
+
+## Crea una habilidad
+
+Crea `.agents/skills/review-config/SKILL.md` en tu proyecto:
+
+```markdown
+---
+name: review-config
+description: "Revisa la configuración del proyecto comparándola con la implementación y las pruebas."
+---
+
+Lee el parser de configuración y sus pruebas.
+Compara las claves y valores documentados con la implementación.
+Informa de diferencias con referencias a archivos. No edites sin una petición.
+```
+
+Usa un nombre en minúsculas con guiones y una descripción clara. Guarda los recursos junto a `SKILL.md` y enlázalos desde las instrucciones. La búsqueda admite carpetas directas de habilidades y archivos Markdown sueltos; evita anidar la habilidad en varias carpetas intermedias.
+
+## Dónde se buscan y quién puede invocarlas
+
+Abre **Ajustes → Plugins integrados**, busca `habilidades` y selecciona un modo para consultar sus plugins de habilidades y su estado. Este listado es de solo consulta: muestra los componentes que permiten utilizar habilidades, no cada documento de instrucciones.
+
+La aplicación consulta las carpetas de habilidades del proyecto, como `.agents/skills` y `.dsh/skills`, y las ubicaciones del usuario configuradas. Las del proyecto tienen prioridad. Los cambios válidos se actualizan automáticamente; un encabezado inválido puede hacer que se omita una habilidad con un aviso.
+
+`disable-model-invocation: true` reserva su uso al usuario. `user-invocable: false` la oculta de los comandos del usuario. Estos campos no cambian los permisos de las herramientas.
+
+Comprueba que `/review-config` aparezca y cargue el texto esperado en una conversación compatible.
+
+<Frame caption="Plugins integrados de habilidades y su estado">
+  <img src="/images/zylon-code/screenshots/customization-skills-es.jpg" alt="Plugins integrados de habilidades y su estado" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/customization/skills)

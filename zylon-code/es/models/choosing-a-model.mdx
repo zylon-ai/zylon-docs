@@ -1,0 +1,43 @@
+---
+title: "Elegir un modelo"
+description: "Selecciona un modelo para tu tarea y comprueba cuándo se aplica un cambio."
+noindex: true
+---
+
+Un **proveedor** es el servicio que ejecuta un modelo. El **modelo** es la IA concreta que seleccionas dentro de ese servicio. Si aparecen nombres parecidos más de una vez, comprueba a qué proveedor pertenece cada uno.
+
+## Selecciona un modelo
+
+Abre el selector del cuadro de mensajes o escribe `/model`. Busca entre los proveedores configurados y elige un modelo. La aplicación guarda la elección para esa conversación y la tiene en cuenta al elegir el valor predeterminado de los chats nuevos.
+
+Puedes cambiar de modelo en un chat existente. El cambio se aplica a la siguiente petición al modelo, incluido el siguiente paso de una tarea en curso. Una petición que ya esté ejecutándose termina con su modelo y esfuerzo originales. Modificar los datos de conexión no cambia por sí solo el modelo de la conversación.
+
+Si un modelo guardado no está disponible, configura su proveedor o elige otro. Prueba una tarea pequeña para comprobar que el servicio acepta la petición.
+
+## Elige el esfuerzo de razonamiento
+
+Algunos modelos pueden dedicar más trabajo a razonar antes de responder. Si el modelo seleccionado admite este control, abre su menú en el cuadro de mensajes y elige **Esfuerzo**:
+
+- Selecciona un nivel disponible, como **Bajo** o **Alto**, para activar el razonamiento con ese nivel.
+- Elige **Desactivado**, si aparece, para pedir que no utilice razonamiento adicional.
+- **Predeterminado**, si aparece, deja la elección al comportamiento configurado en el proveedor.
+
+Los niveles disponibles dependen del modelo. Al seleccionar otro modelo se aplica su valor predeterminado; comprueba la etiqueta junto al nombre antes de enviar el mensaje. Cambiar el esfuerzo también afecta a la siguiente petición al modelo.
+
+Por ejemplo, compara Bajo y Alto con la misma prueba que falla. Revisa el resultado y el tiempo empleado, en lugar de dar por hecho que el nivel más alto siempre será mejor. [Hardening con modelos pequeños](/zylon-code/es/hardening/smaller-models) explica cómo ayudan las peticiones claras y las comprobaciones, sea cual sea el esfuerzo.
+
+## Elige según la tarea
+
+- Para programar, utiliza un modelo que admita llamadas a herramientas.
+- Para adjuntar imágenes o revisar capturas, elige uno compatible con imágenes.
+- Para entradas grandes, comprueba su ventana de contexto y límite de salida.
+
+Pregunta al administrador qué modelo conviene según la política de datos, la cuota y el tiempo de respuesta. Los agentes secundarios, las tareas programadas y la revisión automática pueden generar peticiones adicionales. Añade otro servicio desde [Otros proveedores y modelos locales](/zylon-code/es/models/providers).
+
+<Frame caption="Elegir un modelo en el cuadro de mensajes">
+  <img src="/images/zylon-code/screenshots/models-choosing-a-model-es.jpg" alt="Elegir un modelo en el cuadro de mensajes" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/models/choosing-a-model)

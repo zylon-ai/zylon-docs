@@ -1,0 +1,53 @@
+---
+title: "Resuelve los fallos sin repetir a ciegas"
+description: "Identifica el tipo de fallo, elige una corrección y detente si no aparece información nueva."
+noindex: true
+---
+
+Un intento fallido sirve si te indica qué cambiar. Repetir el mismo mensaje sin información nueva puede gastar tiempo y cuota del modelo sin acercarte a la solución.
+
+## Identifica qué ha fallado
+
+Abre la tarjeta de la herramienta y examina su salida. Distingue la interpretación del agente del error que realmente aparece.
+
+| Fallo | Siguiente paso útil |
+| --- | --- |
+| Se ha entendido mal el requisito | Explica el resultado esperado con un ejemplo concreto |
+| Falta un archivo o una decisión | Aporta la información o pide al agente que la localice |
+| El comando no arranca | Resuelve el requisito del entorno que indica la guía |
+| Un permiso o el sandbox bloquea la operación | Revisa el acceso solicitado y elige una alternativa permitida |
+| Una prueba detecta un resultado incorrecto | Investiga el código con la entrada que falla |
+| Los argumentos de una herramienta son inválidos una y otra vez | Comprueba su disponibilidad y la compatibilidad del modelo; simplifica o cambia de modelo |
+| Un servicio externo no está disponible | Comprueba el servicio, espera según corresponda o informa de la dependencia |
+
+En el ejemplo del buscador, «no se puede conectar al servidor» no justifica reescribir la función de búsqueda. Tampoco se arregla una prueba de consulta vacía eliminando la comprobación que falla.
+
+## Cambia algo relacionado con el fallo
+
+Pide un diagnóstico basado en lo que ha ocurrido:
+
+> La prueba sigue fallando con una consulta formada solo por espacios. Lee el error exacto y revisa la implementación actual. Explica qué suposición era incorrecta, haz una corrección acotada y ejecuta esa comprobación de nuevo. No amplíes la tarea a la ordenación ni rediseñes la preparación de las pruebas.
+
+El siguiente intento debe tener un motivo: información nueva, un entorno corregido, otra implementación o un modelo más adecuado. Si nada ha cambiado, otro intento idéntico difícilmente aportará algo útil.
+
+Si el error del servicio es transitorio, limita los reintentos y respeta las indicaciones del proveedor y el comportamiento de la aplicación. El mensaje no controla necesariamente los reintentos internos del proveedor. Evita un «sigue intentándolo hasta que funcione» sin límites.
+
+## Decide cuándo detenerte
+
+Define una condición razonable para la tarea: por ejemplo, dos intentos de corrección que repitan el mismo fallo sin un diagnóstico nuevo. Es una regla de trabajo incluida en tu petición, no un ajuste universal de Zylon.
+
+Detente antes si hace falta una decisión de producto, un acceso que no está disponible o una capacidad que el modelo no admite. Pide que conserve el trabajo, explique el bloqueo y proponga un siguiente paso. Un resultado bloqueado con datos fiables vale más que afirmar que todo está terminado.
+
+Puedes [detener una conversación o darle nuevas indicaciones mientras trabaja](/zylon-code/es/everyday-use/conversations). Antes de reanudar, revisa las ediciones parciales y las tareas pendientes: detener al agente no deshace las acciones ya realizadas. Utiliza [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) y el procedimiento del proyecto para corregir cambios no deseados.
+
+## Convierte los fallos repetidos en mejoras pequeñas
+
+Si el agente inventa el comando de pruebas, documenta el correcto. Si pasa por alto la pantalla, añade la comprobación relevante. Si amplía el alcance, mejora la petición. Corrige la causa observada en lugar de llenar las instrucciones de advertencias genéricas.
+
+Después, aplica estas ideas al [trabajo con modelos pequeños](/zylon-code/es/hardening/smaller-models).
+
+Lectura: Walkinglabs sobre [cómo obtener información útil de los fallos](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-11-why-observability-belongs-inside-the-harness/).
+
+---
+
+[Read this page in English](/zylon-code/hardening/failure-recovery)

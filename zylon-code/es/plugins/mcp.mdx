@@ -1,0 +1,52 @@
+---
+title: "Gestor de MCPs de Zylon"
+description: "Conecta servidores HTTP o locales, protege credenciales y verifica sus herramientas."
+noindex: true
+---
+
+Un MCP permite al agente utilizar herramientas de otro servicio. Por ejemplo, puede consultar incidencias en un gestor de proyectos o leer documentación compartida. El **servidor MCP** proporciona esas herramientas y Zylon Code se conecta a él.
+
+El gestor de MCPs está activado en instalaciones nuevas, pero no trae servidores configurados. Si no aparece la pestaña **MCPs**, activa su paquete en Plugins.
+
+## Añade un servidor HTTP
+
+1. Abre **Plugins → MCPs → Añadir servidor**.
+2. Escribe un nombre y elige **URL del servidor (HTTP)**.
+3. Introduce la dirección MCP exacta que facilite el servicio.
+4. Elige su método de autenticación: sin autenticación, OAuth, OAuth o sin autenticación, o token bearer. Para un token, pega solo su valor, sin la palabra `Bearer`.
+5. Pulsa **Conectar y crear**. Si utiliza OAuth, completa el acceso en la ventana que aparezca.
+6. Comprueba la tarjeta guardada y la lista de herramientas.
+
+El servidor se guarda cuando la conexión inicial y la consulta de herramientas terminan correctamente. Si cancelas o falla el proceso, no se guarda. OAuth necesita registro de cliente público y PKCE; esta versión no admite clientes OAuth configurados a mano.
+
+## Añade un comando local
+
+Algunos servicios funcionan como un proceso en tu ordenador. Elige **Comando local (STDIO)** y sigue las instrucciones del proveedor.
+
+| Campo | Qué introducir |
+| --- | --- |
+| Comando | El ejecutable, como `npx` o `uvx`, si el proveedor lo requiere. |
+| Argumentos | Un argumento por campo, en el orden indicado. |
+| Directorio de trabajo | La carpeta desde la que se inicia el proceso, si hace falta. |
+| Variables de entorno | Los nombres y valores que requiera el servicio. |
+| Cabeceras HTTP | Los campos que pida el proveedor para un servidor HTTP. |
+
+No pegues una línea de shell completa en Comando. Guarda credenciales en los campos protegidos, no en argumentos ni URL. Al editar, dejar un secreto vacío conserva el valor guardado; quitar su fila lo elimina.
+
+## Utiliza y mantén la conexión
+
+Escribe `@` en un chat y selecciona un MCP activado. Actualiza la referencia si has renombrado, eliminado o desactivado el servidor. Sus herramientas siguen sujetas a los permisos del chat.
+
+**Probar conexión** consulta el servidor y sus herramientas sin ejecutar una herramienta ni llamar al modelo. **Última prueba** muestra ese resultado anterior, no su estado en tiempo real. **Iniciar sesión** permite recuperar el acceso OAuth. El menú de la tarjeta ofrece Editar y Eliminar.
+
+Desactivar el paquete conserva la configuración y las credenciales. Eliminar un servidor borra ambas. **Exportar configuración** guarda los ajustes sin secretos ni resultados de pruebas; esta versión no permite importarlos desde el gestor. Las entradas definidas externamente son de solo lectura.
+
+Consulta [Problemas de MCPs](/zylon-code/es/troubleshooting/plugins-and-mcp) si falla la conexión o una herramienta.
+
+<Frame caption="Servidor MCP con una prueba de conexión correcta y dos herramientas detectadas">
+  <img src="/images/zylon-code/screenshots/plugins-mcp-es.jpg" alt="Servidor MCP con una prueba de conexión correcta y dos herramientas detectadas" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/plugins/mcp)

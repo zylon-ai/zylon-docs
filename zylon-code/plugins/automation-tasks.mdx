@@ -1,0 +1,35 @@
+---
+title: "Automation tasks"
+description: "Schedule local work and check its delivery and result."
+noindex: true
+---
+
+Automation tasks schedule local work for later or on a recurring basis. The feature is included but disabled in a new installation. Enable **Plugins → Official → Automation tasks** and follow any restart notice.
+
+## Create a task
+
+Choose **Automation tasks → New**. This opens a conversation where you request the schedule:
+
+> Create a task named Daily review. Every weekday at 09:00 Europe/Madrid, read this project's checklist and report pending work. Do not edit files.
+
+Check the saved card's instruction, recurrence, time zone, next run and linked conversation. Use **Rules** to edit it and **Delivery records** to inspect scheduled messages.
+
+## Keep Zylon Code running
+
+The application must remain running and the computer awake. There is no cloud worker or automatic wake-up. Work continues in the original conversation with its model and credentials.
+
+Use a named time zone such as `Europe/Madrid`. A daily local time follows daylight-saving changes; an interval of 24 hours does not. Intervals must be at least 60 seconds. After a delay or restart, a recurring task delivers only the latest missed occurrence; a one-time task can arrive late.
+
+## Stop or delete
+
+There is no individual pause control. Disabling the bundle keeps its records, and re-enabling it can deliver a missed occurrence. **Delete task** removes the task and its delivery records after confirmation, while keeping the conversation.
+
+A delivery record means the scheduled message was inserted, not that the agent completed it. Check the conversation for its result. Failed execution has no separate retry timer, and crash recovery can duplicate a delivery.
+
+<Frame caption="A demo automation task scheduled for 2099">
+  <img src="/images/zylon-code/screenshots/plugins-automation-tasks-en.jpg" alt="A demo automation task scheduled for 2099" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/automation-tasks)

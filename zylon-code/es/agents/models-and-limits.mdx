@@ -1,0 +1,34 @@
+---
+title: "Modelos y límites de agentes"
+description: "Configura los límites de delegación y los modelos que pueden utilizar los agentes."
+noindex: true
+---
+
+Abre **Plugins → Oficiales → Agentes secundarios** para configurar cuántos agentes pueden trabajar y qué modelos pueden elegir.
+
+| Ajuste | Qué controla |
+| --- | --- |
+| Profundidad máxima | Cuántos niveles de delegación se permiten en herramientas que heredan este ajuste. Si la herramienta tiene su propio límite, prevalece ese valor. |
+| Concurrencia | Cuántos agentes locales que admiten mensajes de seguimiento pueden estar activos bajo un agente principal, sin contarlo a él. Los agentes externos y las ejecuciones de una sola tarea tienen un funcionamiento distinto. |
+| Selección de modelo | Si el agente puede elegir entre los modelos que autorices. |
+| Modelos permitidos | Las combinaciones concretas de proveedor y modelo que puede utilizar. |
+
+## Guarda los ajustes
+
+Introduce límites enteros válidos. Si activas la selección de modelo, elige al menos uno y guarda. Salir de la página descarta los cambios que no hayas guardado.
+
+Un modelo guardado puede seguir apareciendo aunque su proveedor ya no esté disponible. Quítalo o corrige su conexión antes de utilizarlo. Si aparece un conflicto al guardar, recarga el formulario y revisa la configuración actual.
+
+La selección de modelo y las combinaciones autorizadas de proveedor y modelo se guardan al iniciar una conversación principal nueva. Cambiar los ajustes después no modifica esa política ni la que heredan sus agentes secundarios. Empieza una conversación nueva para utilizar los modelos que acabas de autorizar.
+
+Los cambios de profundidad se aplican en el siguiente intento de delegación, si la herramienta hereda ese ajuste. El límite de concurrencia se comprueba al iniciar o reactivar un agente local: reducirlo no detiene los que ya están activos, pero impide añadir más hasta que haya capacidad.
+
+## Empieza con límites pequeños
+
+Más agentes a la vez generan más peticiones y consumen más recursos. Empieza con subtareas independientes y aumenta la concurrencia cuando veas una mejora. Los límites no aíslan los archivos: sigue asignando áreas de edición separadas.
+
+Estos ajustes controlan los agentes de Zylon Code. Los [agentes externos](/zylon-code/es/advanced/external-agents), como Codex o Claude Code, necesitan preparación adicional.
+
+---
+
+[Read this page in English](/zylon-code/agents/models-and-limits)

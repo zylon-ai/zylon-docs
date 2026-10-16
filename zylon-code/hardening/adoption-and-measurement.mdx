@@ -1,0 +1,56 @@
+---
+title: "Adopt hardening and measure the result"
+description: "Start with recurring failures and compare completed work, review effort and rework."
+noindex: true
+---
+
+Hardening is useful when it improves the work you can actually complete and trust. More instructions, plugins or agents are not useful measures by themselves.
+
+## Choose representative tasks
+
+Pick a small set of work you regularly do: a focused bug fix, a test addition, a repository question and a change that touches a user screen. Define expected outcomes and checks before comparing configurations.
+
+For each task, record the project state, model, relevant settings, mode and verification environment. Reuse equivalent starting states and the same criteria when comparing approaches. Do not give one attempt extra help and call the difference a model improvement.
+
+Observe useful outcomes:
+
+| Measure | What to record |
+| --- | --- |
+| Completion | Which original criteria were met and how they were checked |
+| Rework | Corrections needed after the first result |
+| Review effort | Time spent inspecting and clarifying the work |
+| Scope | Unnecessary files or behavior changed |
+| Reliability | Repeated failures and whether they were reported accurately |
+| Resources | Elapsed time and available model usage or cost information |
+
+Include failed and blocked tasks. “The model usually seems better” is difficult to act on; “it stopped guessing the test command after we documented it” identifies a concrete improvement.
+
+## Fix one recurring problem
+
+Start with the observed cause. Missing project facts call for accurate documentation. Repeated scope expansion calls for clearer briefs. Premature completion calls for better checks and reports. Lost continuity calls for a handoff. Tool-call failures may require a compatible model or tool setup.
+
+Change one important part at a time where practical, then compare. Model output varies, so avoid drawing a broad conclusion from one successful run. Repeat a representative task when the result is uncertain; you do not need a large benchmark system to make a useful local decision.
+
+## Keep the setup maintainable
+
+Remove instructions that no longer apply, keep command guides current and avoid duplicating the same rule across several files. Review your task examples when the product changes. An outdated “helpful” guide can be worse than no guide because it confidently directs work to the wrong place.
+
+Use stronger structure only when the work warrants it. A team may need a small shared task board; an individual fixing one function may need only a brief and a test. Keep the human review effort in your comparison when evaluating whether automation saves time.
+
+## A practical starting sequence
+
+1. Pick one real, bounded task and define what counts as done.
+2. Confirm the relevant project facts and verification command.
+3. Run it with the model and mode you intend to use.
+4. Inspect the changes and the actual checks, then record the outcome.
+5. Improve the largest observed obstacle and compare another equivalent attempt.
+
+These are adoption steps, not a promise of a particular success rate. If the task still exceeds the model or available access, report that limitation and choose another approach.
+
+You now have the concepts needed to make informed [configuration](/zylon-code/configuration/settings), [model](/zylon-code/models/choosing-a-model) and [mode](/zylon-code/modes/overview) choices. Keep the rest of the manual as your reference for operating the application.
+
+Further reading: the [Walkinglabs course and source material](https://github.com/walkinglabs/learn-harness-engineering) and [Anthropic's guidance for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents). The aim is repeatable, inspectable progress on your work, rather than a universal recipe.
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/adoption-and-measurement)

@@ -1,0 +1,33 @@
+---
+title: "Feature and platform availability"
+description: "Separate defaults, optional features and deployment-specific acceptance."
+noindex: true
+---
+
+Features depend on your application version, selected mode and enabled plugins. Use this table when an expected control is missing.
+
+| Feature | Availability |
+| --- | --- |
+| Standard | Default for new tasks. |
+| PTC, Minimal, Creator | Included modes with different tools. |
+| Project instructions, skills, planning, goals and compaction | Standard, PTC and Creator; not the built-in Minimal mode. |
+| Workflows | Standard and Creator; disabled in PTC. |
+| MCP Manager | Enabled in new installations with no servers configured. |
+| Diff Review, Automation, Teams, Auto review and Companion | Included but disabled initially; some are experimental. |
+| URL reading | Included in Standard, PTC and Creator. |
+| Web search | Requires provider credentials and mode configuration. |
+| Browser panel | Included in Desktop. |
+| Browser/computer automation, LSP and external agents | Require explicit integration setup. |
+| Inspector | Optional support/developer diagnostics. |
+
+Existing installations keep saved settings. A feature described in the manual may require additional preparation before it is usable in your build.
+
+## Operating systems and distribution
+
+Use the compiled application and platform instructions supplied by your Zylon contact. Current packaging targets include macOS ARM64/x64 and Windows x64; the installation information will specify which builds are available. This manual does not provide a Linux Desktop installer.
+
+An internal model connection alone does not guarantee offline operation. Follow [network guidance](/zylon-code/advanced/network-and-offline) for that setup. Custom and third-party plugins may have their own platform or language requirements.
+
+---
+
+[Leer esta página en español](/zylon-code/es/reference/availability)

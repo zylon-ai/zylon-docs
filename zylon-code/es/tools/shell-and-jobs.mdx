@@ -1,0 +1,29 @@
+---
+title: "Shell y procesos en segundo plano"
+description: "Ejecuta comandos, controla procesos y configura los límites de la shell."
+noindex: true
+---
+
+El agente ejecuta comandos en tu ordenador. El modo habitual utiliza Bash en macOS y PowerShell en Windows. Las llamadas de Estándar inician procesos nuevos; Mínimo mantiene una shell persistente.
+
+## Pide una comprobación
+
+> Lee los scripts del proyecto y ejecuta la prueba existente del paquete modificado. Indica el comando, su salida y el código de finalización. No instales dependencias.
+
+Comprueba el directorio y el comando en la tarjeta de herramienta. Si falta un ejecutable, hay que revisar el entorno. Un tiempo de espera agotado o una cancelación no confirma que la prueba haya pasado.
+
+## Sigue el trabajo en segundo plano
+
+Cuando se admite, el agente puede iniciar un comando como proceso en segundo plano. Su identificador y estado aparecen en la lista de procesos. Pídele que los enumere, consulte la salida o detenga uno concreto. Detenerlo mantiene los cambios ya realizados.
+
+La salida conservada tiene un límite. Pide que se guarde un archivo de registro cuando necesites toda la salida de un comando largo.
+
+## Ajusta los límites
+
+Abre **Plugins → Oficiales → Shell** para modificar la duración de los comandos y los límites de salida. Guarda los cambios. Conservar más salida consume memoria y no aumenta la ventana de contexto del modelo.
+
+El [panel de terminal](/zylon-code/es/everyday-use/panels) sirve para tus propios comandos. Los ejecutables del proyecto y el acceso a la red corporativa deben estar disponibles en tu ordenador.
+
+---
+
+[Read this page in English](/zylon-code/tools/shell-and-jobs)

@@ -1,0 +1,29 @@
+---
+title: "Shell and background jobs"
+description: "Run commands, manage background output and configure shell execution limits."
+noindex: true
+---
+
+The agent runs commands on your computer. The normal mode uses Bash on macOS and PowerShell on Windows. Standard-style calls start fresh processes; Minimal keeps a persistent shell.
+
+## Ask for a check
+
+> Read this project's scripts and run the existing test for the changed package. Report the command, output and exit status. Do not install dependencies.
+
+Check the working directory and command in the tool card. A missing executable means the environment needs attention; a timeout or cancellation does not confirm that a test passed.
+
+## Follow background work
+
+When supported, the agent can start a command as a background job. Its ID and status appear in the job list. Ask the agent to list jobs, read output or stop a particular job. Stopping it leaves completed changes in place.
+
+Retained output is limited. Ask for an explicit log file when you need the complete output of a long command.
+
+## Set command limits
+
+Open **Plugins → Official → Shell** to change command duration and output limits, then Save. Raising retained output uses more memory and does not increase the model's context window.
+
+The [terminal panel](/zylon-code/everyday-use/panels) is for commands you run yourself. Project executables and corporate network access must be available on your computer.
+
+---
+
+[Leer esta página en español](/zylon-code/es/tools/shell-and-jobs)

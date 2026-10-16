@@ -1,0 +1,43 @@
+---
+title: "Choose the context that matters"
+description: "Supply relevant evidence without burying the task in unrelated files and history."
+noindex: true
+---
+
+The **context window** is the amount of input and output a model can handle for a request. It is measured in **tokens**, pieces of text rather than whole words. Instructions, conversation history, available tool definitions and returned file contents all compete for that space; the exact accounting depends on the model and provider.
+
+Having room for more text does not mean every detail will be used equally well. Aim for enough relevant evidence to solve the task, with a clear path to more information when needed.
+
+## Give the agent a starting point
+
+For the empty-search bug, useful starting information includes the visible symptom, the screen or endpoint involved, a reproduction and the relevant project guide. You rarely need to attach the entire repository.
+
+> The error appears on the item search screen when I submit an empty query. Start from the screen's search handler and follow the call to the filtering function. Read its tests and docs/search.md. If another file is needed, explain how it relates to this behavior.
+
+This request gives direction without pretending you know every dependency. Let the agent search filenames, symbols and call sites, then read the relevant sections. A small snippet can hide a necessary precondition; the agent should inspect surrounding code before editing it.
+
+## Prefer current sources over repeated summaries
+
+Provide the exact error and the input that triggers it. A current file or test result is stronger evidence than an old conversational description of the code. Distinguish requirements (“empty means all items”) from observations (“the current handler throws”).
+
+If you have a dependency map or code graph, use it to find candidates faster, then verify its findings against current source. A graph can be incomplete or stale. You do not need to install a graph tool to do ordinary project search.
+
+For external material, include a relevant excerpt or link and explain why it matters. The model can only use a link's contents if a tool retrieves them or you supply them. Keep customer secrets and unrelated private files out of attachments; see [context and attachments](/zylon-code/everyday-use/context-and-attachments).
+
+## Manage long conversations deliberately
+
+[Compaction](/zylon-code/everyday-use/long-conversations) reduces the history sent to the model. It helps fit work into the available context, but summaries may omit details. Before continuing a long task, restate the current outcome and ask the agent to check the actual files and latest results.
+
+> Continue the empty-query fix. The agreed behavior is to return all items in their existing order. Read the task handoff and inspect the current diff before making another edit. Re-run the focused test if the implementation has changed since the recorded result.
+
+Start a new conversation when the objective has changed substantially or the current one is dominated by abandoned approaches. Carry a short, factual [handoff](/zylon-code/hardening/session-state), rather than pasting the whole transcript.
+
+There is no universal “safe percentage” of context usage for every model. If results degrade as conversations grow, compare a fresh, focused conversation on the same task. The practical question is whether the relevant facts remain accessible and the checks still work.
+
+Next, prepare a [working environment and useful tools](/zylon-code/hardening/environment-and-tools).
+
+Further reading: Walkinglabs on [continuity](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-05-why-long-running-tasks-lose-continuity/).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/context-management)

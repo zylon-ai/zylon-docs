@@ -1,0 +1,25 @@
+---
+title: "Optional web search"
+description: "Configure Exa or Perplexity explicitly; URL fetching alone does not enable search."
+noindex: true
+---
+
+Web search helps the agent find sources when you do not already have a URL. It is disabled by default. Optional Exa and Perplexity integrations use external services and their own credentials.
+
+## Prepare search
+
+Ask Creator or your administrator to configure a compatible search provider and enable search in the intended mode. URL fetching alone does not enable it. The default Zylon interface does not provide a ready search toggle in Models.
+
+Supply provider credentials through the approved configuration. Exa can use `EXA_API_KEY`; Perplexity can use `PERPLEXITY_API_KEY`. Limits and request settings depend on the selected provider.
+
+## Check useful results
+
+> Find current primary sources explaining the feature I describe. Return the source URLs, publication dates where available and a short explanation of how each source applies.
+
+Inspect the `web_search` result and open a sample source. An authentication, quota or connection error is different from finding no relevant results.
+
+To disable search, remove or change the provider selection and the mode's search capability together. For a URL you already know, use [Read web pages](/zylon-code/tools/web).
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/web-search)

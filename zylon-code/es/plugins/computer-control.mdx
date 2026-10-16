@@ -1,0 +1,31 @@
+---
+title: "Control del ordenador"
+description: "Comprende Cua Driver, los permisos del sistema y los requisitos de capturas."
+noindex: true
+---
+
+El control del ordenador permite que el agente inspeccione y maneje aplicaciones de escritorio mediante Cua Driver. Es una capacidad experimental que necesita configuración explícita. Es independiente de la automatización del navegador y de las herramientas de archivos.
+
+## Prepara la integración
+
+Pide al administrador o a Creador que configure un proveedor Cua Driver compatible. El proveedor nativo utiliza su SDK para la plataforma; la alternativa MCP utiliza un ejecutable `cua-driver` instalado por separado. La versión y el sistema operativo determinan cuál se admite.
+
+Concede los permisos del sistema a Zylon Code o a la aplicación que inicie su entorno local. Para trabajar con capturas, elige un modelo compatible con imágenes.
+
+## Inspecciona antes de interactuar
+
+> Encuentra la ventana de la aplicación que te indique y consulta su estado. Describe lo que ves sin pulsar ni escribir.
+
+Comprueba que haya encontrado la ventana correcta. Después solicita una acción concreta y revisa de nuevo el estado.
+
+El escritorio se comparte con tus acciones y con otras sesiones. Cancelar no deshace los clics ni el texto que ya se haya enviado. Antes de reintentar, comprueba si la acción anterior ha tenido efecto.
+
+Utiliza herramientas de archivos y shell para programar cuando no necesites interacción gráfica. Si faltan permisos o falla el entorno, consulta [Problemas de herramientas](/zylon-code/es/troubleshooting/tools-and-permissions).
+
+<Frame caption="Búsqueda de control del ordenador en Plugins integrados, sin resultados">
+  <img src="/images/zylon-code/screenshots/plugins-computer-control-es.jpg" alt="Búsqueda de control del ordenador en Plugins integrados, sin resultados" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/plugins/computer-control)

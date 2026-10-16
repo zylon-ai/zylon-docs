@@ -1,0 +1,27 @@
+---
+title: "Plugin and MCP problems"
+description: "Recover failed installation, activation, authentication and discovery without discarding data."
+noindex: true
+---
+
+Installing a package, enabling it and using its tools are separate steps. Start with the message on the plugin or MCP server card.
+
+| Problem | What to do |
+| --- | --- |
+| A package downloaded but its feature is absent | Confirm it is a compatible bundle, enable it and check whether it needs another provider. |
+| Installation fails | Check the source, version and script prompts. Keep the installer output. |
+| Activation fails | Read the missing settings or components and follow any restart notice. |
+| MCP creation fails | Check the exact URL or executable and separate arguments, plus credentials. |
+| OAuth fails or is cancelled | Retry creation or sign-in. Check the server supports public-client registration and PKCE. |
+| The last test passed but a call fails | Test the connection again and check the task's current permissions. |
+| A mention prevents sending | Update the reference if its server was renamed, removed or disabled. |
+
+For a local command, confirm the executable exists and each argument has its own field. For HTTP, use the service's MCP endpoint instead of its website home page. Review diagnostic output before sharing it.
+
+Re-enabling the manager restores saved servers. Deleting a server removes its configuration and credentials. Configuration export excludes secrets, and this version has no import workflow in the manager.
+
+After fixing a custom mode, try a new conversation. See [Manage plugins](/zylon-code/plugins/managing-plugins) and [MCP Manager](/zylon-code/plugins/mcp) for complete steps.
+
+---
+
+[Leer esta página en español](/zylon-code/es/troubleshooting/plugins-and-mcp)

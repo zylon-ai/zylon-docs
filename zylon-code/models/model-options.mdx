@@ -1,0 +1,41 @@
+---
+title: "Model options"
+description: "Configure a model’s identity, image support and capacity."
+noindex: true
+---
+
+Edit the provider in **Settings → Models** and open its customized model settings. These values describe the endpoint; they do not increase its actual capacity.
+
+| Option | What to enter |
+| --- | --- |
+| Model ID | Exact API identifier accepted by the endpoint. |
+| Display name | A recognizable label for the picker. |
+| Context window | The model’s supported token capacity for a request. |
+| Maximum output | The supported generation limit. |
+| Input types | Text and/or image only when the model supports them. |
+
+## Images
+
+Expand the model's options and select **Image** if supported. At least one input type must remain selected. New custom models without inherited image capability begin as text-only. Screenshot-based tools need an image-capable model; the server must also support sending those images.
+
+## Reasoning capabilities
+
+Reasoning controls come from the selected model's advertised capabilities. Zylon models that report support offer **Off** and their supported effort levels in the composer. Use **Refresh models** on the Zylon connection card after your administrator updates the catalog. If a model does not report those capabilities, the Effort control is absent.
+
+Use [Choose a model](/zylon-code/models/choosing-a-model) for the steps to enable, disable or change effort. A model's default applies when you select it; this does not overwrite an effort already chosen for an existing conversation. **Default**, when offered, sends no explicit reasoning choice for Zylon.
+
+The gateway's model adapter ultimately decides how the requested level is used. Some adapters map Off to a low level or Max to High when the underlying model cannot honor the exact setting. Ask your administrator about the behavior of your deployment if that distinction matters to a task.
+
+## Defaults and errors
+
+Inherited catalog values and saved overrides are different. Restoring a whole provider catalog can remove other edits too; review the form before resetting it. A wrong model ID or protocol can save successfully and still fail during inference.
+
+For adapter-only options such as headers, request compatibility, retries and timeouts, use [profiles and YAML](/zylon-code/advanced/profiles-and-yaml) with the installed configuration schema. Keep keys out of YAML literals.
+
+<Frame caption="Reasoning effort levels for the selected model">
+  <img src="/images/zylon-code/screenshots/models-model-options-en.jpg" alt="Reasoning effort levels for the selected model" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/models/model-options)

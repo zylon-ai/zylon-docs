@@ -1,0 +1,44 @@
+---
+title: "Use and create skills"
+description: "Run reusable task instructions and create a SKILL.md for your project."
+noindex: true
+---
+
+A skill is a reusable instruction document with optional scripts, references and assets. It is not automatically an executable plugin. The agent loads its instructions and uses existing tools to perform the task.
+
+## Invoke a skill
+
+Type `/` and select a user-invocable skill, or type `/name`. The model can also choose eligible skills from its catalog. A name colliding with a built-in command still resolves as that command. Check the expandable Instructions card to see what was loaded.
+
+## Create one
+
+Create `.agents/skills/review-config/SKILL.md` in the project:
+
+```markdown
+---
+name: review-config
+description: "Review project configuration against its implementation and tests."
+---
+
+Read the configuration parser and its tests.
+Compare documented keys and defaults with the implementation.
+Report mismatches with file references. Do not edit without a request.
+```
+
+Use a lowercase kebab-case name and a nonempty description. The provider scans direct skill directories or flat Markdown files, not arbitrary nested trees. Keep supporting files beside the skill and reference them explicitly.
+
+## Discovery and controls
+
+Open **Settings → Built-in plugins**, search for `skill` and select a mode to inspect its skill plugins and their status. This inventory is read-only; it lists the components that support skills, rather than individual skill documents.
+
+Locations include project `.dsh/skills` and `.agents/skills`, configured custom directories and the application’s user skills folder. Project roots take priority over later roots. Watchers refresh valid additions/edits; invalid frontmatter can be skipped with a warning.
+
+`disable-model-invocation: true` reserves a skill for human invocation. `user-invocable: false` removes it from human commands. Neither adds a permission grant. Verify `/review-config` appears in a supported mode and loads the intended text. Minimal has no built-in skill provider.
+
+<Frame caption="Built-in skill plugins and their status">
+  <img src="/images/zylon-code/screenshots/customization-skills-en.jpg" alt="Built-in skill plugins and their status" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/customization/skills)

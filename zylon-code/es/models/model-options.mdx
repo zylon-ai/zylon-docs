@@ -1,0 +1,43 @@
+---
+title: "Opciones de modelos"
+description: "Configura el identificador, la compatibilidad con imágenes y la capacidad del modelo."
+noindex: true
+---
+
+En **Ajustes → Modelos**, edita el proveedor y abre las opciones del modelo personalizado. Estos valores indican a la aplicación qué admite el modelo; no aumentan su capacidad real.
+
+| Opción | Qué introducir |
+| --- | --- |
+| Identificador de modelo | El nombre exacto que acepta la API del servidor. |
+| Nombre mostrado | Una etiqueta que puedas reconocer en el selector. |
+| Ventana de contexto | La cantidad de información que admite una petición. |
+| Salida máxima | Su límite de generación de respuesta. |
+| Tipos de entrada | Texto e imagen, según lo que admita. |
+
+## Imágenes
+
+Selecciona **Imagen** solo si el modelo es compatible. Debe quedar al menos un tipo de entrada seleccionado. Un modelo personalizado sin una capacidad visual heredada empieza configurado para texto.
+
+Las herramientas que utilizan capturas necesitan un modelo compatible con imágenes y un servidor que permita enviárselas. Si falla una captura, comprueba ambos, no solo la casilla.
+
+## Capacidades de razonamiento
+
+Los controles de razonamiento dependen de las capacidades que anuncie el modelo seleccionado. Los modelos de Zylon compatibles muestran **Desactivado** y sus niveles de esfuerzo en el cuadro de mensajes. Pulsa **Actualizar modelos** en la tarjeta de conexión de Zylon cuando el administrador actualice el catálogo. Si un modelo no anuncia esas capacidades, no aparece el control de Esfuerzo.
+
+Consulta [Elegir un modelo](/zylon-code/es/models/choosing-a-model) para activar, desactivar o cambiar el esfuerzo. El valor predeterminado del modelo se aplica al seleccionarlo; no sustituye el esfuerzo que ya hayas elegido en una conversación existente. **Predeterminado**, si aparece, no envía una elección explícita de razonamiento a Zylon.
+
+El adaptador del gateway determina cómo se utiliza el nivel solicitado. Algunos adaptadores convierten Desactivado en un nivel bajo o Máximo en Alto cuando el modelo no admite ese ajuste exacto. Pregunta al administrador cómo se comporta tu despliegue si esa diferencia afecta a una tarea.
+
+## Restablecer valores y corregir errores
+
+Restablecer todo un catálogo puede eliminar otros cambios que hayas hecho; revisa el formulario antes de hacerlo. Un identificador o un protocolo incorrecto puede guardarse y fallar después al utilizar el modelo.
+
+Algunas opciones avanzadas, como cabeceras, reintentos y tiempos de espera, requieren [configuración del perfil](/zylon-code/es/advanced/profiles-and-yaml). Mantén las claves en los campos de credenciales.
+
+<Frame caption="Niveles de esfuerzo de razonamiento del modelo seleccionado">
+  <img src="/images/zylon-code/screenshots/models-model-options-es.jpg" alt="Niveles de esfuerzo de razonamiento del modelo seleccionado" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/models/model-options)

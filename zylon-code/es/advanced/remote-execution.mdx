@@ -1,0 +1,21 @@
+---
+title: "Ejecución remota por SSH"
+description: "Comprende los proveedores POSIX opcionales antes de configurar un proyecto remoto."
+noindex: true
+---
+
+La aplicación de escritorio habitual trabaja con carpetas de tu ordenador. No ofrece un botón de proyecto remoto listo para ejecutar por SSH.
+
+Los proveedores SSH opcionales pueden situar archivos y comandos en una máquina POSIX remota, manteniendo la aplicación y las conversaciones de forma local. Necesitan una integración personalizada preparada y comprobada por el administrador. Seleccionar una carpeta o un modelo externo no los activa.
+
+## Si tu organización ofrece una integración remota
+
+Pregunta qué rutas pertenecen al servidor, dónde se realizan las peticiones al modelo y cómo se aplican los permisos. Las herramientas de archivos y comandos deben utilizar el mismo entorno remoto. El administrador también tiene que preparar la autenticación SSH, las claves de confianza y un entorno remoto compatible.
+
+Comprueba una lectura y un comando acotado antes de editar. Si se pierde la conexión, consulta el estado remoto antes de reintentar: el comando anterior puede haber terminado. La integración no reconecta ni repite las operaciones automáticamente.
+
+Para proyectos locales, sigue [Proyectos](/zylon-code/es/everyday-use/projects). Para un modelo alojado en otro servidor, utiliza [Otros proveedores](/zylon-code/es/models/providers); esa conexión no traslada tus archivos.
+
+---
+
+[Read this page in English](/zylon-code/advanced/remote-execution)

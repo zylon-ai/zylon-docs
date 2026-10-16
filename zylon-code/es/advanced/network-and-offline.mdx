@@ -1,0 +1,25 @@
+---
+title: "Red y operación sin conexión"
+description: "Prepara proxies, certificados y dependencias sin confundir gateway interno con funcionamiento sin conexión."
+noindex: true
+---
+
+Zylon Code puede conectarse a un gateway de modelos interno. Las herramientas, plugins y comandos del proyecto pueden necesitar otros servicios de red. La configuración de tu organización determina si puedes trabajar sin acceso a internet público.
+
+## Proxies y certificados corporativos
+
+Si la red utiliza un proxy o inspección TLS, pide al administrador que prepare la conexión y los certificados de confianza de la aplicación. Reinicia Zylon Code después de cambiar su entorno de inicio. Que el navegador abra el gateway no confirma que la conexión del modelo utilice el mismo proxy o los mismos certificados.
+
+El entorno local lee `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` y `NO_PROXY` al arrancar. Esta conexión admite proxies HTTP y exclusiones por host o dominio; el acceso local permanece directo. No admite SOCKS ni exclusiones CIDR por esta vía.
+
+Pueden añadirse certificados con `NODE_EXTRA_CA_CERTS` en el entorno de inicio aprobado. Mantén activada la verificación de certificados. Los comandos y procesos MCP pueden heredar variables de proxy, así que evita mostrar sus valores al recoger diagnósticos.
+
+## Trabaja sin internet público
+
+Solicita una instalación preparada para tu red. Los servicios de modelos, herramientas documentales, componentes del navegador y fuentes de plugins deben estar disponibles de forma local o mediante servicios internos aprobados.
+
+Comprueba el inicio, una tarea del modelo, el uso de herramientas y la reapertura de una conversación en ese entorno. [Privacidad](/zylon-code/es/configuration/privacy) explica los posibles destinos y [Disponibilidad](/zylon-code/es/reference/availability) resume las funciones opcionales.
+
+---
+
+[Read this page in English](/zylon-code/advanced/network-and-offline)

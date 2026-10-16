@@ -1,0 +1,51 @@
+---
+title: "Automate a procedure with clear stopping conditions"
+description: "Move from supervised tasks to repeatable runs with checks, limits and a useful final state."
+noindex: true
+---
+
+Automate a procedure after you understand what it does, how to check it and how it fails. Scheduling an unclear task simply repeats the uncertainty.
+
+## Describe one bounded run
+
+A reliable procedure has a trigger, inputs, allowed actions, checks, an output and stopping conditions. For a recurring search-health review:
+
+```text
+Input: the selected demo project and its documented focused search tests.
+Action: run the tests and inspect failures; do not modify files.
+Output: a short report with command, result and relevant failure details.
+Stop: after the report, if prerequisites are missing, or if access is refused.
+Do not publish, deploy or keep retrying a failing test.
+```
+
+Start by running the procedure manually. Check that the report is useful on both a passing case and a realistic failure. Only then consider [Automation Tasks](/zylon-code/plugins/automation-tasks), if enabled in your installation.
+
+## Distinguish organization from execution
+
+[Task lists](/zylon-code/everyday-use/goals-and-task-lists) record progress. Goals can help organize longer work. [Workflows](/zylon-code/tools/workflows) can coordinate steps. Scheduling determines when a task becomes due. These are related capabilities, but a task marked complete does not itself prove the code works.
+
+Keep Zylon Code running and the computer awake for local automation to execute. Quitting the application stops it; closing a window may leave the application running in the background. Check the scheduling guide for supported behavior; do not assume a missed run will catch up exactly as you intended.
+
+A prompt can state a time or retry limit, but it is not necessarily a mechanically enforced quota. Use the actual configured tool, agent and provider limits where available, and monitor the resulting run. Never present a conversational instruction as a guaranteed kill switch.
+
+## Build useful feedback into the loop
+
+Each run should inspect the result before deciding the next action. A failing check should lead to a bounded diagnosis or a report, not an automatic claim of success or repeated edits without review.
+
+For an implementation procedure, make the stages explicit: inspect current state, choose one pending behavior, implement, verify, record the result, stop or continue only under the agreed conditions. Revisit dependencies after a failure rather than assuming a fixed sequence always remains valid.
+
+## Keep consequential actions explicit
+
+Decide which actions are allowed for the task and which require human input. Read-only checks are a useful starting point. Publishing, deploying, changing access and affecting external systems need the appropriate authorization and controls for your environment.
+
+Use a [custom mode](/zylon-code/customization/custom-modes) and [permissions](/zylon-code/configuration/permissions) to match the available capabilities to the procedure. An instruction file alone does not prevent an operation.
+
+Record failures, skipped checks and partial work so the next run or person can understand what happened. Avoid generic notifications that say only “task finished”; report the actual outcome and the action needed.
+
+Finally, [measure whether your hardening helps](/zylon-code/hardening/adoption-and-measurement) before expanding the automation.
+
+Further reading: Walkinglabs on [bounded working loops](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-13-loop-engineering/) and [dependencies between steps](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-14-graph-engineering/).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/automation)

@@ -1,0 +1,58 @@
+---
+title: "Your first task"
+description: "Fix a small, reproducible bug and check the result before moving to your own project."
+noindex: true
+---
+
+Start with a small change you can verify. This tutorial uses a reservation function that accepts another booking even when a shop is already full. The correct result is simple: accept a booking when a place is available, and reject it when capacity is reached.
+
+## 1. Open the example project
+
+Connect a model as described in [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon). Download the [example project](/files/zylon-code/first-task-project.zip), extract it and choose its folder in Zylon Code. Select **Standard**. The example has no third-party dependencies; its tests use Node.js. If command execution cannot find the runtime, ask the agent to inspect the available environment and report what is missing before continuing.
+
+You can use your own repository instead. Save any existing work first, and replace the example files, behavior and check command in the prompts below with the ones your project uses.
+
+## 2. Investigate without editing
+
+Select the **Read Only** permission preset and send:
+
+```text
+Read AGENTS.md, src/capacity.mjs and tests/capacity.test.mjs.
+Expected behavior: canReserve(9, 10) is true, and canReserve(10, 10) is false.
+Run the existing tests if the environment permits it. Explain which case fails,
+why it fails and the smallest correction. Do not edit files, install dependencies
+or change permissions. If a check is blocked, report that instead of skipping it.
+```
+
+Expand the tool cards to see which files were read and the actual test output. The full-capacity case should fail on the starting code. If you see a missing-command or permission error instead, resolve that setup issue before interpreting the result as a code failure.
+
+## 3. Implement one bounded correction
+
+Select **Workspace Write**, then send:
+
+```text
+Fix canReserve so a new reservation is refused when current reservations equal
+or exceed capacity. Preserve acceptance while there is space. Keep the change
+in src/capacity.mjs and add a focused test for over-capacity input if needed.
+Run npm test. Do not add dependencies, refactor unrelated code or publish anything.
+Done means all four boundary cases pass and the diff is limited to this behavior.
+Report the changed files, the command and its result, and anything not verified.
+```
+
+The example's four cases are below capacity, exactly full, over capacity and an empty shop with space. Review any approval request in context. If the agent asks a question, answer it through the displayed controls. You can [stop or steer it while it works](/zylon-code/everyday-use/conversations).
+
+## 4. Verify the result
+
+Read the test result and inspect the actual edits. A successful reply alone does not demonstrate that the function works. If [Zylon Diff Review](/zylon-code/plugins/diff) was enabled before the change, open **Pending changes** to review the file or add a comment. The edits are already on disk; **Keep** accepts them for review and **Revert** restores the recorded earlier content.
+
+Check that the capacity comparison changed as expected, all four tests passed and unrelated files were preserved. If a check was not run, keep it marked as unverified.
+
+Once this flow is familiar, apply it to a real project with a concrete symptom and completion check. Continue with [Everyday use](/zylon-code/everyday-use/projects), then learn to improve your prompts and checks in [Hardening](/zylon-code/hardening/overview).
+
+<Frame caption="A completed demo task with file operations and test results">
+  <img src="/images/zylon-code/screenshots/getting-started-first-task-en.jpg" alt="Zylon Code Desktop showing a reservation bug fix, tool results and the final report in English" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/getting-started/first-task)

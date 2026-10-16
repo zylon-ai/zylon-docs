@@ -1,0 +1,50 @@
+---
+title: "Zylon MCP Manager"
+description: "Connect HTTP or local MCP servers, protect credentials and verify discovered tools."
+noindex: true
+---
+
+MCP lets the agent use another service’s tools, for example to look up project issues or read shared documentation. The MCP server provides those tools, and Zylon Code connects to it. Zylon MCP Manager is enabled in new profiles with an empty server list. Existing profiles retain their selection; enable the supplied Zylon MCP bundle if the **MCPs** tab is absent.
+
+## Add an HTTP server
+
+1. Open **Plugins → MCPs → Add server**.
+2. Name the server and choose **Server URL (HTTP)**.
+3. Paste the provider's exact MCP endpoint.
+4. Choose no authentication, OAuth, OAuth-or-none, or a bearer token. Enter a bearer token without the word `Bearer`.
+5. Choose **Connect and create**. Complete OAuth in the sign-in window if requested.
+6. Verify the saved card and discovered tools.
+
+The server is saved only after initialization/discovery succeeds. Failed or cancelled creation leaves no saved server. OAuth servers must support public-client registration and PKCE; manually configured OAuth clients are outside this version.
+
+## Add a local command
+
+Choose **Local command (STDIO)**. Enter the executable available on your computer, then one argument per field. For `npx`, the provider may require `-y` followed by its package name; use that provider's actual instructions. Do not paste a shell command line into the executable field.
+
+| Field | Use |
+| --- | --- |
+| Command | Local executable, such as the provider's `npx` or `uvx` launcher. |
+| Arguments | Separate ordered arguments. |
+| Working directory | Optional process startup folder; not an access grant. |
+| Environment variables | Provider-required names and protected values. |
+| HTTP headers | Only provider-required protected fields. |
+
+Use protected fields for credentials, not command arguments or URLs. Blank saved values preserve existing secrets; removing a row removes its value.
+
+## Use and maintain
+
+Type `@` in a project chat and choose an enabled MCP. The reference identifies its tools but does not bypass permissions or mode restrictions. If the server was disabled, renamed or removed after selection, update the mention before sending.
+
+Use **Test connection** for explicit initialization/discovery without calling a tool or model. **Last test** is historical, not continuous health. **Sign in** recovers an existing OAuth server. The card menu owns Edit/Delete.
+
+Disabling the bundle retains configuration and credentials; deleting a server removes both. External profile entries are read-only. **Export configuration** produces public version-2 settings without secrets or test results; configuration import is not implemented. Re-enter credentials when migrating.
+
+<Frame caption="An MCP server with a successful connection test and two discovered tools">
+  <img src="/images/zylon-code/screenshots/plugins-mcp-en.jpg" alt="An MCP server with a successful connection test and two discovered tools" />
+</Frame>
+
+See [MCP troubleshooting](/zylon-code/troubleshooting/plugins-and-mcp) if discovery, authentication or tool execution fails.
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/mcp)

@@ -1,0 +1,35 @@
+---
+title: "Gestionar plugins"
+description: "Instala paquetes y controla su activación, configuración y eliminación."
+noindex: true
+---
+
+Abre **Plugins** en la barra lateral para activar funciones incluidas, instalar paquetes y consultar sus ajustes. Las tarjetas de Shell, ejecución del agente y agentes secundarios abren sus páginas de configuración.
+
+## Activa una función incluida
+
+Utiliza su interruptor y sigue los avisos de reinicio. Si cambia las herramientas del agente, inicia una conversación nueva para comprobarlo. La guía de cada función explica qué ocurre con sus datos al desactivarla.
+
+## Instala un paquete
+
+1. Selecciona la opción de instalación.
+2. Introduce una fuente compatible: paquete y versión, fuente Git, archivo tarball o ruta absoluta de una carpeta local.
+3. Revisa los avisos sobre confianza en el código y scripts de instalación.
+4. Completa la instalación y activa el paquete, o pulsa **Activar ahora** si aparece.
+5. Comprueba si hay errores de activación y prueba la función que describe su guía.
+
+Utiliza paquetes preparados para el gestor de plugins de Zylon Code. Descargar una biblioteca general no la convierte en una función del agente. Algunas integraciones, como el control del navegador, también necesitan configuración por parte de Creador o del administrador.
+
+## Actualiza o elimina
+
+Conserva el código y la configuración antes de actualizar. Sigue las instrucciones del paquete para reinstalar una versión y reiniciar. Puedes desactivarlo o desinstalarlo desde Plugins; la conservación de datos y la eliminación de credenciales dependen de cada función.
+
+La fuente predeterminada es el registro oficial de npm. Tu organización puede configurar otro registro. Si falla la instalación o la activación, consulta [Problemas de plugins y MCPs](/zylon-code/es/troubleshooting/plugins-and-mcp).
+
+<Frame caption="Plugins oficiales y sus controles de activación">
+  <img src="/images/zylon-code/screenshots/plugins-managing-plugins-es.jpg" alt="Plugins oficiales y sus controles de activación" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/plugins/managing-plugins)

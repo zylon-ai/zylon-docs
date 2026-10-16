@@ -1,0 +1,27 @@
+---
+title: "Minimal"
+description: "Use a persistent shell and fixed prompt as a controlled baseline."
+noindex: true
+---
+
+Minimal contains one persistent shell tool and a fixed system prompt. It does not load the built-in skill system, project-instruction loader, planning, goals or context compaction supplied by the richer presets.
+
+## When to use it
+
+Use Minimal for controlled experiments and small tasks where shell commands are enough. Fewer tools do not make it automatically easier for beginners or safer. The shell can still read files, edit them and execute scripts when permissions allow it.
+
+Example:
+
+> Run the project's already-installed focused tests, identify the failing behavior and report the cause. Do not edit files or install packages.
+
+Inspect the shell commands and actual output. If the project requires conventions in AGENTS.md, Minimal does not automatically load them through the standard instruction plugin; provide the relevant instruction explicitly or choose Standard.
+
+## Compare fairly
+
+Keep the model, permissions, prompt and starting files identical across runs. Restore the checkout between experiments using your normal project process. A new chat alone does not reset files.
+
+For long work, reusable skills, planning or delegation, choose [Standard](/zylon-code/modes/standard). To define a different baseline, create a [custom mode](/zylon-code/customization/custom-modes) rather than treating the built-in configuration viewer as an editor.
+
+---
+
+[Leer esta página en español](/zylon-code/es/modes/minimal)

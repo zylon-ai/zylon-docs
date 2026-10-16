@@ -1,0 +1,43 @@
+---
+title: "Choose a model"
+description: "Select a model for your task and understand when a change takes effect."
+noindex: true
+---
+
+A **provider** is the service that runs a model. A **model** is the particular AI you select within that service. Check the provider group in the picker when similar names appear more than once.
+
+## Select a model
+
+Open the model picker in the composer or enter `/model`. Search the configured providers and select a model. The application records your choice for the conversation and uses it when choosing defaults for new conversations.
+
+You can change models in an existing chat. The change applies to the next model request, including the next step of a task already in progress. A request already running finishes with its original model and effort. Changing connection settings alone does not select a different model for the conversation.
+
+If a saved model is unavailable, configure its provider or select another. Run a small task to check that the selected service accepts the request.
+
+## Choose reasoning effort
+
+Some models can spend additional work on reasoning before replying. If the selected model supports this control, open its composer menu and choose **Effort**:
+
+- Choose an offered level, such as **Low** or **High**, to enable reasoning at that level.
+- Choose **Off**, when offered, to request that reasoning be disabled.
+- **Default**, when offered, leaves the choice to the provider's configured behavior.
+
+The available levels depend on the model. Selecting a different model applies that model's default; check the caption beside its name before sending. Effort changes take effect at the next model request too.
+
+For example, compare Low and High on the same failing test. Check the result and time taken instead of assuming that the highest level is always best. [Hardening for smaller models](/zylon-code/hardening/smaller-models) explains how clear tasks and verification help regardless of effort.
+
+## Match the model to the task
+
+- For coding, choose a model that supports tool calls.
+- For image attachments and visual inspection, choose a model with image input.
+- For large inputs, check its context window and output limit.
+
+Ask your administrator which model to use for your data policy, quota and latency requirements. Subagents, scheduled tasks and Auto review can make additional requests. Configure another service in [Other providers and local models](/zylon-code/models/providers).
+
+<Frame caption="Choosing a model in the composer">
+  <img src="/images/zylon-code/screenshots/models-choosing-a-model-en.jpg" alt="Choosing a model in the composer" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/models/choosing-a-model)

@@ -1,0 +1,52 @@
+---
+title: "Verify behavior and review changes"
+description: "Use meaningful checks and the Diff Review plugin before accepting the result."
+noindex: true
+---
+
+A confident final reply is not evidence that the change works. Choose checks that could detect the actual mistake, then inspect both their results and the edited files.
+
+## Reproduce the behavior you are fixing
+
+For empty search, a focused regression test should exercise the function or screen that currently fails. When practical, observe the test failing on the original implementation and passing after the fix. That helps establish that the check detects this defect rather than passing regardless of the code.
+
+The example requirements imply several cases:
+
+| Input | Expected result |
+| --- | --- |
+| Empty string | All items, preserving order |
+| Whitespace only | Same behavior as an empty query |
+| A matching non-empty query | Existing filtering behavior |
+| A query with no matches | The existing empty-results behavior |
+
+Do not introduce a test for every cosmetic edit. Choose verification appropriate to the change and reuse the project's established tools. A focused assertion is useful for filtering logic; a screen change may also need a browser or manual check of visible behavior.
+
+## Check the user path when it matters
+
+A function test can pass while the screen still rejects empty input before calling it. For this bug, verify the path from submitting the query to displaying the list. An end-to-end check exercises connected parts of the application; it still covers only the conditions and assertions it includes.
+
+For visual behavior, name what to inspect: error message absent, expected items visible, order preserved, loading state finished. A screenshot can support that observation, but it does not show whether a hidden request failed or all keyboard interactions work.
+
+Ask for a report tied to the criteria:
+
+> For each requirement, state the check used and its observed result. Include exact commands and any skipped or blocked checks. Do not describe a check as passing if it was not run. Inspect the final diff for unrelated changes.
+
+## Review with Zylon Diff Review
+
+Enable the optional [Zylon Diff Review plugin](/zylon-code/plugins/diff) and open **Pending changes**. The agent's edits are already on disk: this panel reviews them after they happen. **Keep** accepts the current content; **Revert** restores the earlier content recorded for review. Reverting a newly created file deletes it after confirmation. It does not replace permission approval, testing or version control.
+
+Inspect file, block or line changes. Use comments to point out a specific problem and send them with your next message. If a relevant change came from a shell command or external editor, use **Import version-control changes** as appropriate; do not assume the panel lists every repository change automatically.
+
+Run the relevant check again after a correction or revert changes the implementation. A previous pass describes the code at that time. Keeping a change or marking a checklist complete cannot guarantee that later edits preserve it.
+
+## Close the loop
+
+Accept the result when the agreed behavior is demonstrated, the diff is appropriate and remaining limitations are explicit. If a check is unavailable, describe what remains unverified and decide whether that prevents completion.
+
+Continue with [leaving a useful session handoff](/zylon-code/hardening/session-state).
+
+Further reading: Walkinglabs on [premature completion](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-09-why-agents-declare-victory-too-early/) and [end-to-end checks](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-10-why-end-to-end-testing-changes-results/).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/verification-and-diffs)

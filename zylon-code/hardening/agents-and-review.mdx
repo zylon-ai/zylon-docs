@@ -1,0 +1,52 @@
+---
+title: "Delegate work and review independently"
+description: "Give each agent a clear responsibility and judge the combined result through evidence."
+noindex: true
+---
+
+A second agent can help investigate another part of the project or review a change from a fresh perspective. It also adds coordination, model usage and another possible source of mistakes. Begin with one agent; delegate when there is a clear, useful division of work.
+
+## Separate responsibilities
+
+For the search fix, the main agent can implement while a reviewer examines the requirements and final diff. A good review request is specific:
+
+> Review the empty-query change without editing files. Check that empty and whitespace-only input return all items in their original order, ordinary filtering is preserved and the tests detect the original failure. Inspect the current code and actual check results. Report actionable findings with file references, or state what remains unverified.
+
+The reviewer should have the original criteria, not only the implementer's claim that the work is correct. Agreement between two agents is not independent proof: both can share the same incorrect assumption. Tests and observed behavior remain necessary.
+
+## Parallelize independent work
+
+Two read-only investigations can often run together: one checks the screen integration, another checks existing test coverage. Edits need clearer ownership. Assign different files or have one agent apply the combined change after both investigations.
+
+Zylon's [subagents](/zylon-code/agents/delegation) and [Agent Teams](/zylon-code/plugins/agent-teams) are different ways to coordinate work. Teams add a roster, messages and a shared task board. Neither guarantees isolated files or automatic conflict prevention. Members can share the same project directory.
+
+Do not ask several agents to rewrite the same function simultaneously. An apparently successful edit can overwrite another agent's work or make its test results stale. Recheck the combined implementation after integration, especially where the edits interact.
+
+## Make handoffs explicit
+
+Give each delegated task an outcome, scope, relevant inputs and completion check. Request a concise report of findings, changed files if permitted, actual checks and blockers. The main agent remains responsible for reconciling conflicting results and verifying the whole task.
+
+For dependent work, order the steps instead of forcing parallel execution:
+
+```text
+Confirm expected search behavior
+  → implement the focused change
+  → verify the user path
+  → review the final combined diff
+```
+
+You can express this sequence in ordinary instructions. A workflow graph is useful when recurring dependencies and routing become difficult to manage; it is not a prerequisite for a small review.
+
+## Choose reviewer models deliberately
+
+See [agent models and limits](/zylon-code/agents/models-and-limits) for what your configuration supports. A different model can offer another perspective, but cost and compatibility still matter. A smaller model may handle a narrow test review well while struggling with a broad architecture review; evaluate both rather than assigning by size alone.
+
+Use delegation to reduce a specific bottleneck. If coordination and duplicate reading cost more than the task itself, return to one agent with focused checks.
+
+Next, learn how to [automate a bounded procedure](/zylon-code/hardening/automation).
+
+Further reading: Walkinglabs on [dependencies and agent coordination](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-14-graph-engineering/) and [Anthropic's workflow patterns](https://www.anthropic.com/engineering/building-effective-agents).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/agents-and-review)

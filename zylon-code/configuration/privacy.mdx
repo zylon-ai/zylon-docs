@@ -1,0 +1,30 @@
+---
+title: "Privacy and external services"
+description: "Understand local storage and the data flows created by models, tools and plugins."
+noindex: true
+---
+
+Zylon Code stores conversations and project settings locally. Model requests go to the provider you configure. They can include your messages, instructions, relevant file contents, tool results and supported images.
+
+## Where data can go
+
+| Capability | Destination |
+| --- | --- |
+| Zylon model connection | Your configured gateway and the services that run its models. |
+| Another provider | That provider's model endpoint. |
+| MCP | The connected server, or services used by a local MCP command. |
+| Web reading and search | The requested site or search provider. |
+| Plugin installation | The chosen package registry or source. |
+| Commands and browser actions | The services used by the command or page. |
+
+Using a local application does not mean all task processing stays on your computer. An internal model gateway also does not prevent a tool or plugin from contacting another service. See [Network and offline operation](/zylon-code/advanced/network-and-offline) for organization-managed restrictions.
+
+## Before working with sensitive data
+
+Use the providers and integrations approved by your organization. Keep tokens in protected credential fields. Review exports, screenshots, command output and diagnostic files before sharing them.
+
+Third-party plugins run local code and may introduce their own network requests. Check their requirements and the provider's data policy before enabling them. [Permissions](/zylon-code/configuration/permissions) explains how to limit task operations.
+
+---
+
+[Leer esta página en español](/zylon-code/es/configuration/privacy)

@@ -1,0 +1,27 @@
+---
+title: "Flujos de trabajo"
+description: "Coordina varias tareas del agente y revisa el resultado conjunto."
+noindex: true
+---
+
+Utiliza un flujo de trabajo cuando varias tareas del agente necesiten una secuencia definida y un resultado conjunto. Para una o dos revisiones independientes, suele bastar con [delegación](/zylon-code/es/agents/delegation).
+
+Estándar y Creador incluyen la herramienta de flujos; PTC no. Un flujo coordina trabajo ahora, mientras que una tarea automatizada lo programa para más adelante.
+
+## Solicita un flujo
+
+> Utiliza un flujo para revisar la configuración de estos cinco servicios. Asigna a cada agente su carpeta y una tarea de solo lectura. Reúne los hallazgos en un informe con referencias a archivos y las comprobaciones que hayan fallado.
+
+Indica las entradas, las fases, los responsables y el resultado final. El agente escribe un script que coordina el trabajo. Cada agente necesita contexto para su tarea; no recibe automáticamente todos los resultados intermedios.
+
+## Sigue la ejecución
+
+La vista del flujo muestra la ejecución y sus agentes. Si funciona en segundo plano, también aparece en la lista de procesos con su progreso y salida. Revisa el resultado conjunto y el trabajo que haya fallado o se haya cancelado. Puedes conservar los resultados parciales útiles, pero debes decidir qué hacer con lo pendiente.
+
+Los agentes comparten archivos salvo que prepares copias separadas. Asigna áreas de edición distintas o deja que uno aplique los hallazgos conjuntos. Detener el flujo no revierte los cambios ya hechos.
+
+Para trabajo recurrente, utiliza [Tareas automatizadas](/zylon-code/es/plugins/automation-tasks). Para un tablero compartido y mensajes entre miembros, utiliza [Equipos de agentes](/zylon-code/es/plugins/agent-teams).
+
+---
+
+[Read this page in English](/zylon-code/tools/workflows)

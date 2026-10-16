@@ -1,0 +1,23 @@
+---
+title: "Servidores de lenguaje"
+description: "Añade navegación por símbolos mediante un servidor de lenguaje configurado."
+noindex: true
+---
+
+Un servidor de lenguaje ayuda al agente a encontrar definiciones, referencias y documentación de los símbolos del código. La herramienta opcional `lsp` lo utiliza para consultar el proyecto sin modificarlo cuando no basta con buscar texto.
+
+## Prepara la integración
+
+Pide a Creador o al administrador que configure el servidor del lenguaje de tu proyecto y active la herramienta LSP. El ejecutable y las dependencias del proyecto deben estar disponibles en tu ordenador. Una extensión instalada en el editor no tiene por qué proporcionárselos a Zylon Code.
+
+## Pregunta por un símbolo
+
+> Encuentra la definición y las referencias de esta función. Consulta su documentación e indica desde qué partes del proyecto se llama. No edites archivos.
+
+Revisa las rutas y las posiciones de código devueltas. Los resultados grandes pueden recortarse o indicar que se han omitido ubicaciones. Que no exista un comentario de documentación es distinto de que falle el servidor.
+
+Si la consulta falla, comprueba el ejecutable, el lenguaje, la carpeta de proyecto y los mensajes de diagnóstico. Utiliza búsqueda y lectura de archivos cuando la tarea no necesite navegación por símbolos.
+
+---
+
+[Read this page in English](/zylon-code/plugins/language-servers)

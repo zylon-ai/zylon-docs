@@ -1,0 +1,34 @@
+---
+title: "Conectar con Zylon"
+description: "Guarda el token de desarrollador del gateway y su URL base; después comprueba una petición real."
+noindex: true
+---
+
+La conexión de Zylon permite utilizar los modelos aprobados por tu organización. Pide al administrador la **URL base** del gateway y un **token de desarrollador del gateway**. El token de un workspace es una credencial distinta; consulta la [guía de gestión de tokens](/es/developer-manual/get-started/token-management).
+
+## Guarda la conexión
+
+1. En la bienvenida o en **Ajustes → Modelos**, abre la tarjeta de conexión de Zylon.
+2. Introduce el **Token de desarrollador** y la **URL base**. Usa la URL de API completa que te facilite el administrador, por ejemplo `https://your-deployment.example/api/gpt`.
+3. Guarda los cambios. Antes de guardar, la aplicación verifica la conexión consultando su lista de modelos. Si estás editando una conexión, dejar el campo del token vacío conserva el que ya tenías.
+4. Abre el selector de modelos. El modelo inicial es `zylon/default`; pulsa **Actualizar modelos** para consultar de nuevo la lista disponible.
+
+Esta conexión utiliza la API Anthropic Messages. Si quieres conectar otro servicio, consulta [Otros proveedores y modelos locales](/zylon-code/es/models/providers) y selecciona el protocolo que admita.
+
+## Comprueba la conexión
+
+Selecciona un proyecto pequeño y envía:
+
+> Enumera los archivos de la carpeta principal del proyecto. Lee un archivo de texto pequeño y resume para qué sirve. No modifiques archivos ni instales nada.
+
+Contrasta el resultado con los archivos de tu ordenador. Así compruebas que el modelo responde y puede utilizar una herramienta; guardar el formulario no hace esa prueba. Si falla la verificación al guardar o actualizar modelos, la aplicación conserva los ajustes, el token y el catálogo anteriores. Revisa la URL y el token e inténtalo de nuevo; un catálogo existente no confirma que una conexión nueva funcione.
+
+Guarda los tokens en su campo de credenciales. Si falla la conexión, sigue los pasos de [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models).
+
+<Frame caption="Ajustes de conexión de Zylon con las credenciales ocultas">
+  <img src="/images/zylon-code/screenshots/getting-started-connect-to-zylon-es.jpg" alt="Ajustes de conexión de Zylon con las credenciales ocultas" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/getting-started/connect-to-zylon)

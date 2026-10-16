@@ -1,0 +1,34 @@
+---
+title: "Connect to Zylon"
+description: "Save your gateway developer token and Base URL, then verify an actual model request."
+noindex: true
+---
+
+Your Zylon connection gives the agent access to the models approved by your organization. Ask the administrator for the gateway's **Base URL** and a **Gateway developer token**. A workspace token is a different credential; see the platform's [token management guide](/en/developer-manual/get-started/token-management).
+
+## Save the connection
+
+1. In the welcome setup or **Settings → Models**, open the Zylon connection card.
+2. Enter **Developer token** and **Base URL**. Use the complete API URL supplied by your administrator, for example `https://your-deployment.example/api/gpt`.
+3. Save. The app verifies the connection by requesting its model list before saving. When editing an existing connection, leaving the token blank keeps the saved token.
+4. Open the model picker. The initial model is `zylon/default`; use **Refresh models** to request the available list again.
+
+This connection uses the Anthropic Messages API. If you are setting up a different service, use [Other providers and local models](/zylon-code/models/providers) and select its supported protocol.
+
+## Check the connection
+
+Select a small project and send:
+
+> List the files in the project's top-level folder. Read one small text file and summarize its purpose. Do not change any files or install anything.
+
+Check the tool result against the files on your computer. This confirms that the model can respond and use a tool; saving the form alone does not test that. If verification fails during Save or Refresh models, the app keeps the previous settings, token and catalog. Check the URL and token, then retry; an existing catalog does not confirm that a new connection works.
+
+Keep tokens in the credential field. For connection failures, follow [setup troubleshooting](/zylon-code/troubleshooting/setup-and-models).
+
+<Frame caption="Zylon connection settings with credentials hidden">
+  <img src="/images/zylon-code/screenshots/getting-started-connect-to-zylon-en.jpg" alt="Zylon connection settings with credentials hidden" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/getting-started/connect-to-zylon)

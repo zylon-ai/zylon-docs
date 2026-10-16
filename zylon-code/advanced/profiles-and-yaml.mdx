@@ -1,0 +1,29 @@
+---
+title: "Profiles and YAML"
+description: "Inspect advanced local configuration when normal settings are not enough."
+noindex: true
+---
+
+An application **profile** records which plugins and services Zylon Code loads. A **mode** chooses the tools and instructions for an agent task. Normal users can manage most settings through the interface without editing a profile.
+
+You can inspect loaded components in **Settings → Built-in plugins** before editing a profile. That list is read-only; feature configuration remains on the sidebar’s **Plugins → Official** pages.
+
+## Open the configuration
+
+When Settings offers **Open configuration file**, use it to locate the current local configuration. Desktop normally uses the `desktop` profile under the application's data folder. Your organization may configure another data location.
+
+The profile patch is a YAML file, typically `~/.zylon-code/profiles/desktop/cordis.patch.yml`. Keep a copy before editing it and use the settings and documentation for your installed version.
+
+## What to watch when editing
+
+Installed bundles add configuration layers, and local overrides apply afterward. Replacing an entry's `config` replaces its complete configuration, so preserve other fields. JavaScript expressions marked `!!js` can execute configuration code; use only reviewed values.
+
+Keep credentials in their designated fields. A configuration file can contain private values, so inspect it before sharing.
+
+## Check the result
+
+Follow restart notices and test the affected feature in a new conversation. If activation fails, restore your saved configuration and keep the error for support. Prefer [Creator](/zylon-code/modes/creator) for a custom bundle rather than editing unrelated profile entries yourself.
+
+---
+
+[Leer esta página en español](/zylon-code/es/advanced/profiles-and-yaml)

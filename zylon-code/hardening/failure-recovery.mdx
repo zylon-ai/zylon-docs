@@ -1,0 +1,53 @@
+---
+title: "Recover from failures without blind retries"
+description: "Classify the failure, choose a corrective action and stop when there is no new evidence."
+noindex: true
+---
+
+A failed attempt is useful when it tells you what to change. Repeating the same prompt without new evidence can consume time and model quota while leaving the problem untouched.
+
+## Identify what failed
+
+Inspect the relevant tool card and its output. Separate the agent's interpretation from the actual error.
+
+| Failure | Useful next action |
+| --- | --- |
+| The requirement was misunderstood | Restate the expected behavior and one concrete example |
+| A required file or decision was missing | Supply it or ask the agent to locate it |
+| A command cannot start | Fix the documented environment requirement |
+| A permission or sandbox blocks an operation | Review the requested access and choose an allowed approach |
+| A test detects the wrong result | Investigate the code using the failing input |
+| Tool arguments are repeatedly invalid | Check tool availability and model compatibility; simplify or change the model |
+| An external service is unavailable | Verify the service, wait according to policy or report the dependency |
+
+For the search example, “cannot connect to the demo server” does not justify rewriting the search function. Likewise, an empty-query assertion failure should not be “fixed” by deleting the assertion.
+
+## Change one relevant thing
+
+Ask for a diagnosis based on the failure:
+
+> The focused test still fails for whitespace-only input. Read the exact failure and inspect the current implementation. Explain which assumption was wrong, make a focused correction and run that check again. Do not expand the task to sorting or redesign the test setup.
+
+The next attempt should have a reason: new information, corrected setup, a different implementation or a more suitable model. If nothing has changed, another identical attempt is unlikely to teach you much.
+
+For a transient service error, use bounded retries that respect the provider's guidance and application behavior. The prompt does not necessarily control built-in provider retries. Avoid giving broad “keep trying until it works” instructions.
+
+## Decide when to stop
+
+Set a practical stopping condition for the task, such as two correction attempts that produce the same failure without a new diagnosis. This is a working rule in your task brief, not a universal Zylon setting.
+
+Stop sooner when the agent needs a product decision, unavailable access or a capability the model does not support. Ask it to preserve the current work, state the blocker and propose a next step. A blocked outcome with accurate evidence is more useful than a false completion claim.
+
+You can [stop or steer a running conversation](/zylon-code/everyday-use/conversations). Before resuming, inspect partial edits and pending jobs; stopping the agent does not undo actions already completed. Use [Diff Review](/zylon-code/plugins/diff) and the project's recovery process to correct unwanted changes.
+
+## Turn repeated failures into a small improvement
+
+If the agent repeatedly guesses the wrong test command, document the command. If it misses the screen integration, add the relevant check. If the scope keeps expanding, improve the brief. Fix the cause you observed instead of growing an instruction file with generic warnings.
+
+Next, apply these ideas when [working with smaller models](/zylon-code/hardening/smaller-models).
+
+Further reading: Walkinglabs on [observable feedback](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-11-why-observability-belongs-inside-the-harness/).
+
+---
+
+[Leer esta página en español](/zylon-code/es/hardening/failure-recovery)

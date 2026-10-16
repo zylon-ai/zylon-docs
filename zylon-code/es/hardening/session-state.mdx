@@ -1,0 +1,57 @@
+---
+title: "Deja un resumen útil para continuar"
+description: "Anota las decisiones, los cambios y las comprobaciones sin depender del historial de la conversación."
+noindex: true
+---
+
+Cuando el trabajo ocupa varias sesiones, el siguiente agente necesita saber qué es cierto ahora. Una conversación larga resulta difícil de consultar; una nota como «está casi terminado» no basta para retomar el trabajo con confianza.
+
+## Anota el estado actual
+
+Si la tarea necesita un relevo, guarda un documento breve. Basta con un archivo Markdown, por ejemplo `docs/tasks/empty-search.md`. No se actualiza ni se carga por sí solo: pide al agente que lo mantenga y que lo lea al continuar.
+
+```markdown
+# Corrección de la búsqueda vacía
+
+Objetivo: las consultas vacías o con espacios muestran todo en el orden actual.
+Decisión: conservar el filtrado existente para las consultas no vacías.
+Cambios: src/search.mjs y tests/search.test.mjs.
+Comprobado: node --test tests/search.test.mjs; todos los casos pasan tras editar.
+Sin comprobar: la pantalla del navegador; el servicio de ejemplo no arrancaba.
+Siguiente paso: iniciar el servicio y enviar una consulta vacía en la pantalla.
+Trabajo previo: README.md tenía cambios ajenos a esta tarea; hay que conservarlos.
+```
+
+El resultado anotado corresponde a una versión concreta de los archivos. Si la implementación ha cambiado, vuelve a comprobar lo relevante. Las notas ayudan a orientarse; no sustituyen al código actual ni a la salida de las pruebas.
+
+## Describe comportamientos, no porcentajes
+
+Cuando haya varias funciones, una tabla pequeña permite distinguir lo pendiente, lo implementado, lo comprobado y lo bloqueado. Añade las dependencias y los datos utilizados para comprobar cada elemento.
+
+| Comportamiento | Estado | Comprobación o siguiente paso |
+| --- | --- | --- |
+| La consulta vacía devuelve todo | Comprobado en la función | La prueba pasa; falta revisar la pantalla |
+| La pantalla envía la consulta vacía | Bloqueado | El servicio de ejemplo no está disponible |
+| Las consultas con texto siguen filtrando igual | Comprobado en la función | Pasan los casos de filtrado existentes |
+
+Una lista de tareas no impone ese comportamiento. Ni un archivo JSON ni una marca de «comprobado» impiden una regresión. Las pruebas y la revisión aportan información; el documento la registra. Evita porcentajes como «90 % terminado» que esconden qué requisito falta.
+
+## Deja un estado que se pueda retomar
+
+Antes de terminar, pide al agente que examine los cambios, identifique lo pendiente e indique qué comprobaciones han pasado y cuáles han fallado. Debe explicar si deja servicios temporales o tareas en segundo plano en ejecución. Conserva los registros útiles y los cambios ajenos a la tarea.
+
+Dejar un «estado limpio» significa que otra persona puede entender y continuar el trabajo. No exige borrar cambios incompletos, crear un commit automáticamente ni restablecer el repositorio. Decide las acciones del control de versiones según el proceso del equipo y lo autorizado para la tarea.
+
+Los [objetivos y las listas de tareas](/zylon-code/es/everyday-use/goals-and-task-lists) ayudan a organizar la conversación. La guía de [recuperación de sesiones](/zylon-code/es/troubleshooting/recovery) explica qué conserva la aplicación. Un resumen en el repositorio añade información del proyecto que otra conversación o persona puede consultar.
+
+Para la siguiente sesión:
+
+> Lee docs/tasks/empty-search.md, revisa los cambios actuales y confirma qué criterio falta. No repitas comprobaciones terminadas salvo que haya cambiado el código o el entorno relevante. Continúa con la revisión en el navegador o indica qué la bloquea.
+
+Continúa con [cómo diagnosticar los fallos](/zylon-code/es/hardening/failure-recovery).
+
+Lecturas: Walkinglabs sobre [la continuidad entre sesiones](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-05-why-long-running-tasks-lose-continuity/) y [cómo dejar un estado recuperable](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-12-why-every-session-must-leave-a-clean-state/).
+
+---
+
+[Read this page in English](/zylon-code/hardening/session-state)

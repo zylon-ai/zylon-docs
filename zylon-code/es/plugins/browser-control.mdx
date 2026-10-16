@@ -1,0 +1,41 @@
+---
+title: "Control del navegador"
+description: "Prepara un proveedor de navegador y verifica la automatización antes de utilizarla."
+noindex: true
+---
+
+El control del navegador permite que el agente consulte una página e interactúe con sus controles. Es una capacidad opcional y experimental. Abrir el panel de navegador no activa la automatización.
+
+## Prepara un proveedor
+
+Pide a Creador o al administrador que configure un proveedor compatible con tu versión:
+
+| Proveedor | Qué necesita |
+| --- | --- |
+| Playwright MCP | Un entorno Playwright MCP compatible y Chromium, con sus ajustes de inicio o conexión. |
+| Chrome DevTools MCP | Chrome y la conexión al navegador configurada. |
+| Stagehand | Un entorno compatible y otro modelo configurado para sus acciones asistidas por IA. |
+
+La aplicación necesita el proveedor y su navegador antes de utilizarlos en una tarea. La instalación y la compatibilidad dependen del sistema operativo y de la versión.
+
+## Prueba una tarea de lectura
+
+Inicia una conversación nueva:
+
+> Abre la página de prueba que te indique. Consulta su título y los controles visibles. Descríbelos sin enviar formularios ni cambiar datos de cuentas.
+
+Contrasta la página observada con los resultados de las herramientas. Para inspeccionar capturas hace falta un modelo compatible con imágenes.
+
+## Ten en cuenta el estado del navegador
+
+Según la configuración, el proveedor puede abrir un navegador separado o conectarse a uno existente. No selecciona automáticamente tu navegador habitual con la sesión iniciada. Otras personas o procesos pueden cambiar un navegador conectado mientras dura la tarea.
+
+Tras reiniciar ese entorno, puede ser necesario recuperar pestañas o iniciar sesión de nuevo. Comprueba el estado antes de repetir una acción. Para problemas de inicio o acceso, consulta [Problemas de plugins](/zylon-code/es/troubleshooting/plugins-and-mcp).
+
+<Frame caption="Búsqueda de control del navegador en Plugins integrados, sin resultados">
+  <img src="/images/zylon-code/screenshots/plugins-browser-control-es.jpg" alt="Búsqueda de control del navegador en Plugins integrados, sin resultados" />
+</Frame>
+
+---
+
+[Read this page in English](/zylon-code/plugins/browser-control)

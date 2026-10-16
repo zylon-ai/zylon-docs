@@ -1,0 +1,27 @@
+---
+title: "Workflows"
+description: "Coordinate several agent tasks and inspect their combined result."
+noindex: true
+---
+
+Use a workflow when several agent tasks need a defined sequence and a combined result. For one or two independent reviews, ordinary [delegation](/zylon-code/agents/delegation) is usually easier.
+
+Standard and Creator include the workflow tool. PTC does not. A workflow coordinates work now; an automation task schedules it for later.
+
+## Request a workflow
+
+> Use a workflow to review the configuration of these five services. Give each agent its service folder and a read-only task. Combine the findings into one report with file references and any failed checks.
+
+Specify the input, phases, ownership and final output. Under the hood, the agent writes a coordination script. Each worker needs its own task context and does not automatically receive every intermediate result.
+
+## Follow the run
+
+The workflow view shows the run and its agents. A background workflow also appears in the job list with progress and output. Inspect the combined result and any failed or cancelled work. Useful partial results can be retained, but unfinished tasks still need a decision.
+
+Workers share files unless you prepared separate copies. Give them independent edit scopes or let one agent apply the combined findings. Stopping a workflow does not reverse changes already made.
+
+For recurring work, use [Automation tasks](/zylon-code/plugins/automation-tasks). For a shared task board and teammate messages, use [Agent Teams](/zylon-code/plugins/agent-teams).
+
+---
+
+[Leer esta página en español](/zylon-code/es/tools/workflows)

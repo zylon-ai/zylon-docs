@@ -1,0 +1,21 @@
+---
+title: "Remote execution over SSH"
+description: "Understand the optional POSIX provider arrangement before configuring a remote workspace."
+noindex: true
+---
+
+The normal Desktop application works on folders on your computer. It does not offer a ready remote-project button for SSH execution.
+
+Optional SSH providers can put files and commands on a remote POSIX machine while keeping the application and conversation records local. This requires a custom integration prepared and verified by its administrator; selecting a folder or an external model does not enable it.
+
+## If your organization supplies a remote integration
+
+Ask which project paths are remote, where model requests run and how permissions are enforced. Both the filesystem and command tools must use the same remote environment. The administrator also needs to prepare SSH authentication, trusted host keys and the matching remote runtime.
+
+Check a read-only file operation and a bounded command before editing. After disconnection, inspect remote state before retrying: the previous command may still have completed. Automatic reconnection and replay are not provided by this integration.
+
+For local projects, follow [Projects](/zylon-code/everyday-use/projects). For model connections hosted elsewhere, use [Other providers](/zylon-code/models/providers); those connections do not move your project files.
+
+---
+
+[Leer esta página en español](/zylon-code/es/advanced/remote-execution)

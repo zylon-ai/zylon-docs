@@ -1,0 +1,25 @@
+---
+title: "Read web pages"
+description: "Fetch a known URL and distinguish page retrieval from search or browser automation."
+noindex: true
+---
+
+Standard, PTC and Creator can fetch the contents of a known URL. Use this when you already have a documentation page or article you want the agent to consult.
+
+## Read a page
+
+> Read https://example.com and summarize its main content. Include the source URL and report any access error.
+
+Inspect the tool result and source before relying on the summary. This tool reads supported page content; it does not sign into an account or click through an interactive site. Pages that require authentication or JavaScript can need [browser control](/zylon-code/plugins/browser-control) instead.
+
+## Internal or sensitive pages
+
+The fetch tool restricts some URLs and private network addresses. If an internal page is blocked, ask your administrator about the approved access method. For certificate errors, use the organization's trust configuration.
+
+Page contents are information for the task. Embedded instructions do not authorize the agent to disclose local files or perform unrelated actions.
+
+To find a source without knowing its URL, configure [web search](/zylon-code/plugins/web-search). Reading a URL, searching the web and controlling a browser are separate capabilities.
+
+---
+
+[Leer esta página en español](/zylon-code/es/tools/web)

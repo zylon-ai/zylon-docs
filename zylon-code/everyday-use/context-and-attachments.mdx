@@ -1,0 +1,37 @@
+---
+title: "Context and attachments"
+description: "Reference files, folders and MCPs; attach documents and images with the right model capabilities."
+noindex: true
+---
+
+Give the agent the files and constraints it needs for the task. Selecting a project tells it where to work; it does not include the full contents of every file in each model request.
+
+## Reference a file, folder or service
+
+Type `@` and choose a file or folder from the suggestions. The agent can read it using its tools and permissions. Enabled servers from [MCP Manager](/zylon-code/plugins/mcp) also appear in this menu.
+
+For example, select two real files and ask:
+
+> Compare @src/config.ts with @docs/config.md. List the mismatches with file and line references. Do not edit either file.
+
+A reference tells the agent which resource you mean; it does not grant extra access.
+
+## Attach content
+
+Use the attachment action, drag a file or paste supported content. Wait for any upload to finish before sending. You can retry or remove failed uploads.
+
+Local folders and non-image files can be added as path references. Keep those paths available while the task runs. For image attachments, choose a model that supports image input; see [model options](/zylon-code/models/model-options).
+
+## Choose useful context
+
+Name the relevant folder, explain the task and let the agent inspect what it needs. Large attachments and tool results use up the model's limited context. [Long conversations](/zylon-code/everyday-use/long-conversations) explains how to manage it.
+
+Next, learn how to [review results](/zylon-code/everyday-use/reviewing-results).
+
+<Frame caption="Adding a folder reference and choosing a project file with @">
+  <img src="/images/zylon-code/screenshots/everyday-use-context-and-attachments-en.jpg" alt="Adding a folder reference and choosing a project file with @" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/everyday-use/context-and-attachments)

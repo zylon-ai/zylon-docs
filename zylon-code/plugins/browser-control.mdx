@@ -1,0 +1,41 @@
+---
+title: "Browser control"
+description: "Prepare one browser provider and verify automation before using it in a task."
+noindex: true
+---
+
+Browser control lets the agent inspect a page and interact with its controls. It is an optional experimental capability. The browser panel alone does not enable automation.
+
+## Prepare a provider
+
+Ask Creator or your administrator to configure one provider supported by your build:
+
+| Provider | What it needs |
+| --- | --- |
+| Playwright MCP | A compatible Playwright MCP runtime and Chromium, with launch or attachment settings. |
+| Chrome DevTools MCP | Chrome and the configured browser connection. |
+| Stagehand | A compatible runtime and a separately configured model for its AI-assisted actions. |
+
+The application needs the provider and its browser runtime before a task uses it. Installation and live compatibility depend on your operating system and build.
+
+## Try a read-only task
+
+Start a fresh conversation:
+
+> Open the test page I provide. Inspect its title and visible controls. Describe them without submitting forms or changing account data.
+
+Check the observed page and tool results. Screenshot inspection needs a model that supports images.
+
+## Work with browser state
+
+A provider can launch a separate browser or attach to an existing one, depending on configuration. It does not automatically choose your usual signed-in browser. Other people and processes can change an attached browser while the task runs.
+
+After a runtime restart, tabs and login state may need to be restored. Check current state before repeating an action. For startup or access problems, see [Plugin troubleshooting](/zylon-code/troubleshooting/plugins-and-mcp).
+
+<Frame caption="Browser-control search in Built-in plugins, with no matching entry">
+  <img src="/images/zylon-code/screenshots/plugins-browser-control-en.jpg" alt="Browser-control search in Built-in plugins, with no matching entry" />
+</Frame>
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/browser-control)

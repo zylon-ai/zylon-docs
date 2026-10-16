@@ -1,0 +1,25 @@
+---
+title: "External agents"
+description: "Prepare optional Codex, Claude Code and ACP delegation bridges explicitly."
+noindex: true
+---
+
+External agents let Zylon Code delegate to another agent application, such as Codex, Claude Code or an ACP-compatible runtime. These bridges are optional and disabled in the normal modes.
+
+Choosing a model from a vendor does not install that vendor's agent application. Ordinary [subagents](/zylon-code/agents/delegation) run within Zylon Code and are the simpler starting point.
+
+## Prepare a bridge
+
+Ask Creator or your administrator to configure a compatible runtime and expose its delegation tool. Codex and Claude Code need their own supported runtime and authentication. A Zylon developer token does not sign into those applications. ACP agents need a configured executable and their own model access.
+
+Use explicit, approved credentials and configuration. The bridge does not automatically select any executable found on your computer.
+
+## Check before important work
+
+Try a small read-only task. Review its final output, permission requests, cancellation and errors. Confirm where it stores data and which provider receives its requests; the parent conversation's settings do not automatically define the external agent's policies.
+
+Keep the runtime's installation and compatibility information for future updates. For normal parallel work, return to [Delegate to agents](/zylon-code/agents/delegation).
+
+---
+
+[Leer esta página en español](/zylon-code/es/advanced/external-agents)

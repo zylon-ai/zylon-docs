@@ -1,0 +1,25 @@
+---
+title: "Agent execution settings"
+description: "Limit how many independent tool calls an agent can run at once."
+noindex: true
+---
+
+This setting limits how many independent tool calls one agent can execute at once. For example, it may read several unrelated files in parallel. It does not control the number of subagents or decide whether an action is permitted.
+
+## Change the limit
+
+1. Open **Plugins → Official** and the Agent execution or Agent loop card.
+2. Enter a valid number in **Parallel tool calls**.
+3. Save the change. The field indicates when your value overrides the default.
+
+Use **Reset to default** to remove the override and save if required. Leaving the form without saving discards your draft.
+
+## When to change it
+
+Start with the default. Raising the limit can help independent reads, but it also increases resource use and concurrent requests to external services. Operations that depend on each other still need ordering.
+
+If calls remain sequential, their dependencies or execution rules may explain why. Use [Agent models and limits](/zylon-code/agents/models-and-limits) for delegated agents and [Shell settings](/zylon-code/tools/shell-and-jobs) for command timeouts and output.
+
+---
+
+[Leer esta página en español](/zylon-code/es/plugins/agent-loop)

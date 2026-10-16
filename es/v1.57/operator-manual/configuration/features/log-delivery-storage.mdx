@@ -102,10 +102,10 @@ Bajo `logging.delivery.syslog`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Habilita entrega por syslog. |
 | `format` | `rfc5424_json` | `rfc5424_json`, `cef` | Formato del payload syslog. |
-| `host` | vacio | hostname o IP | Host del colector. Requerido cuando syslog esta habilitado. |
-| `port` | `6514` | puerto TCP/UDP valido | Puerto del colector. |
-| `transport` | `tls` | `tls`, `tcp`, `udp` | Transporte del socket. |
-| `framing` | `newline` | `newline`, `octet_counting` | Framing para TCP/TLS. Ignorado para UDP. |
+| `endpoint.host` | vacio | hostname o IP | Host del colector. Requerido cuando syslog esta habilitado. |
+| `endpoint.port` | `6514` | puerto TCP/UDP valido | Puerto del colector. |
+| `endpoint.transport` | `tls` | `tls`, `tcp`, `udp` | Transporte del socket. |
+| `endpoint.framing` | `newline` | `newline`, `octet_counting` | Framing para TCP/TLS. Ignorado para UDP. |
 
 <Accordion title="Claves opcionales de syslog">
 Los filtros y ajustes opcionales de entrega, cola, lotes y TLS se configuran bajo sus bloques anidados correspondientes en `logging.delivery.syslog`.
@@ -209,8 +209,8 @@ Bajo `logging.delivery.http`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Habilita entrega por HTTP. |
 | `format` | `canonical_json` | `canonical_json` | Formato del payload HTTP. |
-| `url` | vacio | URL | Requerido cuando HTTP esta habilitado. |
-| `method` | `POST` | `POST` | Metodo HTTP. |
+| `endpoint.url` | vacio | URL | Requerido cuando HTTP esta habilitado. |
+| `endpoint.method` | `POST` | `POST` | Metodo HTTP. |
 | `headers` | `[]` | lista YAML | Cabeceras salientes estaticas. |
 
 <Accordion title="Claves opcionales de HTTP">

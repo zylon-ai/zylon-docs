@@ -3,9 +3,16 @@
 import json
 import re
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEW = "v1.58/"
+SECTION_LANDINGS = {
+    "changelog", "operator-manual", "operator-manual/configuration",
+    "operator-manual/configuration/features", "operator-manual/configuration/observability",
+    "operator-manual/installation", "operator-manual/instance-hardening",
+    "operator-manual/knowledge-base", "operator-manual/auditability-ai-safety",
+}
 
 
 def pages(node):
@@ -22,6 +29,25 @@ def pages(node):
     elif isinstance(node, list):
         for item in node:
             yield from pages(item)
+
+
+def normalize_redirect_path(value):
+    """Mintlify production treats a terminal /index as its directory path."""
+    path = unquote(urlsplit(value).path).rstrip("/") or "/"
+    return path.removesuffix("/index") or "/"
+
+
+def validate_normalized_redirects(redirects):
+    normalized = {}
+    for source, destination in redirects.items():
+        source_path = normalize_redirect_path(source)
+        target_path = normalize_redirect_path(destination)
+        assert source_path != target_path, ("Self redirect after path normalization", source, destination)
+        if source_path in normalized:
+            assert normalized[source_path] == target_path, ("Conflicting normalized redirect sources", source)
+        normalized[source_path] = target_path
+    for source, destination in normalized.items():
+        assert destination not in normalized, ("Normalized redirect chain or cycle", source, destination)
 
 
 def main():
@@ -75,14 +101,23 @@ def main():
 
     redirects = {entry["source"]: entry["destination"] for entry in config["redirects"]}
     assert len(redirects) == len(config["redirects"]), "Duplicate redirect sources"
+    validate_normalized_redirects(redirects)
+    for lang in ("en", "es"):
+        for version in ("v1.57", "v1.58"):
+            for section in SECTION_LANDINGS:
+                old = f"/{lang}/{version}/{section}"
+                for source in (old, old + "/index"):
+                    assert redirects.get(source) == old + "/overview", ("Section bookmark must reach its overview", source)
     for source, destination in redirects.items():
-        assert destination not in redirects, ("Redirect chain", source, destination)
         target = ROOT / destination.lstrip("/")
         assert target.with_suffix(".mdx").is_file() or (target / "index.mdx").is_file(), (source, destination)
     for lang in ("en", "es"):
         for path in (ROOT / lang / "v1.57").rglob("*.mdx"):
             relative = path.relative_to(ROOT / lang / "v1.57").as_posix().removesuffix(".mdx")
-            old = "/" + lang + "/" + relative
+            legacy = relative.removesuffix("/overview")
+            if legacy not in SECTION_LANDINGS:
+                legacy = relative
+            old = "/" + lang + "/" + legacy
             if "version-availability" in path.read_text():
                 assert redirects.get(old) == old.replace("/" + lang + "/", "/" + lang + "/v1.58/", 1), old
             else:

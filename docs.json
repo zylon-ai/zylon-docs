@@ -344,13 +344,13 @@
                   {
                     "group": "Getting Started",
                     "pages": [
-                      "en/v1.57/operator-manual"
+                      "en/v1.57/operator-manual/overview"
                     ]
                   },
                   {
                     "group": "Installation",
                     "pages": [
-                      "en/v1.57/operator-manual/installation",
+                      "en/v1.57/operator-manual/installation/overview",
                       "en/v1.57/operator-manual/installation/hardware-requirements",
                       "en/v1.57/operator-manual/installation/online",
                       "en/v1.57/operator-manual/installation/semi-airgap",
@@ -381,7 +381,7 @@
                   {
                     "group": "Configuration",
                     "pages": [
-                      "en/v1.57/operator-manual/configuration",
+                      "en/v1.57/operator-manual/configuration/overview",
                       {
                         "group": "AI Presets",
                         "pages": [
@@ -410,7 +410,7 @@
                       {
                         "group": "Knowledge Base Connectors",
                         "pages": [
-                          "en/v1.57/operator-manual/knowledge-base",
+                          "en/v1.57/operator-manual/knowledge-base/overview",
                           "en/v1.57/operator-manual/knowledge-base/google-drive",
                           "en/v1.57/operator-manual/knowledge-base/sharepoint",
                           "en/v1.57/operator-manual/knowledge-base/confluence",
@@ -447,7 +447,7 @@
                           {
                             "group": "Observability",
                             "pages": [
-                              "en/v1.57/operator-manual/configuration/observability",
+                              "en/v1.57/operator-manual/configuration/observability/overview",
                               "en/v1.57/operator-manual/configuration/observability/platform-metrics",
                               "en/v1.57/operator-manual/configuration/observability/destinations",
                               "en/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
@@ -474,7 +474,7 @@
                   {
                     "group": "Security",
                     "pages": [
-                      "en/v1.57/operator-manual/instance-hardening",
+                      "en/v1.57/operator-manual/instance-hardening/overview",
                       "en/v1.57/operator-manual/instance-hardening/airgap-your-server",
                       "en/v1.57/operator-manual/instance-hardening/disk-encryption",
                       "en/v1.57/operator-manual/security/authentication-for-sensitive-actions"
@@ -483,7 +483,7 @@
                   {
                     "group": "Auditability & AI Governance",
                     "pages": [
-                      "en/v1.57/operator-manual/auditability-ai-safety",
+                      "en/v1.57/operator-manual/auditability-ai-safety/overview",
                       "en/v1.57/operator-manual/backoffice/log-delivery-storage"
                     ]
                   },
@@ -491,7 +491,7 @@
                     "group": "Additional pages",
                     "hidden": true,
                     "pages": [
-                      "en/v1.57/operator-manual/configuration/features",
+                      "en/v1.57/operator-manual/configuration/features/overview",
                       "en/v1.57/operator-manual/low-level"
                     ]
                   },
@@ -517,7 +517,7 @@
                 "tab": "Changelog",
                 "icon": "list",
                 "pages": [
-                  "en/v1.57/changelog",
+                  "en/v1.57/changelog/overview",
                   {
                     "group": "Additional pages",
                     "hidden": true,
@@ -841,13 +841,13 @@
                   {
                     "group": "Primeros pasos",
                     "pages": [
-                      "es/v1.57/operator-manual"
+                      "es/v1.57/operator-manual/overview"
                     ]
                   },
                   {
                     "group": "Instalación",
                     "pages": [
-                      "es/v1.57/operator-manual/installation",
+                      "es/v1.57/operator-manual/installation/overview",
                       "es/v1.57/operator-manual/installation/hardware-requirements",
                       "es/v1.57/operator-manual/installation/online",
                       "es/v1.57/operator-manual/installation/semi-airgap",
@@ -878,7 +878,7 @@
                   {
                     "group": "Configuración",
                     "pages": [
-                      "es/v1.57/operator-manual/configuration",
+                      "es/v1.57/operator-manual/configuration/overview",
                       {
                         "group": "Preajustes de IA",
                         "pages": [
@@ -907,7 +907,7 @@
                       {
                         "group": "Conectores de Bases de Conocimiento",
                         "pages": [
-                          "es/v1.57/operator-manual/knowledge-base",
+                          "es/v1.57/operator-manual/knowledge-base/overview",
                           "es/v1.57/operator-manual/knowledge-base/google-drive",
                           "es/v1.57/operator-manual/knowledge-base/sharepoint",
                           "es/v1.57/operator-manual/knowledge-base/confluence",
@@ -944,7 +944,7 @@
                           {
                             "group": "Observabilidad",
                             "pages": [
-                              "es/v1.57/operator-manual/configuration/observability",
+                              "es/v1.57/operator-manual/configuration/observability/overview",
                               "es/v1.57/operator-manual/configuration/observability/platform-metrics",
                               "es/v1.57/operator-manual/configuration/observability/destinations",
                               "es/v1.57/operator-manual/configuration/observability/external-grafana-dashboard"
@@ -971,7 +971,7 @@
                   {
                     "group": "Seguridad",
                     "pages": [
-                      "es/v1.57/operator-manual/instance-hardening",
+                      "es/v1.57/operator-manual/instance-hardening/overview",
                       "es/v1.57/operator-manual/instance-hardening/airgap-your-server",
                       "es/v1.57/operator-manual/instance-hardening/disk-encryption",
                       "es/v1.57/operator-manual/security/authentication-for-sensitive-actions"
@@ -980,7 +980,7 @@
                   {
                     "group": "Auditabilidad y gobernanza de IA",
                     "pages": [
-                      "es/v1.57/operator-manual/auditability-ai-safety",
+                      "es/v1.57/operator-manual/auditability-ai-safety/overview",
                       "es/v1.57/operator-manual/backoffice/log-delivery-storage"
                     ]
                   },
@@ -988,7 +988,7 @@
                     "group": "Páginas adicionales",
                     "hidden": true,
                     "pages": [
-                      "es/v1.57/operator-manual/configuration/features",
+                      "es/v1.57/operator-manual/configuration/features/overview",
                       "es/v1.57/operator-manual/low-level"
                     ]
                   },
@@ -1014,7 +1014,7 @@
                 "tab": "Registro de cambios",
                 "icon": "list",
                 "pages": [
-                  "es/v1.57/changelog",
+                  "es/v1.57/changelog/overview",
                   {
                     "group": "Páginas adicionales",
                     "hidden": true,
@@ -1332,13 +1332,13 @@
                   {
                     "group": "Getting Started",
                     "pages": [
-                      "en/v1.58/operator-manual"
+                      "en/v1.58/operator-manual/overview"
                     ]
                   },
                   {
                     "group": "Installation",
                     "pages": [
-                      "en/v1.58/operator-manual/installation",
+                      "en/v1.58/operator-manual/installation/overview",
                       "en/v1.58/operator-manual/installation/hardware-requirements",
                       "en/v1.58/operator-manual/installation/online",
                       "en/v1.58/operator-manual/installation/semi-airgap",
@@ -1370,7 +1370,7 @@
                   {
                     "group": "Configuration",
                     "pages": [
-                      "en/v1.58/operator-manual/configuration",
+                      "en/v1.58/operator-manual/configuration/overview",
                       {
                         "group": "AI Presets",
                         "pages": [
@@ -1399,7 +1399,7 @@
                       {
                         "group": "Knowledge Base Connectors",
                         "pages": [
-                          "en/v1.58/operator-manual/knowledge-base",
+                          "en/v1.58/operator-manual/knowledge-base/overview",
                           "en/v1.58/operator-manual/knowledge-base/google-drive",
                           "en/v1.58/operator-manual/knowledge-base/sharepoint",
                           "en/v1.58/operator-manual/knowledge-base/confluence",
@@ -1439,7 +1439,7 @@
                           {
                             "group": "Observability",
                             "pages": [
-                              "en/v1.58/operator-manual/configuration/observability",
+                              "en/v1.58/operator-manual/configuration/observability/overview",
                               "en/v1.58/operator-manual/configuration/observability/platform-metrics",
                               "en/v1.58/operator-manual/configuration/observability/destinations",
                               "en/v1.58/operator-manual/configuration/observability/external-grafana-dashboard"
@@ -1465,7 +1465,7 @@
                   {
                     "group": "Security",
                     "pages": [
-                      "en/v1.58/operator-manual/instance-hardening",
+                      "en/v1.58/operator-manual/instance-hardening/overview",
                       "en/v1.58/operator-manual/instance-hardening/airgap-your-server",
                       "en/v1.58/operator-manual/instance-hardening/disk-encryption",
                       "en/v1.58/operator-manual/security/authentication-for-sensitive-actions"
@@ -1474,7 +1474,7 @@
                   {
                     "group": "Auditability & AI Governance",
                     "pages": [
-                      "en/v1.58/operator-manual/auditability-ai-safety",
+                      "en/v1.58/operator-manual/auditability-ai-safety/overview",
                       "en/v1.58/operator-manual/backoffice/log-delivery-storage"
                     ]
                   },
@@ -1482,7 +1482,7 @@
                     "group": "Additional pages",
                     "hidden": true,
                     "pages": [
-                      "en/v1.58/operator-manual/configuration/features",
+                      "en/v1.58/operator-manual/configuration/features/overview",
                       "en/v1.58/operator-manual/low-level"
                     ]
                   }
@@ -1499,7 +1499,7 @@
                 "tab": "Changelog",
                 "icon": "list",
                 "pages": [
-                  "en/v1.58/changelog",
+                  "en/v1.58/changelog/overview",
                   {
                     "group": "Additional pages",
                     "hidden": true,
@@ -1805,13 +1805,13 @@
                   {
                     "group": "Primeros pasos",
                     "pages": [
-                      "es/v1.58/operator-manual"
+                      "es/v1.58/operator-manual/overview"
                     ]
                   },
                   {
                     "group": "Instalación",
                     "pages": [
-                      "es/v1.58/operator-manual/installation",
+                      "es/v1.58/operator-manual/installation/overview",
                       "es/v1.58/operator-manual/installation/hardware-requirements",
                       "es/v1.58/operator-manual/installation/online",
                       "es/v1.58/operator-manual/installation/semi-airgap",
@@ -1843,7 +1843,7 @@
                   {
                     "group": "Configuración",
                     "pages": [
-                      "es/v1.58/operator-manual/configuration",
+                      "es/v1.58/operator-manual/configuration/overview",
                       {
                         "group": "Preajustes de IA",
                         "pages": [
@@ -1872,7 +1872,7 @@
                       {
                         "group": "Conectores de Bases de Conocimiento",
                         "pages": [
-                          "es/v1.58/operator-manual/knowledge-base",
+                          "es/v1.58/operator-manual/knowledge-base/overview",
                           "es/v1.58/operator-manual/knowledge-base/google-drive",
                           "es/v1.58/operator-manual/knowledge-base/sharepoint",
                           "es/v1.58/operator-manual/knowledge-base/confluence",
@@ -1912,7 +1912,7 @@
                           {
                             "group": "Observabilidad",
                             "pages": [
-                              "es/v1.58/operator-manual/configuration/observability",
+                              "es/v1.58/operator-manual/configuration/observability/overview",
                               "es/v1.58/operator-manual/configuration/observability/platform-metrics",
                               "es/v1.58/operator-manual/configuration/observability/destinations",
                               "es/v1.58/operator-manual/configuration/observability/external-grafana-dashboard"
@@ -1938,7 +1938,7 @@
                   {
                     "group": "Seguridad",
                     "pages": [
-                      "es/v1.58/operator-manual/instance-hardening",
+                      "es/v1.58/operator-manual/instance-hardening/overview",
                       "es/v1.58/operator-manual/instance-hardening/airgap-your-server",
                       "es/v1.58/operator-manual/instance-hardening/disk-encryption",
                       "es/v1.58/operator-manual/security/authentication-for-sensitive-actions"
@@ -1947,7 +1947,7 @@
                   {
                     "group": "Auditabilidad y gobernanza de IA",
                     "pages": [
-                      "es/v1.58/operator-manual/auditability-ai-safety",
+                      "es/v1.58/operator-manual/auditability-ai-safety/overview",
                       "es/v1.58/operator-manual/backoffice/log-delivery-storage"
                     ]
                   },
@@ -1955,7 +1955,7 @@
                     "group": "Páginas adicionales",
                     "hidden": true,
                     "pages": [
-                      "es/v1.58/operator-manual/configuration/features",
+                      "es/v1.58/operator-manual/configuration/features/overview",
                       "es/v1.58/operator-manual/low-level"
                     ]
                   }
@@ -1972,7 +1972,7 @@
                 "tab": "Registro de cambios",
                 "icon": "list",
                 "pages": [
-                  "es/v1.58/changelog",
+                  "es/v1.58/changelog/overview",
                   {
                     "group": "Páginas adicionales",
                     "hidden": true,
@@ -2113,7 +2113,7 @@
     },
     {
       "source": "/en/operator-manual",
-      "destination": "/en/v1.57/operator-manual"
+      "destination": "/en/v1.57/operator-manual/overview"
     },
     {
       "source": "/en/operator-manual/configuration/search",
@@ -2125,7 +2125,7 @@
     },
     {
       "source": "/en/operator-manual/configuration",
-      "destination": "/en/v1.57/operator-manual/configuration"
+      "destination": "/en/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/en/operator-manual/configuration/n8n",
@@ -2169,7 +2169,7 @@
     },
     {
       "source": "/en/operator-manual/configuration/features",
-      "destination": "/en/v1.57/operator-manual/configuration/features"
+      "destination": "/en/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/en/operator-manual/configuration/features/feat-database",
@@ -2197,7 +2197,7 @@
     },
     {
       "source": "/en/operator-manual/configuration/observability",
-      "destination": "/en/v1.57/operator-manual/configuration/observability"
+      "destination": "/en/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/en/operator-manual/configuration/observability/external-grafana-dashboard",
@@ -2245,7 +2245,7 @@
     },
     {
       "source": "/en/operator-manual/installation",
-      "destination": "/en/v1.57/operator-manual/installation"
+      "destination": "/en/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/en/operator-manual/installation/legacy",
@@ -2329,7 +2329,7 @@
     },
     {
       "source": "/en/operator-manual/instance-hardening",
-      "destination": "/en/v1.57/operator-manual/instance-hardening"
+      "destination": "/en/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/en/operator-manual/instance-hardening/disk-encryption",
@@ -2365,7 +2365,7 @@
     },
     {
       "source": "/en/operator-manual/knowledge-base",
-      "destination": "/en/v1.57/operator-manual/knowledge-base"
+      "destination": "/en/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/en/operator-manual/knowledge-base/confluence-server",
@@ -2373,7 +2373,7 @@
     },
     {
       "source": "/en/operator-manual/auditability-ai-safety",
-      "destination": "/en/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/en/operator-manual/authentication/ldap",
@@ -2549,7 +2549,7 @@
     },
     {
       "source": "/en/changelog",
-      "destination": "/en/v1.57/changelog"
+      "destination": "/en/v1.57/changelog/overview"
     },
     {
       "source": "/en/changelog/guides/1-43-0",
@@ -2793,7 +2793,7 @@
     },
     {
       "source": "/es/operator-manual",
-      "destination": "/es/v1.57/operator-manual"
+      "destination": "/es/v1.57/operator-manual/overview"
     },
     {
       "source": "/es/operator-manual/configuration/search",
@@ -2805,7 +2805,7 @@
     },
     {
       "source": "/es/operator-manual/configuration",
-      "destination": "/es/v1.57/operator-manual/configuration"
+      "destination": "/es/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/es/operator-manual/configuration/n8n",
@@ -2849,7 +2849,7 @@
     },
     {
       "source": "/es/operator-manual/configuration/features",
-      "destination": "/es/v1.57/operator-manual/configuration/features"
+      "destination": "/es/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/es/operator-manual/configuration/features/feat-database",
@@ -2877,7 +2877,7 @@
     },
     {
       "source": "/es/operator-manual/configuration/observability",
-      "destination": "/es/v1.57/operator-manual/configuration/observability"
+      "destination": "/es/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/es/operator-manual/configuration/observability/external-grafana-dashboard",
@@ -2925,7 +2925,7 @@
     },
     {
       "source": "/es/operator-manual/installation",
-      "destination": "/es/v1.57/operator-manual/installation"
+      "destination": "/es/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/es/operator-manual/installation/legacy",
@@ -3009,7 +3009,7 @@
     },
     {
       "source": "/es/operator-manual/instance-hardening",
-      "destination": "/es/v1.57/operator-manual/instance-hardening"
+      "destination": "/es/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/es/operator-manual/instance-hardening/disk-encryption",
@@ -3045,7 +3045,7 @@
     },
     {
       "source": "/es/operator-manual/knowledge-base",
-      "destination": "/es/v1.57/operator-manual/knowledge-base"
+      "destination": "/es/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/es/operator-manual/knowledge-base/confluence-server",
@@ -3053,7 +3053,7 @@
     },
     {
       "source": "/es/operator-manual/auditability-ai-safety",
-      "destination": "/es/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/es/operator-manual/authentication/ldap",
@@ -3225,7 +3225,7 @@
     },
     {
       "source": "/es/changelog",
-      "destination": "/es/v1.57/changelog"
+      "destination": "/es/v1.57/changelog/overview"
     },
     {
       "source": "/es/changelog/guides/1-43-0",
@@ -3461,39 +3461,39 @@
     },
     {
       "source": "/en/operator-manual/index",
-      "destination": "/en/v1.57/operator-manual"
+      "destination": "/en/v1.57/operator-manual/overview"
     },
     {
       "source": "/en/operator-manual/configuration/index",
-      "destination": "/en/v1.57/operator-manual/configuration"
+      "destination": "/en/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/en/operator-manual/configuration/features/index",
-      "destination": "/en/v1.57/operator-manual/configuration/features"
+      "destination": "/en/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/en/operator-manual/configuration/observability/index",
-      "destination": "/en/v1.57/operator-manual/configuration/observability"
+      "destination": "/en/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/en/operator-manual/installation/index",
-      "destination": "/en/v1.57/operator-manual/installation"
+      "destination": "/en/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/en/operator-manual/instance-hardening/index",
-      "destination": "/en/v1.57/operator-manual/instance-hardening"
+      "destination": "/en/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/en/operator-manual/knowledge-base/index",
-      "destination": "/en/v1.57/operator-manual/knowledge-base"
+      "destination": "/en/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/en/operator-manual/auditability-ai-safety/index",
-      "destination": "/en/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/en/changelog/index",
-      "destination": "/en/v1.57/changelog"
+      "destination": "/en/v1.57/changelog/overview"
     },
     {
       "source": "/es/index",
@@ -3501,39 +3501,39 @@
     },
     {
       "source": "/es/operator-manual/index",
-      "destination": "/es/v1.57/operator-manual"
+      "destination": "/es/v1.57/operator-manual/overview"
     },
     {
       "source": "/es/operator-manual/configuration/index",
-      "destination": "/es/v1.57/operator-manual/configuration"
+      "destination": "/es/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/es/operator-manual/configuration/features/index",
-      "destination": "/es/v1.57/operator-manual/configuration/features"
+      "destination": "/es/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/es/operator-manual/configuration/observability/index",
-      "destination": "/es/v1.57/operator-manual/configuration/observability"
+      "destination": "/es/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/es/operator-manual/installation/index",
-      "destination": "/es/v1.57/operator-manual/installation"
+      "destination": "/es/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/es/operator-manual/instance-hardening/index",
-      "destination": "/es/v1.57/operator-manual/instance-hardening"
+      "destination": "/es/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/es/operator-manual/knowledge-base/index",
-      "destination": "/es/v1.57/operator-manual/knowledge-base"
+      "destination": "/es/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/es/operator-manual/auditability-ai-safety/index",
-      "destination": "/es/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/es/changelog/index",
-      "destination": "/es/v1.57/changelog"
+      "destination": "/es/v1.57/changelog/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/ai-presets",
@@ -3585,147 +3585,291 @@
     },
     {
       "source": "/en/v1.57/operator-manual/index",
-      "destination": "/en/v1.57/operator-manual"
+      "destination": "/en/v1.57/operator-manual/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/configuration/index",
-      "destination": "/en/v1.57/operator-manual/configuration"
+      "destination": "/en/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/configuration/features/index",
-      "destination": "/en/v1.57/operator-manual/configuration/features"
+      "destination": "/en/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/configuration/observability/index",
-      "destination": "/en/v1.57/operator-manual/configuration/observability"
+      "destination": "/en/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/installation/index",
-      "destination": "/en/v1.57/operator-manual/installation"
+      "destination": "/en/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/instance-hardening/index",
-      "destination": "/en/v1.57/operator-manual/instance-hardening"
+      "destination": "/en/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/knowledge-base/index",
-      "destination": "/en/v1.57/operator-manual/knowledge-base"
+      "destination": "/en/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/en/v1.57/operator-manual/auditability-ai-safety/index",
-      "destination": "/en/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/en/v1.57/changelog/index",
-      "destination": "/en/v1.57/changelog"
+      "destination": "/en/v1.57/changelog/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/index",
-      "destination": "/en/v1.58/operator-manual"
+      "destination": "/en/v1.58/operator-manual/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/configuration/index",
-      "destination": "/en/v1.58/operator-manual/configuration"
+      "destination": "/en/v1.58/operator-manual/configuration/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/configuration/features/index",
-      "destination": "/en/v1.58/operator-manual/configuration/features"
+      "destination": "/en/v1.58/operator-manual/configuration/features/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/configuration/observability/index",
-      "destination": "/en/v1.58/operator-manual/configuration/observability"
+      "destination": "/en/v1.58/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/installation/index",
-      "destination": "/en/v1.58/operator-manual/installation"
+      "destination": "/en/v1.58/operator-manual/installation/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/instance-hardening/index",
-      "destination": "/en/v1.58/operator-manual/instance-hardening"
+      "destination": "/en/v1.58/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/knowledge-base/index",
-      "destination": "/en/v1.58/operator-manual/knowledge-base"
+      "destination": "/en/v1.58/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/en/v1.58/operator-manual/auditability-ai-safety/index",
-      "destination": "/en/v1.58/operator-manual/auditability-ai-safety"
+      "destination": "/en/v1.58/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/en/v1.58/changelog/index",
-      "destination": "/en/v1.58/changelog"
+      "destination": "/en/v1.58/changelog/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/index",
-      "destination": "/es/v1.57/operator-manual"
+      "destination": "/es/v1.57/operator-manual/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/configuration/index",
-      "destination": "/es/v1.57/operator-manual/configuration"
+      "destination": "/es/v1.57/operator-manual/configuration/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/configuration/features/index",
-      "destination": "/es/v1.57/operator-manual/configuration/features"
+      "destination": "/es/v1.57/operator-manual/configuration/features/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/configuration/observability/index",
-      "destination": "/es/v1.57/operator-manual/configuration/observability"
+      "destination": "/es/v1.57/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/installation/index",
-      "destination": "/es/v1.57/operator-manual/installation"
+      "destination": "/es/v1.57/operator-manual/installation/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/instance-hardening/index",
-      "destination": "/es/v1.57/operator-manual/instance-hardening"
+      "destination": "/es/v1.57/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/knowledge-base/index",
-      "destination": "/es/v1.57/operator-manual/knowledge-base"
+      "destination": "/es/v1.57/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/es/v1.57/operator-manual/auditability-ai-safety/index",
-      "destination": "/es/v1.57/operator-manual/auditability-ai-safety"
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/es/v1.57/changelog/index",
-      "destination": "/es/v1.57/changelog"
+      "destination": "/es/v1.57/changelog/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/index",
-      "destination": "/es/v1.58/operator-manual"
+      "destination": "/es/v1.58/operator-manual/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/configuration/index",
-      "destination": "/es/v1.58/operator-manual/configuration"
+      "destination": "/es/v1.58/operator-manual/configuration/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/configuration/features/index",
-      "destination": "/es/v1.58/operator-manual/configuration/features"
+      "destination": "/es/v1.58/operator-manual/configuration/features/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/configuration/observability/index",
-      "destination": "/es/v1.58/operator-manual/configuration/observability"
+      "destination": "/es/v1.58/operator-manual/configuration/observability/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/installation/index",
-      "destination": "/es/v1.58/operator-manual/installation"
+      "destination": "/es/v1.58/operator-manual/installation/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/instance-hardening/index",
-      "destination": "/es/v1.58/operator-manual/instance-hardening"
+      "destination": "/es/v1.58/operator-manual/instance-hardening/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/knowledge-base/index",
-      "destination": "/es/v1.58/operator-manual/knowledge-base"
+      "destination": "/es/v1.58/operator-manual/knowledge-base/overview"
     },
     {
       "source": "/es/v1.58/operator-manual/auditability-ai-safety/index",
-      "destination": "/es/v1.58/operator-manual/auditability-ai-safety"
+      "destination": "/es/v1.58/operator-manual/auditability-ai-safety/overview"
     },
     {
       "source": "/es/v1.58/changelog/index",
-      "destination": "/es/v1.58/changelog"
+      "destination": "/es/v1.58/changelog/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual",
+      "destination": "/en/v1.57/operator-manual/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/configuration",
+      "destination": "/en/v1.57/operator-manual/configuration/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/configuration/features",
+      "destination": "/en/v1.57/operator-manual/configuration/features/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/configuration/observability",
+      "destination": "/en/v1.57/operator-manual/configuration/observability/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/installation",
+      "destination": "/en/v1.57/operator-manual/installation/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/instance-hardening",
+      "destination": "/en/v1.57/operator-manual/instance-hardening/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/knowledge-base",
+      "destination": "/en/v1.57/operator-manual/knowledge-base/overview"
+    },
+    {
+      "source": "/en/v1.57/operator-manual/auditability-ai-safety",
+      "destination": "/en/v1.57/operator-manual/auditability-ai-safety/overview"
+    },
+    {
+      "source": "/en/v1.57/changelog",
+      "destination": "/en/v1.57/changelog/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual",
+      "destination": "/en/v1.58/operator-manual/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/configuration",
+      "destination": "/en/v1.58/operator-manual/configuration/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/configuration/features",
+      "destination": "/en/v1.58/operator-manual/configuration/features/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/configuration/observability",
+      "destination": "/en/v1.58/operator-manual/configuration/observability/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/installation",
+      "destination": "/en/v1.58/operator-manual/installation/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/instance-hardening",
+      "destination": "/en/v1.58/operator-manual/instance-hardening/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/knowledge-base",
+      "destination": "/en/v1.58/operator-manual/knowledge-base/overview"
+    },
+    {
+      "source": "/en/v1.58/operator-manual/auditability-ai-safety",
+      "destination": "/en/v1.58/operator-manual/auditability-ai-safety/overview"
+    },
+    {
+      "source": "/en/v1.58/changelog",
+      "destination": "/en/v1.58/changelog/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual",
+      "destination": "/es/v1.57/operator-manual/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/configuration",
+      "destination": "/es/v1.57/operator-manual/configuration/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/configuration/features",
+      "destination": "/es/v1.57/operator-manual/configuration/features/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/configuration/observability",
+      "destination": "/es/v1.57/operator-manual/configuration/observability/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/installation",
+      "destination": "/es/v1.57/operator-manual/installation/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/instance-hardening",
+      "destination": "/es/v1.57/operator-manual/instance-hardening/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/knowledge-base",
+      "destination": "/es/v1.57/operator-manual/knowledge-base/overview"
+    },
+    {
+      "source": "/es/v1.57/operator-manual/auditability-ai-safety",
+      "destination": "/es/v1.57/operator-manual/auditability-ai-safety/overview"
+    },
+    {
+      "source": "/es/v1.57/changelog",
+      "destination": "/es/v1.57/changelog/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual",
+      "destination": "/es/v1.58/operator-manual/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/configuration",
+      "destination": "/es/v1.58/operator-manual/configuration/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/configuration/features",
+      "destination": "/es/v1.58/operator-manual/configuration/features/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/configuration/observability",
+      "destination": "/es/v1.58/operator-manual/configuration/observability/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/installation",
+      "destination": "/es/v1.58/operator-manual/installation/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/instance-hardening",
+      "destination": "/es/v1.58/operator-manual/instance-hardening/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/knowledge-base",
+      "destination": "/es/v1.58/operator-manual/knowledge-base/overview"
+    },
+    {
+      "source": "/es/v1.58/operator-manual/auditability-ai-safety",
+      "destination": "/es/v1.58/operator-manual/auditability-ai-safety/overview"
+    },
+    {
+      "source": "/es/v1.58/changelog",
+      "destination": "/es/v1.58/changelog/overview"
     }
   ]
 }

@@ -25,10 +25,11 @@ The `navigation.versions` entries in `docs.json` own their language navigation. 
 
 Keep the language first and the version second in both releases’ page URLs so Mintlify can match translations and versions without resetting the language or page. Keep internal links within the selected version. Preview installation snippets live under `snippets/v1.58/`; shared images remain under `images/`. API reference pages are maintained directly in the versioned MDX files; OpenAPI JSON snapshots are not required to render them. The legacy sync workflow and helper scripts remain separate maintenance tooling.
 
-Before opening a PR:
+The `Validate versioned docs` GitHub Actions check runs the version guard and redirect regression tests on pull requests and pushes to `main`. Before opening a PR:
 
 ```sh
 python3 scripts/check-doc-versions.py
+python3 -m unittest discover -s scripts/tests
 bash -n update-spec.sh
 mint broken-links
 mint dev --port 3010 --no-open
@@ -36,4 +37,6 @@ mint dev --port 3010 --no-open
 
 Check version and language switching, an existing 1.57 API page, the matching 1.58 page, the migration guide, and an installation page with imported snippets. When 1.58 ships, change its selector label to `1.58`, move `default: true` to it, and remove the upcoming-release notice imports/usages from its pages. Update the expected default, label, and notice checks in `scripts/check-doc-versions.py` at the same time. Preserve the 1.57 URLs, compatibility redirects, and snapshots.
 
-Home pages use an explicit `overview` slug, and navigation entries omit `/index`, so Mintlify can match equivalent pages when switching releases. Root and `/index` URLs remain compatibility redirects. Hidden 1.57 landing pages explain topics first documented in 1.58 and link to that release, without asserting feature availability in 1.57. Historical 1.57 upgrade guides explicitly link to the frozen 1.57 preset reference even when read from the 1.58 snapshot.
+Home and section landing pages use an explicit `overview` slug so Mintlify can match equivalent pages when switching releases. Existing section-root and `/index` URLs both redirect directly to the corresponding `/overview` page. Never redirect an `/index` alias to its parent path: Mintlify production normalizes these to the same route, creating a self-redirect even when the local preview works. The version checker rejects normalized self-redirects, conflicting aliases, and redirect chains or cycles. Hidden 1.57 landing pages explain topics first documented in 1.58 and link to that release, without asserting feature availability in 1.57. Historical 1.57 upgrade guides explicitly link to the frozen 1.57 preset reference even when read from the 1.58 snapshot.
+
+After publishing, verify the deployed home, section pages, and old bookmarks with real redirect traces. The local preview does not establish hosted routing or search-index behavior. If Cloudflare serves stale HTML or cached redirects, [purge the affected documentation URLs or hostname](https://developers.cloudflare.com/cache/how-to/purge-cache/) after the Mintlify deployment completes, then repeat the public checks. Scope the purge to `docs.zylon.ai`, including affected entry points, legacy aliases, and discovery files. Review the cache rules so documentation HTML and redirects honor origin `Cache-Control` headers; a browser refresh or query parameter may still hit the same edge cache.

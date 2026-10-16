@@ -47,7 +47,7 @@ Zylon almacena un sobre de log compartido y datos estructurados especificos del 
 | Metadatos de entrega | Esquema externo, severity, outcome, actor y entorno para syslog | Ayuda a clasificar eventos en SIEM y colectores. |
 
 <Warning>
-Sensitive request keys are masked before request input payloads are stored. Masked values are stored as `***`; they are not hashed, tokenized, or preserved as last-four characters in Zylon logs. URI user information in primitive string values is also redacted before storage.
+Las claves sensibles se enmascaran antes de almacenar los datos de entrada de las solicitudes. Los valores enmascarados se guardan como `***`: los logs de Zylon no conservan un hash, un token ni sus últimos cuatro caracteres. La información de usuario de las URI contenidas en valores de texto también se oculta antes del almacenamiento.
 </Warning>
 
 <Accordion title="Claves de request enmascaradas">

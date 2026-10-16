@@ -133,10 +133,10 @@ Under `logging.delivery.syslog`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables syslog delivery. |
 | `format` | `rfc5424_json` | `rfc5424_json`, `cef` | Syslog payload format. |
-| `host` | empty | hostname or IP | Required collector host. |
-| `port` | `6514` | valid TCP/UDP port | Collector port. |
-| `transport` | `tls` | `tls`, `tcp`, `udp` | Socket transport. |
-| `framing` | `newline` | `newline`, `octet_counting` | Stream framing for TCP/TLS. Ignored for UDP. |
+| `endpoint.host` | empty | hostname or IP | Required collector host. |
+| `endpoint.port` | `6514` | valid TCP/UDP port | Collector port. |
+| `endpoint.transport` | `tls` | `tls`, `tcp`, `udp` | Socket transport. |
+| `endpoint.framing` | `newline` | `newline`, `octet_counting` | Stream framing for TCP/TLS. Ignored for UDP. |
 
 <Accordion title="Optional syslog keys">
 Optional filter, delivery, queue, batch, and TLS settings are configured under their matching nested blocks in `logging.delivery.syslog`.
@@ -258,8 +258,8 @@ Under `logging.delivery.http`:
 | --- | --- | --- | --- |
 | `enabled` | `false` | `true`, `false` | Enables HTTP delivery. |
 | `format` | `canonical_json` | `canonical_json` | HTTP payload format. |
-| `url` | empty | URL | Required when HTTP delivery is enabled. |
-| `method` | `POST` | `POST` | HTTP method. |
+| `endpoint.url` | empty | URL | Required when HTTP delivery is enabled. |
+| `endpoint.method` | `POST` | `POST` | HTTP method. |
 | `headers` | `[]` | YAML list | Static outbound headers. Supports `Header=Value` and `Header: Value`. |
 
 <Accordion title="Optional HTTP keys">

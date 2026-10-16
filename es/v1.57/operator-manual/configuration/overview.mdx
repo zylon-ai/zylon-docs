@@ -3,10 +3,6 @@ title: "Descripción General de la Configuración"
 description: "Guía completa para configurar su instancia de Zylon"
 ---
 
-import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 Configure su instancia de Zylon para satisfacer los requisitos específicos de su organización. Esta sección cubre modelos de IA, configuración de red, autenticación, funciones y configuraciones avanzadas.
 
 ---
@@ -33,16 +29,19 @@ Configure su instancia de Zylon para satisfacer los requisitos específicos de s
 ## Configuración Principal
 
 <CardGroup cols={2}>
-  <Card title="Preajustes de IA" icon="brain" href="/es/v1.58/operator-manual/ai-presets/getting-started">
+  <Card title="Preajustes de IA" icon="brain" href="/es/v1.57/operator-manual/ai-presets/getting-started">
     Configure modelos de IA basados en la capacidad de GPU y habilite capacidades especializadas
   </Card>
-  <Card title="Conectores de Conocimiento" icon="database" href="/es/v1.58/operator-manual/knowledge-base/index">
+  <Card title="Conectores de Conocimiento" icon="database" href="/es/v1.57/operator-manual/knowledge-base/overview">
     Conéctese a fuentes de datos externas como SharePoint, Confluence y sistemas de archivos
   </Card>
-  <Card title="Integración n8n" icon="chart-diagram" href="/es/v1.58/operator-manual/configuration/n8n">
+  <Card title="Integración n8n" icon="chart-diagram" href="/es/v1.57/operator-manual/configuration/n8n">
     Habilite y configure la automatización de flujos de trabajo n8n dentro de Zylon
   </Card>
-  <Card title="Marca Blanca" icon="palette" href="/es/v1.58/operator-manual/configuration/whitelabel">
+  <Card title="Configuración de Búsqueda" icon="magnifying-glass" href="/es/v1.57/operator-manual/configuration/search">
+    Configure idiomas de búsqueda y ajustes de búsqueda por palabras clave para un descubrimiento óptimo de contenido
+  </Card>
+  <Card title="Marca Blanca" icon="palette" href="/es/v1.57/operator-manual/configuration/whitelabel">
     Personalice la marca, logotipos y apariencia para que coincidan con su organización
   </Card>
 </CardGroup>
@@ -52,10 +51,10 @@ Configure su instancia de Zylon para satisfacer los requisitos específicos de s
 ## Red y Conectividad
 
 <CardGroup cols={2}>
-  <Card title="Puertos y DNS" icon="network-wired" href="/es/v1.58/operator-manual/configuration/network/ports-and-dns">
+  <Card title="Puertos y DNS" icon="network-wired" href="/es/v1.57/operator-manual/configuration/network/ports-and-dns">
     Configure los puertos de red y la configuración de DNS necesarios
   </Card>
-  <Card title="Configuración de Proxy" icon="shield" href="/es/v1.58/operator-manual/configuration/network/proxy">
+  <Card title="Configuración de Proxy" icon="shield" href="/es/v1.57/operator-manual/configuration/network/proxy">
     Configure proxy HTTP/HTTPS para entornos de red restringidos
   </Card>
 </CardGroup>
@@ -65,10 +64,10 @@ Configure su instancia de Zylon para satisfacer los requisitos específicos de s
 ## Autenticación y Seguridad
 
 <CardGroup cols={2}>
-  <Card title="SSO de Google" icon="google" href="/es/v1.58/operator-manual/openid/google">
+  <Card title="SSO de Google" icon="google" href="/es/v1.57/operator-manual/openid/google">
     Habilite el inicio de sesión único de Google para la autenticación de usuarios
   </Card>
-  <Card title="SSO de Microsoft Entra" icon="microsoft" href="/es/v1.58/operator-manual/openid/microsoft">
+  <Card title="SSO de Microsoft Entra" icon="microsoft" href="/es/v1.57/operator-manual/openid/microsoft">
     Configure el inicio de sesión único de Microsoft Entra (Azure AD)
   </Card>
 </CardGroup>
@@ -80,37 +79,31 @@ Configure su instancia de Zylon para satisfacer los requisitos específicos de s
 Habilite o deshabilite funciones específicas para controlar lo que está disponible para sus usuarios.
 
 <CardGroup cols={2}>
-  <Card title="Registro de Auditoría" icon="list" href="/es/v1.58/operator-manual/configuration/features/feat-audit">
-    Configure la captura de mensajes de solicitud y respuestas del chat del gateway
+  <Card title="Registro de Auditoría" icon="list" href="/es/v1.57/operator-manual/configuration/features/feat-audit">
+    Realice un seguimiento de las acciones del usuario y los eventos del sistema para cumplimiento y seguridad
   </Card>
-  <Card title="Entrega y almacenamiento de logs" icon="truck" href="/es/v1.58/operator-manual/configuration/features/log-delivery-storage">
+  <Card title="Entrega y almacenamiento de logs" icon="truck" href="/es/v1.57/operator-manual/configuration/features/log-delivery-storage">
     Configure almacenamiento interno, entrega por syslog y entrega por HTTP
   </Card>
-  <Card title="Conector de Base de Datos" icon="database" href="/es/v1.58/operator-manual/configuration/features/feat-database">
+  <Card title="Conector de Base de Datos" icon="database" href="/es/v1.57/operator-manual/configuration/features/feat-database">
     Habilite consultas directas a bases de datos desde conversaciones de chat
   </Card>
-  <Card title="Instrucciones personalizadas de proyecto" icon="chalkboard-user" href="/es/v1.58/operator-manual/configuration/features/feat-project-custom-instructions">
+  <Card title="Instrucciones personalizadas de proyecto" icon="chalkboard-user" href="/es/v1.57/operator-manual/configuration/features/feat-project-custom-instructions">
     Configure el maximo de instrucciones y entienda los ajustes de comportamiento del chat a nivel de proyecto
   </Card>
-  <Card title="Omnisearch" icon="magnifying-glass" href="/es/v1.58/operator-manual/configuration/search">
-    Configure los idiomas de búsqueda por palabras clave y la longitud máxima de las consultas
-  </Card>
-  <Card title="Conector MCP" icon="plug" href="/es/v1.58/operator-manual/configuration/features/feat-mcp">
+  <Card title="Conector MCP" icon="plug" href="/es/v1.57/operator-manual/configuration/features/feat-mcp">
     Integre herramientas del Protocolo de Contexto de Modelo para capacidades extendidas
   </Card>
-  <Card title="Monitor del sistema" icon="gauge-high" href="/es/v1.58/operator-manual/configuration/features/feat-system-monitor">
-    Habilite métricas en vivo de recursos del host y servicio de modelos en Backoffice
-  </Card>
-  <Card title="Procesamiento de Archivos con Visión" icon="image" href="/es/v1.58/operator-manual/configuration/features/feat-file-vision">
+  <Card title="Procesamiento de Archivos con Visión" icon="image" href="/es/v1.57/operator-manual/configuration/features/feat-file-vision">
     <Badge color="orange" size="xs">Alpha</Badge> Configura el procesamiento con visión para archivos PPTX y Docling
   </Card>
-  <Card title="Soporte Multimodal" icon="image" href="/es/v1.58/operator-manual/configuration/features/feat-multimodal">
+  <Card title="Soporte Multimodal" icon="image" href="/es/v1.57/operator-manual/configuration/features/feat-multimodal">
     Habilite el procesamiento de imágenes y capacidades de visión en modelos de IA
   </Card>
-  <Card title="Extracción Web" icon="file-code" href="/es/v1.58/operator-manual/configuration/features/feat-webextract">
+  <Card title="Extracción Web" icon="file-code" href="/es/v1.57/operator-manual/configuration/features/feat-webextract">
     Extraiga y analice contenido de páginas web en tiempo real
   </Card>
-  <Card title="Búsqueda Web" icon="globe" href="/es/v1.58/operator-manual/configuration/features/feat-websearch">
+  <Card title="Búsqueda Web" icon="globe" href="/es/v1.57/operator-manual/configuration/features/feat-websearch">
     Habilite capacidades de búsqueda en internet dentro de conversaciones de chat
   </Card>
 </CardGroup>
@@ -122,10 +115,10 @@ Habilite o deshabilite funciones específicas para controlar lo que está dispon
 Utilice estas paginas para entender como Zylon programa el trabajo recurrente de backend para sincronizacion y borrado permanente.
 
 <CardGroup cols={2}>
-  <Card title="Sincronizacion" icon="arrows-rotate" href="/es/v1.58/operator-manual/configuration/cron-tasks/sync">
+  <Card title="Sincronizacion" icon="arrows-rotate" href="/es/v1.57/operator-manual/configuration/cron-tasks/sync">
     Configure la tarea de sincronizacion programada de integraciones, incluido el cron y la zona horaria
   </Card>
-  <Card title="Borrado permanente" icon="trash" href="/es/v1.58/operator-manual/configuration/cron-tasks/hard-delete">
+  <Card title="Borrado permanente" icon="trash" href="/es/v1.57/operator-manual/configuration/cron-tasks/hard-delete">
     Configure la politica de retencion usada para eliminar definitivamente elementos inactivos o borrados
   </Card>
 </CardGroup>
@@ -135,10 +128,10 @@ Utilice estas paginas para entender como Zylon programa el trabajo recurrente de
 ## Configuración Avanzada
 
 <CardGroup cols={2}>
-  <Card title="Observabilidad" icon="chart-line" href="/es/v1.58/operator-manual/configuration/observability">
+  <Card title="Observabilidad" icon="chart-line" href="/es/v1.57/operator-manual/configuration/observability/overview">
     Configure telemetría, reportes de fallos y métricas de uso para monitoreo
   </Card>
-  <Card title="Ajuste de Rendimiento" icon="gauge-high" href="/es/v1.58/operator-manual/configuration/performance">
+  <Card title="Ajuste de Rendimiento" icon="gauge-high" href="/es/v1.57/operator-manual/configuration/performance">
     Optimice la utilización de recursos y el threading para un mejor rendimiento
   </Card>
 </CardGroup>

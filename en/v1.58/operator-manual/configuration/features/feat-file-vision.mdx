@@ -25,8 +25,8 @@ Enable vision-based file processing for documents and slides.
 
 | Key                             | Default | Values           | Description                                       |
 | ------------------------------- | ------- | ---------------- | ------------------------------------------------- |
-| `transformation.pptx.vision.mode`    | `none`  | `none \| lite` | Controls vision processing mode for PPTX files (`.pptx`).   |
-| `transformation.docling.vision.mode` | `none`  | `none \| lite` | Controls vision processing mode for Docling-processed files (`.pdf`, `.docx`, `.xlsx`). |
+| `features.transformation.pptx.vision.mode`    | `none`  | `none \| lite` | Controls vision processing mode for PPTX files (`.pptx`).   |
+| `features.transformation.docling.vision.mode` | `none`  | `none \| lite` | Controls vision processing mode for Docling-processed files (`.pdf`, `.docx`, `.xlsx`). |
 
 ### Recommendations
 
@@ -40,11 +40,12 @@ Enabling `lite` increases resource consumption and document processing time.
 ### Example
 
 ```yaml
-transformation:
-    pptx:
-      vision:
-        mode: lite
-    docling:
-      vision:
-        mode: lite
+features:
+    transformation:
+        pptx:
+            vision:
+                mode: lite
+        docling:
+            vision:
+                mode: lite
 ```

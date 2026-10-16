@@ -201,6 +201,10 @@ In your online machine, ensure firewall access to these domains:
 
     This will download the AI models that you have specified in the Wizard.
 
+    <Note>
+      Running `models download` with no arguments opens an interactive model-selection prompt, which requires a TTY. It will fail (`could not open a new TTY`) in non-interactive contexts such as a scripted SSH command, CI/CD pipeline, or other automation. For unattended or scripted installs, always pass the model names explicitly instead, as shown below.
+    </Note>
+
     If for some reason you need to download specific models, you can do so with:
 
     ```bash
@@ -224,6 +228,13 @@ In your online machine, ensure firewall access to these domains:
     ```
 
     This creates a `zylon-models-<timestamp>.tar` file in your current directory containing all selected AI models.
+
+    <Note>
+      Running `models export` with no arguments opens an interactive model-selection prompt, which requires a TTY. It will fail (`could not open a new TTY`) in non-interactive contexts such as a scripted SSH command, CI/CD pipeline, or other automation. For unattended or scripted installs, always pass the model names explicitly instead:
+      ```bash
+      sudo zylon-cli models export model-a model-b
+      ```
+    </Note>
 
     <Note>
       The model export file can be 10-100 GB depending on which models you have downloaded.
@@ -254,11 +265,15 @@ In your online machine, ensure firewall access to these domains:
     Export the downloaded version into an airgap bundle:
 
     ```bash
-    sudo zylon-cli export <version>
+    sudo zylon-cli export <version> --models model-a,model-b
     ```
 
     This creates `zylon-<version>-<os>-<arch>.tar` in your current directory. Additionally, it will generate
     the commands to run on the offline machine for installation to import and install Zylon. Store these commands safely.
+
+    <Note>
+      Unlike the `download` step above, `export` **requires** the `--models` flag when your configuration has airgap mode enabled (`airgap.offlineInstall: true` / `airgap.offlineOperation: true`) — running it without `--models` aborts with `Please specify the required models using --models flag`. Pass the same model names you used in the "Download AI Models" step, comma-separated.
+    </Note>
 
     <Note>
       Export can take significant time. The resulting tar file may be 60-80GB.
@@ -379,6 +394,10 @@ In your online machine, ensure firewall access to these domains:
 
     `models import` registers the model artifacts locally, and `models download --offline` installs them into the offline runtime.
 
+    <Warning>
+      If Zylon is already running on this machine (an update rather than a first install), both `models import` and `import` (next step) briefly **stop the k0s cluster** before importing and restart it automatically once done — expect a short interruption to the running instance (typically a few minutes, depending on archive size) during each import step, not just during the final `install`.
+    </Warning>
+
     Verify models were installed successfully:
 
     ```bash
@@ -408,7 +427,7 @@ In your online machine, ensure firewall access to these domains:
     Verify that import completed successfully by checking installed versions:
 
     ```bash
-    sudo zylon-cli list-versions --offline
+    sudo zylon-cli list-versions --airgap
     ```
 
   </Step>
@@ -419,11 +438,11 @@ In your online machine, ensure firewall access to these domains:
     Install Zylon using the imported bundle:
 
     ```bash
-    sudo zylon-cli install <version> --airgap
+    sudo zylon-cli install <version> --airgap --models model-a,model-b
     ```
 
     <Note>
-      The AI models have already been imported in a previous step, so no `--models` flag is needed here.
+      Pass the same `--models` list you used for `export`. Although the AI models have already been imported in a previous step, the CLI's own post-`export` guidance recommends repeating `--models` on `install` as well — omitting it has not been exhaustively verified to be safe across all configurations, so including it is the safer choice for unattended installs.
     </Note>
   </Step>
 
@@ -459,6 +478,14 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
 <Note>
   **Estimated Time**: 45-60 minutes total (15-20 min online machine, 25-40 min offline machine)
 </Note>
+
+<Warning>
+  **Check your AI preset before updating.** The `ai.preset` value in your existing configuration can be renamed, replaced, or removed entirely between Zylon versions. If your preset no longer exists in the target version's chart, `install` will fail late — after packages, images, and cluster charts have already been processed — with an error like `Preset file not found: setups/presets/<path>.yaml`. Since the target machine has no internet access to check the current preset list, verify compatibility against the newly-downloaded chart before running `install`:
+  ```bash
+  tar -tzf zylon-chart-<new-version>.tgz | grep setups/presets
+  ```
+  If your configured preset isn't listed, pick a replacement from the available presets (see [AI Presets](/en/operator-manual/ai-presets/presets)) and update `ai.preset` in `/etc/zylon/zylon-conf.yaml` before proceeding — check the replacement preset's `models[].modelRepo` values against what you already have downloaded, since a different preset may require different models.
+</Warning>
 
 <Steps>
   <Step title="On Online Machine: Download New Models (If Needed)">
@@ -587,7 +614,7 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     Verify that import completed successfully by checking installed versions:
 
     ```bash
-    sudo zylon-cli list-versions --offline
+    sudo zylon-cli list-versions --airgap
     ```
 
   </Step>
@@ -626,6 +653,10 @@ If you have an existing Zylon installation (online or semi-airgap) and want to m
 - [ ] Method to transfer files (70-100 GB) between machines
 - [ ] Target airgap machine with NO internet connection
 - [ ] Root and SSH access to all machines involved
+
+<Warning>
+  If you're migrating to a different Zylon version at the same time (not just changing operation mode), check that your existing `ai.preset` still exists in the target version's chart before installing — see the preset-compatibility warning under [Updating Zylon](#updating-zylon) above for how to check and what to do if it doesn't.
+</Warning>
 
 ---
 
@@ -885,7 +916,7 @@ If you have an existing Zylon installation (online or semi-airgap) and want to m
     Verify import completion:
 
     ```bash
-    sudo zylon-cli list-versions --offline
+    sudo zylon-cli list-versions --airgap
     ```
   </Step>
 

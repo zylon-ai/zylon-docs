@@ -25,8 +25,8 @@ Habilita el procesamiento de archivos con visión para documentos y presentacion
 
 | Clave                                  | Por Defecto | Valores        | Descripción                                         |
 | -------------------------------------- | ----------- | -------------- | --------------------------------------------------- |
-| `transformation.pptx.vision.mode`      | `none`      | `none \| lite` | Controla el modo de visión para archivos PPTX (`.pptx`).   |
-| `transformation.docling.vision.mode`   | `none`      | `none \| lite` | Controla el modo de visión para archivos procesados con Docling (`.pdf`, `.docx`, `.xlsx`).  |
+| `features.transformation.pptx.vision.mode`      | `none`      | `none \| lite` | Controla el modo de visión para archivos PPTX (`.pptx`).   |
+| `features.transformation.docling.vision.mode`   | `none`      | `none \| lite` | Controla el modo de visión para archivos procesados con Docling (`.pdf`, `.docx`, `.xlsx`).  |
 
 ### Recomendaciones
 
@@ -40,11 +40,12 @@ Activar `lite` aumenta el consumo de recursos y el tiempo de procesamiento de lo
 ### Ejemplo
 
 ```yaml
-transformation:
-    pptx:
-      vision:
-        mode: lite
-    docling:
-      vision:
-        mode: lite
+features:
+    transformation:
+        pptx:
+            vision:
+                mode: lite
+        docling:
+            vision:
+                mode: lite
 ```

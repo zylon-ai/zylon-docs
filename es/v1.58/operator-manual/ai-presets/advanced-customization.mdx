@@ -49,7 +49,7 @@ Todas las configuraciones personalizadas siguen este patrón:
 ```yaml
 ai:
   preset: "<base-preset>"           # Comienza con un preset base
-  numGPUs: <number>                 # Opcional: para configuraciones multi-GPU
+  gpuCount: <number>                 # Opcional: para configuraciones multi-GPU
   config:
     models:
       - id: llm                      # Obligatorio: modelo de lenguaje principal
@@ -394,7 +394,7 @@ Ejemplos:
 ```yaml
 ai:
   preset: "<base-preset>"
-  numGPUs: integer                         # Opcional: para multi-GPU
+  gpuCount: integer                         # Opcional: para multi-GPU
   config:
     models:
       - id: string                         # Requerido: identificador único
@@ -453,7 +453,7 @@ Total:         0.95
 ```yaml
 ai:
   preset: "baseline-48g"
-  numGPUs: 1
+  gpuCount: 1
   config:
     models:
       # LLM Principal - Maneja generación de texto general

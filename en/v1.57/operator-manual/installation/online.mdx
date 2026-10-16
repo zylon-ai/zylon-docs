@@ -118,6 +118,10 @@ This guide covers the standard Zylon installation for environments with full int
 
     This will download and install the AI models that you have specified in the Wizard.
 
+    <Note>
+      Running `models download` with no arguments opens an interactive model-selection prompt, which requires a TTY. It will fail (`could not open a new TTY`) in non-interactive contexts such as a scripted SSH command, CI/CD pipeline, or other automation. For unattended or scripted installs, always pass the model names explicitly instead, as shown below.
+    </Note>
+
     If for some reason you need to download specific models, you can do so with:
 
     ```bash
@@ -158,6 +162,10 @@ This guide covers the standard Zylon installation for environments with full int
     <Note>
       Note that AI models are **not** included in this step—they were installed in the previous step.
     </Note>
+
+    <Tip>
+      **Advanced flags**: `sudo zylon-cli install --help` lists additional flags for special cases, for example `--no-drivers` (skip NVIDIA driver installation, e.g. if your organization manages drivers through its own configuration management) and `--skip-preflight` (bypass the preflight checks run by `install` itself). These are for advanced/expert use only — most installs should rely on the standard preflight check above.
+    </Tip>
 
     <InstallationMonitor />
   </Step>

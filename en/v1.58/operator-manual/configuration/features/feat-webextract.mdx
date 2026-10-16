@@ -1,0 +1,38 @@
+---
+title: "Web Extract"
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Note>**Feature in Alpha**</Note>
+
+When given an URL, the AI has capabilities to extract and parse content.
+
+### Configuration
+
+| Key      | Default | Values          | Description                              |
+| -------- | ------- | --------------- | ---------------------------------------- |
+| `enabled`| `false` | `true \| false` | Enable web page extraction and parsing |
+| `timeout` | `15` | Positive integer | Timeout in seconds for each web page fetch |
+| `poolSize` | `5` | Positive integer | Number of browser instances to keep in the pool |
+| `poolIdleTimeout` | `300` | Positive integer | Seconds before an idle browser instance is terminated |
+| `poolMaxPages` | `5` | Positive integer | Maximum concurrent pages per browser instance |
+
+### Example
+
+```yaml
+features:
+    webExtract:
+        enabled: true
+        timeout: 15
+        poolSize: 5
+        poolIdleTimeout: 300
+        poolMaxPages: 5
+```
+
+
+### Usage
+
+When enabled, this feature allows Zylon to extract and parse content from web pages, enabling content analysis and data extraction capabilities.

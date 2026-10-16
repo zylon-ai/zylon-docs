@@ -1,0 +1,106 @@
+---
+title: "Visión general"
+description: "API para automatizar y gestionar Zylon Workspace."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+La Workspace API te permite gestionar por API **todo lo que ocurre en Zylon Workspace**: organizaciones, miembros del espacio de trabajo, proyectos, chats, artefactos, integraciones e informes. Úsala para automatizar tareas de administración o integrar Zylon con tus sistemas internos.
+
+## Actualizar a 1.58
+
+Consulta la [guía de migración 1.57 → 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para las rutas antiguas conservadas, cuerpos de artefactos y cambios de chat/hilos. Si tu integración usa IDs de usuario o cuenta, migra los mapeos y comparaciones afectados: los IDs de creador ahora identifican cuentas, mientras que las APIs de membresía siguen usando IDs de miembro. Que una petición funcione no garantiza que los IDs almacenados sigan coincidiendo. Para integraciones que necesiten identidad de usuario o filtros de creador, usa la API actual y sigue la [búsqueda de ID de cuenta a partir del ID de miembro](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados); las URLs antiguas conservadas no hacen esa conversión.
+
+## Base URL
+
+Todos los endpoints de Workspace viven bajo:
+
+```
+https://{BASE_URL}/api/v1
+```
+
+## Cabecera de organización (`x-org`)
+
+Los endpoints de Workspace bajo `/api/v1/app/*` requieren la cabecera `x-org` para que Zylon sepa a qué organización del workspace apuntar.
+
+Puedes enviar `x-org` como:
+
+- el slug de la organización (recomendado), por ejemplo `default`
+- el ID de la organización (UUID)
+
+Úsalo así en tus solicitudes:
+
+```bash
+-H "x-org: {org_slug}"
+```
+
+## Scopes de token de solo lectura
+
+`Workspace.Read.All` permite lecturas y búsquedas de Workspace, incluidas organizaciones, miembros del espacio de trabajo, proyectos, artefactos, hilos, interacciones, incidencias, feedback e integraciones. No permite mutaciones de Workspace; las operaciones de creación, actualización, eliminación, unión y otras escrituras devuelven `403`.
+
+`Read.All` incluye los mismos permisos de lectura/búsqueda de Workspace y también inventario de cuentas, tokens y gateways y lecturas de Backoffice/metadatos. Su [allowlist de solo lectura de ZylonGPT](/es/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/overview) solo se puede usar cuando el token de cuenta incluye `gateway_id`; un token `Read.All` creado sin contexto de gateway no puede llamar a ZylonGPT. El acceso efectivo siempre queda limitado por los permisos de rol del propietario del token. Los scopes múltiples combinan sus permisos. Consulta [Gestión de tokens](/es/v1.58/developer-manual/get-started/token-management) para ver los seis scopes y las reglas de creación.
+
+## Conceptos clave
+
+| Concepto | Significado |
+| --- | --- |
+| **Cuenta (`Account`)** | Registro de identidad que se autentica en Zylon. Una cuenta puede pertenecer a varias organizaciones. |
+| **Miembro del espacio de trabajo (`WorkspaceMember`)** | Membresía de una cuenta dentro de una organización. Una cuenta puede tener **varios miembros del espacio de trabajo**, uno por organización. |
+| **Artefacto (`Artifact`)** | Contenido persistente que puede reutilizarse en chats y herramientas. |
+
+Este modelo permite escenarios multi‑organización en los que una misma persona puede pertenecer a varios espacios de trabajo con roles distintos.
+
+## Paginación
+
+La paginación es un modelo compartido en la Workspace API. Los listados devuelven un sobre con cursores:
+
+<Accordion title="Ejemplo de sobre de paginación">
+```json
+{
+  "data": [],
+  "next_cursor": "cursor_next",
+  "previous_cursor": "cursor_prev",
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 0
+}
+```
+</Accordion>
+
+Usa `page`, `page_size`, `after`, `before`, `first`, `last` y `total_count` cuando estén disponibles.
+
+## Secciones de Workspace API
+
+<CardGroup cols={3}>
+  <Card title="General" icon="chart-line" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/general/overview">
+    Analíticas, incidencias, búsqueda y estado del sistema.
+  </Card>
+
+  <Card title="Autenticación" icon="key" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/authentication/openid">
+    Flujos SSO y callbacks de login/autenticación de workspace.
+  </Card>
+
+  <Card title="Miembros del espacio de trabajo" icon="users" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/users/user">
+    Crea, actualiza y gestiona el acceso de miembros del espacio de trabajo y su pertenencia a organizaciones.
+  </Card>
+
+  <Card title="Proyectos" icon="folder" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/projects/project">
+    Aprovisiona proyectos, gestiona miembros y controla la visibilidad.
+  </Card>
+
+  <Card title="Chats" icon="message" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/chats/threads">
+    Crea hilos, ejecuta interacciones y transmite respuestas en streaming.
+  </Card>
+
+  <Card title="Contenido" icon="file" href="/es/v1.58/developer-manual/build-with-zylon/workspace-api/content/artifacts">
+    Gestiona artefactos e integraciones como Confluence, SharePoint, Filesystem y Claromentis.
+  </Card>
+</CardGroup>
+
+## Errores y casos límite
+
+- **401/403**: token ausente o permisos insuficientes.
+- **404**: IDs inválidos o eliminados.
+- **Redirecciones**: login/callback devuelven `302` para navegadores.

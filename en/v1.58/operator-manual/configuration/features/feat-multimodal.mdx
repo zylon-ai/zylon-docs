@@ -1,0 +1,29 @@
+---
+title: "Multimodalility capabilities"
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Info>
+    **Available from version 1.51**
+</Info>
+<Note>**This feature requires your current model to have image capabilities**</Note>
+<Note>**Feature in Alpha**</Note>
+
+Extract and parse content from images if model capabilities supports it.
+
+### Configuration
+
+| Key      | Default | Values          | Description                      |
+| -------- | ------- | --------------- | -------------------------------- |
+| `enabled`| `true`  | `true \| false` | Store Audit Log events & traces  |
+
+### Example
+
+```yaml
+features:
+    multimodal-image:
+        enabled: true
+```

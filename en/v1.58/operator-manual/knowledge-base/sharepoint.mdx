@@ -1,0 +1,170 @@
+---
+title: SharePoint
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+To integrate with SharePoint, you need to **create a Microsoft Entra application** that acts as a bridge between Zylon ↔ SharePoint and **configure Zylon** to use this Microsoft application.
+
+This guide walks you through integrating SharePoint with Zylon using Microsoft’s OAuth 2.0. This enables Zylon to securely access your SharePoint resources using delegated permissions.
+
+## Create a Microsoft Entra app
+
+First you need a Microsoft Entra application. We recommend to use a non-personal account to create this from the Microsoft Entra panel. This account does not need to have access to any items on SharePoint but has the right permissions to setup the app that will serve as a bridge between Zylon and SharePoint.
+
+1. Go to [https://entra.microsoft.com](https://entra.microsoft.com/).
+
+On the left sidebar Click `Applications` → `App Registrations` → `New Registration`
+
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen.png)
+
+2. Provide a meaningful name for the Application.
+3. On Supported Account types choose `Accounts in this organizational directory only`
+4. Under `Redirect URI` → Select `Web` and add the followings redirect URL
+
+```
+https://{your-zylon-instance}.com/api/app/integration/sharepoint/callback
+```
+
+1. Click `Register`
+
+![Screenshot 2025-04-07 at 11.23.17.png](/images/operator-manual/knowledge-base/sharepoint-images/Screenshot_2025-04-07_at_11.23.17.png)
+
+2. Click on `Redirect URIs`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image.png)
+
+3. Click on `Add a platform`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_1.png)
+
+4. Click on `Single-Page application`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_2.png)
+
+5. Add the following URL and click `Configure`:
+
+```
+https://{your-zylon-instance}.com
+```
+
+6. Now that the app is created, note the `Application (client) Id` and `Directory (tenant) id` from the `Overview` page.
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_3.png)
+
+7. Let’s create an application secret
+
+Navigate to `Certificates & secrets` → Click `+ New client secret` → Add a description and expiration date(if you add a date coming up shortly you have to be aware your integration will stop working when the secret expires)
+
+Copy the Client Secret`value`. The secret value will not be accesible later.
+
+![imagen.png](/images/operator-manual/knowledge-base/sharepoint-images/imagen_1.png)
+
+
+Now we have to configure the API permissions our client application will have.
+
+Navigate to `API Permissions` → `+ Add a permission` → `Microsoft Graph` → `Delegated permissions` and include the permissions below then click on `Add permissions`
+
+- `Files.Read.All`
+- `OpenId permissions.offline_access`
+- `SharePointTenantSettings.Read.All`
+- `Sites.Read.All`
+- `User.Read`
+
+Navigate to `API Permissions` → `+ Add a permission` → `SharePoint` → `Delegated permissions` and include the permissions below then click on `Add permissions`
+
+- `AllSites.Read`
+- `EnterpriseResource.Read`
+- `MyFiles.Read`
+- `Project.Read`
+- `Sites.Search.All`
+- `User.Read.All`
+
+After adding both list of permissions click on `Grant admin consent for [Your Org]` and confirm by clicking `Yes`
+
+![image.png](/images/operator-manual/knowledge-base/sharepoint-images/image_4.png)
+
+## Configure Zylon with your Azure AD app
+
+With the values we have acquired in previous
+steps we will edit Zylon config file located in `/etc/zylon/zylon-conf.yaml`
+
+
+Add the following snippet to the bottom of the file
+
+```bash
+integration:
+  sharepoint:
+    enabled: true
+    clientId: "" //From step 10 - Application client Id
+    clientSecret: "" //From step 11 - Secret value
+    redirectUri: "" //From step 4
+    domain: "" //Your sharepoint domain. ex: https://zylonai.sharepoint.com
+    tenantId: "" //From step 10 - Directory tenant Id
+    entrySite: "" //Optional: Default Entry SharePoint site URL
+    entryList: "" //Optional: Default Entry list name (e.g., "Documents")
+    entryFolder: "" //Optional: Default Entry folder name
+```
+
+And fill the properties with the values generated previously:
+
+- clientId → value generated on step 10
+- clientSecret → value generated on step 11
+- redirectUri → same value as step 4
+- domain → Your sharepoint url
+- tenantId → same value as step 10
+- entrySite → (Optional) Default SharePoint site URL. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryList → (Optional) Default list name, e.g., "Documents". See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+- entryFolder → (Optional) Default folder name. See [Configuring Default Opening Folder](#configuring-default-opening-folder) section below
+Save and close `/etc/zylon/zylon-conf.yaml` file
+
+Finally, execute the following command to reset Zylon and update the config
+
+```bash
+sudo zylon-cli sync
+```
+
+You are all set 🎉
+
+## Configuring Default Opening Folder
+
+You can configure a default opening folder for the SharePoint integration. This allows the integration to open directly to a specific folder when users access SharePoint through Zylon, improving the user experience by skipping navigation steps.
+
+The three optional fields control the entry point for the integration:
+
+- `entrySite`: The absolute SharePoint site URL (works for both SharePoint and OneDrive)
+- `entryList`: The list name within the site (e.g., "Documents" is the default for SharePoint)
+- `entryFolder`: The folder name within the list
+
+**Important:** You must use absolute SharePoint paths for the `entrySite` field, even for OneDrive. The path format should be like:
+```
+https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com
+```
+
+### Example Configuration
+
+If you want the integration to open by default to the "Defense and Security" folder in the Documents list for the user `user_example_onmicrosoft_com`, you would configure:
+
+```bash
+entrySite: "https://example-my.sharepoint.com/personal/user_example_onmicrosoft_com"
+entryList: "Documents" //Default on SharePoint
+entryFolder: "Defense and Security"
+```
+
+This configuration will make the integration open directly to the "Defense and Security" folder when users access SharePoint through Zylon.
+
+**Note:** All three fields are optional. If they are not set or left empty, they will be ignored and the integration will use the default behavior (opening at the root level).
+
+## Troubleshooting
+
+### I tried to upload files to the knowledge base but the SharePoint button is greyed out
+
+Clear the browser cache and try again.
+
+### When I click on `Upload files -> From SharePoint` the log in is not working
+
+- Check that the `clientId` `secretId` are copy pasted correctly into Zylon config file
+- Check that `redirectUri` is the same as step 4 and that your domain from sharepoint is right
+- Check that the `tenantId` being used matches the one under the `Overview` page of your application on Azure AD

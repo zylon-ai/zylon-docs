@@ -1,0 +1,469 @@
+---
+title: "Chats"
+description: "Hilos, interacciones y chat de una sola llamada."
+---
+
+Los chats en la Workspace API se organizan alrededor de **hilos** e **interacciones**:
+| Concepto | Significado |
+| --- | --- |
+| **Thread** | Contenedor de conversación dentro de un proyecto. |
+| **Interaction** | Interacción individual dentro del hilo. |
+| **Chat** | Solicitud de una sola llamada que **no** crea un hilo. |
+
+Usa hilos cuando necesitas historial y seguimiento. Usa interacciones para enviar un nuevo turno a un hilo. Usa el endpoint de chat para solicitudes de un solo turno.
+
+## Solicitud básica y respuesta
+
+Crea una interacción en un hilo con `POST /api/v1/app/thread/{threadId}/interaction`.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `thread_id` | Si | Identificador del hilo. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
+| Body | `agent` | No | Preset de agente a usar. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "{threadID}",
+    "artifact_ids": ["{artifactID}"],
+    "all_artifacts": false,
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "Summarize the artifact in three bullets." }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta (InteractionDTO)">
+```json
+{
+  "id": "inter_5a7b9c1d3e5f7a9b",
+  "project_id": "proj_7a5c3e1b9d2f4a6c",
+  "thread_id": "thread_3f2a1c4d5b6e7f8a",
+  "state": "Completed",
+  "artifact_ids": ["artifact_2b4d6f8a1c3e5a7b"],
+  "all_artifacts": false,
+  "user_input": {
+    "role": "user",
+    "content": [
+      { "type": "text", "text": "Summarize the artifact in three bullets." }
+    ]
+  },
+  "assistant_output": {
+    "id": "msg_3d2c1b4a5f6e7d8c",
+    "created": 1739036500,
+    "model": "default",
+    "stop_reason": "end_turn",
+    "content": [
+      { "type": "text", "text": "• Ticket volume rose 12% week-over-week\n• Billing issues drove 38% of cases\n• Priority bugs were resolved within 48 hours" }
+    ],
+    "usage": { "input_tokens": 180, "output_tokens": 52 }
+  },
+  "created_at": "2026-02-08T14:41:10Z"
+}
+```
+</Accordion>
+
+## Agregar media al chat
+
+Si el modelo seleccionado soporta entrada multimodal, puedes enviar media en `pgpt.messages[].content[]` (la misma forma de request usada por interacciones en hilo y por chat de una sola llamada).
+
+Puedes combinar múltiples bloques de contenido en un mismo mensaje. Tipos principales en el esquema:
+
+| Tipo | Uso típico | Campos requeridos | Notas |
+| --- | --- | --- | --- |
+| `text` | Prompt/entrada en texto plano | ninguno | Usa `text`; soporta metadata opcional de `citations`. |
+| `image` | Imagen adjunta | `data` | `data` puede ser base64 o URL; `mime_type` es opcional. |
+| `audio` | Audio adjunto | `data` | `data` puede ser base64 o URL; `mime_type` es opcional. |
+| `binary` | Payload binario genérico | `data`, `mime_type` | `filename` opcional. |
+| `file` | Bloque de archivo/documento | `content` | `content_type` y `doc_metadata` opcionales. |
+| `tool_use` | Solicitud de llamada de herramienta | `id`, `name`, `input` | Bloque interno de orquestación de tools. |
+
+`start_timestamp`, `stop_timestamp` y `_meta` son opcionales en todos los bloques.
+
+<Accordion title="Ejemplo de bloques de contenido">
+```json
+[
+  { "type": "text", "text": "Summarize this image." },
+  { "type": "image", "data": "<BASE64_OR_URL>", "mime_type": "image/png" },
+  { "type": "audio", "data": "<BASE64_OR_URL>", "mime_type": "audio/mpeg" },
+  { "type": "binary", "data": "<BASE64_OR_URL>", "mime_type": "application/octet-stream", "filename": "blob.bin" },
+  {
+    "type": "file",
+    "content": "<BASE64_OR_TEXT_FILE_CONTENT>",
+    "content_type": "application/pdf",
+    "doc_metadata": { "file_name": "contract.pdf", "file_type": "pdf" }
+  },
+  {
+    "type": "source",
+    "sources": [
+      {
+        "type": "context.website",
+        "url": "https://example.com/report",
+        "title": "Quarterly Report",
+        "description": "Public report page"
+      },
+      {
+        "type": "context.chunk",
+        "id": "chunk_01",
+        "score": 0.92,
+        "text": "Support backlog dropped 8% week-over-week",
+        "document": {
+          "object": "artifact",
+          "artifact": "artifact_123",
+          "doc_metadata": { "file_name": "support.csv", "file_type": "csv" }
+        }
+      }
+    ]
+  },
+  { "type": "tool_use", "id": "toolu_123", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "tool_result",
+    "tool_use_id": "toolu_123",
+    "content": [{ "type": "text", "text": "Found 5 matching passages." }],
+    "is_error": false
+  },
+  { "type": "thinking", "thinking": "I should compare the latest week to the previous one." },
+  {
+    "type": "tldr",
+    "content": [
+      { "type": "text", "text": "User: Analyze support trend" },
+      { "type": "text", "text": "Assistant: Backlog decreased 8%" }
+    ]
+  }
+]
+```
+</Accordion>
+
+Ejemplo de interacción con imagen + texto y flags de ejecución:
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Body | `thread_id` | Si | Identificador del hilo. |
+| Body | `pgpt` | Si | Cuerpo de solicitud de chat. |
+| Body | `artifact_ids` | No | IDs de artefactos para usar como contexto. |
+| Body | `all_artifacts` | No | Incluye todos los artefactos disponibles si es `true`. |
+| Body | `agent` | No | Preset de agente a usar. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "{threadID}",
+    "all_artifacts": true,
+    "artifact_ids": [],
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "image",
+              "data": "<BASE64_IMAGE_DATA>",
+              "mime_type": "image/png"
+            },
+            {
+              "type": "text",
+              "text": "What do you see here?"
+            }
+          ]
+        }
+      ],
+      "system": {
+        "use_default_prompt": true,
+        "citations": {
+          "enabled": true
+        }
+      },
+      "thinking": {
+        "enabled": true
+      }
+    }
+  }'
+```
+
+- `system.citations.enabled`: pide al modelo incluir referencias/citas cuando estén disponibles.
+- `thinking.enabled`: activa modo de razonamiento profundo; puede tardar más pero suele mejorar la calidad.
+
+## Crear o listar hilos
+
+Crear un hilo en un proyecto:
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `name` | Si | Nombre del hilo. |
+| Body | `visibility` | Si | `Public` o `Private`. |
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Listar hilos:
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/project/{projectID}/thread?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "data": [
+    {
+      "id": "thread_3f2a1c4d5b6e7f8a",
+      "name": "Weekly Support Brief",
+      "visibility": "Private",
+      "created_at": "2026-02-08T14:40:00Z"
+    }
+  ],
+  "has_next_page": false,
+  "has_previous_page": false,
+  "total_count": 1
+}
+```
+</Accordion>
+
+Crea un hilo y la primera interacción en una sola petición:
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `projectID` | Si | Identificador del proyecto. |
+| Body | `name` | Si | Nombre del nuevo hilo. |
+| Body | `visibility` | Si | `Public` o `Private`. |
+
+</Accordion>
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/project/{projectID}/thread/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+## Actualizar o eliminar un hilo
+
+```bash
+curl -X PUT "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Weekly Support Brief",
+    "visibility": "Private"
+  }'
+```
+
+Eliminar un hilo:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/thread/{threadID}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+## Listar u obtener interacciones
+
+Listar interacciones de un hilo:
+
+<Accordion title="Parametros del endpoint">
+
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Path | `threadID` | Si | Identificador del hilo. |
+| Query | `page` | No | Número de página absoluto, empezando en 1. |
+| Query | `page_size` | No | Número de elementos por página. |
+| Query | `page_order` | No | `ASC` o `DESC`. |
+| Query | `after` | No | Cursor o valor desde el que paginar hacia delante. |
+| Query | `before` | No | Cursor o valor desde el que paginar hacia atrás. |
+| Query | `first` | No | Limita a los primeros N elementos después de un cursor. |
+| Query | `last` | No | Limita a los últimos N elementos antes de un cursor. |
+| Query | `total_count` | No | Incluye el total de resultados en la respuesta. |
+
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction?page=1&page_size=20" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+Obtener una interacción:
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+## Eliminar o hacer streaming de una interacción
+
+Cancelar una interacción en ejecución:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+Eliminar una interacción:
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}"
+  -H "x-org: {org_slug}"
+```
+
+Streaming:
+
+```bash
+curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Accept: text/event-stream"
+```
+
+<Accordion title="Ejemplo de stream">
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_3d2c1b4a5f6e7d8c","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"• Ticket volume rose 12%"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+</Accordion>
+
+## Chat de una sola llamada
+
+Si no necesitas un hilo, usa el endpoint de chat:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/chat" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Draft a 2-sentence update on this week’s support backlog." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "msg_5f2e1d3c4b6a7c8d",
+  "role": "assistant",
+  "content": [
+    { "type": "text", "text": "Backlog volume dipped 8% this week after closing high-priority billing cases. We’ll focus next on resolving long-tail authentication issues." }
+  ]
+}
+```
+</Accordion>
+
+## Validar una solicitud de chat
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/chat/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "text", "text": "Give me a three-bullet summary of the Q1 support plan." }
+        ]
+      }
+    ],
+    "max_tokens": 64,
+    "temperature": 0.3
+  }'
+```
+
+## Herramientas disponibles
+
+Pasa tools en `pgpt.tools` como `{ "name": "...", "type": "..." }`.
+
+| Nombre | Tipo | Qué hace |
+| --- | --- | --- |
+| `semantic_search` | `semantic_search_v1` | Busca conocimiento indexado del proyecto/workspace por similitud semántica. |
+| `file_sematic_search` | `file_semantic_search_v1` | Busca semánticamente en archivos y adjuntos. |
+| `tabular_analysis` | `tabular_analysis_v1` | Analiza datasets tabulares y devuelve insights calculados. |
+| `database_query` | `database_query_v1` | Ejecuta consultas a bases de datos configuradas. |
+| `web_search` | `web_search_v1` | Realiza búsqueda web para información externa/pública. |
+| `web_extract` | `web_extract_v1` | Extrae contenido estructurado de URLs. |
+| `list_project_files` | `list_project_files_v1` | Lista archivos del proyecto actual para usarlos con otras tools. |
+
+## Errores y casos límite
+
+- **400**: esquema inválido (usa `/chat/validate`).
+- **404**: hilo o interacción no encontrada.
+- **409**: interacción ya completada al cancelar.

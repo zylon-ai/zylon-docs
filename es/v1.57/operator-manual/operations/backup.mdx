@@ -1,0 +1,143 @@
+---
+title: Copias de seguridad y recuperación ante desastres
+---
+
+Zylon está preparado para ser completamente respaldado y restaurado en caso de fallo de hardware o situaciones de recuperación ante desastres.
+
+Hay múltiples formas de abordar el problema: una copia completa del disco y una solución basada en Velero.
+
+## Copia de seguridad completa del disco
+
+Dado que la mayoría de las instalaciones de Zylon se ejecutan en un solo nodo, es perfectamente válido hacer una copia de seguridad completa tradicional del disco con una herramienta como Clonezilla o similar.
+
+Almacena la imagen en un almacenamiento en frío y en caso de recuperación simplemente reemplaza el contenido del disco. Zylon debería volver al momento en el tiempo en que se tomó la instantánea.
+
+Ten en cuenta que esto solo es posible si Zylon se está ejecutando en un solo nodo de kubernetes; las configuraciones de múltiples nodos DEBEN usar Velero como estrategia de respaldo.
+
+## Copia de seguridad de datos usando zylon-cli
+
+### Comando de copia de seguridad:
+
+`sudo zylon-cli backup [--keep-last N]`
+
+Tomará una instantánea de los datos de Zylon y la guardará en la máquina local.
+
+### Comando de restauración:
+
+`sudo zylon-cli restore [--backup-file path-to-backup]`
+
+Restaurará el estado de Zylon al momento en el tiempo en que se tomó la instantánea. Por defecto, se usará la última copia de seguridad, pero también se puede especificar una instantánea determinada.
+
+
+
+Estas copias de seguridad básicas tomarán una instantánea del estado de Zylon y guardarán el contenido como un .tar.gz en la carpeta `/var/backups/zylon` con la fecha de la copia de seguridad como nombre de archivo.
+
+<Warn>
+    Deberías considerar copiar los archivos de copia de seguridad a una máquina diferente en caso de fallo del disco.
+</Warn>
+
+Por defecto, solo se conservan las últimas 10 copias de seguridad.
+
+**Durante el proceso de copia de seguridad, Zylon estará fuera de línea.** Dependiendo de la cantidad de documentos que hayas cargado, este proceso puede tomar varios minutos.
+
+### Poner las copias de seguridad en programación
+
+Puedes agregar estas copias de seguridad en una programación automáticamente, ejecuta `sudo crontab -e` para abrir el editor de cron y agrega la copia de seguridad como
+
+Por ejemplo, esta copia de seguridad se realizará todos los sábados a las 4am
+
+```jsx
+
+0 4 * * 6 sudo zylon-cli backup --keep-last 5 -y >> /var/log/zylon-backup.log 2>&1
+```
+
+## Velero
+
+[Velero](https://velero.io/) es la forma estándar de hacer copias de seguridad de clústeres de kubernetes. Permite automatización y solo respalda la información requerida del clúster y la aplicación.
+
+> Ten en cuenta que en caso de fallo del disco, una copia de seguridad de Velero no restaurará el clúster, los controladores Nvidia y otras herramientas requeridas para ejecutar Zylon. Para recuperarse de ese escenario, realiza una configuración regular de Zylon seguida del proceso de restauración de la copia de seguridad.Para habilitar las copias de seguridad de Velero **debes:**
+
+### 1. Instalar Velero CLI
+
+```bash
+https://velero.io/docs/v1.3.0/velero-install/
+```
+
+Después de que el comando tenga éxito, el binario `velero` debería estar disponible en tu ruta.
+
+### 2. Proporcionar una solución de almacenamiento de objetos válida.
+
+Este es el almacenamiento donde se almacenarán las copias de seguridad y idealmente debería ser una máquina completamente separada.
+
+Una lista de proveedores comunes son:
+
+- AWS s3
+- Google Cloud Storage
+- Azure Blob storage
+- Un servidor minio autohospedado
+- Lista completa de proveedores aquí: https://velero.io/docs/v1.15/supported-providers/
+
+Una copia de seguridad inicial de Zylon tomará un mínimo de 20GB de almacenamiento y crecerá a medida que cargues documentos y generes más datos.
+
+Consulta las `instrucciones de configuración` para tu proveedor elegido en la tabla https://velero.io/docs/v1.15/supported-providers/.
+
+Es posible que necesites seguir varios pasos como crear un usuario de AWS en caso de s3, configurar algunos permisos y así sucesivamente. Si necesitas orientación durante el proceso, contacta al equipo de Zylon.
+
+### 3. Instalar Velero en el clúster de kubernetes de Zylon
+
+Velero CLI se encargará de *la mayor parte* del trabajo para habilitar las copias de seguridad dentro del clúster. Sin embargo, para hacer una copia de seguridad adecuada de Zylon usando Velero, se DEBEN pasar varias banderas durante la instalación, en particular estas banderas son obligatorias:
+
+```bash
+--features=EnableCSI
+--use-node-agent
+```
+
+Por ejemplo, una instalación de Velero que usa AWS S3 como almacenamiento tendrá un archivo de configuración ubicado en `/etc/zylon/velero.txt` con el contenido:
+
+```bash
+[default]
+aws_access_key_id = AKIA5...
+aws_secret_access_key = kuBsP9dc0...
+```
+
+Entonces Velero se instalará con el siguiente comando:
+
+```bash
+velero install --provider aws \
+		--bucket backup \
+		--secret-file /etc/zylon/velero.txt \
+		--plugins velero/velero-plugin-for-aws:v1.10.0 \
+		--backup-location-config region=us-east-1 \
+		--use-volume-snapshots=true \
+		--features=EnableCSI \
+    --use-node-agent \
+		--snapshot-location-config region=us-east-1,s3ForcePathStyle="true"
+```
+
+El proceso es ligeramente diferente para cada proveedor, asegúrate de estar seleccionando el plugin de velero correcto, las credenciales adecuadas y que se pasen las banderas obligatorias requeridas por Zylon.
+
+### 4. Parchear Velero para k0s
+
+Zylon usa k0s internamente como un clúster de kubernetes. Velero necesita un pequeño parche para habilitar las copias de seguridad. Ejecuta el siguiente comando para que Velero pueda descubrir todos los pods que necesitan ser respaldados:
+
+```bash
+kubectl patch daemonset node-agent \
+		--namespace velero --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/volumes/0/hostPath/path", "value": "/var/lib/k0s/kubelet/pods"}]'
+```
+
+### 5. Crear una copia de seguridad del namespace de Zylon
+
+La creación del proceso de copia de seguridad también requiere banderas obligatorias, en este caso, se DEBEN pasar las siguientes banderas
+
+```bash
+--include-namespaces zylon 
+--default-volumes-to-fs-backup
+```
+
+Por ejemplo, configurar una copia de seguridad inicial podría hacerse ejecutando:
+
+```bash
+velero backup create my-first-backup --include-namespaces zylon --default-volumes-to-fs-backup
+```
+
+Hay muchas estrategias de copia de seguridad y restauración que van más allá del alcance de este manual, para más información sobre ellas consulta la documentación oficial: https://velero.io/docs/v1.15/

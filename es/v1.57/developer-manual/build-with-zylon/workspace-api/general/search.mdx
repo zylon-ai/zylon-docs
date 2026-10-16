@@ -1,0 +1,106 @@
+---
+title: "Búsqueda"
+description: "Busca en proyectos, hilos, artefactos, contenido de artefactos e interacciones."
+---
+
+Usa el endpoint de búsqueda para consultar contenido del espacio de trabajo mediante texto. Limita el alcance con el filtro `types`.
+
+Las consultas de Search requieren un token con acceso a Workspace y un gateway de PrivateGPT vinculado a la colección de tu organización.
+
+## Solicitud básica y respuesta
+
+Busca en todos los recursos con `GET /api/v1/app/search`.
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `q` | Si | Texto de búsqueda. Debe tener entre 3 y 80 caracteres. |
+| Query | `types` | No | Lista separada por comas de `Project`, `Artifact`, `ArtifactContent`, `Thread` e `Interaction`. Por defecto busca en todos los tipos. |
+| Query | `limit` | No | Número máximo de resultados. Por defecto es `30` y debe ser mayor que `1`. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/search?q=support%20summary&types=Artifact,ArtifactContent&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "artifact_2b4d6f8a1c3e5a7b",
+    "type": "Artifact",
+    "match": "Q1 Support Summary",
+    "rank": 0.91,
+    "metadata": {
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  },
+  {
+    "id": "content_8f1a3d5c7b9e",
+    "type": "ArtifactContent",
+    "match": "Billing issues drove 38% of support cases.",
+    "rank": 0.84,
+    "metadata": {
+      "name": "Q1 Support Summary",
+      "type": "Document",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Buscar solo hilos
+
+<Accordion title="Parametros del endpoint">
+| Tipo | Nombre | Obligatorio | Notas |
+| --- | --- | --- | --- |
+| Query | `q` | Si | Texto de búsqueda. Debe tener entre 3 y 80 caracteres. |
+| Query | `types` | No | Usa `Thread` para limitar resultados a hilos. |
+| Query | `limit` | No | Número máximo de resultados. Por defecto es `30` y debe ser mayor que `1`. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/search?q=weekly%20brief&types=Thread&limit=5" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+[
+  {
+    "id": "thread_3f2a1c4d5b6e7f8a",
+    "type": "Thread",
+    "match": "Weekly Support Brief",
+    "rank": 0.86,
+    "metadata": {
+      "name": "Weekly Support Brief",
+      "project_id": "proj_7a5c3e1b9d2f4a6c",
+      "project_name": "Customer Insights"
+    }
+  }
+]
+```
+</Accordion>
+
+## Metadatos por tipo de resultado
+
+| Tipo de resultado | Forma de `metadata` |
+| --- | --- |
+| `Project` | `entity`, con el objeto de proyecto. |
+| `Artifact` | `name`, `type`, `project_id`, `project_name`. |
+| `ArtifactContent` | `name`, `type`, `project_id`, `project_name`. |
+| `Thread` | `name`, `project_id`, `project_name`. |
+| `Interaction` | `content`, `thread_id`, `project_id`, `project_name`, `thread_name`. |
+
+## Errores y casos límite
+
+- **400**: falta `q`, consulta vacía, consulta fuera del rango de 3-80 caracteres, `types` inválido o `limit <= 1`.
+- **403**: permisos insuficientes.

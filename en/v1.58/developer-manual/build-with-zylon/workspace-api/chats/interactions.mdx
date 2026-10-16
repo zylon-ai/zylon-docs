@@ -1,0 +1,233 @@
+---
+title: "Interactions"
+description: "Run and manage interactions inside a thread."
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Interactions are individual message exchanges within a thread. You can create them, fetch full details, cancel in-flight work, or stream output.
+
+
+<Note>
+In 1.58, `created_by.id` identifies an account. If your client compares it with a saved workspace-user ID, migrate that mapping using the [current member API](/en/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrate-saved-user-ids). Retained aliases do not restore the old creator identity.
+</Note>
+
+## Basic request and response
+
+Create a turn with `POST /api/v1/app/thread/{threadID}/interaction`. The server adds prior thread history; send only the new user message. The response is `200` SSE, not a JSON interaction object.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `threadID` | Yes | Thread identifier; the URL supplies the thread. |
+| Body | `thread_id` | No | Optional; the URL thread ID takes precedence. |
+| Body | `pgpt` | Yes | Exactly one message in `messages`, with `role: "user"`. Uses the Messages request fields. |
+| Body | `artifacts` | No | Scoped selections; see Selecting artifacts. |
+| Body | `agent` | No | `Default` (default) or `ProjectDeepResearch`. |
+</Accordion>
+
+```bash
+curl -N -X POST "https://{BASE_URL}/api/v1/app/thread/{threadID}/interaction" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "artifacts": {
+      "document": [
+        {
+          "scope": "project",
+          "artifacts_ids": [
+            "{artifactID}"
+          ]
+        }
+      ]
+    },
+    "agent": "Default",
+    "pgpt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Summarize the artifact in three bullets."
+            }
+          ]
+        }
+      ],
+      "max_tokens": 120,
+      "temperature": 0.2
+    }
+  }'
+```
+
+The stream below is abbreviated. Read the initial `interaction` event for the persisted interaction ID, then process message events until `done`.
+
+<Accordion title="Example stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
+## Get an interaction
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Example response">
+```json
+{
+  "id": "{interactionID}",
+  "project_id": "{projectID}",
+  "thread_id": "{threadID}",
+  "state": "Completed",
+  "user_input": {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "Summarize the artifact in three bullets."
+      }
+    ]
+  },
+  "assistant_output": {
+    "id": "msg_example",
+    "type": "message",
+    "role": "assistant",
+    "created": 1770556870000,
+    "model": "default",
+    "stop_reason": "end_turn",
+    "content": [
+      {
+        "type": "text",
+        "text": "Ticket volume decreased this week."
+      }
+    ],
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 52
+    },
+    "errors": []
+  },
+  "artifacts": {
+    "document": [
+      {
+        "scope": "project",
+        "artifacts_ids": [
+          "{artifactID}"
+        ]
+      }
+    ]
+  },
+  "created_at": "2026-02-08T14:41:10Z",
+  "pgpt": {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Summarize the artifact in three bullets."
+          }
+        ]
+      }
+    ],
+    "max_tokens": 120,
+    "temperature": 0.2
+  }
+}
+```
+</Accordion>
+
+### Interaction response fields
+
+Null fields may be omitted. Nested message fields follow [Messages](/en/v1.58/developer-manual/build-with-zylon/working-with-messages); account fields follow [Workspace Members](/en/v1.58/developer-manual/build-with-zylon/workspace-api/users/user).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Server-generated interaction ID. |
+| `project_id` | string | Project containing the interaction. |
+| `thread_id` | string or null | Owning thread, when present. |
+| `state` | string | `Processing`, `Completed`, `Error`. |
+| `user_input` | object | The user message: `role` and `content` blocks. |
+| `assistant_output` | object or null | Assistant message when available; see the Messages response model. |
+| `artifacts` | object or null | Artifact selections described below. |
+| `created_at` | timestamp | Server-generated creation time. |
+| `created_by` | object or null | Account details when requested on the interaction list with `include=Account`. Creator ID is an account ID. |
+| `pgpt` | object or null | Stored chat request; see the Messages request model. |
+
+Selections follow the [scoped artifact model](/en/v1.58/developer-manual/build-with-zylon/workspace-api/chats/threads#selecting-artifacts).
+
+## Cancel or delete an interaction
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/cancel" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+Cancel returns `204 No Content`. Delete returns `200` with the deleted interaction in the response model above.
+
+```bash
+curl -X DELETE "https://{BASE_URL}/api/v1/app/interaction/{interactionID}" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+## Stream interaction output
+
+```bash
+curl -N "https://{BASE_URL}/api/v1/app/interaction/{interactionID}/stream" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Accept: text/event-stream"
+```
+
+The stream starts from the beginning while events remain available. Handle `interaction`, message events, `error`, and terminal `done`; an unavailable or expired interaction stream may report an error within SSE.
+
+The stream below is abbreviated. Read the initial `interaction` event for the persisted interaction ID, then process message events until `done`.
+
+<Accordion title="Example stream">
+```text
+event: interaction
+data: {"type":"interaction","interaction":{"id":"{interactionID}","project_id":"{projectID}","thread_id":"{threadID}","state":"Processing","user_input":{"role":"user","content":[{"type":"text","text":"Summarize the artifact in three bullets."}]},"created_at":"2026-02-08T14:41:10Z"}}
+
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_example","type":"message","role":"assistant","content":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"block_id":"block_example","delta":{"type":"text_delta","text":"Ticket volume decreased this week."}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+event: done
+data: {"type":"done"}
+```
+</Accordion>
+
+## Errors and edge cases
+
+- **400**: request must contain exactly one user message; invalid artifact selections.
+- **403**: insufficient project permissions.
+- **404**: interaction not found on detail or mutation operations.
+- **409**: interaction already completed when canceling.

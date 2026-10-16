@@ -1,0 +1,304 @@
+---
+title: "Actualización a 1.58"
+description: "Pasos para actualizar tu instalación de Zylon a la versión 1.58."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Warning>
+  **Se requiere Zylon CLI 2.9.0 o posterior.** Los comandos de esta guía no están disponibles en versiones anteriores de la CLI.
+</Warning>
+
+<Warning>
+Si mantienes una integración por API, revisa la [guía de migración de API 1.57 → 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) antes de actualizar. Los IDs de creador ahora identifican cuentas; las operaciones de miembros siguen usando IDs de miembro del espacio de trabajo. Para clientes que dependan de esos IDs, migra las llamadas afectadas a la API actual y [actualiza los mapeos de IDs guardados](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados). Las URLs antiguas no conservan todo el contrato de identidad de 1.57.
+</Warning>
+
+## Qué ha cambiado
+
+1.58 requiere dos pasos manuales que la CLI no ejecuta por sí sola. Ejecuta ambos cuando 1.58 esté instalado y todos los pods estén listos:
+
+- **Backfill de Skills y Documentos.** Las Skills y los Documentos existentes deben procesarse con `zylon-cli backfill-projections`.
+- **Límite de pods más alto en el nodo.** El nodo de Kubernetes debe permitir hasta 200 pods. Las instalaciones nuevas lo aplican automáticamente; las existentes lo aplican con `zylon-cli configure --max-pods 200`. Esto reinicia k0s, por lo que todos los servicios de Zylon estarán brevemente no disponibles.
+
+Si usas el preset `baseline-96g`, hay un paso más antes de instalar:
+
+- **Nuevo modelo en `baseline-96g`.** `baseline-96g` ahora usa `nvidia/Qwen3.8-27B-NVFP4` en lugar de `cyankiwi/qwen3.5-27b-awq-4bit`. Descárgalo antes de instalar 1.58. Para mantener el modelo anterior, configura `ai.preset: "deprecated.96g.20261008"`.
+
+## Cómo actualizar
+
+<Info>
+  Si necesitas ayuda, [abre un ticket de soporte](https://zylonsupport.zendesk.com/hc/en-us/requests/new?tf_subject=1.58+Upgrade+Help) y nuestro equipo de ingeniería te ayudará.
+</Info>
+
+### Paso 1: Instala 1.58
+
+Sigue los pasos según tu tipo de instalación.
+
+<Tabs>
+  <Tab title="Online">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download nvidia/Qwen3.8-27B-NVFP4
+        ```
+      </Step>
+      <Step title="Instala 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.58.X
+        ```
+      </Step>
+    </Steps>
+
+    Para detalles completos del entorno y troubleshooting, consulta la [guía de actualización online](/es/v1.58/operator-manual/installation/online#actualizando-zylon).
+
+  </Tab>
+  <Tab title="Semi-Airgap">
+
+    <Steps>
+      <Step title="Actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Rehabilita acceso a internet">
+        Permite temporalmente operaciones online en tu configuración y aplícala:
+
+        ```yaml
+        airgap:
+          offlineOperation: false
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+      <Step title="Verifica conectividad">
+        ```bash
+        sudo zylon-cli preflight --network -v
+        ```
+      </Step>
+      <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download nvidia/Qwen3.8-27B-NVFP4
+        ```
+      </Step>
+      <Step title="Instala 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+        sudo zylon-cli install 1.58.X
+        ```
+      </Step>
+      <Step title="Vuelve a activar modo offline">
+        ```yaml
+        airgap:
+          offlineOperation: true
+        ```
+
+        ```bash
+        sudo zylon-cli sync
+        ```
+      </Step>
+    </Steps>
+
+    Para red/proxy y más detalle operativo, consulta la [guía de actualización semi-airgap](/es/v1.58/operator-manual/installation/semi-airgap#actualizando-zylon).
+
+  </Tab>
+  <Tab title="Airgap Completo">
+
+    Estos pasos se ejecutan en dos máquinas: una con internet para descarga y la máquina destino offline.
+
+    <Steps>
+      <Step title="Máquina online: actualiza la CLI (obligatorio)">
+        ```bash
+        sudo zylon-cli self-update
+        ```
+
+        Si el comando falla o la versión no cambia, ejecuta el instalador de respaldo:
+
+        ```bash
+        curl -sL get.zylon.ai | sudo -E bash
+        ```
+
+        ```bash
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Máquina online: prepara el paquete de transferencia de la CLI">
+        ```bash
+        sudo tar -czf zylon-update.tar.gz \
+          /usr/local/bin/zylon-cli \
+          /usr/local/bin/zylon-forge-cli
+        ```
+      </Step>
+      <Step title="Máquina online: descarga y exporta el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        sudo zylon-cli models download --no-install nvidia/Qwen3.8-27B-NVFP4
+        sudo zylon-cli models export
+        ```
+      </Step>
+      <Step title="Máquina online: exporta el bundle de plataforma 1.58">
+        ```bash
+        sudo zylon-cli list-versions
+
+        # Usa --from si conoces tu versión actual (bundle más pequeño)
+        sudo zylon-cli export 1.58.X --from CURRENT_VERSION
+
+        # Si no, exporta un bundle completo
+        sudo zylon-cli export 1.58.X
+        ```
+      </Step>
+      <Step title="Transfiere artefactos a la máquina offline">
+        Transfiere los archivos necesarios:
+
+        - `zylon-*.tar`
+        - `zylon-update.tar.gz`
+        - `zylon-models-<timestamp>.tar` (solo para `baseline-96g`). Colócalo en su propia carpeta en la máquina offline, por ejemplo `/tmp/models`, para que `zylon-cli import zylon-*.tar` no lo incluya.
+      </Step>
+      <Step title="Máquina offline: extrae el paquete de actualización CLI">
+        ```bash
+        cd /tmp
+        sudo tar -xzf zylon-update.tar.gz -C /
+        sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
+        sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
+        ```
+      </Step>
+      <Step title="Máquina offline: importa el nuevo modelo de 96g (solo para `baseline-96g`)">
+        Omite este paso si no usas el preset `baseline-96g`.
+
+        ```bash
+        cd /tmp/models
+        sudo zylon-cli models import zylon-models-<timestamp>.tar
+        sudo zylon-cli models download --offline
+        sudo zylon-cli models list --installed
+        ```
+      </Step>
+      <Step title="Máquina offline: importa e instala">
+        ```bash
+        # Importa el bundle de Zylon, verifica la versión y luego instala
+        sudo zylon-cli import zylon-*.tar
+        sudo zylon-cli list-versions --offline
+        sudo zylon-cli install 1.58.X --airgap
+        ```
+      </Step>
+    </Steps>
+
+    Para bundles diferenciales y transferencia, consulta la [guía de actualización airgap](/es/v1.58/operator-manual/installation/airgap#actualizando-zylon).
+
+  </Tab>
+</Tabs>
+
+### Paso 2: Espera a que todos los pods estén listos
+
+Espera hasta que todos los pods del namespace `zylon` tengan todos sus contenedores listos (por ejemplo `1/1`) y estén en `Running` (o `Completed` en el caso de jobs):
+
+```bash
+watch sudo kubectl get pods -n zylon
+```
+
+### Paso 3: Aplica los cambios de 1.58
+
+Ejecuta los mismos comandos en todos los tipos de instalación. No necesita acceso a internet.
+
+<Warning>
+  El backfill reescribe las Skills y Documentos existentes y no se puede deshacer. Ejecútalo siempre primero con `--dry-run` y revisa la salida antes de ejecutarlo de verdad.
+</Warning>
+
+```bash
+# Comprueba que se pueden ejecutar comandos dentro del backend. Debe terminar sin salida.
+# Justo después de un reinicio puede fallar unos minutos aunque el pod muestre 1/1; espera y reintenta.
+sudo kubectl -n zylon exec deploy/zylon-zylon-backend -- true
+
+# Previsualiza el backfill de las Skills y Documentos existentes. No se cambia nada.
+# Revisa la última línea: debe mostrar failures=0. "planned" es cuántos se escribirán.
+sudo zylon-cli backfill-projections --dry-run
+
+# Solo si el dry run ha ido bien: backfill de las Skills y Documentos existentes para que aparezcan en 1.58.
+# Este cambio es irreversible.
+sudo zylon-cli backfill-projections
+
+# Muestra el límite de pods actual del nodo. Si muestra 110 (el valor por defecto de Kubernetes), nunca se ha aumentado.
+sudo kubectl get nodes -o jsonpath='{.items[*].status.capacity.pods}{"\n"}'
+
+# Aumenta el límite de pods de Kubernetes a 200 (las instalaciones nuevas ya lo tienen).
+# Reinicia k0s, por lo que todos los servicios de Zylon estarán no disponibles durante unos minutos.
+# Si el límite ya es 200, no cambia nada y k0s no se reinicia.
+sudo zylon-cli configure --max-pods 200
+
+# Cuando k0s vuelva a estar en marcha, comprueba el nuevo límite. Debe mostrar 200.
+sudo kubectl get nodes -o jsonpath='{.items[*].status.capacity.pods}{"\n"}'
+```
+
+La última línea de cada ejecución del backfill muestra el resultado. Los números dependen de tus datos; `failures` siempre debe ser `0`:
+
+```text
+# --dry-run: "planned" es lo que se escribirá, todavía no se cambia nada
+Projection backfill complete: processed=178 content-migrated=0 projections-written=0 planned=43 skipped=135 failures=0
+
+# Ejecución real: lo planificado ya se ha escrito ("projections-written")
+Projection backfill complete: processed=178 content-migrated=43 projections-written=43 planned=0 skipped=135 failures=0
+```
+
+<Info>
+  Ejecuta el backfill antes de aumentar el límite de pods: el backfill necesita la plataforma en marcha y el reinicio de k0s lo interrumpiría.
+</Info>
+
+## Solución de problemas
+
+<AccordionGroup>
+  <Accordion title="backfill-projections falla">
+    Si el error dice `container not found ("zylon-backend")`, el nodo se ha reiniciado hace poco y aún no está listo para ejecutar comandos. Espera unos minutos hasta que `sudo kubectl -n zylon exec deploy/zylon-zylon-backend -- true` funcione y reintenta. No se ha cambiado nada.
+
+    Si no, comprueba que todos los pods del namespace `zylon` están listos, vuelve a ejecutarlo con `--dry-run` y revisa la salida. Si el dry run también falla, [abre un ticket de soporte](https://zylonsupport.zendesk.com/hc/en-us/requests/new?tf_subject=1.58+Upgrade+Help) antes de ejecutar el backfill real.
+  </Accordion>
+  <Accordion title="configure --max-pods no puede actualizar la configuración de k0s">
+    El comando solo edita `/etc/k0s/k0s.yaml` cuando coincide con el formato generado por la Zylon CLI. Si no, se detiene y muestra los pasos manuales:
+
+    1. Añade `maxPods: 200` en `spec.workerProfiles` → `default` → `values` dentro de `/etc/k0s/k0s.yaml`.
+    2. Reinicia k0s:
+
+    ```bash
+    sudo k0s stop && sudo k0s start
+    ```
+
+    3. Comprueba que el nuevo límite está activo:
+
+    ```bash
+    sudo grep maxPods /run/k0s/kubelet/config.yaml
+    ```
+  </Accordion>
+</AccordionGroup>

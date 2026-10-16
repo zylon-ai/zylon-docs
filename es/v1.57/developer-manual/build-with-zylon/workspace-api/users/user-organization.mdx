@@ -1,0 +1,88 @@
+---
+title: "Organizaciones"
+description: "Lee y actualiza la organización actual de Workspace."
+---
+
+Las organizaciones son el contenedor principal de usuarios y proyectos. Estos endpoints operan sobre la organización seleccionada por el header `x-org`.
+
+## Solicitud básica y respuesta
+
+Obtén la organización actual con `GET /api/v1/app/organization`.
+
+```bash
+curl "https://{BASE_URL}/api/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}"
+```
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "org_2f3a9d1c7b5e4a8f",
+  "name": "Aurora Labs",
+  "slug": "aurora-labs",
+  "state": "Active",
+  "display_name": "Aurora Labs",
+  "context": "Enterprise R&D and analytics.",
+  "logo": "https://{BASE_URL}/files/org-logo.png",
+  "auto_join_enabled": true,
+  "default_role": "Viewer",
+  "email_regex": ".*@auroralabs.com",
+  "gateway_id": "gw_4b7c2a1d9e5f",
+  "created_at": "2026-02-08T14:12:45Z",
+  "member_count": null
+}
+```
+</Accordion>
+
+## Actualizar configuración de organización
+
+```bash
+curl -X POST "https://{BASE_URL}/api/v1/app/organization" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "x-org: {org_slug}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Aurora Labs",
+    "context": "Private AI platform for product and support teams.",
+    "clear_context": false,
+    "email_regex": ".*@auroralabs.com"
+  }'
+```
+
+<Accordion title="Parametros del endpoint">
+| Campo | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| `name` | string | No | Nombre visible de la organización. Máximo 60 caracteres. |
+| `context` | string | No | Contexto de organización usado por funcionalidades de Workspace. |
+| `clear_context` | boolean | No | Ponlo a `true` para eliminar el contexto existente. Por defecto es `false`. |
+| `logo_file_name` | string | No | Nombre del archivo de logo en multipart. Obligatorio si subes un logo. |
+| `logo_content_type` | string | No | Tipo de contenido del logo en multipart. Debe ser PNG o JPEG. |
+| `logo_content_length` | integer | No | Tamaño del logo en bytes. Máximo 5 MB. |
+| `fileData` | file | No | Binario del logo solo para multipart. |
+</Accordion>
+
+<Accordion title="Ejemplo de respuesta">
+```json
+{
+  "id": "org_2f3a9d1c7b5e4a8f",
+  "name": "Aurora Labs",
+  "slug": "aurora-labs",
+  "state": "Active",
+  "display_name": "Aurora Labs",
+  "context": "Private AI platform for product and support teams.",
+  "logo": "https://{BASE_URL}/files/org-logo.png",
+  "auto_join_enabled": true,
+  "default_role": "Viewer",
+  "email_regex": ".*@auroralabs.com",
+  "gateway_id": "gw_4b7c2a1d9e5f",
+  "created_at": "2026-02-08T14:12:45Z",
+  "member_count": null
+}
+```
+</Accordion>
+
+## Errores y casos límite
+
+- **401/403**: token inválido o ausente.
+- **400**: regex inválida, nombre de organización de más de 60 caracteres, tipo de logo no soportado o logo mayor de 5 MB.

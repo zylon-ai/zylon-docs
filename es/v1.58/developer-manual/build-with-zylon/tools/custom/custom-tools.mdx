@@ -1,0 +1,67 @@
+---
+title: "Herramientas personalizadas"
+description: "Define tus propias herramientas usando JSON Schema."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Las herramientas personalizadas permiten definir una interfaz (nombre + JSON Schema) y dejar que el asistente decida cuándo usarla. Cuando se usa, devuelve un bloque `tool_use` con `input` estructurado.
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+
+## Requisitos
+
+En la lista `tools`, incluye:
+
+- `name`: nombre único
+- `description`: qué hace la herramienta
+- `inputSchema`: JSON Schema de la entrada
+
+## Solicitud y respuesta básicas
+
+Este ejemplo valida una herramienta de calculadora y fuerza su uso.
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Add 5 and 7." }
+    ],
+    "tools": [
+      {
+        "name": "simple_calculator",
+        "description": "Add two numbers.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "a": { "type": "number" },
+            "b": { "type": "number" }
+          },
+          "required": ["a", "b"]
+        }
+      }
+    ],
+    "tool_choice": { "type": "tool", "name": "simple_calculator" }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`. Cuando el asistente devuelva un `tool_use`, ejecuta la herramienta y responde con un bloque `tool_result`.
+
+<Note>
+Solo las herramientas personalizadas usan `tool_use` y `tool_result`. Las herramientas integradas se ejecutan en el servidor y devuelven bloques `server_tool_use` seguidos de su resultado; no envíes resultados de vuelta para ellas. Consulta [Cómo se devuelven los resultados de las herramientas integradas](/es/v1.58/developer-manual/build-with-zylon/tools/introduction-to-tools#cómo-se-devuelven-los-resultados-de-las-herramientas-integradas).
+</Note>

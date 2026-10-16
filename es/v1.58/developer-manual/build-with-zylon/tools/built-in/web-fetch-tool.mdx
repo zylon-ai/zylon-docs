@@ -1,0 +1,95 @@
+---
+title: "Herramienta Web Fetch"
+description: "Extrae contenido de una URL en el mensaje."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Usa Web Fetch cuando necesitas que el asistente recupere contenido de una URL.
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+
+## Requisitos
+
+- Especificación de la herramienta: `{ "name": "web_extract", "type": "web_extract_v1" }`
+- No requiere `tool_context`
+
+## Solicitud y respuesta básicas
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Summarize https://example.com/" }
+    ],
+    "tools": [
+      { "name": "web_extract", "type": "web_extract_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+Ejemplo de respuesta:
+
+```json
+{ "valid": true, "errors": null }
+```
+
+Para ejecutar, envía el mismo cuerpo a `POST /messages`.
+
+## Bloques de respuesta
+
+Zylon ejecuta esta herramienta en el servidor. La respuesta contiene un bloque `server_tool_use` con la llamada, seguido de un bloque `web_fetch_tool_result` con el resultado. El ID de la llamada empieza por `srvtoolu_`. No envíes un `tool_result` de vuelta para ella.
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_3c4d", "name": "web_extract", "input": { "url": "https://example.com/" } },
+  {
+    "type": "web_fetch_tool_result",
+    "tool_use_id": "srvtoolu_3c4d",
+    "content": {
+      "type": "web_fetch_result",
+      "url": "https://example.com/",
+      "retrieved_at": "2026-10-08T10:00:00Z",
+      "content": {
+        "type": "document",
+        "title": "Example Domain",
+        "source": { "type": "text", "media_type": "text/plain", "data": "# Example Domain\n\nThis domain is for use in examples." }
+      }
+    }
+  }
+]
+```
+
+Error:
+
+```json
+{
+  "type": "web_fetch_tool_result",
+  "tool_use_id": "srvtoolu_3c4d",
+  "content": { "type": "web_fetch_tool_result_error", "error_code": "url_not_accessible" }
+}
+```
+
+Estos bloques no tienen campo `is_error`. Para detectar un fallo, comprueba si `content.type` termina en `_error` y lee `content.error_code`.
+
+Con la extensión Zylon activada (`system.extensions` incluye `zylon`), el resultado se devuelve como un bloque `tool_result` simple con contenido `text`.
+
+Consulta [Migración de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para ver la lista completa de bloques de herramientas de servidor.
+
+## Consejos
+
+- La URL debe aparecer en el mensaje.
+- Mantén el prompt conciso.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/v1.58/developer-manual/build-with-zylon/working-with-messages)

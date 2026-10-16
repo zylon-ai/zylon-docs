@@ -1,0 +1,877 @@
+---
+title: "Registro de cambios"
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+<Update label="1.58.0" description="TBD">
+  <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+    Upcoming release
+  </span>
+
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión 1.58.X**
+
+    Usa Zylon CLI **2.9.0 o posterior**. Cuando termine la instalación y todos los pods estén listos, previsualiza el backfill de Skills y Documentos con `backfill-projections --dry-run`, ejecuta el backfill y después aplica `configure --max-pods 200`. Cambiar el límite de pods interrumpe brevemente todos los servicios de Zylon. Sigue la [guía de actualización a 1.58](/es/v1.58/changelog/guides/1-58-0) completa.
+
+    **Las integraciones afectadas deben migrar su uso de la API.** Los campos de creador identifican ahora **cuentas**; las operaciones de pertenencia siguen usando **IDs de miembros del workspace**. Migra las llamadas afectadas y actualiza los mapas de IDs guardados aunque las URLs legacy sigan funcionando. Revisa la [guía de migración de API de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Ejecución de código — Beta**: Habilitada por defecto en los despliegues estándar de 1.58. Ejecuta código en un sandbox aislado para analizar archivos, realizar cálculos y generar hojas de cálculo, gráficos e informes. Si un operador la desactiva en Workspace, el chat y las demás herramientas disponibles siguen funcionando, pero el asistente no puede ejecutar código ni completar los pasos de una Skill que lo requieran. Consulta [Ejecución de código](/es/v1.58/user-manual/tools/code-execution) y la [configuración del operador](/es/v1.58/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
+  - **Creador y editor de Skills**: Crea Skills reutilizables con el chat o edita sus instrucciones directamente. Para crear una con el chat, instala primero **Skill Creator** desde la biblioteca de tu organización en tu proyecto y elige **Skills > New Skill > Create with Chat**. Sigue la [guía paso a paso](/es/v1.58/user-manual/skills/creating-a-skill), que también explica cómo instalar y usar la Skill generada.
+  - **Archivos generados en Documentos AI**: Los archivos creados mediante ejecución de código pueden guardarse como artefactos del proyecto y usarse con la experiencia existente de previsualización y descarga.
+  - **Cronología de ejecución de herramientas**: Consulta pasos desplegables, descripciones, tiempo empleado, salida de comandos y errores.
+  - **Indicadores de chats sin leer**: Identifica en el menú lateral los chats que contienen respuestas del asistente sin leer.
+  - **Modo oscuro y preferencias compartidas**: Ampliado el soporte de temas en Workspace y Backoffice, con preferencias de cuenta compartidas entre ambos.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Gestor de conectores**: Consulta y filtra conectores entre organizaciones, identifica su proyecto y creador y revoca credenciales conservando los archivos importados.
+  - **System Monitor**: Consulta en directo el uso de CPU, RAM, disco, GPU y VRAM, además de las colas de modelos, solicitudes de inferencia activas y velocidad de generación de tokens. Requiere habilitar System Monitor. Consulta [System Monitor](/es/v1.58/operator-manual/backoffice/system-monitor).
+  - **Soporte de idiomas**: Añadidas preferencias de idioma en Backoffice y traducciones al español.
+
+  ## 🔌 APIs para desarrolladores
+  ### ✨ Novedades
+
+  - **APIs unificadas**: Consolidadas las rutas de artefactos y separados los perfiles de cuenta de las pertenencias al workspace. Las rutas legacy de artefactos, integraciones y miembros quedan obsoletas en 1.58, con eliminación prevista para 1.59. Consulta la [guía de migración de API](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para los límites de compatibilidad y ejemplos.
+  - **Tokens de API de solo lectura**: Elige permisos de lectura o de lectura y escritura al crear tokens de Workspace y gateway. Consulta [gestión de tokens](/es/v1.58/developer-manual/get-started/token-management).
+  - **Respuestas de herramientas actualizadas**: Las herramientas integradas usan `server_tool_use` y bloques de resultado tipados. Las herramientas personalizadas mantienen su flujo de herramientas del cliente. Consulta los [ejemplos de migración](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#bloques-de-herramientas-de-servidor).
+  - **Omnisearch ampliado**: Añadidos filtros de recurso, proyecto, tipo de artefacto y fecha, además de búsqueda en texto generado por IA. Consulta la [API de búsqueda](/es/v1.58/developer-manual/build-with-zylon/workspace-api/general/search).
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Verificación de artefactos**: Las descargas de la CLI se comprueban con los checksums de la versión.
+  - **Backup y restauración más seguros**: Las cargas de trabajo se detienen de forma ordenada antes de copiar o reemplazar los datos, y después se reanuda la programación. Consulta [backup y restauración](/es/v1.58/operator-manual/operations/backup).
+  - **n8n actualizado**: Actualizado el despliegue de n8n incluido y corregida la compatibilidad del ingress MCP.
+
+  ### 🐛 Correcciones
+
+  - Los resultados de búsqueda de archivos enlazados identifican el proyecto de destino accesible.
+  - Mejorada la recuperación ante fallos del lector de documentos, la extracción de PDF y el procesamiento de hojas de cálculo y tablas.
+  - Mejoradas la validación de conexiones MCP y la renovación de credenciales OAuth durante las conversaciones.
+  - Mejorados el tratamiento de archivos generados, los errores de archivos ausentes y la aplicación de las políticas de descarga de la organización.
+</Update>
+
+<Update label="1.57.0" description="August 17, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión 1.57.X**
+
+    Sigue la [guía de migración 1.57](/es/v1.58/changelog/guides/1-57-0) completa antes de actualizar.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Skills**: Enseña a tu agente de Zylon a realizar tareas complejas con paquetes de instrucciones ya preparados. [Más información](/es/v1.58/user-manual/skills/introduction-to-skills)
+  - **Skills de Organización**: Añade y gestiona Skills a nivel de organización, permitiendo un despliegue centralizado de skills en todos los workspaces. [Más información](/es/v1.58/user-manual/managing-organization-skills)
+  - **Integración con Google Drive**: Conecta tu Google Drive directamente a Zylon para un acceso y colaboración documental sin fricciones. [Más información](/es/v1.58/user-manual/connectors/google-drive)
+  - **Interfaz de Guardrails**: Interfaz visual para configurar y gestionar guardrails de IA, para interacciones más seguras y controladas. [Más información](/es/v1.58/operator-manual/backoffice/guardrails)
+  - **Frescura de Sesión**: Gestión de sesión mejorada con comprobaciones automáticas de frescura para mantener la estabilidad de la conexión.
+  - **Adjuntar documentos en el chat**: Arrastra imágenes y documentos directamente a un mensaje de chat para que Zylon pueda leerlos y usarlos como contexto. [Más información](/es/v1.58/user-manual/tools/attachments)
+  - **Bloqueo de descargas por configuración del administrador de la organización**: Los administradores pueden bloquear ahora las descargas de archivos subidos a la Base de conocimiento y de recursos generados por IA a nivel de organización.
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Monitor de Recursos**: Nueva API para monitorizar los recursos del sistema y las métricas de carga de trabajo de IA en tiempo real.
+  - **Soporte ARM64**: Soporte completo para despliegues en arquitectura ARM64.
+  - **Rendimiento mejorado**: Inferencia más rápida, mejor gestión de la concurrencia y una búsqueda web más eficiente.
+
+</Update>
+
+<Update label="1.56.0" description="June 17, 2026">
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Rediseño completo empresarial**: Workspace se ha rediseñado por completo con una nueva apariencia y experiencia orientada a entornos empresariales.
+  - **Rediseño de la Base de conocimiento**: La Base de conocimiento se ha rediseñado por completo para ser mucho más flexible.
+    - Ahora puedes soltar carpetas completas desde tu sistema dentro de la Base de conocimiento.
+    - Puedes navegar por carpetas con una interacción de doble clic al estilo macOS.
+    - Puedes subir documentos o carpetas directamente dentro de una carpeta específica.
+    - Puedes seleccionar varios documentos o carpetas y moverlos.
+    - También se soporta menú contextual con clic derecho.
+  - **Agent Flows pasa a llamarse Documentos AI**: Agent Flows pasa a llamarse Documentos AI en todo el producto.
+  - **Mejor soporte para pantallas pequeñas**: Aunque Zylon no es una aplicación móvil, el nuevo rediseño mejora de forma notable la experiencia en pantallas más pequeñas.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Panel de uso para consumo de tokens**: Backoffice incluye ahora un panel de uso para hacer seguimiento del consumo de tokens. Esta funcionalidad requiere tener el [registro de auditoría](/es/v1.58/operator-manual/configuration/features/feat-audit) habilitado.
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Logs de auditoría para flujos SIEM y seguridad**: Zylon ofrece ahora capacidades reforzadas de auditabilidad y logs de seguridad para integraciones SIEM y revisiones operativas. Consulta [Auditabilidad y gobernanza de IA](/es/v1.58/operator-manual/auditability-ai-safety/), [entrega y almacenamiento de logs](/es/v1.58/operator-manual/backoffice/log-delivery-storage) y [configuración de entrega de logs](/es/v1.58/operator-manual/configuration/features/log-delivery-storage).
+  - **Controles de política de retención de logs**: Se añade soporte de política de retención para logs almacenados. Consulta la [configuración de hard delete](/es/v1.58/operator-manual/configuration/cron-tasks/hard-delete).
+  - **Soporte para Active Directory / LDAP**: Zylon soporta ahora integración con directorio corporativo mediante [Active Directory / LDAP](/es/v1.58/operator-manual/authentication/ldap).
+  - **Contraseña de un solo uso para root admin tras cada login por CLI**: El acceso de administrador root mediante CLI requiere ahora una contraseña de un solo uso después de cada inicio de sesión. Consulta la [configuración de CLI](/es/v1.58/operator-manual/configuration/cli).
+  - **Pipeline de extracción de PPTX basado en visión**: Se añade un nuevo pipeline para archivos PPTX que aprovecha modelos de visión para mejorar la precisión y la calidad de la extracción de información. Consulta [procesamiento visual de archivos](/es/v1.58/operator-manual/configuration/features/feat-file-vision).
+
+  ### 🐛 Correcciones de errores
+
+  - Se corrigió un error que podía hacer que los MCP fallaran en un chat aunque no estuvieran seleccionados.
+  - **Mejor gestión de memoria en Web Search**: Se mejora la gestión de memoria en la [herramienta de Web Search](/es/v1.58/user-manual/tools/web-search).
+  - Se incluyen múltiples correcciones y mejoras de interfaz como parte del despliegue del rediseño.
+
+</Update>
+
+<Update label="1.55.0" description="April 15, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión 1.55.X**
+
+    Esta versión cambia la familia de modelos de IA predeterminada a Qwen 3.5 y deshabilita la descarga automática de modelos por defecto.
+    Si instalas la actualización de la plataforma antes de descargar el modelo necesario, los servicios de IA no arrancarán.
+
+    Consulta la [guía de migración a la versión 1.55](/es/v1.58/changelog/guides/1-55-0) antes de actualizar.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Novedades
+
+  - **Nuevos modelos y nueva familia predeterminada**: Se ha añadido compatibilidad con Qwen 3.5 y, de forma experimental, con Ministral, GLM 4.7 y los modelos NVIDIA Nemotron. Qwen 3.5 pasa a ser la familia base predeterminada, mejorando la calidad de razonamiento, el comportamiento agéntico y la calidad de las respuestas.
+  - **Nuevas herramientas de Workspace en el chat**: Con el nuevo conjunto de modelos, el chat puede ahora listar contenido, obtener contenido, crear resúmenes y análisis, y generar documentos en blanco a partir del contexto del chat.
+  - **Rediseño de las instrucciones en ajustes de proyecto**: Los ajustes de proyecto utilizan ahora un único campo de instrucciones personalizadas en lugar de dos, simplificando la configuración y mejorando la experiencia de usuario.
+  - **Sincronización automática de la base de conocimiento**: Las integraciones pueden ahora sincronizarse automáticamente tras su configuración. Los flujos de sincronización manual ya no son necesarios para el uso habitual.
+  - **Tokens personales de Workspace**: Todos los usuarios pueden ahora generar sus propios tokens de API personales de Workspace directamente desde los ajustes de su cuenta, sin necesidad de intervención de un administrador.
+
+  ## 🛠️ Backoffice
+  ### ✨ Novedades
+
+  - **Rediseño completo del Backoffice**: El Backoffice ha sido completamente rediseñado con importantes mejoras de interfaz y experiencia de usuario para hacer la administración de la plataforma más clara, ágil y coherente.
+
+  ## 🛠️ Plataforma
+  ### ✨ Novedades
+
+  - **Métricas de plataforma para visibilidad de IA/GPU**: Ahora es posible recopilar y consumir métricas de plataforma, incluyendo métricas de GPU y de cargas de trabajo de IA, para mejorar la observabilidad y la visibilidad operativa. Consulta la [configuración de observabilidad](/en/v1.58/operator-manual/configuration/observability).
+
+  ### 🐛 Corrección de errores
+
+  - Corregidos errores cuando el sistema se ejecuta en una máquina con IPv6 habilitado.
+
+</Update>
+
+<Update label="1.54.0" description="March 09, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión ≥ 1.54.0**
+
+    Esta versión requiere migrar a la nueva versión de la CLI antes de actualizar. Omitir este paso causará un fallo crítico y Zylon no podrá iniciarse.
+    Esta actualización requiere entre 45 y 60 minutos de inactividad planificada. Planifícalo con antelación y notifica a tus usuarios antes de comenzar.
+    Esta versión contiene un cambio incompatible con versiones antiguas con los tokens de API del Workspace.
+
+    Consulta la [guía de migración completa de la versión 1.54.0](/es/v1.58/changelog/guides/1-54-0) para todos los detalles.
+  </Danger>
+
+  ## 💼 Workspace
+  ### ✨ Funcionalidades
+
+  - **Renovación de los registros de auditoría:** mayor visibilidad y capacidades de filtrado en las entradas de auditoría con seguimiento granular de las acciones de los usuarios.
+  - **Conector de Confluence On-Prem:** integración con instancias on-premises de Confluence para un acceso y colaboración documental sin fricciones. [Más información](/es/v1.58/user-manual/connectors/confluence-server)
+
+  ### 🐛 Correcciones de errores
+
+  - Se corrigieron cierres inesperados al procesar consultas SQL excesivamente grandes con el conector de base de datos.
+  - Se añadieron títulos correctos para conectores MCP cuando solo hay una herramienta.
+  - Se corrigió un error en chats cuando ocurría la compresión de contexto.
+  - Se optimizó el selector de organización para listas largas, mejorando la usabilidad.
+
+  ## 🛠️ Plataforma
+  ### ✨ Funcionalidades
+
+  - **Backoffice:** el Backoffice de la plataforma es utilizado por los operadores para gestionar el acceso a nivel de plataforma y los entornos de desarrollo. [Más información](/es/v1.58/operator-manual/backoffice/introduction)
+  - **AI Gateways:** un servicio de software dedicado y aislado que se sitúa entre los clientes y las APIs internas de Zylon. [Más información](/es/v1.58/operator-manual/backoffice/platform-backoffice#gateways)
+</Update>
+
+<Update label="1.53.0" description="February 23, 2026">
+  <Danger>
+    **⚠️ Acción requerida antes de actualizar a la versión ≥ 1.53.0**
+
+    Esta versión requiere migrar a la nueva versión del CLI antes de actualizar. Omitir este paso causará un fallo crítico y Zylon no podrá iniciarse.
+    Esta actualización requiere 45–60 minutos de tiempo de inactividad planificado. Planifica en consecuencia y notifica a tus usuarios antes de comenzar.
+
+    Sigue la [guía de migración completa de 1.53.0](/es/v1.58/changelog/guides/1-53-0) para obtener todos los detalles.
+  </Danger>
+
+  ## 🛠️ Plataforma
+  ### ✨ Funcionalidades
+
+  - **Instalación Airgap Completa**: Zylon ahora puede operar en entornos completamente aislados de extremo a extremo — incluyendo actualizaciones — no solo en tiempo de ejecución. Para entornos con aislamiento de red estricto, esto desbloquea la gestión completa del ciclo de vida sin acceso a internet.
+    - Consulta la nueva [guía de instalación airgap](/es/v1.58/operator-manual/installation/airgap) para comenzar o migrar tu instancia existente.
+
+  - **Zylon CLI 2.0.0**: Una renovación importante de la interfaz de línea de comandos que simplifica todo el proceso de instalación a un solo comando — `sudo zylon-cli install <version>`. No más secuencias de configuración de múltiples pasos.
+    - **Asistente de Configuración**: Configura cada aspecto de tu instancia de Zylon de forma interactiva, sin editar manualmente archivos YAML. El asistente te guía a través de todas las opciones de configuración paso a paso.
+
+    ![](/images/changelog/1.53.0/image1.png)
+    ![](/images/changelog/1.53.0/image2.png)
+
+</Update>
+
+<Update label="1.52.0" description="January 28, 2026">
+
+  ## 💼 Workspace
+  - **Soporte para DB2**: Ahora puedes conectar tus bases de datos DB2 directamente a Zylon, permitiendo que la IA razone sobre tus datos empresariales mientras mantienes control total y seguridad.
+  - **Mejoras en integraciones MCP**: Ahora se admite autenticación con token Bearer para integraciones MCP, proporcionando opciones de seguridad más flexibles. También puedes activar o desactivar todas las herramientas MCP a la vez, facilitando la configuración de tu workspace.
+  - **Selección de Carpeta de SharePoint**: Al usar el selector de SharePoint, ahora puedes establecer una carpeta de inicio predeterminada para toda la organización, ahorrando tiempo al navegar a ubicaciones frecuentemente utilizadas.
+  - **Ventana de Analíticas Extendida**: Los datos de analíticas ahora están disponibles durante los últimos 12 meses, proporcionándote una vista más amplia del uso del workspace y las tendencias.
+  - **Visibilidad del Conector**: Ahora puedes ver quién creó cada conector, mejorando la transparencia y facilitando la gestión de integraciones en tu equipo.
+  - **Columna de Proyecto en Reporte de Problemas**: El rastreador de problemas ahora muestra una columna de proyecto con nombres de proyectos, facilitando la organización y el filtrado de problemas reportados.
+
+  ## 🛠️ Plataforma
+  - **Despliegues Privados de N8N**: Ahora puedes desplegar tu propio clúster privado de N8N dentro de tu infraestructura. Úsalo de forma independiente para construir flujos de trabajo personalizados, o crea tus propios servidores MCP para capacidades de IA extendidas. N8N maneja tu automatización personalizada mientras Zylon proporciona la capa de IA, asegurando que todos los datos permanezcan seguros dentro de tu entorno.
+
+  ## 🐛 Correcciones de Errores
+  - **Mejoras en redirección** en toda la plataforma.
+  - **Estabilidad en Creación y Edición de Conectores**: Se corrigieron múltiples casos donde las operaciones de creación y edición de conectores fallaban inesperadamente.
+
+</Update>
+
+
+<Update label="1.51.0" description="December 16, 2025">
+
+    ## 💼 Workspace
+    ### ✨ Funcionalidades
+    - **Adjuntar imágenes en el chat**: Ahora puedes adjuntar imágenes directamente en conversaciones de chat. Esta función requiere que tu modelo admita capacidades de imagen.
+    - **Conectores a nivel de proyecto**: Los MCPs y las bases de datos ahora se pueden configurar a **nivel de proyecto**, haciéndolos reutilizables en múltiples agentes y flows manteniendo un control de acceso consistente.
+    - **Herramienta de búsqueda web en el chat**: La búsqueda web ahora está disponible directamente dentro del chat, permitiendo a los usuarios obtener información actualizada sin salir de la conversación.
+    - **Editar y eliminar última interacción**: Corrige errores o refina prompts rápidamente editando o eliminando tu **última interacción** directamente desde la interfaz del chat.
+
+    ### 🐛 Bug Fixes
+    - **Visibilidad mejorada**: Hemos mejorado el contraste y la colocación de algunos elementos de la interfaz para mejor descubribilidad y usabilidad.
+    - **Duplicar Documento IA para flows en ejecución**: Ahora puedes duplicar Documentos IA incluso mientras aún están en ejecución, permitiendo iteración y experimentación más rápidas.
+    - **Corrección de duplicación de preguntas y respuestas masivas**: Se resolvió un problema donde la duplicación de preguntas y respuestas masivas fallaba bajo ciertas condiciones.
+    - **Bloqueo de chat cuando se selecciona herramienta MCP**: Se corrigió un error donde seleccionar una herramienta rota impedía a los usuarios continuar las interacciones de chat mientras MCP estaba activo.
+
+    ## Tiempo de inactividad esperado
+    Alrededor de 1 hora porque hay cambios en la capa de IA de bajo nivel que requieren que se descargue contenido grande.
+
+    ## Recomendaciones sobre cuándo actualizar
+    Actualice fuera del horario comercial para evitar impactar a los usuarios durante un período prolongado.
+</Update>
+
+<Update label="1.50.0" description="December 9, 2025">
+
+## 💼 Workspace
+### ✨ Funcionalidades
+- **Edición y eliminación de mensajes**: ¿Cometiste un error en el chat? ¡No hay problema! Ahora puedes eliminar y editar tus últimos mensajes en chats privados y colaborativos, dándote más control sobre tu historial de conversación y reduciendo la fricción al refinar tus entradas.
+- **Mejoras del conector de base de datos**: El conector de base de datos ahora admite vistas y procedimientos almacenados, proporcionando acceso rápido a tus datos sin riesgos de fuga. Esto permite una integración de datos más flexible manteniendo los límites de seguridad.
+- **Mejoras de rendimiento de la base de conocimiento**: Hemos entregado mejoras importantes de rendimiento en toda la Base de conocimiento, especialmente al cargar y buscar documentos en toda la aplicación.
+### 🐛 Bug Fixes
+- **UX mejorada al vincular desde proyectos**: más espacio para navegar tus artefactos
+</Update>
+
+
+<Update label="1.49.1" description="November 18, 2025">
+## 💼 Workspace
+### ✨ Funcionalidades
+- **Carga masiva de usuarios CSV**: Ahora puedes subir múltiples usuarios a la vez mediante CSV, totalmente integrado con control de asientos y seguimiento de licencias. Ahorra tiempo para administradores que incorporan equipos grandes y reduce errores manuales.
+- **Mejoras en gestión de contraseñas**: Los usuarios ahora pueden actualizar sus propias contraseñas y los administradores pueden restablecer contraseñas directamente desde el espacio de trabajo. Mejor higiene de seguridad y menos sobrecarga administrativa.
+- **Modo desarrollador**: Estamos introduciendo **Zylon Developer Mode**, permitiendo a los usuarios autenticarse e interactuar con la API de Zylon, desbloqueando integraciones más profundas y personalización de flujos de trabajo.
+Esto permitirá a las organizaciones automatizar operaciones del espacio de trabajo desde scripts internos y conectar Zylon en servicios backend personalizados.
+  - **Gestión de tokens**: Los desarrolladores y administradores de Zylon ahora pueden crear, revocar y gestionar tokens de API directamente dentro del espacio de trabajo. Este cambio reduce la fricción operativa al construir integraciones.
+- **Actualización de permisos**: Los visualizadores ahora están **restringidos de descargar archivos** en la Base de conocimiento, asegurando que la información sensible permanezca controlada.
+### 🐛 Bug Fixes
+- Barra de búsqueda centrada en el rastreador de problemas para mejor usabilidad.
+- Los visualizadores ahora tienen prohibido descargar archivos.
+
+## 🛠️ Platform
+### ✨ Funcionalidades
+- **Amplía Zylon con tus propias herramientas y flujos de trabajo sin infraestructura adicional: Zylon** ahora admite **endpoints de API estilo Messages**, permitiendo integraciones de herramientas sin problemas.
+Esto desbloquea compatibilidad con:
+  - **N8N**
+  - **Herramientas LangChain**
+  - **Automatizaciones personalizadas** construidas internamente
+  - **Monitoreo mejorado y seguimiento de rendimiento**: Hemos mejorado la observabilidad de cargas de trabajo de inferencia para un ajuste de rendimiento más preciso y diagnóstico de problemas
+</Update>
+
+<Update label="1.48.2" description="October 30, 2025">
+  ## 🛠️ Platform
+  ### 🐛 Bug Fixes
+  - Página de estado:
+    - Ahora requiere inicio de sesión para acceder.
+## 💼 Workspace
+  ### 🐛 Bug Fixes
+  - Estabilidad mejorada de Omnisearch al trabajar con archivos vinculados.
+
+</Update>
+<Update label="1.48.1" description="October 27, 2025">
+  ## 🛠️ Platform
+  ### ✨ Funcionalidades
+  - Zylon ahora ofrece soporte de proxy. Aprende más sobre ello [aquí](/es/v1.58/operator-manual/configuration/network/proxy).
+  - Se introdujo una página de Estado que proporciona información sobre la salud general del sistema en `https://your-zylon-instance.com/status`
+  ### 🐛 Bug Fixes
+  - Mejora de estabilidad para chats largos: Se corrigieron fallos que ocurrían al reducir el tamaño de la ventana de contexto.
+  - Rendimiento del sistema mejorado durante pruebas de estrés.
+  - Se aumentó el número de conexiones de base de datos permitidas.
+
+  ## 💼 Workspace
+  ### 🐛 Bug Fixes
+  - Conector de base de datos: ahora admite todos los tipos de columna SQL.
+  - Panel de análisis: Precisión mejorada de informes semanales.
+  - Panel de problemas:
+    - El contenido completo del chat ahora se muestra al reportar un problema.
+    - Se añadió la capacidad de limpiar el filtro de fecha.
+  - Documento IA:
+    - Se corrigió un problema que impedía usar Zylon AI como fuente para crear flow de borrador.
+    - Se permitió el uso de comillas dobles en preguntas para el flow de preguntas y respuestas masivas.
+
+</Update>
+<Update label="1.47.1" description="October 3, 2025">
+  ## 💼 Workspace
+
+  ### ✨ Funcionalidades
+
+  - **Mejoras del conector de base de datos**: Ahora admite vistas de base de datos y proporciona datos contextuales más ricos, permitiendo al modelo generar respuestas más precisas y fundamentadas.
+  - **Vista de usuarios principales personalizable**: Ajusta el número de usuarios principales mostrados en el Panel de uso para adaptarse a las necesidades de tu organización.
+  - **Integración del conector MCP**: Ahora puedes usar conectores MCP en tu instancia de Zylon.
+    - Esta función está en **fase Alpha** y [necesita ser habilitada](/es/v1.58/operator-manual/configuration/features).
+    - Aprende cómo usarla con el [Manual de usuario](/es/v1.58/user-manual/tools/mcp-connector).
+  - **Soporte de imágenes en chats**: Ahora puedes chatear con tus imágenes, _si el modelo de imagen está habilitado_.
+
+  ### 🐛 Bug Fixes
+  - Estabilidad y rendimiento mejorados de los selectores de archivos en todos los módulos de la aplicación.
+  - Mecanismos de manejo de errores refinados para una mejor experiencia de usuario durante casos límite.
+  - Funciones de colaboración mejoradas en entornos de chat compartidos para trabajo en equipo más fluido.
+
+  ## 🛠️ Platform
+  - Se resolvió el problema de validación de licencia en la interfaz de línea de comandos (CLI).
+</Update>
+
+<Update label="1.46.2" description="September 24, 2025">
+  <Warning>
+    Una nueva versión de CLI está ahora disponible, con un proceso de actualización mejorado que es más robusto. El proceso ahora valida la preparación del sistema antes de continuar e incluye capacidades de autorreparación automática cuando ocurren errores.
+    Debes descargar la nueva versión ejecutando sudo zylon-cli self-update.
+  </Warning>
+  
+  ## 💼 Workspace
+
+  ### ✨ Funcionalidades
+
+  - **Modelo GPT-OSS ahora disponible**: Ahora puedes acceder a nuestro modelo experimental GPT-OSS en configuraciones de 24GB y 48GB, dándote capacidades de IA más potentes para tareas complejas. Más información en [presets experimentales](/es/v1.58/operator-manual/ai-presets/presets#presets-experimentales).
+
+  ### 🐛 Bug Fixes
+
+  - Estabilidad y confiabilidad de conexión mejoradas.
+  - Se corrigió un error que podía causar fallos al configurar nuevos Documentos IA.
+  - Se corrigió un problema raro que podía hacer que la IA se quedara bloqueada mientras procesaba solicitudes.
+  - Se corrigió un error donde no se podían crear nuevos documentos IA si no se generaba un título automáticamente.
+  - El sistema ahora elige el modelo de lenguaje correcto para cada tarea de forma más consistente.
+  - Se corrigió un problema que afectaba la sincronización de datos entre sistemas.
+  - Se corrigió un problema que ocasionalmente afectaba la interpretación de imágenes en archivos PPTX. 
+
+  ## 🛠️ Platform
+
+  - Usa tus propios modelos de IA: Ahora puedes conectar tus propios modelos de IA ajustados sin perder ninguna de las funciones de la plataforma. Esto te da más control y flexibilidad sobre cómo se comporta la IA. Más información en [personalizar los presets por defecto](/es/v1.58/operator-manual/ai-presets/advanced-customization).
+  - Soporte de visión mejorado: Se corrigió un error que a veces impedía que las herramientas de IA se cargaran cuando las funciones visuales (imagen) estaban activadas.
+
+  </Update>
+<Update label="1.45.1" description="September 17, 2025">
+
+## 💼 Workspace
+### ✨ Funcionalidades
+- Conector de base de datos: Conéctate sin problemas a bases de datos PostgreSQL, MySQL y MSSQL y haz preguntas en chats, permitiendo recuperación de datos intuitiva sin 
+escribir consultas SQL.
+  - Esta función está en **fase Alpha** y [necesita ser habilitada](/es/v1.58/operator-manual/configuration/features).
+  - Aprende cómo usarla con el [Manual de usuario](/es/v1.58/user-manual/tools/database-connector).
+- Documento IA - Nuevas opciones de menú para una experiencia de usuario mejorada:
+  - Reintentar: Permite a los usuarios reiniciar flujos de trabajo fallidos con un solo clic.
+  - Duplicar: El usuario es llevado a un nuevo flujo de trabajo prellenado con los mismos datos que el original
+
+### 🐛 Bug Fixes
+
+- Al añadir nuevos miembros a proyectos, la búsqueda encuentra usuarios por correo electrónico.
+- Cuando la base de conocimiento solo tenía archivos en procesamiento, el selector de fuentes mostraba 0 archivos en lugar de estado vacío.
+- Omnisearch encuentra carpetas correctamente.
+
+## 🛠️ Platform
+- Refactorización de API: API ZGPT mejorada con gestión automática de contexto e integración directa de herramientas, optimizando flujos de trabajo de desarrollo mediante manejo inteligente de solicitudes
+
+</Update>
+<Update label="1.44.0" description="September 15, 2025">
+  <Danger>
+    Esta actualización implica 15-30 minutos de tiempo de inactividad.
+    Sigue [esta guía de migración antes de actualizar.](/es/v1.58/changelog/guides/1-43-0)
+  </Danger>
+
+## 🛠️ Platform
+- ¡Zylon se vuelve multimodal! Ahora nuestra plataforma es capaz de gestionar varios modelos de IA ejecutándose en paralelo dentro de la misma instancia.
+
+## 💼 Workspace
+### ✨ Funcionalidades
+- Extracción de contenido de diapositivas mejorada gracias a ejecutar un modelo de lenguaje visual (VLM) en conjunto con un modelo de lenguaje grande (LLM). Por favor consulta los nuevos presets alternativos para entender [cómo configurarlo y habilitarlo](/es/v1.58/operator-manual/ai-presets/presets#presets-alternativos). Las nuevas capacidades añadidas son:
+  - **Comprensión inteligente de contenido**: Extracción impulsada por VLM implementada que puede analizar y entender contenido visual complejo incluyendo diapositivas, diagramas, gráficos e imágenes.
+  - **Análisis contextual**: La integración VLM permite mejor comprensión del contexto de diapositivas, relaciones entre elementos visuales y contenido textual dentro de imágenes.
+- Mostrar la última hora de actualización para Documentos IA.
+
+### 🐛 Bug Fixes
+- Soporte para exportar archivos DOCX con elementos personalizados (p. ej., citas, fuentes de conocimiento).
+- Se resolvió un problema donde las exportaciones PDF tenían problemas de formato con listas anidadas.
+- Se corrigió un problema con el análisis de respuestas parciales durante el streaming.
+- Se abordó un problema donde el panel de reporte de problemas mostraba una fecha vacía.
+- Se resolvió un problema de visualización en el modal de vinculación de artefactos en Microsoft Edge.
+
+</Update>
+<Update label="1.43.1" description="September 10, 2025">
+  <Danger>
+    This update involves a 15-30 minutes of downtime.
+    
+    Sigue [esta guía de migración antes de actualizar.](/es/v1.58/changelog/guides/1-43-0)
+  </Danger>
+
+  ## 💼 Workspace
+  
+  ### ✨ Funcionalidades
+  - 🔎 **Omnisearch**: Ahora capaz de buscar contenido dentro de Documentos IA y documentos de la Base de conocimiento
+    - Sigue las [instrucciones para habilitarlo](/es/v1.58/changelog/guides/1-43-0#post-update)
+  - 📝 **Reporte de problemas**: Los usuarios ahora pueden reportar chats a organizaciones de administradores cuando encuentran problemas con las respuestas de Zylon.
+
+  ![](/images/changelog/1.43.0/image1.png)
+  ![](/images/changelog/1.43.0/image2.png)
+  ![](/images/changelog/1.43.0/issue_reporting_panel_filters.png)
+  - 🎨 **Nuevo motor de renderizado**: Chats más rápidos y fluidos con Zylon
+    - Zylon ahora puede entender y renderizar diagramas Mermaid directamente en el chat
+    - Legibilidad mejorada de bloques de código para mayor claridad y atractivo visual
+    - Las respuestas del chat ahora se renderizan suavemente sin causar saltos de formato durante el streaming
+  - 💬 **Comportamiento de chat por defecto mejorado**: Uso forzado de búsqueda semántica cuando se seleccionan archivos y no se eligen otras herramientas
+  - 🔐 **Control de registros de auditoría**: Se añadió la capacidad de desactivar los registros de auditoría — sigue la guía de configuración para deshabilitarlos
+
+
+  ### 🐛 Bug Fixes
+  - Asegurar que el proyecto esté cargado antes de navegar al primer chat
+  - Prevenir que el usuario acceda a chats eliminados por URL y mostrar advertencia al intentar acceder a recursos eliminados (chat, proyectos)
+  - Se corrigió un problema con las migas de pan en Omnisearch que causaba problemas de accesibilidad
+  - Se resolvió un problema donde el análisis numérico se deshabilitaba incorrectamente durante el procesamiento de documentos
+  - Se corrigió la navegación a proyectos eliminados limpiando el último proyecto visitado si ya no existe
+  - Se impidió que los usuarios naveguen a documentos IA eliminados vía Omnisearch
+  - Se corrigieron bloques de código rotos en streaming cuando el lenguaje de programación no se detectaba
+ 
+  ## 🛠️ Platform
+  - Ingest: Un endpoint unificado para ingesta que admite texto, archivos y URIs, incluyendo soporte para ingesta asíncrona.
+  - Reorganizar la estructura de endpoints para mayor claridad agrupando endpoints relacionados bajo una ruta base común.
+
+  <Warning>
+    Si estás usando la API de bajo nivel directamente, por favor revisa cuidadosamente nuestro [Manual de desarrollador](https://docs.zylon.ai/es/v1.58/api-reference/how-to-use)
+  </Warning>
+</Update>
+
+
+
+<Update label="1.40.1" description="August 21, 2025">
+  ### ✨ Funcionalidades
+
+  - 📁 **Carpetas**: Organiza tu base de conocimiento sin esfuerzo usando carpetas para mejor gestión de documentos subidos directamente
+
+  ![](/images/changelog/1.40.0/image1.png)
+
+  - 💬 **Chats asíncronos**: Ahora puedes cerrar Zylon mientras tu chat continúa en segundo plano — ¡multitarea más fácil\!
+  - 🔎 **Omnisearch**: Busca instantáneamente en tu contenido para navegar rápidamente a tus recursos: Documentos, Chats, Documentos IA.
+
+  ![image.png](/images/image.png)
+
+  💡 _Consejo: Usa_ `Cmd + K` _(Mac)_ _o_ `Ctrl + K` _(Windows/Linux)_ _para abrir Omnisearch aún más rápido\!_
+
+  - 🔗 **Enlaces**: Los archivos vinculados en una base de conocimiento de otro proyecto ahora se mantienen sincronizados con el original — sin duplicados o versiones desactualizadas
+
+  ### 🛠️ Platform
+
+  - 🚫 Los endpoints deprecados en la API de bajo nivel han sido eliminados
+</Update>
+
+<Update label="1.39.0" description="August 12, 2025">
+  ### ✨ Funcionalidades
+
+  - Los usuarios ahora pueden crear carpetas en la base de conocimiento
+  - Los usuarios ahora pueden mover carpetas y archivos dentro de la base de conocimiento mediante arrastrar y soltar
+
+  ![](/images/changelog/1.39.0/image1.png)
+</Update>
+
+<Update label="1.38.0" description="August 8, 2025">
+  ### ✨ Funcionalidades
+
+  - Nuevo Documento IA. Leer y extraer.
+
+  ![](/images/changelog/1.38.0/image1.png)
+
+  ![](/images/changelog/1.38.0/image2.png)
+</Update>
+
+<Update label="1.37.1" description="August 7, 2025">
+  ### ✨ Funcionalidades
+
+  - Exportar Documento IA a PDF/DOCX
+
+  ![CleanShot 2025-07-15 at 15.46.03.png](https://i.imgur.com/r39V4S9.png)
+
+  - Reanudabilidad en chat (ahora el usuario puede conectarse en tiempo real a una respuesta de zylon y el usuario puede actualizar o dejar la aplicación y volver sin detener la respuesta)
+
+  ### Bugfixes & improvements
+
+  - Se corrigió un error que impedía dejar las instrucciones del proyecto vacías
+  - Las conexiones a la base de datos se cierran correctamente para evitar alcanzar el límite
+  - Crear una nueva integración de Claromentis no era posible debido a un error
+</Update>
+
+<Update label="1.34.2" description="July 16, 2025">
+  <Warning>
+    Es esencial actualizar la aplicación web de Zylon inmediatamente al recibir la notificación de actualización, haciendo clic en el
+    botón Actualizar. La aplicación no funcionará correctamente hasta que se complete la actualización. Si algún usuario tiene problemas, limpia
+    la caché y actualiza.
+  </Warning>
+  ### ✨ Funcionalidades
+
+  - **Selector de herramientas**: El usuario tiene la capacidad de seleccionar herramientas entre disponibles: Análisis numérico y Pensamiento
+    extendido (solo disponible con Qwen 3).
+  - Análisis numérico (actualmente en beta): Habilita operaciones estándar en datos tabulares en formato textual, incluyendo
+    cálculos como promedios, filtrado, selección y visualización de datos usando gráficos. En la actualidad, esta
+    funcionalidad está disponible solo cuando se selecciona un archivo CSV de la base de conocimiento. Para un rendimiento óptimo, recomendamos
+    adherirse a las siguientes directrices:
+  - Se debe incluir una sola fila de encabezado.
+  - Las fechas deben formatearse como yyyy-mm-dd.
+  - Los números deben seguir el formato XXXXXXX(.XX).
+  - Las celdas vacías deben contener uno de los siguientes
+    valores: "nan", "none", "null", "", "undefined", "n/a", "na", "nat".
+
+  ### Bugfixes & improvements
+
+  - Se corrigió un error que impedía a Qwen generar gráficos en ciertas situaciones
+  - Se corrigió un problema con el nombre del asistente cuando se establecía el contexto de la empresa
+  - Mejor experiencia de usuario en dispositivos pequeños en la vista de análisis
+</Update>
+
+<Update label="1.33.0" description="July 11, 2025">
+  <Note>
+    Esta actualización implica entre 15m y 30m de tiempo de inactividad.
+  </Note>
+  ### ✨ Funcionalidades
+
+  - Nuevo modelo disponible y establecido como predeterminado en todos los presets de línea base. Echa un vistazo a la página [Qwen
+    3](https://qwenlm.github.io/blog/qwen3/) para información más detallada.
+  - Para presets pequeños (24, 32 GB), nuestro nuevo modelo predeterminado es `Qwen 3 14B`.
+  - Para presets más grandes (48, 96 GB), nuestro nuevo modelo predeterminado es `Qwen 3 32B`.
+  - Pensamiento extendido: Nuevas capacidades de pensamiento gracias a los modelos Qwen 3.
+
+  ![](https://i.imgur.com/mua1O7B.png)
+
+  ### Bugfixes & improvements
+
+  - Se corrigió un problema en la generación de títulos de chat que creaba títulos sin letras mayúsculas.
+  - Mostrar toda la vista de árbol para documentos de confluence al seleccionar archivos para vincular
+  - Al hacer una interacción, los documentos sin contenido se ignoran
+  - En una integración de confluence existente, en caso de error durante la autenticación ahora intenta iniciar sesión nuevamente
+  - Forzar modo streaming en API de bajo nivel
+
+  <Note>
+    Esta versión cambia el modelo actual a los modelos Qwen 3. **Esta es la forma en que recomendamos usar Zylon para
+    admitir nuevas funciones y funcionalidades.**
+
+    En caso de que quieras mantener cualquiera de las configuraciones anteriores (modelo, ventana de contexto, etc.), tienes que revertir el preset
+    como se detalla en [**Presets deprecados**](/es/v1.58/operator-manual/ai-presets/presets) en la sección de reversión.
+  </Note>
+</Update>
+
+<Update label="1.32.0" description="July 9, 2025">
+  ### Bugfixes & improvements
+
+  - Experiencia de usuario mejorada cuando un usuario se elimina de un proyecto, mostrando una advertencia.
+</Update>
+
+<Update label="1.31.1" description="TODO: Add release date">
+  - Lanzado a Sandbox: July 8, 2025
+  - Lanzado a Stable: -
+
+  ### Bugfixes & improvements
+
+  - Optimizado cómo funciona la caché del frontend
+  - Añadido soporte para citas en bloques de pensamiento
+  - Se corrigió un problema que causaba que los resúmenes fallaran en algunos escenarios
+  - Se corrigió un problema en el selector de fuentes que impedía usar Zylon AI incluso cuando estaba seleccionado
+</Update>
+
+<Update label="1.31.0" description="July 4, 2025">
+  ### Selector de herramientas
+
+  Ahora es posible seleccionar qué herramienta usar
+
+  ### IA agéntica de Zylon
+
+  Varias mejoras y correcciones para tener mejor estabilidad.
+
+  ### Bugfixes & improvements
+
+  - Intentar ingerir documentos de Confluence fallaba debido a un cambio importante en la API de Atlassian
+  - Eliminar archivo del selector de fuentes cuando el documento original ha sido eliminado
+  - Interfaz de chat mejorada
+  - Mostrar estado vacío para integración de sistema de archivos
+  - Las citas con archivos PDF ahora abren la página correcta
+</Update>
+
+<Update label="1.30.1" description="June 30, 2025">
+  ### IA agéntica de Zylon - Programa de pruebas alfa
+
+  El núcleo de IA de Zylon ahora está impulsado por agentes que usan diferentes herramientas dependiendo de la tarea a resolver.
+
+  El primer agente disponible para probadores alfa proporciona capacidades de **consulta analítica** para extraer
+  información valiosa de fuentes de datos tabulares como CSVs.
+
+  Háznoslo saber si quieres unirte al programa para empezar a probarlo.
+
+  ### Transferir propiedad del proyecto
+
+  En caso de que quieras dejar de ser el propietario de un proyecto, ahora puedes transferir la propiedad a un usuario diferente.
+
+  ![image.png](https://i.imgur.com/ambkIvz.png)
+
+  ![image.png](https://i.imgur.com/JRJEgui.png)
+
+  ### Vincular archivos de diferentes proyectos
+
+  Ahora es posible subir archivos una vez y reutilizarlos en diferentes proyectos sin necesidad de ingerirlos nuevamente,
+  mejorando así la usabilidad y gestión de recursos.
+
+  ![image.png](https://i.imgur.com/FNFv2c1.png)
+
+  ![image.png](https://i.imgur.com/7rww4mp.png)
+
+  ![image.png](https://i.imgur.com/lidZHlY.png)
+
+  ![image.png](https://i.imgur.com/3p9usWU.png)
+
+  ![image.png](https://i.imgur.com/kvOcDG1.png)
+
+  **Bugfixes and improvements:**
+
+  - Los archivos ligeros obtienen mayor prioridad que los archivos pesados en la cola de ingesta para acelerar el proceso y evitar colas
+    bloqueadas por un solo archivo pesado. Más información en [(Opcional) Ajustes de rendimiento](/es/v1.58/operator-manual/configuration/performance)
+  - Cuando se ingiere un HTML no UTF-8, ahora el contenido se procesa correctamente
+  - Mejora en la detección automática de delimitador y encabezado CSV
+  - Mejora en la ingesta de tablas para mayor precisión en la recuperación de datos
+  - En caso de que las credenciales de Claromentis hayan cambiado, aparece un modal para actualizarlas
+</Update>
+
+<Update label="1.29.0" description="June 17, 2025">
+  ### Integración de base de conocimiento de sistema de archivos
+
+  Ahora es posible añadir una nueva integración para la Base de conocimiento, en caso de que tengas un sistema de archivos basado en SMB.
+  Consulta cómo configurar esta integración [1. Recopila información de tu servidor Samba](/es/v1.58/operator-manual/knowledge-base/file-system)
+
+  ![image.png](https://i.imgur.com/grtGwyG.png)
+
+  ![image.png](https://i.imgur.com/IBpzwqr.png)
+
+  ![image.png](https://i.imgur.com/eN3OGJO.png)
+
+  ![image.png](https://i.imgur.com/LC2CO9N.png)
+
+  **Bugfixes and improvements:**
+
+  - Cambiar contenido de Documentos IA lanzaba un error aunque el contenido se guardara correctamente
+  - Cambiar organización en diferentes pestañas ya no genera parpadeo
+  - Navegar a configuración sin proyectos
+  - La extensión de bloques de código dentro del editor ha sido mejorada
+</Update>
+
+<Update label="1.28.5" description="May 30, 2025">
+  ### Panel de análisis para administradores
+
+  Como administrador ahora puedes revisar cómo los usuarios están interactuando con el sistema para una organización determinada. Comprueba
+  proyectos totales, chats, consultas de chat y ve análisis agregados por semanas.
+
+  ![image.png](https://i.imgur.com/jaT4oPh.png)
+
+  ### Nombre automático de chat
+
+  Similar a los Documentos IA, ahora los chats obtienen un nombre automático basado en el mensaje inicial del usuario
+
+
+  ### Marca blanca
+
+  Hemos añadido soporte completo de marca blanca, así que ahora puedes personalizar el nombre del asistente de IA para que coincida con la marca de tu empresa.
+
+  ![Screenshot 2025-06-03 at 11.01.22.png](https://i.imgur.com/SsK65Ic.png)
+
+  Por defecto, el nombre del asistente está establecido en **Zylon**. Para cambiarlo, simplemente actualiza el campo `assistantName` en tu
+  archivo de configuración con tu nombre preferido.
+
+  **Directrices de nomenclatura**
+
+  - Mantén el nombre de tu agente bajo 20 caracteres.
+  - Evita usar mayúsculas y minúsculas mezcladas (p. ej., "MyAIAssistant").
+  - No incluyas símbolos inusuales, caracteres especiales o puntuación excesiva (por ejemplo, "\$uper_Bot\!").
+
+  ```yaml
+  
+  assistantName: "Zylon"
+  ```
+</Update>
+
+<Update label="1.27.4" description="May 19, 2025">
+  **Bugfixes and improvements:**
+
+  - `Qwen 2.5 14B` es el nuevo modelo predeterminado en el preset `baseline-24g`.
+</Update>
+
+<Update label="1.27.3" description="May 13, 2025">
+  <Danger>
+    Esta actualización implica 30m/1h de tiempo de inactividad.
+
+    Se requiere una actualización de controladores antes de actualizar a esta versión\!
+    ejecuta `sudo zylon-cli install-drivers --force` para actualizar los controladores.
+  </Danger>
+  ### Los propietarios de integraciones de Confluence, Claromentis o SharePoint pueden sincronizar archivos y carpetas ingeridos
+
+  ![image.png](https://i.imgur.com/ZeWRNYL.png)
+
+  \*\* Solo los archivos ingeridos después de la actualización son elegibles para sincronización.\*
+
+  ### Fija tus proyectos favoritos para acceso rápido
+
+  ![image.png](https://i.imgur.com/lTbhjcW.png)
+
+  **Bugfixes and improvements:**
+
+  - Rendimiento de UI
+  - Mejorar legibilidad en columnas largas en tablas dentro de documentos IA
+  - Añadido preset de IA para 32Gb (Mistral Small 3 2501)
+  - GPUs Blackwell admitidas (RTX 5080, RTX 5090)
+  - La UI de resumen de organización de proyectos ha sido mejorada. Ahora puedes comprobar fácilmente proyectos privados, compartidos y fijados.
+  - Las fuentes en Documentos IA de preguntas y respuestas masivas ahora apuntan a la referencia del documento en lugar de mostrar el nombre del archivo y la página.
+  - Los chats largos ahora están admitidos, anteriormente cuando había un chat largo, los nuevos mensajes desaparecían después de la respuesta de Zylon.
+  - Los archivos PPT ahora se ingieren correctamente.
+  - Recuperación de documentos mejorada.
+
+  ## Cambios requeridos antes de actualizar a Zylon 1.27.3
+
+  Los controladores Nvidia CUDA necesitan actualizarse a la versión 12.9. Para hacerlo, sigue estos pasos:
+
+  1. Actualiza Zylon-CLI:
+
+  ```bash
+  sudo zylon-cli self-update
+  ```
+
+  1. (Opcional) Haz una [copia de seguridad usando
+     zylon-cli](/es/v1.58/operator-manual/operations/backup) antes de comenzar el proceso.
+  2. Prepara y actualiza los controladores y toolkit de Nvidia:
+
+  ```bash
+  sudo zylon-cli setup
+  ```
+
+  1. Reinicia la máquina y comprueba que `nvidia-smi` funciona bien:
+
+  ```bash
+  sudo reboot
+  nvidia-smi
+  ```
+
+  1. Actualiza Zylon a 1.27.0 usando:
+
+  ```bash
+  sudo zylon-cli update
+  ```
+</Update>
+
+<Update label="1.25.0" description="April 24, 2025">
+  ### Nuevo selector de organización para cambiar de organización sin cerrar sesión
+
+  ![Screenshot 2025-04-24 at 19.50.23.png](https://i.imgur.com/sQfoh6H.png)
+
+  ### Conector de SharePoint
+
+  ![Screenshot 2025-04-24 at 19.44.14.png](https://i.imgur.com/Zftol5l.png)
+
+  **Otras funciones:**
+
+  - Marco de observabilidad
+  - Ahora se muestra un tooltip con el nombre completo cuando un nombre de fuente es demasiado largo en la Base de conocimiento.
+
+  **Bugfixes and improvements:**
+
+  - Restablecer modal de instrucciones personalizadas a estado vacío cuando se cerró sin guardar
+  - El flujo para añadir usuarios manualmente a una organización ha sido mejorado para hacerlo más fácil.
+  - Mejoras de usabilidad en varios flujos de aplicación
+
+  **Cambios requeridos debido al nuevo marco de métricas de observabilidad**
+
+  Para proporcionar mejor soporte en caso de que algo salga mal, en esta versión hemos actualizado cómo funciona el
+  marco de observabilidad incluyendo una nueva herramienta basada en Grafana, más allá del mecanismo de reporte de fallos que teníamos
+  con Sentry. Para que funcione, por favor asegúrate de que tu firewall no esté bloqueando conexiones a cualquiera de estos sitios web:
+
+  - sentry.io (deberías tener esto ya configurado correctamente)
+  - \*.grafana.net (este es el nuevo requerido)
+
+  Recuerda que cualquier dato que enviamos es completamente anónimo y agregado, y nos ayudará a diagnosticar cualquier
+  mal funcionamiento en la plataforma y entender cómo se está usando Zylon para acelerar acciones de soporte.
+
+  Para aquellos que quieran saber más sobre lo que ha cambiado, hemos evolucionado el archivo de configuración antiguo:
+
+  ```yaml
+  sentry:
+  enabled: true
+  environment: "my-company"
+  ```
+
+  a este nuevo y más granular:
+
+  ```yaml
+  observability:
+  crashReporting: true
+  usageMetrics: true
+  
+  companyIdentifier: "my-company"
+  ```
+
+  En caso de que quieras optar por no participar en esto, puedes añadir el siguiente fragmento al archivo de configuración, pero recuerda que
+  hacerlo nos dejará ciegos contra cualquier acción de soporte de nuestra parte:
+
+  ```yaml
+  observability:
+  crashReporting: false
+  usageMetrics: false
+  ```
+</Update>
+
+<Update label="1.23.10" description="April 9, 2025">
+  ### Nuevas funciones
+
+  - Los chats ahora se pueden copiar y pegar y respetará el formato
+  - El selector de archivos permite carga de múltiples archivos
+
+  ### Bugfixes
+
+  - Integración de Claromentis mejorada para tener en cuenta archivos con enlaces simbólicos que hacían fallar la integración. Los enlaces simbólicos no se
+    ingieren.
+  - Hacer la extracción de archivos de Claromentis más resistente. Un archivo fallido no hará fallar el proceso de ingesta; el archivo será
+    marcado como fallido y el proceso continuará.
+</Update>
+
+<Update label="1.23.1" description="April 7, 2025">
+  ## **Editor de IA mejorado**
+
+  Hemos renovado completamente el editor de texto en Documentos IA, enfocándonos en funcionalidad mejorada y una mejor experiencia de usuario:
+
+  - **IA en línea**: Ahora puedes hacer prompts en línea dentro de un documento para incluir más información o modificar texto existente.
+    Simplemente comienza a escribir `/zylon`.
+  - **Colaboración en tiempo real**: ¡Co-crea con tus compañeros en tiempo real\!
+  - **Exportación CSV para tablas**: Descarga los resultados de preguntas y respuestas masivas o cualquier otra tabla como archivo CSV.
+  - **UX mejorada**: Disfruta de una experiencia de edición de tablas más flexible y funciones de edición de texto más versátiles.
+
+  ## **Búsqueda de base de conocimiento**
+
+  Hemos añadido una barra de búsqueda dedicada a la página de Base de conocimiento de cada Proyecto para que puedas encontrar contenido más rápido.
+
+  ## **Soporte EML**
+
+  La plataforma ahora admite el formato de correo electrónico EML popular. Sube tus archivos .eml y úsalos en Chats y Documentos IA
+  para resumir hilos largos, consultar información específica y más.
+
+  ## **Exportación CSV en chat**
+
+  Ahora puedes descargar tablas de conversaciones de Chat como archivos CSV.
+</Update>

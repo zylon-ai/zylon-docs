@@ -1,0 +1,121 @@
+---
+title: "Visión general"
+description: "Habilita herramientas integradas y personalizadas en la API de mensajes."
+---
+
+import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+Las herramientas permiten que el asistente ejecute operaciones específicas (como buscar artefactos, analizar datos tabulares o extraer una página web) como parte de una respuesta.
+
+Puedes habilitar herramientas añadiendo tres campos a una petición `POST /messages`:
+
+{/* <!-- RESTRUCTURED --> */}
+| Campo | Propósito |
+| --- | --- |
+| `tools` | Qué herramientas están permitidas. |
+| `tool_choice` | Cómo debe elegir herramientas el asistente (`auto`, forzar una herramienta o `none`). |
+| `tool_context` | Contexto opcional (documentos o conexiones de BD). |
+
+## Requisitos previos
+
+- Un token de API. Ver [Backoffice Developer Console](/es/v1.58/developer-manual/get-started/developer-console).
+- El nombre de host de Zylon (sustituye `{BASE_URL}` en los ejemplos).
+
+## Solicitud y respuesta básicas
+
+Empieza con `POST /messages/validate` para validar el cuerpo de la petición sin ejecutar el modelo.
+
+Este ejemplo habilita **Web Fetch**:
+
+```bash
+curl -X POST "https://{BASE_URL}/api/gpt/v1/messages/validate" \
+  -H "Authorization: Bearer {API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "max_tokens": 64,
+    "messages": [
+      { "role": "user", "content": "Summarize: https://example.com/" }
+    ],
+    "tools": [
+      { "name": "web_extract", "type": "web_extract_v1" }
+    ],
+    "tool_choice": { "type": "auto" }
+  }'
+```
+
+{/* <!-- RESTRUCTURED --> */}
+<Accordion title="Ejemplo de respuesta">
+```json
+{ "valid": true, "errors": null }
+```
+</Accordion>
+
+Para ejecutar la petición, envía el mismo cuerpo a `POST /messages`.
+
+## Herramientas integradas
+
+Zylon incluye herramientas integradas:
+
+| Tipo de herramienta | Qué hace | Requiere `tool_context` |
+| --- | --- | --- |
+| `semantic_search_v1` | Buscar artefactos ingeridos | Sí (`ingested_artifact`) |
+| `tabular_analysis_v1` | Analizar artefactos tabulares | Sí (`ingested_artifact`) |
+| `web_extract_v1` | Extraer una URL del mensaje | No |
+| `web_search_v1` | Buscar en la web | No |
+| `database_query_v1` | Consultar una BD SQL | Sí (`sql_database`) |
+| `code_execution_v1` | Ejecutar comandos bash y editar archivos en un contenedor aislado | No |
+
+Guías:
+
+- [Herramienta de búsqueda semántica](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/semantic-search-tool)
+- [Herramienta de análisis tabular](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/tabular-analysis-tool)
+- [Herramienta Web Fetch](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/web-fetch-tool)
+- [Herramienta Web Search](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/web-search-tool)
+- [Herramienta de consulta a base de datos](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/database-query-tool)
+- [Herramienta de ejecución de código](/es/v1.58/developer-manual/build-with-zylon/tools/built-in/code-execution-tool)
+
+### Cómo se devuelven los resultados de las herramientas integradas
+
+Zylon ejecuta las herramientas integradas en el servidor, dentro de la misma solicitud. Cada llamada aparece en la respuesta como un bloque `server_tool_use` (prefijo de ID `srvtoolu_`), seguido de su bloque de resultado:
+
+| Herramienta | Bloque de resultado |
+| --- | --- |
+| `semantic_search`, `tabular_analysis`, `database_query`, `summarize`, `present_files`, skills, herramientas MCP | `server_tool_result` (`content`, `is_error`) |
+| `web_search` | `web_search_tool_result` |
+| `web_fetch` | `web_fetch_tool_result` |
+| Ejecución de código: `bash_code_execution` | `bash_code_execution_tool_result` |
+| Ejecución de código: `text_editor_code_execution` | `text_editor_code_execution_tool_result` |
+
+```json
+[
+  { "type": "server_tool_use", "id": "srvtoolu_9c0d", "name": "semantic_search", "input": { "query": "billing issues" } },
+  {
+    "type": "server_tool_result",
+    "tool_use_id": "srvtoolu_9c0d",
+    "content": [{ "type": "text", "text": "Customers reported duplicate charges after the plan change." }],
+    "is_error": false
+  }
+]
+```
+
+No envíes resultados de vuelta para las herramientas integradas: Zylon ya las ha ejecutado. `stop_reason: "tool_use"` y los bloques `tool_result` solo se aplican a las [herramientas personalizadas](#herramientas-personalizadas). Cada guía de herramienta muestra su formato de resultado.
+
+## Herramientas personalizadas
+
+Las herramientas personalizadas te permiten definir una interfaz mediante JSON Schema.
+
+Ver: [Herramientas personalizadas](/es/v1.58/developer-manual/build-with-zylon/tools/custom/custom-tools)
+
+## Errores comunes
+
+- **Nombre de campo**: usa `inputSchema` (no `input_schema`).
+- **Falta de contexto**: algunas herramientas requieren `tool_context`.
+- **Autenticación**: incluye `Authorization: Bearer ...` en cada petición.
+
+## Próximos pasos
+
+- Formato de mensajes: [Mensajes](/es/v1.58/developer-manual/build-with-zylon/working-with-messages)
+- Ingesta de contenido: [Artefactos](/es/v1.58/developer-manual/build-with-zylon/working-with-artifacts)

@@ -1,0 +1,43 @@
+---
+title: "Audit Log"
+description: "Configure gateway chat-content capture, internal log storage, and external delivery."
+---
+
+import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
+
+<UpcomingRelease />
+
+`features.audit.enabled` controls whether gateway chat logs capture request messages and response content. It is enabled by default. Workspace, Backoffice, and security events are still emitted when this flag is disabled.
+
+Chat-content capture, internal storage, and external delivery are separate settings. Storage is enabled by default; syslog and HTTP delivery are disabled by default.
+
+### Configuration
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `features.audit.enabled` | `true` | `true`, `false` | Captures request messages and response content in gateway chat logs. |
+| `logging.storage.enabled` | `true` | `true`, `false` | Persists structured logs internally for later retrieval. |
+| `logging.delivery.syslog.enabled` | `false` | `true`, `false` | Sends newly emitted logs to a syslog collector. |
+| `logging.delivery.http.enabled` | `false` | `true`, `false` | Sends newly emitted logs to an HTTP collector. |
+
+### Example
+
+This example enables gateway chat-content capture and internal storage:
+
+```yaml
+features:
+  audit:
+    enabled: true
+
+logging:
+  storage:
+    enabled: true
+```
+
+For CLI-managed installations, merge these settings into `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync`.
+
+<Note>
+Captured chat content can appear in stored logs and externally delivered records. Set `features.audit.enabled: false` to omit gateway chat request messages and response content. This flag does not provide general redaction of every event field. The Backoffice API's `include` parameter controls retrieval only; it does not filter externally delivered records.
+</Note>
+
+To connect a SIEM, follow [Send logs to your SIEM](/en/v1.58/operator-manual/configuration/features/log-delivery-storage#send-logs-to-your-siem). To schedule deletion of stored logs, see [Log-only cleanup](/en/v1.58/operator-manual/configuration/features/log-delivery-storage#configure-cleanup-for-stored-logs-only). Enabling the example above alone does not forward logs externally or enable cleanup.

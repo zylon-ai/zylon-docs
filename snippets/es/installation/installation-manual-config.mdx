@@ -59,7 +59,7 @@ license:
 
 **Elige tu preset de IA**
 
-Establece `ai.preset` basándote en tu memoria GPU disponible. Consulta [Presets de IA](/es/operator-manual/ai-presets/getting-started) para más detalles.
+Establece `ai.preset` basándote en tu memoria GPU disponible. Consulta [Presets de IA](/es/v1.57/operator-manual/ai-presets/getting-started) para más detalles.
 
 ```yaml
 ai:
@@ -111,3 +111,14 @@ ingress:
 ```
 
 Si estás en una red privada o necesitas usar un certificado personalizado, consulta [Desactivar Let's Encrypt](#disable-lets-encrypt) a continuación.
+
+<span id="disable-lets-encrypt" style={{ display: "block", scrollMarginTop: "8rem" }} />
+
+**Desactivar Let's Encrypt**
+
+Edita `/etc/zylon/zylon-conf.yaml` y **elimina** estas líneas de la sección `ingress`:
+
+```yaml
+certManagerAnnotations:
+  cert-manager.io/cluster-issuer: "letsencrypt-prod"
+```

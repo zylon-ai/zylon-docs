@@ -25,7 +25,7 @@ The `navigation.versions` entries in `docs.json` own their language navigation. 
 
 Keep the language first and the version second in both releases’ page URLs so Mintlify can match translations and versions without resetting the language or page. Keep internal links within the selected version. Preview installation snippets live under `snippets/v1.58/`; shared images remain under `images/`. API reference pages are maintained directly in the versioned MDX files; OpenAPI JSON snapshots are not required to render them. The legacy sync workflow and helper scripts remain separate maintenance tooling.
 
-Before opening a PR:
+The `Validate versioned docs` GitHub Actions check runs the version guard and redirect regression tests on pull requests and pushes to `main`. Before opening a PR:
 
 ```sh
 python3 scripts/check-doc-versions.py

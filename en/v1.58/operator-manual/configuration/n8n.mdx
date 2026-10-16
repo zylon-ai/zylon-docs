@@ -33,7 +33,6 @@ n8n:
     enabled: false  # Allow outbound connections to n8n services
   license:
     key: ""  # n8n license key
-    type: ""  # License type (community or enterprise)
 ```
 
 <Info>
@@ -114,7 +113,7 @@ After making changes, run `sudo zylon-cli sync` to apply them.
 If you have a custom certificate n8n may reject it. To avoid TLS verification on internal calls you can set up the following flag
 ```yaml
 n8n:
-  tlsRejectUnauthorized: 0  # Default is 1
+  tlsRejectUnauthorized: "0"  # Default is "1". Quote it: an unquoted 0 is ignored
 ```
 After making changes, run `sudo zylon-cli sync` to apply them.
 

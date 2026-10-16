@@ -49,24 +49,24 @@ If your system has multiple GPUs, you can combine their memory capacity to use h
 
 1. **Calculate total VRAM**: Add up the memory of all GPUs
 2. **Select appropriate preset**: Choose preset for the total memory
-3. **Configure GPU count**: Set the `numGPUs` parameter
+3. **Configure GPU count**: Set the `gpuCount` parameter
 
 **Configuration Example:**
 
 ```yaml
 ai:
   preset: "baseline-48g"
-  numGPUs: 2  # Using 2 GPUs with 24GB each (48GB total)
+  gpuCount: 2  # Using 2 GPUs with 24GB each (48GB total)
 ```
 
 ### Multi-GPU Configuration Examples
 
 | Hardware Setup | Individual GPU Memory | Total VRAM | Recommended Preset | Configuration |
 |----------------|----------------------|------------|-------------------|---------------|
-| 2x RTX 4090    | 24GB each            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
-| 2x L4          | 24GB each            | 48GB       | `baseline-48g`    | `numGPUs: 2`  |
-| 4x RTX 4090    | 24GB each            | 96GB       | `baseline-96g`    | `numGPUs: 4`  |
-| 2x RTX A6000   | 48GB each            | 96GB       | `baseline-96g`    | `numGPUs: 2`  |
+| 2x RTX 4090    | 24GB each            | 48GB       | `baseline-48g`    | `gpuCount: 2`  |
+| 2x L4          | 24GB each            | 48GB       | `baseline-48g`    | `gpuCount: 2`  |
+| 4x RTX 4090    | 24GB each            | 96GB       | `baseline-96g`    | `gpuCount: 4`  |
+| 2x RTX A6000   | 48GB each            | 96GB       | `baseline-96g`    | `gpuCount: 2`  |
 
 ### Multi-GPU Best Practices
 
@@ -80,7 +80,7 @@ ai:
 ```yaml
 ai:
   preset: "baseline-96g,capabilities.multilingual"
-  numGPUs: 4  # 4x RTX 4090 (24GB each = 96GB total)
+  gpuCount: 4  # 4x RTX 4090 (24GB each = 96GB total)
 ```
 
 ## Shared Memory Configuration

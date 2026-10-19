@@ -68,10 +68,11 @@ ai:
 
 **Establece tu identificador de empresa**
 
-Establece `companyIdentifier` a cualquier identificador para el seguimiento anónimo de métricas (por ejemplo, `acme-corp`). Si tienes múltiples instalaciones, usa identificadores diferentes (por ejemplo, `company` y `company-test`):
+Establece `global.companyIdentifier` a cualquier identificador para el seguimiento anónimo de métricas (por ejemplo, `acme-corp`). Si tienes múltiples instalaciones, usa identificadores diferentes (por ejemplo, `company` y `company-test`):
 
 ```yaml
-companyIdentifier: "tu-empresa"
+global:
+  companyIdentifier: "tu-empresa"
 ```
 
 **Desactiva telemetría e informes de errores**

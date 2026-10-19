@@ -79,9 +79,6 @@ sigue estos pasos para configurar los ajustes del proxy.
           httpProxy: "http://your-proxy-address:port"
           httpsProxy: "http://your-proxy-address:port"
           noProxy: "your,no,proxy,exceptions"
-
-        replicated:
-          privateCASecret: ~
         ```
         <Danger>
         No establezcas el campo `crt` para proxies transparentes. Si requieres capacidades de inspección SSL, debes reconfigurar tu infraestructura de proxy para inspección SSL y luego seguir las instrucciones en la pestaña <b>Proxy de Inspección SSL</b> arriba.

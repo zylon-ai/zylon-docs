@@ -33,7 +33,6 @@ n8n:
     enabled: false  # Permitir conexiones salientes a servicios de n8n
   license:
     key: ""  # Clave de licencia de n8n
-    type: ""  # Tipo de licencia (community or enterprise)
 ```
 <Info>
 La API pública de n8n permite gestionar workflows, ejecuciones, credenciales 
@@ -114,7 +113,7 @@ Si tienes un certificado autofirmado, n8n podría rechazarlo. Para evitar la ver
 
 ```yaml
 n8n:
-  tlsRejectUnauthorized: 0  # El valor por defecto es 1
+  tlsRejectUnauthorized: "0"  # El valor por defecto es "1". Entre comillas: un 0 sin comillas se ignora
 ```
 Después de hacer cambios, ejecuta `sudo zylon-cli sync` para aplicarlos.
 

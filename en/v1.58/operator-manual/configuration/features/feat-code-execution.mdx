@@ -61,7 +61,7 @@ Sandboxes have no internet access. By default, a code execution sandbox can only
 - DNS.
 - The Zylon API, so code in the sandbox can call the model with the permissions of the user who sent the request.
 
-To let sandboxes reach other services inside the cluster, such as an internal database or API, add them to `external.opensandbox.codeExecution.internal.services`. Each entry is a Kubernetes NetworkPolicy peer:
+To let sandboxes reach other services inside the cluster, such as an internal database or API, add them to `external.opensandbox.codeExecution.internal.services`. Each entry selects pods by their labels: `namespaceSelector` takes the namespace's labels and `podSelector` the pods' labels. List the labels directly, without `matchLabels` (Zylon adds it), and give each selector at least one label: an empty one would let sandboxes reach every pod in the cluster.
 
 ```yaml
 external:
@@ -70,11 +70,9 @@ external:
             internal:
                 services:
                     - namespaceSelector:
-                          matchLabels:
-                              kubernetes.io/metadata.name: analytics
+                          kubernetes.io/metadata.name: analytics
                       podSelector:
-                          matchLabels:
-                              app: postgres
+                          app: postgres
 ```
 
 <Warning>

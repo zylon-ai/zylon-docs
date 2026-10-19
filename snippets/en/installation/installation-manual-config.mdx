@@ -68,10 +68,11 @@ ai:
 
 **Set your company identifier**
 
-Set `companyIdentifier` to any identifier for anonymous metrics tracking (e.g., `acme-corp`). If you have multiple installations, use different identifiers (e.g., `company` and `company-test`):
+Set `global.companyIdentifier` to any identifier for anonymous metrics tracking (e.g., `acme-corp`). If you have multiple installations, use different identifiers (e.g., `company` and `company-test`):
 
 ```yaml
-companyIdentifier: "your-company"
+global:
+  companyIdentifier: "your-company"
 ```
 
 **Disable telemetry & crash reporting**

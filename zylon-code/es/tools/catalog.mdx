@@ -8,12 +8,14 @@ Normalmente describes un resultado en lenguaje natural. El agente elige herramie
 
 | Capacidad / nombres | Uso y guía |
 | --- | --- |
+| `working_directory` | Consulta o cambia el directorio de la conversación; los procesos existentes y los permisos no cambian. |
+| `create_worktree` | [Crea y utiliza otra copia de trabajo de Git](/zylon-code/es/plugins/git-worktrees), si está activado. |
 | `read`, `read_image`, `write`, `edit`, `glob`, `grep` | [Inspeccionar y editar archivos](/zylon-code/es/tools/files-and-code). Las imágenes necesitan un modelo que las admita. |
 | `bash`, `pwsh`; `job_list`, `job_output`, `job_kill` | [Comandos y procesos](/zylon-code/es/tools/shell-and-jobs). El sistema y modo eligen la shell. |
 | `web_fetch`; `web_search` opcional | [Leer URLs](/zylon-code/es/tools/web); [buscar](/zylon-code/es/plugins/web-search) requiere proveedor. |
 | `skill` | Cargar [instrucciones reutilizables](/zylon-code/es/customization/skills). |
 | `ask_user_question`, `exit_plan_mode`, `todo_write`, `create_goal`, `get_goal`, `update_goal` | [Preguntas y planes](/zylon-code/es/modes/plan-mode) y [progreso](/zylon-code/es/everyday-use/goals-and-task-lists). |
-| `subagent`, `subagent_fork`, `list_subagent_models`, `list_agents`, `interrupt_agent` | [Delegar e inspeccionar trabajo](/zylon-code/es/agents/delegation). |
+| `subagent`, `subagent_fork`, `list_subagent_models`, `send_message`, `list_agents`, `interrupt_agent` | [Delegar e inspeccionar trabajo](/zylon-code/es/agents/delegation). |
 | `workflow` | [Coordinar un flujo solicitado explícitamente](/zylon-code/es/tools/workflows). |
 | `run_code` | [Llamadas programáticas](/zylon-code/es/modes/ptc). |
 | `diff_approval_annotate` | [Anotaciones de revisión](/zylon-code/es/plugins/diff), con el plugin de revisión activado. |
@@ -24,16 +26,13 @@ Normalmente describes un resultado en lenguaje natural. El agente elige herramie
 | `stagehand_navigate`, `stagehand_observe`, `stagehand_act`, `stagehand_extract`, `stagehand_screenshot`, `stagehand_tabs`; herramientas DevTools | [Automatización web](/zylon-code/es/plugins/browser-control); catálogo del proveedor. |
 | Herramientas del ordenador | [Control del escritorio](/zylon-code/es/plugins/computer-control); necesita un entorno compatible y permisos del sistema operativo. |
 | `lsp` | [Navegación opcional por símbolos](/zylon-code/es/plugins/language-servers). |
-| `terminal_open`, `terminal_list`, `terminal_read`, `terminal_send`, `terminal_signal`, `terminal_close` | [Terminales persistentes](/zylon-code/es/tools/shell-and-jobs), si están configurados. |
-| `schedule_create`, `schedule_list`, `schedule_update`, `schedule_delete` | [Tareas programadas](/zylon-code/es/plugins/automation-tasks), si están activadas. |
-| `session_search`, `session_trace`, `session_event_read`, `session_event_search`, `session_event_trace` | Consultar eventos guardados en composiciones con herramientas de sesiones. Véase [conversaciones](/zylon-code/es/everyday-use/conversations). |
+| `terminal_open`, `terminal_list`, `terminal_read`, `terminal_send`, `terminal_signal`, `terminal_close` | [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals), si están activadas. |
+| `schedule_create`, `schedule_list`, `schedule_update`, `schedule_delete` | [Mensajes programados integrados](/zylon-code/es/plugins/automation-tasks) en Estándar, PTC y Creador; no disponibles para agentes delegados. |
+| `session_search`, `session_trace`, `session_event_read`, `session_event_search`, `session_event_trace` | [Busca y consulta conversaciones anteriores](/zylon-code/es/plugins/session-search), si el plugin opcional está activado. |
 | `load_workspace_dependencies` | Descubrir un entorno preparado para documentos. Véase [documentos](/zylon-code/es/tools/documents). |
-| `str_replace_editor`, `ralph` | Editor alternativo opcional y flujo iterativo acotado. Véase [archivos](/zylon-code/es/tools/files-and-code) y [flujos](/zylon-code/es/tools/workflows). |
+| `ralph` | [Repite una tarea acotada con agentes nuevos](/zylon-code/es/plugins/ralph-loops), si está activado y lo solicitas expresamente. |
+| `subagent_codex`, `subagent_claude_code` | [Agentes externos nativos](/zylon-code/es/advanced/external-agents), con sus plugins y cuentas preparados. |
 
 Algunas herramientas de esta referencia necesitan una integración opcional; no están disponibles en todos los chats. Las herramientas de tu conversación y la [guía de disponibilidad](/zylon-code/es/reference/availability) indican cuáles expone tu despliegue.
 
 Despliega los resultados para comprobar qué se ha ejecutado y si hay errores o salida recortada. Si falta una herramienta, revisa el modo, los plugins y sus requisitos antes de ampliar permisos.
-
----
-
-[Read this page in English](/zylon-code/tools/catalog)

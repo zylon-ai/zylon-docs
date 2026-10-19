@@ -1,34 +1,38 @@
 ---
 title: "Settings"
-description: "Change language, appearance and defaults, and find feature-specific configuration."
+description: "Find your Zylon domain, model credentials, language, appearance and task defaults."
 noindex: true
 ---
 
-Open **Settings** at the bottom of the sidebar. You can choose English or Spanish, light or dark appearance, and defaults for future conversations.
+Open **Settings** at the bottom of the sidebar. General settings own the Zylon domain; Models owns its developer token and model options.
 
 | Area | What you configure |
 | --- | --- |
-| General | Language, appearance and conversation defaults. |
-| Models | Credentials, connection URLs and available models. |
-| Built-in plugins | A read-only list of the application's components. |
-| Plugins in the sidebar | Feature switches and settings such as Shell and agent limits. |
+| General → Zylon connection | Verify or change the deployment domain and manage an explicitly trusted certificate. |
+| General | Language, appearance, Developer view and defaults for new conversations. |
+| Models | Save the Zylon developer token, refresh the catalog and edit model options. The Zylon model API URL is derived from the domain and read-only here. |
+| Built-in plugins | Inspect loaded components and their status; this inventory is read-only. |
+| Agent presets | Choose the default mode for new tasks and inspect mode configuration. |
+| Plugins in the sidebar | Configure included features and optional integrations. |
 
-The **Coding Tools** switch changes the settings and mode-selection experience. To control file or command access, use [permissions](/zylon-code/configuration/permissions).
+## Change the Zylon domain
 
-## Defaults and current conversations
+In **General → Zylon connection**, enter an origin such as `https://zylon.example` and select **Connect**. The app verifies the license before saving the change. A failed change to another domain preserves the working connection. If the new deployment needs a different gateway key, update it afterward in Models.
 
-A new mode default applies to new tasks. Changing the model in a conversation applies to its next model request. The permission picker controls the current conversation. Check the corresponding guide before changing a default while work is running.
+An approved private certificate can be removed with **Forget trusted certificate**. This also clears its cached license verification; reconnect using normal certificate validation or a newly verified certificate. Follow [License and access](/zylon-code/getting-started/license-and-access) if access becomes blocked.
 
-## Save your changes
+## Developer view and defaults
 
-Shell, Agent execution and Subagent forms keep a draft until you select **Save**. Leaving those pages without saving discards the draft. Use the reset control to return a field to its default and follow any restart notice.
+**Developer view** exposes additional programming controls, including PTC and Minimal in the mode picker and advanced configuration views. It does not itself restrict what the agent can execute. Use [permissions](/zylon-code/configuration/permissions) to control task access.
 
-**Open configuration file**, when available, opens the application's local configuration. Prefer the normal forms unless you need a setting they do not expose; [Profiles and YAML](/zylon-code/advanced/profiles-and-yaml) explains that advanced option.
+Turning Developer view off resets a saved PTC or Minimal default to Standard. Existing conversations keep their mode. A new mode default applies to new tasks. Changing the model in a conversation applies to its next model request. The permission picker controls the current conversation. Check the corresponding guide before changing a default while work is running.
+
+## Save the relevant form
+
+Shell, Agent execution and Subagent forms keep a draft until you select **Save**. Leaving those pages without saving discards the draft. Follow any restart notice.
+
+**Open configuration file**, when available, opens the local application configuration. Prefer the normal forms unless you need a setting they do not expose; see [Profiles and YAML](/zylon-code/advanced/profiles-and-yaml).
 
 <Frame caption="Application settings and language controls">
   <img src="/images/zylon-code/screenshots/configuration-settings-en.jpg" alt="Application settings and language controls" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/configuration/settings)

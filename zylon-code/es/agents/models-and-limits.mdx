@@ -4,12 +4,12 @@ description: "Configura los límites de delegación y los modelos que pueden uti
 noindex: true
 ---
 
-Abre **Plugins → Oficiales → Agentes secundarios** para configurar cuántos agentes pueden trabajar y qué modelos pueden elegir.
+Abre **Plugins**, en el grupo de ajustes de plugins integrados, y entra en **Agentes secundarios** para configurar cuántos agentes pueden trabajar y qué modelos pueden elegir.
 
 | Ajuste | Qué controla |
 | --- | --- |
 | Profundidad máxima | Cuántos niveles de delegación se permiten en herramientas que heredan este ajuste. Si la herramienta tiene su propio límite, prevalece ese valor. |
-| Concurrencia | Cuántos agentes locales que admiten mensajes de seguimiento pueden estar activos bajo un agente principal, sin contarlo a él. Los agentes externos y las ejecuciones de una sola tarea tienen un funcionamiento distinto. |
+| Concurrencia | Cuántos agentes secundarios pueden estar activos o iniciándose, en todos los niveles bajo un mismo agente principal, incluidas las ejecuciones externas. No cuenta al principal. |
 | Selección de modelo | Si el agente puede elegir entre los modelos que autorices. |
 | Modelos permitidos | Las combinaciones concretas de proveedor y modelo que puede utilizar. |
 
@@ -21,14 +21,12 @@ Un modelo guardado puede seguir apareciendo aunque su proveedor ya no esté disp
 
 La selección de modelo y las combinaciones autorizadas de proveedor y modelo se guardan al iniciar una conversación principal nueva. Cambiar los ajustes después no modifica esa política ni la que heredan sus agentes secundarios. Empieza una conversación nueva para utilizar los modelos que acabas de autorizar.
 
-Los cambios de profundidad se aplican en el siguiente intento de delegación, si la herramienta hereda ese ajuste. El límite de concurrencia se comprueba al iniciar o reactivar un agente local: reducirlo no detiene los que ya están activos, pero impide añadir más hasta que haya capacidad.
+Los cambios de profundidad se aplican en el siguiente intento de delegación, si la herramienta hereda ese ajuste. El límite de concurrencia se comprueba al iniciar o reactivar un agente: reducirlo no detiene los que ya están activos, pero impide añadir más hasta que haya capacidad.
+
+Si se alcanza el límite, el inicio nuevo se rechaza en lugar de quedar en cola. Espera a que termine un agente o continúa con uno existente. Un agente que espera a sus hijos o que aún está cerrando recursos puede seguir ocupando una plaza. El límite controla trabajo activo, no el consumo acumulado de tokens.
 
 ## Empieza con límites pequeños
 
 Más agentes a la vez generan más peticiones y consumen más recursos. Empieza con subtareas independientes y aumenta la concurrencia cuando veas una mejora. Los límites no aíslan los archivos: sigue asignando áreas de edición separadas.
 
 Estos ajustes controlan los agentes de Zylon Code. Los [agentes externos](/zylon-code/es/advanced/external-agents), como Codex o Claude Code, necesitan preparación adicional.
-
----
-
-[Read this page in English](/zylon-code/agents/models-and-limits)

@@ -42,6 +42,7 @@ for product in products:
 
 languages = {language.get('language'): language for language in code.get('languages', [])}
 check(set(languages) == {'en', 'es'}, 'English and Spanish navigation are both required')
+check(code.get('languages', [{}])[0].get('language') == 'es', 'Spanish must be the default manual language')
 nav_pages = leaves(code)
 check(len(nav_pages) == len(set(nav_pages)), 'Duplicate navigation page')
 actual_files = {ROOT / 'zylon-code.mdx', *(ROOT / 'zylon-code').rglob('*.mdx')}
@@ -74,6 +75,8 @@ for file in sorted(actual_files):
         check(not re.search(r'^hidden: true$', frontmatter, re.M), f'{relative}: page hidden from its own sidebar')
     check(text.endswith('\n') and not text.endswith('\n\n'), f'{relative}: trailing newline')
     check('@/' not in text, f'{relative}: unresolved authoring link')
+    check(not re.search(r'^\[(?:Read this page in English|Leer esta página en español)\]', text, re.M),
+          f'{relative}: use the language picker instead of a translated-page footer')
     check(len(re.findall(r'\S+', text)) >= 80, f'{relative}: empty or incomplete page')
     body = re.sub(r'^```[^\n]*\n.*?^```\s*$', '', text, flags=re.M | re.S)
     urls = re.findall(r'\]\(([^\s)]+)\)', body)
@@ -91,10 +94,6 @@ for file in sorted(actual_files):
         spanish = ROOT / str(relative).replace('zylon-code', 'zylon-code/es', 1)
         if spanish.is_file():
             check(text != spanish.read_text(), f'{relative}: Spanish page is an English copy')
-            check('](/' + str(spanish.relative_to(ROOT))[:-4] + ')' in text,
-                  f'{relative}: missing language-switch link')
-            check('](/' + str(relative)[:-4] + ')' in spanish.read_text(),
-                  f'{spanish.relative_to(ROOT)}: missing language-switch link')
 
 if ERRORS:
     print('\n'.join(ERRORS), file=sys.stderr)

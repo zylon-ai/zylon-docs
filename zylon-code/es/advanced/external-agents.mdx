@@ -1,25 +1,25 @@
 ---
 title: "Agentes externos"
-description: "Prepara explícitamente los puentes opcionales Codex, Claude Code y ACP."
+description: "Elige una integración nativa y comprende su autenticación y sus límites."
 noindex: true
 ---
 
-Los agentes externos permiten que Zylon Code delegue en otra aplicación, como Codex, Claude Code o un agente compatible con ACP. Estos puentes son opcionales y están desactivados en los modos habituales.
+Los agentes externos delegan trabajo a otro producto. Elegir el modelo de ese proveedor en Modelos es una operación distinta: tener acceso al modelo no activa su agente de programación.
 
-Elegir un modelo de un proveedor no instala su aplicación de agente. Los [agentes secundarios](/zylon-code/es/agents/delegation) normales trabajan dentro de Zylon Code y son la opción más sencilla para empezar.
+| Integración | Preparación | Resultado |
+| --- | --- | --- |
+| [Subagente de Codex](/zylon-code/es/plugins/codex-subagent) | Activar el plugin ofrecido y preparar la autenticación y los ajustes nativos de Codex | Una tarea nueva; devuelve la respuesta final o un error al principal. |
+| [Subagente de Claude Code](/zylon-code/es/plugins/claude-code-subagent) | Activar el plugin ofrecido y preparar la autenticación y los ajustes nativos de Claude | Una tarea nueva; devuelve la respuesta final o un error al principal. |
+| ACP u otro entorno configurado | Ejecutable, conexión y acceso al modelo preparados por el administrador | Delegación de una tarea según el proveedor. |
 
-## Prepara la conexión
+## Prepara el acceso
 
-Pide a Creador o al administrador que configure un entorno compatible y active su herramienta de delegación. Codex y Claude Code necesitan su propio entorno y autenticación. Un token de desarrollador de Zylon no inicia sesión en esas aplicaciones. Los agentes ACP necesitan un ejecutable configurado y su propio acceso a modelos.
+Codex y Claude Code están en **Plugins → Plugins experimentales → Más**. Al activarlos puede descargarse un entorno empaquetado compatible. Ninguno recurre a un ejecutable encontrado en el ordenador. La autenticación y el modelo siguen dependiendo de cada producto; un token de Zylon no inicia sesión en ellos. Sus permisos nativos se configuran por separado de los de la conversación principal.
 
-Utiliza credenciales y ajustes explícitos y aprobados. El puente no elige automáticamente cualquier ejecutable que encuentre en el ordenador.
+Pide al administrador que prepare ACP u otra integración que no se ofrezca como plugin. La presencia de un ejecutable no confirma que la integración esté lista.
 
-## Comprueba antes de usarlo en trabajo importante
+## Comprueba una tarea acotada
 
-Prueba una tarea pequeña de solo lectura. Revisa su respuesta, las autorizaciones, la cancelación y los errores. Comprueba dónde guarda los datos y qué proveedor recibe las peticiones; los ajustes de la conversación principal no definen automáticamente la política del agente externo.
+Empieza con una tarea de solo lectura que incluya las rutas, los datos y las restricciones necesarios. El agente externo no hereda la conversación principal. Comprueba la respuesta final, la cancelación y los errores. Comparte el directorio actual del proyecto salvo que se indique otro; si permitiste cambios, revisa también los archivos por separado.
 
-Conserva la información de instalación y compatibilidad para futuras actualizaciones. Para trabajo paralelo habitual, vuelve a [Delegar en agentes](/zylon-code/es/agents/delegation).
-
----
-
-[Read this page in English](/zylon-code/advanced/external-agents)
+Estas ejecuciones no admiten mensajes de seguimiento ni reanudación. El principal recibe un resultado de finalización, no un chat local con toda la actividad de las herramientas nativas. Para continuar el trabajo con más mensajes, utiliza [agentes locales de Zylon](/zylon-code/es/agents/delegation). Tanto los agentes locales como los externos cuentan para el [límite de concurrencia](/zylon-code/es/agents/models-and-limits).

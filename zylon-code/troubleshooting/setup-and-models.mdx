@@ -1,25 +1,36 @@
 ---
-title: "Setup and model problems"
-description: "Diagnose startup, authentication, discovery and model request failures."
+title: "Setup, license and model problems"
+description: "Separate download, domain, license, credential and model-request failures."
 noindex: true
 ---
 
-Start with the operation that failed and its exact error. Opening the application, saving a connection, listing models and completing a model task are separate checks.
+Start with the step that failed. Downloading the app, verifying a license, saving a developer token and completing a model task are different checks.
+
+## Download and license
 
 | Symptom | What to do |
 | --- | --- |
-| The application does not open | Confirm you have the build for your system and follow the supplied installation instructions. Keep any startup error for support. |
-| Zylon cannot verify or save a connection | Check the developer token and full API URL, then retry. Failed verification keeps the previous settings, token and catalog. |
-| A saved Zylon connection fails during a task | Open Settings → Models and check the full API URL, gateway token and Anthropic Messages support. |
-| No models appear after discovery | Refresh the list and check the server protocol. Try a small task with the configured model to test access. |
-| The saved model is unavailable | Configure its provider or choose another model in the composer. |
-| An image is rejected | Check the model's image option and the actual server's image support. |
-| A proxy or certificate error appears | Ask the administrator to check proxy and trusted-certificate settings, then restart the application. |
+| No download button in Backoffice | Ask the administrator to check your account access and published installers. Platform → Gateways is an administrator route; developers can also download from the instructions after creating a gateway key. |
+| No installer is selected | Choose the correct OS and architecture from Other platforms. The browser may not identify the architecture. |
+| The application does not open | Check the build's OS and architecture and follow its supplied installation instructions. Keep the startup error for support. |
+| The domain is rejected | Enter only an HTTP or HTTPS origin, such as `https://zylon.example`, without `/api/gpt`, credentials or query parameters. |
+| The license cannot be verified | Confirm network access, the exact domain and a current deployment license that includes Zylon Code. The developer token is not used for this check. |
+| The welcome dialog returns after earlier use | The saved authorization may have expired or verification failed. Reconnect the same domain; ask the administrator to check the license and server. Do not delete your data. |
+| A private certificate confirmation appears | Compare its server, fingerprint, issuer and validity dates with the administrator before approving it. An expired or changed certificate needs investigation. |
+
+[License and access](/zylon-code/getting-started/license-and-access) explains temporary offline verification and which failures still block use.
+
+## Model access
+
+| Symptom | What to do |
+| --- | --- |
+| The Zylon connection cannot be saved | Check the domain in Settings → General and the gateway key in Settings → Models. A failed model-list request keeps the previous settings and key. |
+| The key worked before but no longer does | Check its expiry, revocation and the account's active gateway access. Create a replacement key if needed and save it in Models. |
+| A request is denied despite a valid key | Check the key's Read & Write access and the gateway's permissions, model availability and quotas. Broader local file permissions do not change API access. |
+| The model API URL cannot be edited | This is expected for Zylon. Change the domain in General; the app derives the model URL. |
+| The selected model is unavailable | Configure its provider or choose another model in the composer. Refresh the catalog if the deployment has changed. |
+| An image is rejected | Check both the model's image option and the actual server's image support. |
 
 Use a small read-only task to test both a reply and a tool call. Save the error text with secrets removed. Keep tokens in credential fields rather than pasting them into a conversation.
 
-If your project list is empty, check your [data location](/zylon-code/configuration/data-and-backups) before resetting anything. Continue with [connection setup](/zylon-code/getting-started/connect-to-zylon) or [network guidance](/zylon-code/advanced/network-and-offline) for the affected area.
-
----
-
-[Leer esta página en español](/zylon-code/es/troubleshooting/setup-and-models)
+If your project list is empty, check the [data location](/zylon-code/configuration/data-and-backups) before resetting anything. See [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) for the setup sequence and [Network](/zylon-code/advanced/network-and-offline) for proxies and certificates.

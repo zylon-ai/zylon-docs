@@ -1,0 +1,43 @@
+---
+title: "Persistent terminals"
+description: "Let the agent return to the same shell across tool calls."
+noindex: true
+---
+
+A persistent terminal keeps a shell or interactive program running between the agent's tool calls. The agent can start a development server, return to its output later or send another command to the same session. This is useful when the next step depends on the process or shell state left by the previous one.
+
+For an ordinary one-command test, the normal [shell tools](/zylon-code/tools/shell-and-jobs) are usually sufficient. The [terminal panel](/zylon-code/everyday-use/panels) is a separate place for commands you type yourself.
+
+## Enable the tools
+
+Open **Plugins → Experimental plugins → More** and enable **Persistent terminals**. It starts disabled and adds its tools to every mode, including Minimal. It is separate from Minimal's own persistent shell.
+
+The supplied shell uses Bash on macOS and PowerShell on Windows. Project executables and dependencies must already be available to the application.
+
+| Action | Tool calls you can recognize |
+| --- | --- |
+| Start or list the agent's terminals | `terminal_open`, `terminal_list` |
+| Read output or send input to an existing terminal | `terminal_read`, `terminal_send` |
+| Interrupt a foreground program or close the terminal | `terminal_signal`, `terminal_close` |
+
+## Example: follow a development server
+
+> Open a persistent terminal in this project and run its existing development-server command. Keep the terminal ID, check the startup output and report the local URL. Do not install dependencies or expose the server publicly.
+
+Then ask:
+
+> Read that terminal's latest output and tell me whether the server is still running. Do not start a second copy.
+
+The terminal ID identifies the running session. Only the agent that opened it can operate it; another agent cannot take it over by knowing the ID. Changing the conversation's working directory does not move an existing terminal.
+
+## Interpret output and finish
+
+A send can return after output becomes quiet or a wait expires. Neither proves that the command finished. Check its reported status and output before sending more input. A background send can return a job ID; use [job controls](/zylon-code/tools/shell-and-jobs) to read or stop it.
+
+Output retention is bounded. Save a log when you need the full record. Terminals and their live processes do not survive an application restart.
+
+When finished, ask the agent to stop the server and close that terminal. Closing ends its process tree without undoing file changes. Check running work before disabling the plugin.
+
+<Frame caption="Persistent terminals components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-persistent-terminals-en.jpg" alt="Persistent terminals components, disabled in this example" />
+</Frame>

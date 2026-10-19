@@ -1,31 +1,38 @@
 ---
-title: "Install and launch"
-description: "Install the supplied Desktop application and prepare your first connection."
+title: "Download and install"
+description: "Get the Desktop installer from Backoffice and prepare the Zylon domain and access you need."
 noindex: true
 ---
 
-Zylon Code is distributed as a compiled Desktop application. You do not need to clone its source repository or install Node, Python or a package manager to install it.
+Zylon Code is a compiled Desktop application. Download its installer from your organization's Zylon Backoffice; you do not need to clone the source or install a programming toolchain to install the application. Your own projects may need additional tools to build or run tests.
 
-<Note>
-The download location and installation steps will be added here when the client distribution is ready. Until then, use the application build and instructions supplied by your Zylon contact.
-</Note>
+## Before downloading
 
-## Before you start
+Ask your administrator for the **Zylon domain**, such as `https://zylon.example`, and confirm that the deployment has a valid license that includes Zylon Code. You will also need a gateway API key to use its models. These are separate requirements; [License and access](/zylon-code/getting-started/license-and-access) explains them.
 
-Have a project folder ready. To connect through your organization's Zylon gateway, ask its administrator for the **Base URL** and a **Gateway developer token**. The application can open before a model is configured.
+## Download from Backoffice
 
-## Open the application
+If you have access to the **Platform** area:
 
-Open Zylon Code and complete the welcome setup. New installations start in Spanish; you can select English in **Settings → General**. You should see the project chooser, conversation area and Settings.
+1. Sign in to your organization's Backoffice.
+2. Open **Platform → Gateways**.
+3. Select **Download Zylon Code**.
+4. Download the installer for your operating system and processor architecture.
 
-Closing the main window can leave the application running in the background. Use the operating system's **Quit** action when you want to stop it completely.
+The Platform area is available to accounts with Operator or SuperAdmin access. A developer can also find the Zylon Code download in the instructions shown immediately after creating a gateway API key. See [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) for that route.
 
-Continue with [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon). If the application does not open, see [startup troubleshooting](/zylon-code/troubleshooting/setup-and-models).
+The download card shows the available version and architecture. When it can identify your device, it selects a compatible build; otherwise choose from **Other platforms**. Check the architecture yourself: `arm64` is for ARM processors, including Apple Silicon; `x64` is for Intel/AMD 64-bit processors. Use only a build offered for your system.
+
+Available installers depend on what your organization publishes. If no download option appears, ask the administrator to check your Backoffice access and the published installers. The absence of a button alone does not identify a license problem.
+
+## Install and open
+
+Open the downloaded installer or archive and follow the installation instructions supplied for that build. Launch Zylon Code. On first launch, its welcome dialog asks for the Zylon domain and verifies the license before you can work. Continue with [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) to complete the domain and model setup.
+
+You can choose Spanish or English in **Settings → General** once setup is complete. Closing the main window can leave the application running in the background; use the operating system's **Quit** action to stop it completely.
+
+If the application does not open, follow [startup troubleshooting](/zylon-code/troubleshooting/setup-and-models).
 
 <Frame caption="Zylon Code Desktop after opening the application">
   <img src="/images/zylon-code/screenshots/getting-started-installation-en.jpg" alt="Zylon Code Desktop after opening the application" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/getting-started/installation)

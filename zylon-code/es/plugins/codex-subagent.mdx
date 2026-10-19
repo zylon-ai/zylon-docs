@@ -1,0 +1,39 @@
+---
+title: "Subagente de Codex"
+description: "Delega una tarea acotada a Codex con su cuenta y sus ajustes propios."
+noindex: true
+---
+
+Subagente de Codex permite que el agente de Zylon encargue una tarea independiente al agente de programación nativo de Codex y utilice su respuesta en el trabajo principal. Elígelo cuando quieras su comportamiento y entorno propios, por ejemplo para revisar un cambio desde otra perspectiva.
+
+Es distinto de seleccionar un modelo en Zylon: este agente externo utiliza su propio entorno, acceso y configuración. Los [agentes de Zylon Code](/zylon-code/es/agents/delegation) son la opción más sencilla si necesitas continuar una conversación dentro de Zylon Code.
+
+## Activa y prepara el acceso
+
+1. Abre **Plugins → Plugins experimentales → Más** y activa **Subagente de Codex**.
+2. Espera a que termine la descarga del entorno compatible, si hace falta, y reinicia si se indica. El proceso nativo arranca al delegar una tarea, no solo por activar el interruptor.
+3. Pide al administrador que prepare la autenticación nativa de Codex y sus permisos para trabajar sin preguntas interactivas, con el usuario que ejecuta Zylon Code. El plugin no inicia sesión por ti ni ofrece un asistente para configurar esa cuenta.
+
+La integración utiliza el entorno de Codex que incluye su paquete, sin recurrir a otro ejecutable del ordenador. Que se active no confirma todavía que funcionen el acceso o las tareas.
+
+Para fijar un modelo específico o ajustar los permisos, utiliza la [configuración del perfil](/zylon-code/es/advanced/profiles-and-yaml). Si no se fija otro modelo, se utiliza el de los ajustes nativos de Codex. El selector del agente principal y la lista habitual de modelos autorizados no lo eligen. Iniciar sesión con ChatGPT en Modelos de Zylon es otra conexión.
+
+Los permisos y el sandbox nativos se configuran por separado de los de la conversación principal. Compruébalos antes de permitir ediciones: pedir «solo lectura» describe la tarea, pero no configura esa política.
+
+## Ejemplo: una revisión aparte
+
+> Delega una tarea de solo lectura en Codex: revisa los cambios actuales de src/parser y sus pruebas. Comprueba las entradas con espacios, el tratamiento de errores y si las pruebas detectan el comportamiento modificado. Devuelve problemas concretos con referencias a archivos, o explica qué falta por verificar. No edites, instales paquetes ni crees más agentes. Espera su respuesta antes de aplicar cambios.
+
+`subagent_codex` inicia el trabajo en segundo plano y devuelve un identificador de agente. El principal recibe la respuesta o un error resumido al terminar. Facilita las rutas, los requisitos y las restricciones: la tarea empieza sin el historial del chat principal.
+
+## Revisa y termina
+
+El agente externo comparte el directorio de proyecto seleccionado. No recibe un worktree aislado automáticamente y cuenta para el [límite de agentes en paralelo](/zylon-code/es/agents/models-and-limits).
+
+Cada ejecución admite una tarea, sin mensajes de seguimiento ni reanudación. Para continuar, envía otro encargo completo. El principal no recibe un chat local con toda la actividad nativa ni sus diffs; si permitiste ediciones, comprueba los archivos y las pruebas por separado.
+
+Pide al principal que cancele una ejecución que deba detenerse; las ediciones ya realizadas se conservan. Si faltan el entorno, el acceso o los permisos, la primera tarea puede fallar. Lee el error antes de cambiar la configuración. Desactivar el plugin retira su herramienta, pero conserva el paquete descargado y los cambios del proyecto.
+
+<Frame caption="Componentes de Subagente de Codex, desactivados en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-codex-subagent-es.jpg" alt="Componentes de Subagente de Codex, desactivados en este ejemplo" />
+</Frame>

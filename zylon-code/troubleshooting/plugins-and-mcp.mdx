@@ -1,27 +1,26 @@
 ---
 title: "Plugin and MCP problems"
-description: "Recover failed installation, activation, authentication and discovery without discarding data."
+description: "Check included features, activation, server authentication and discovered tools."
 noindex: true
 ---
 
-Installing a package, enabling it and using its tools are separate steps. Start with the message on the plugin or MCP server card.
+Start with the message on the plugin or MCP server card. The Desktop product lets you configure included plugins; it does not show package-installation controls.
 
 | Problem | What to do |
 | --- | --- |
-| A package downloaded but its feature is absent | Confirm it is a compatible bundle, enable it and check whether it needs another provider. |
-| Installation fails | Check the source, version and script prompts. Keep the installer output. |
+| There is no Add plugin button | This Desktop build hides package installation. Configure the included features in Plugins or ask your administrator about a supported extension. |
+| A feature is absent | Check its mode and the built-in plugin inventory. An integration may need a separately configured provider. |
+| A plugin is enabled but its tool is missing | Check the mode used by this conversation; try a new conversation after a composition change. |
 | Activation fails | Read the missing settings or components and follow any restart notice. |
 | MCP creation fails | Check the exact URL or executable and separate arguments, plus credentials. |
-| OAuth fails or is cancelled | Retry creation or sign-in. Check the server supports public-client registration and PKCE. |
+| OAuth fails or is cancelled | Retry creation or sign-in. Check that the server supports public-client registration and PKCE. |
 | The last test passed but a call fails | Test the connection again and check the task's current permissions. |
 | A mention prevents sending | Update the reference if its server was renamed, removed or disabled. |
 
-For a local command, confirm the executable exists and each argument has its own field. For HTTP, use the service's MCP endpoint instead of its website home page. Review diagnostic output before sharing it.
+The read-only inventory is under **Settings → Built-in plugins** when **Developer view** is enabled. It is different from the **Plugins** page used to configure included features.
 
-Re-enabling the manager restores saved servers. Deleting a server removes its configuration and credentials. Configuration export excludes secrets, and this version has no import workflow in the manager.
+For a local MCP command, confirm the executable exists and each argument has its own field. For HTTP, use the service's MCP endpoint instead of its website home page. Review diagnostic output before sharing it.
 
-After fixing a custom mode, try a new conversation. See [Manage plugins](/zylon-code/plugins/managing-plugins) and [MCP Manager](/zylon-code/plugins/mcp) for complete steps.
+Re-enabling the manager restores saved servers. Deleting a server removes its configuration and credentials. Configuration export excludes secrets; see the [MCP guide](/zylon-code/plugins/mcp) for the import behavior supported by your build.
 
----
-
-[Leer esta página en español](/zylon-code/es/troubleshooting/plugins-and-mcp)
+If all model and tool work is blocked by the domain dialog, resolve [licensing](/zylon-code/getting-started/license-and-access) first. Re-enabling an integration does not repair that requirement. Continue with [Manage plugins](/zylon-code/plugins/managing-plugins) for feature-specific steps.

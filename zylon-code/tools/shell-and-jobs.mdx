@@ -18,12 +18,10 @@ When supported, the agent can start a command as a background job. Its ID and st
 
 Retained output is limited. Ask for an explicit log file when you need the complete output of a long command.
 
+The optional [Persistent terminals](/zylon-code/plugins/persistent-terminals) plugin lets an agent open and revisit its own terminals in any mode. A conversation directory change affects new commands, while existing shells and servers retain their process-local directory.
+
 ## Set command limits
 
-Open **Plugins → Official → Shell** to change command duration and output limits, then Save. Raising retained output uses more memory and does not increase the model's context window.
+Open **Plugins → Built-in plugin settings → Shell** to change command duration and output limits, then Save. Raising retained output uses more memory and does not increase the model's context window.
 
 The [terminal panel](/zylon-code/everyday-use/panels) is for commands you run yourself. Project executables and corporate network access must be available on your computer.
-
----
-
-[Leer esta página en español](/zylon-code/es/tools/shell-and-jobs)

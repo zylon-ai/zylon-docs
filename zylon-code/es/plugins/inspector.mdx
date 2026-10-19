@@ -1,23 +1,21 @@
 ---
-title: "Inspector"
-description: "Recoge información de diagnóstico concreta siguiendo las indicaciones de soporte."
+title: "Herramientas de desarrollo"
+description: "Consulta los registros de las conversaciones y el entorno local con ayuda de soporte."
 noindex: true
 ---
 
-Inspector es una función experimental de diagnóstico para desarrolladores y personal de soporte. Permite inspeccionar el entorno local y la interfaz con Chrome DevTools. No hace falta para las tareas habituales.
+El paquete opcional **Herramientas de desarrollo** sirve para diagnóstico y desarrollo. Empieza desactivado. Actívalo en **Plugins → Plugins experimentales** cuando necesites ese acceso de diagnóstico.
 
-## Utilízalo con soporte
+## Inspecciona una conversación
 
-Empieza por [Recuperación e informes de soporte](/zylon-code/es/troubleshooting/recovery). Si soporte te pide utilizar Inspector, sigue las instrucciones de preparación y conexión de tu versión concreta. Recoge el error y la información de diagnóstico necesaria para ese problema.
+Abre **Registro de sesión** desde el menú de pestaña nueva de la barra lateral. Sus vistas de registro sin procesar y mensajes agrupados permiten consultar la conversación guardada. Empieza por el chat habitual o su vista de trayectoria si ya muestran la información que necesitas.
+
+**Ctrl/Cmd+Mayús+.** abre o contrae **NodeJS Inspector** en el panel inferior. Este depurador permite examinar el entorno local de la aplicación.
 
 <Warning>
-Un depurador puede ejecutar código y mostrar credenciales, mensajes o contenido privado de archivos. Mantén el acceso local y revisa las capturas antes de compartirlas.
+Activar Herramientas de desarrollo inicia un servicio de depuración y captura las peticiones de red del proceso local sin ocultar datos. Un depurador puede ejecutar código y mostrar credenciales, mensajes y archivos privados. Mantén el acceso local y revisa los diagnósticos antes de compartirlos.
 </Warning>
 
 ## Termina la investigación
 
-Cierra el depurador y desactiva o retira la función según las instrucciones. Comprueba después que la aplicación se inicia con normalidad. Conserva los registros originales y comparte una copia sin credenciales ni datos privados.
-
----
-
-[Read this page in English](/zylon-code/plugins/inspector)
+Empieza por [Recuperación e informes para soporte](/zylon-code/es/troubleshooting/recovery), reproduce el fallo concreto y recoge solo lo necesario. Cierra el depurador y desactiva Herramientas de desarrollo al terminar. Desactivarlo no elimina los datos sensibles de un archivo que ya hayas exportado: prepara una copia sin credenciales ni datos privados antes de enviarla.

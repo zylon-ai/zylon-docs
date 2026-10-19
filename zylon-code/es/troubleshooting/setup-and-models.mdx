@@ -1,25 +1,36 @@
 ---
-title: "Problemas de inicio y modelos"
-description: "Diagnostica inicio, autenticación, descubrimiento y peticiones al modelo."
+title: "Problemas de inicio, licencia y modelos"
+description: "Distingue los fallos de descarga, dominio, licencia, credenciales y peticiones al modelo."
 noindex: true
 ---
 
-Empieza por la operación que ha fallado y su error exacto. Abrir la aplicación, guardar una conexión, consultar modelos y completar una tarea son comprobaciones distintas.
+Empieza por el paso que ha fallado. Descargar la aplicación, comprobar la licencia, guardar el token de desarrollador y completar una tarea son comprobaciones diferentes.
+
+## Descarga y licencia
 
 | Síntoma | Qué hacer |
 | --- | --- |
-| La aplicación no se abre | Comprueba que tienes la versión para tu sistema y sigue las instrucciones de instalación. Conserva el error de inicio para soporte. |
-| Zylon no puede verificar o guardar una conexión | Revisa el token de desarrollador y la URL de API completa e inténtalo de nuevo. Una verificación fallida conserva los ajustes, el token y el catálogo anteriores. |
-| La conexión de Zylon se guarda, pero falla la tarea | Abre Ajustes → Modelos y comprueba la URL de API completa, el token del gateway y la compatibilidad con Anthropic Messages. |
-| No aparecen modelos tras la consulta | Actualiza la lista y comprueba el protocolo del servidor. Prueba una tarea pequeña con el modelo configurado para confirmar el acceso. |
-| El modelo guardado no está disponible | Configura su proveedor o elige otro en el cuadro de mensajes. |
-| Se rechaza una imagen | Revisa la opción de imagen del modelo y la compatibilidad real del servidor. |
-| Aparece un error de proxy o certificado | Pide al administrador que compruebe el proxy y los certificados de confianza. Después reinicia la aplicación. |
+| No aparece el botón de descarga en Backoffice | Pide al administrador que revise tu acceso y los instaladores publicados. Plataforma → Puertas de enlace es un recorrido de administrador; los desarrolladores también pueden descargar desde las instrucciones que aparecen al crear una clave del gateway. |
+| No se selecciona un instalador | Elige el sistema y la arquitectura correctos en Otras plataformas. El navegador puede no detectar la arquitectura. |
+| La aplicación no se abre | Comprueba el sistema y la arquitectura de la versión descargada y sigue sus instrucciones de instalación. Conserva el error para soporte. |
+| Se rechaza el dominio | Introduce solo una dirección HTTP o HTTPS como `https://zylon.example`, sin `/api/gpt`, credenciales ni parámetros. |
+| No se puede comprobar la licencia | Confirma la conexión de red, el dominio exacto y una licencia vigente que incluya Zylon Code. El token de desarrollador no interviene en esta comprobación. |
+| Vuelve a aparecer la bienvenida después de haber trabajado | Puede haber caducado la autorización guardada o haber fallado la comprobación. Conecta de nuevo al mismo dominio y pide al administrador que revise la licencia y el servidor. No borres tus datos. |
+| Aparece una confirmación de certificado privado | Contrasta con el administrador el servidor, la huella, el emisor y las fechas antes de aceptarlo. Un certificado caducado o cambiado necesita revisión. |
+
+[Licencia y acceso](/zylon-code/es/getting-started/license-and-access) explica el margen temporal sin conexión y los fallos que siguen bloqueando el uso.
+
+## Acceso a modelos
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| No se puede guardar la conexión de Zylon | Revisa el dominio en Ajustes → General y la clave del gateway en Ajustes → Modelos. Si falla la consulta de modelos, se conservan los ajustes y la clave anteriores. |
+| La clave funcionaba y ha dejado de hacerlo | Revisa si ha caducado, se ha revocado o ha cambiado el acceso de la cuenta al gateway. Si hace falta, crea otra y guárdala en Modelos. |
+| Se deniega una petición con una clave válida | Revisa Lectura y escritura, los permisos del gateway, los modelos disponibles y las cuotas. Ampliar los permisos locales no cambia el acceso a la API. |
+| No se puede editar la URL de los modelos | Es el comportamiento previsto para Zylon. Cambia el dominio en General; la aplicación calcula la URL. |
+| El modelo seleccionado no está disponible | Configura su proveedor o elige otro en el cuadro de mensajes. Actualiza el catálogo si ha cambiado la instalación. |
+| Se rechaza una imagen | Comprueba la opción de imagen del modelo y la compatibilidad real del servidor. |
 
 Utiliza una tarea pequeña de solo lectura para probar tanto la respuesta como una llamada a herramientas. Guarda el error sin secretos. Mantén los tokens en sus campos de credenciales, sin pegarlos en la conversación.
 
-Si la lista de proyectos está vacía, comprueba la [ubicación de los datos](/zylon-code/es/configuration/data-and-backups) antes de restablecer nada. Consulta [Conexión](/zylon-code/es/getting-started/connect-to-zylon) o [Red](/zylon-code/es/advanced/network-and-offline) según el problema.
-
----
-
-[Read this page in English](/zylon-code/troubleshooting/setup-and-models)
+Si la lista de proyectos está vacía, comprueba la [ubicación de los datos](/zylon-code/es/configuration/data-and-backups) antes de restablecer nada. [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) recoge el orden de configuración y [Red](/zylon-code/es/advanced/network-and-offline) explica proxies y certificados.

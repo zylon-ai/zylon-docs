@@ -11,8 +11,17 @@ Edit the provider in **Settings → Models** and open its customized model setti
 | Model ID | Exact API identifier accepted by the endpoint. |
 | Display name | A recognizable label for the picker. |
 | Context window | The model’s supported token capacity for a request. |
-| Maximum output | The supported generation limit. |
+| Maximum output | The model's supported output capacity. |
+| Request output limit | Default output budget for an ordinary request; separate from the model's capacity. |
 | Input types | Text and/or image only when the model supports them. |
+
+## Capacity and request budget
+
+For example, a deployment may support a 131,072-token context and 32,768 output tokens while reserving 8,192 for an ordinary reply. Enter the server-supported capacities and choose a request limit no larger than its output capacity. These example numbers are not performance recommendations.
+
+Newly discovered Zylon models default to a request limit of 8,192 tokens, or their lower advertised output capacity. Refresh preserves existing model fields and manual rows; it does not replace old limits with new discovery values. Review existing rows explicitly after a server change.
+
+A large output reservation leaves less room for input. The summary used for [compaction](/zylon-code/everyday-use/long-conversations) has a separate budget; reducing the normal reply limit does not automatically reduce that summary limit. Ask your administrator to align compaction with a small model's capacity.
 
 ## Images
 
@@ -20,9 +29,9 @@ Expand the model's options and select **Image** if supported. At least one input
 
 ## Reasoning capabilities
 
-Reasoning controls come from the selected model's advertised capabilities. Zylon models that report support offer **Off** and their supported effort levels in the composer. Use **Refresh models** on the Zylon connection card after your administrator updates the catalog. If a model does not report those capabilities, the Effort control is absent.
+Reasoning controls come from the selected model's advertised capabilities. Zylon models that report support offer **Off** and their supported effort levels in the composer. Use **Refresh models** to add newly available models. Refresh preserves saved reasoning declarations too; ask your administrator to update an existing model's declarations when its capabilities change. Without configured reasoning capabilities, the Effort control is absent.
 
-Use [Choose a model](/zylon-code/models/choosing-a-model) for the steps to enable, disable or change effort. A model's default applies when you select it; this does not overwrite an effort already chosen for an existing conversation. **Default**, when offered, sends no explicit reasoning choice for Zylon.
+Use [Choose a model](/zylon-code/models/choosing-a-model) for the steps to enable, disable or change effort. Selecting another model applies that model's default. Editing a model's configured default does not replace an effort already selected in a conversation. **Default**, when offered, sends no explicit reasoning choice for Zylon.
 
 The gateway's model adapter ultimately decides how the requested level is used. Some adapters map Off to a low level or Max to High when the underlying model cannot honor the exact setting. Ask your administrator about the behavior of your deployment if that distinction matters to a task.
 
@@ -35,7 +44,3 @@ For adapter-only options such as headers, request compatibility, retries and tim
 <Frame caption="Reasoning effort levels for the selected model">
   <img src="/images/zylon-code/screenshots/models-model-options-en.jpg" alt="Reasoning effort levels for the selected model" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/models/model-options)

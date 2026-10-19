@@ -1,41 +1,45 @@
 ---
 title: "Otros proveedores y modelos locales"
-description: "Conecta otro servicio de modelos o un servidor local."
+description: "Utiliza una cuenta compatible, una clave API o un servidor de modelos."
 noindex: true
 ---
 
-Abre **Ajustes → Modelos** para configurar una conexión. Para el gateway de tu empresa, sigue [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Las tarjetas de otros proveedores y las conexiones personalizadas dependen de la versión de la aplicación.
+Abre **Ajustes → Modelos** para configurar una conexión. Zylon Code sigue necesitando un dominio de Zylon con licencia aunque elijas otro proveedor. Para el gateway de la empresa, consulta [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon).
 
-## Utiliza un proveedor de la lista
+## Inicia sesión con una cuenta de ChatGPT o Claude
 
-Abre su tarjeta, introduce la clave API y guarda. El campo de la clave empieza vacío; si lo dejas así al editar, se conserva la clave guardada. Después selecciona un modelo y prueba una tarea pequeña.
+Si tu versión ofrece autorización por cuenta, las tarjetas de ChatGPT y Claude aparecen encima de los proveedores. Pulsa **Iniciar sesión** y sigue el enlace del proveedor, el código de dispositivo o las instrucciones de devolución de la autorización. Introduce la contraseña solo en la web del proveedor. Puedes cancelar un inicio pendiente; si se interrumpe, aparecerá una opción para reanudarlo o reintentarlo.
 
-Modifica la URL o la lista de modelos solo si la tarjeta ofrece esos controles y el proveedor lo requiere.
+Después, selecciona un modelo disponible. **Usar cuenta** permite activar una cuenta que ya tenga sesión iniciada. El acceso depende del plan y los permisos del proveedor. Los modelos de una cuenta de ChatGPT utilizan una conexión distinta de la API de OpenAI con clave.
+
+**Cerrar sesión** retira la autorización de esa cuenta. No cambia automáticamente a una clave API guardada. Una conversación puede conservar el modelo anterior aunque ya no esté disponible; elige otra conexión o vuelve a iniciar sesión.
+
+## Utiliza una clave API
+
+Abre la tarjeta del proveedor, introduce su clave API y guarda. Dejar vacío el campo de una clave ya guardada la conserva. Introducir una clave en una conexión que también admite cuenta puede cambiar su modo de autenticación; comprueba qué opción está activa antes de probar el modelo.
+
+Si aún no aparece el proveedor, pulsa **Añadir proveedor de modelos** y elige la opción de proveedor de terceros. Las claves API y las suscripciones de cuenta tienen condiciones de acceso y facturación diferentes.
 
 ## Conecta un servicio personalizado o local
 
-1. Añade un proveedor personalizado con un identificador único y un nombre reconocible.
-2. Introduce su **URL base** y el protocolo de API que admita el servidor.
-3. Introduce la clave, si la necesita, en su campo de credenciales.
-4. Pulsa **Obtener modelos disponibles**, selecciona los que quieras y guarda. Si falla la consulta, añade a mano los identificadores exactos del servidor.
-5. Selecciona un modelo y pídele una tarea pequeña de solo lectura que utilice una herramienta.
+1. Pulsa **Añadir proveedor de modelos → API de modelo personalizada**.
+2. Introduce un identificador único, un nombre reconocible, la URL base y el protocolo que implemente el servidor.
+3. Si necesita una clave, introdúcela en su campo de credenciales.
+4. Pulsa **Obtener modelos disponibles**, selecciona los resultados y añádelos. Si el servidor no permite consultar el catálogo, introduce sus identificadores exactos a mano.
+5. Guarda el proveedor, selecciona un modelo y prueba una tarea pequeña de solo lectura que utilice una herramienta.
 
-**Chat Completions**, **Responses** y **Anthropic Messages** son protocolos de API distintos. Elige el que implemente el servidor; decir «compatible con OpenAI» no basta para saber cuál utilizar.
+**OpenAI Chat Completions**, **OpenAI Responses** y **Anthropic Messages** son protocolos distintos. Decir «compatible con OpenAI» no basta para saber cuál implementa el servidor. Un modelo local necesita un servidor funcionando por separado y accesible; `localhost` se refiere a este ordenador.
 
-Un modelo local necesita un servidor de modelos funcionando por separado y accesible desde tu ordenador. En una URL de conexión, `localhost` se refiere a este ordenador.
+## Certificados privados
 
-## Comprueba las capacidades del modelo
+La consulta de modelos puede pedir confirmación de un certificado HTTPS válido emitido por una entidad que la aplicación no reconoce. Contrasta el dominio, la huella, el emisor y las fechas con el administrador antes de aceptarlo. La aprobación se limita a ese dominio y certificado; siguen comprobándose el nombre y la vigencia. Una aprobación provisional solo se conserva si la consulta y el guardado terminan correctamente. Puedes retirar la confianza desde el editor del proveedor y aplicar el cambio. Un certificado distinto necesita otra confirmación.
 
-Una conexión puede ofrecer modelos con y sin razonamiento. Selecciona primero el modelo y comprueba si su menú del cuadro de mensajes muestra **Esfuerzo**. Actualiza la lista cuando el servidor cambie las capacidades anunciadas. Los niveles pertenecen a cada modelo; no son un ajuste común a todos los proveedores. Consulta [Capacidades de razonamiento](/zylon-code/es/models/model-options) para conocer los detalles.
+El certificado del dominio de Zylon se gestiona en **Ajustes → General**, sin modificar la URL de modelos que deriva de él.
 
-## Modifica o elimina una conexión
+## Comprueba y mantén la conexión
 
-Eliminar un proveedor puede dejar sin servicio el modelo guardado en una conversación. Selecciona otro si ocurre. [Opciones de modelos](/zylon-code/es/models/model-options) explica las capacidades de imagen y contexto; [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models) te ayuda con los errores de conexión.
+Después de guardar, prueba una petición real y consulta el resultado de una herramienta. El catálogo no confirma que la generación funcione. Eliminar un proveedor puede dejar sin servicio el modelo guardado en un chat. [Opciones de modelos](/zylon-code/es/models/model-options) explica capacidades y razonamiento; [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models) cubre los fallos de conexión.
 
-<Frame caption="Configuración de un proveedor de modelos personalizado">
-  <img src="/images/zylon-code/screenshots/models-providers-es.jpg" alt="Configuración de un proveedor de modelos personalizado" />
+<Frame caption="Token del desarrollador y dirección del proveedor derivada del dominio de Zylon">
+  <img src="/images/zylon-code/screenshots/models-providers-es.jpg" alt="Token del desarrollador y dirección del proveedor derivada del dominio de Zylon" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/models/providers)

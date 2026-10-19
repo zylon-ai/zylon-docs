@@ -10,14 +10,18 @@ Un modo define las herramientas y las instrucciones con las que trabaja el agent
 | --- | --- | --- |
 | [Estándar](/zylon-code/es/modes/standard) | Trabajo diario con código y archivos | Herramientas directas, habilidades, planificación, objetivos, delegación y flujos. |
 | [PTC](/zylon-code/es/modes/ptc) | Tareas por lotes o resultados que conviene agrupar | El agente llama a herramientas desde un programa TypeScript. |
-| [Mínimo](/zylon-code/es/modes/minimal) | Tareas pequeñas y comparaciones controladas | Una shell persistente e instrucciones fijas. |
+| [Mínimo](/zylon-code/es/modes/minimal) | Tareas pequeñas y comparaciones controladas | Shell persistente, lectura de imágenes y compactación del historial. |
 | [Creador](/zylon-code/es/modes/creator) | Crear herramientas, plugins y modos | Funciones de Estándar y herramientas para inspeccionar y ampliar la aplicación. |
 
 ## Elige antes de empezar
 
-Selecciona el modo al crear una tarea. Las tarjetas de Ajustes permiten cambiar el predeterminado de las tareas futuras. Una conversación que ya ha empezado conserva sus herramientas; cambiar el valor predeterminado no la transforma en otro modo.
+Selecciona el modo al crear una tarea. Las tarjetas de **Ajustes → Modos** permiten cambiar el predeterminado de las tareas futuras. Una conversación que ya ha empezado conserva su modo; cambiar el valor predeterminado no la transforma en otro. Los plugins opcionales globales sí pueden añadir o retirar herramientas de conversaciones existentes.
 
 **Ver configuración** abre una vista de solo lectura. Para [crear un modo](/zylon-code/es/customization/custom-modes), utiliza Creador y prueba el resultado en una conversación nueva.
+
+## Si no aparecen PTC o Mínimo
+
+Abre **Ajustes → General** y activa **Vista de desarrollo**. Al desactivarlo se ocultan las opciones integradas PTC y Mínimo; si una de ellas era el modo predeterminado, pasa a ser Estándar. Las conversaciones existentes conservan su modo. Volver a activarlo no recupera el valor predeterminado anterior.
 
 ## Planificación y permisos
 
@@ -28,7 +32,3 @@ Si estás empezando, elige Estándar. Prueba otro modo cuando tengas una necesid
 <Frame caption="Los modos de tarea disponibles">
   <img src="/images/zylon-code/screenshots/modes-overview-es.jpg" alt="Los modos de tarea disponibles" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/modes/overview)

@@ -6,6 +6,8 @@ noindex: true
 
 PTC means Programmatic Tool Calling. The agent uses `run_code` to write a TypeScript program that calls tools through a generated SDK. You describe the task; you do not need to write the program yourself.
 
+Choose PTC before starting the conversation. If it is missing, enable **Settings → General → Developer view**.
+
 ## Example
 
 > Check JSON files in configs/ against schema.json. Save a CSV with one row per issue. Include unreadable files and continue checking the rest. Leave the originals unchanged.
@@ -21,7 +23,3 @@ Expand the program and nested tool activity. Check whether failed files were inc
 PTC has skills, instructions, goals, planning, delegation and compaction. Its built-in preset disables the workflow tool. It does not promise lower token use or better performance than Standard: results depend on the task and program. Tool availability, filesystem access and approval policy still apply.
 
 Choose [Standard](/zylon-code/modes/standard) for direct tools or read [workflows](/zylon-code/tools/workflows) for the separate reusable workflow feature.
-
----
-
-[Leer esta página en español](/zylon-code/es/modes/ptc)

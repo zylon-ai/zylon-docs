@@ -1,0 +1,37 @@
+---
+title: "License and access"
+description: "Understand the deployment license, model credentials and temporary offline verification."
+noindex: true
+---
+
+Zylon Code requires a valid license for your organization's Zylon deployment that includes **Zylon Code**. Your administrator or Zylon contact manages that license. You enter the deployment's domain in Desktop; there is no license-file upload or activation-key field in this setup.
+
+## Three different checks
+
+| Requirement | What it enables |
+| --- | --- |
+| A valid deployment license including Zylon Code | Agent creation, model requests and tool execution in the application. |
+| A gateway API key and the required account access | Access to the deployment's models, within its permissions and quotas. |
+| A reachable model service | Completing the task's model requests. |
+
+Using another model provider or selecting broader permissions does not bypass Zylon Code's license requirement. See [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) to configure the domain and key in order.
+
+## What Desktop verifies
+
+The application checks the public license endpoint at your configured domain. That request does not send your developer token. The deployment must report Zylon Code as enabled and a license expiry in the future. A missing flag, missing license or expired license blocks use, even if the application downloaded successfully.
+
+For administrators, the relevant response fields are `metadata.zylon_code_enabled` and `valid_until` from `GET /api/v1/license`. Code-seat metadata can also be present in a deployment license; this Desktop check does not allocate or count those seats. Confirm your contracted access with your administrator rather than interpreting metadata as a per-device activation screen.
+
+## If the deployment is temporarily unavailable
+
+Desktop tries to verify the license at startup and renews its authorization when needed. A previous successful check for the same domain can temporarily cover a network failure or server error. The default period is five days after that check, bounded by the license expiry; an administrator may configure a different supported period.
+
+This grace period does not provide a model connection. A task still needs access to whichever model service it uses. First-time setup and a newly entered domain need a successful verification.
+
+An explicit denial, invalid response, expired verification, different domain or certificate problem does not qualify for this fallback. When authorization is unavailable, the domain dialog blocks work until the requirement is resolved. Replacing the API key will not repair a disabled or expired license.
+
+## Resolve a license problem
+
+Check the domain in **Settings → General**, or in the blocking welcome dialog. It should be an address such as `https://zylon.example`, without `/api/gpt`. Confirm network access and any private certificate with your administrator. If the domain is correct, ask them to check that the license is current and includes Zylon Code, or contact Zylon sales.
+
+Keep your project files and application data while investigating. Reinstallation or deleting conversations does not renew a deployment license. [Setup troubleshooting](/zylon-code/troubleshooting/setup-and-models) separates license errors from model and token failures.

@@ -13,6 +13,8 @@ Use this reference when a term appears in a guide. The first group covers workin
 | Agent | A model working through instructions and tools to complete a task. |
 | Provider | The service that runs the selected model. |
 | API key / token credential | A secret value used to authenticate to a service. |
+| Account sign-in | Provider authorization through its own login flow; separate from an API-key connection and from an external coding agent. |
+| Request output limit | The output budget reserved for a normal request, which can be smaller than the model's maximum capacity. |
 | Token | A unit of text processed by a model, often part of a word. This is different from an access token credential. |
 | Context window | A request’s information capacity, including instructions, tool results and the generated response, as defined by the model and provider. |
 | Tool call | A model's request for an operation, such as reading a file or running a command. |
@@ -26,6 +28,8 @@ Use this reference when a term appears in a guide. The first group covers workin
 | Term | Meaning |
 | --- | --- |
 | Project | A selected folder on your computer and its conversations. Separate from a server-side Zylon Workspace project. |
+| Working directory | Current folder used to resolve a conversation's relative paths; can change independently of the original project. |
+| Git worktree | Another checkout of the same repository with its own branch and working files. |
 | Mode | The tools and instructions selected for a new agent task. |
 | Plan mode | A state for investigating and proposing work before implementation. |
 | Permission preset | Access restrictions and approval rules for a task. |
@@ -41,7 +45,3 @@ Use this reference when a term appears in a guide. The first group covers workin
 | Local runtime / Host | The application's local process that runs tools, connects models and stores data. |
 
 Model names identify models, not installed external agent applications. Standard, PTC, Minimal and Creator are the supplied modes; names such as Review or Repair can describe a task or a custom mode.
-
----
-
-[Leer esta página en español](/zylon-code/es/reference/glossary)

@@ -1,23 +1,30 @@
 ---
 title: "Notas de versión"
-description: "Conoce la base documentada y prepara actualizaciones visibles para usuarios."
+description: "Revisa la versión Desktop documentada y prepara una actualización."
 noindex: true
 ---
 
-## Zylon Code 0.1
+## Versión RC documentada
 
-Este manual cubre la aplicación de escritorio, la interfaz en español e inglés, la conexión de modelos de Zylon, los modos incluidos y las integraciones opcionales. El modo inicial es Estándar y la conexión de Zylon empieza con `zylon/default`.
+Este manual recoge los cambios de Desktop integrados con el entorno **0.2.1-rc.2**. La versión que muestra el producto está en **Ajustes → General**; sigue las instrucciones del binario que reciba tu organización.
 
-Consulta [Disponibilidad](/zylon-code/es/reference/availability) para comprobar los requisitos de una función. El enlace de descarga y los pasos se añadirán a [Instalación](/zylon-code/es/getting-started/installation) junto con la información de distribución para clientes.
+Estas son las principales novedades de uso que cubre la documentación:
+
+- **Conexión al despliegue:** verifica primero un dominio de Zylon con licencia. El dominio se modifica en General y el token de desarrollador en Modelos. La URL de modelos se obtiene de ese dominio.
+- **Acceso a modelos:** inicio de sesión con cuentas compatibles de ChatGPT y Claude, confirmación explícita de certificados privados y límite de salida por petición independiente de la capacidad del modelo.
+- **Modos:** Vista de desarrollo determina si se ofrecen PTC y Mínimo. Mínimo incluye ahora lectura de imágenes y compactación del historial.
+- **Automatización:** los recordatorios y su página están integrados. Puedes cambiar el horario, el nombre y la instrucción de una tarea activa sin sustituir la conversación.
+- **Plugins opcionales:** worktrees de Git, terminales persistentes, búsqueda de sesiones, títulos que siguen el chat, bucles de Ralph y delegación nativa en Codex o Claude Code tienen sus propias guías en el [catálogo](/zylon-code/es/plugins/catalog).
+- **Revisión y diagnóstico:** nueva organización de Plugins, Herramientas de desarrollo, estadísticas detalladas o compactas y atajos de tamaño de letra en Desktop.
 
 ## Antes de actualizar
 
-Anota las versiones de la aplicación y los plugins instalados. Sal de Zylon Code por completo y haz una copia de sus datos y de las carpetas de proyecto. Lee los cambios de la versión y las instrucciones de migración, si las hay.
+Conserva una copia de los datos de la aplicación y de los archivos del proyecto. Anota los plugins activos y sus versiones. Sigue las instrucciones de instalación o actualización de tu versión Desktop. Los paquetes personalizados pueden necesitar versiones compatibles; guarda su código y configuración.
 
-Después, comprueba conversaciones, credenciales, adjuntos y plugins activados. Conserva los originales hasta confirmar que la actualización funciona. Los paquetes personalizados pueden necesitar ajustes de compatibilidad; guarda su código e instrucciones.
+Una conexión existente de Zylon puede recuperar el dominio de la URL anterior, el token y los ajustes de modelos, pero sigue necesitando una licencia válida. Si el despliegue utiliza otra ruta de modelos, el administrador debe preparar `/api/gpt` antes de actualizar. Consulta con él si la verificación de licencia bloquea el inicio.
 
-Esta página describe la versión documentada. Las fechas, enlaces de descarga y procedimientos de actualización deben corresponder a la información suministrada con cada versión para clientes.
+## Comprueba después de actualizar
 
----
+Abre conversaciones, adjuntos e integraciones representativas. Comprueba el modo, el modelo y los permisos, y prueba una tarea pequeña de solo lectura con una herramienta. Revisa las reglas de automatización y los resultados reales: una entrega guardada no significa que la tarea haya terminado. Conserva los originales hasta confirmar que la instalación actualizada funciona.
 
-[Read this page in English](/zylon-code/release-notes)
+Consulta [Disponibilidad](/zylon-code/es/reference/availability) e [Instalación](/zylon-code/es/getting-started/installation) para conocer la distribución y sus requisitos.

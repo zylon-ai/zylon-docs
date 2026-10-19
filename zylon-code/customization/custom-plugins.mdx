@@ -14,14 +14,10 @@ Explain which data should survive a restart, what the interface displays and wha
 
 ## Build and install
 
-Ask Creator to inspect the available application APIs, create the plugin and package it for installation. Review its generated source, dependencies and installation scripts before enabling it.
+Start a [Creator](/zylon-code/modes/creator) conversation. Ask it to inspect the installed application APIs, create the plugin and package it as a local bundle. Creator has plugin-management tools for this work; the Plugins page does not offer an arbitrary package installation form. Review the generated source, dependencies and installation scripts before authorizing installation. A package or runtime download may need Internet access or an internal registry. Ask the agent to report the package location, activation result and recovery steps; a generated folder alone does not mean the plugin is loaded.
 
 Test both the interface and the agent's tools. Check a meaningful error and disable/re-enable behavior. A new conversation may be needed when the feature changes a mode's tools.
 
 ## Keep the feature usable
 
 Save the source, configuration and compatible application version. Zylon does not automatically maintain or translate generated and third-party plugins. Check compatibility before updating the application and keep clear instructions for removing the feature.
-
----
-
-[Leer esta página en español](/zylon-code/es/customization/custom-plugins)

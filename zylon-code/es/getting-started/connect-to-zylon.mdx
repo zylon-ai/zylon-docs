@@ -1,34 +1,55 @@
 ---
 title: "Conectar con Zylon"
-description: "Guarda el token de desarrollador del gateway y su URL base; después comprueba una petición real."
+description: "Comprueba el dominio y la licencia de Zylon y guarda una clave del gateway para acceder a sus modelos."
 noindex: true
 ---
 
-La conexión de Zylon permite utilizar los modelos aprobados por tu organización. Pide al administrador la **URL base** del gateway y un **token de desarrollador del gateway**. El token de un workspace es una credencial distinta; consulta la [guía de gestión de tokens](/es/developer-manual/get-started/token-management).
+La configuración tiene dos pasos: comprobar el **dominio y la licencia de Zylon** y guardar un **token de desarrollador** para acceder a los modelos. La licencia no sustituye a la clave de API, y la clave no activa una licencia.
 
-## Guarda la conexión
+## 1. Conecta el dominio de Zylon
 
-1. En la bienvenida o en **Ajustes → Modelos**, abre la tarjeta de conexión de Zylon.
-2. Introduce el **Token de desarrollador** y la **URL base**. Usa la URL de API completa que te facilite el administrador, por ejemplo `https://your-deployment.example/api/gpt`.
-3. Guarda los cambios. Antes de guardar, la aplicación verifica la conexión consultando su lista de modelos. Si estás editando una conexión, dejar el campo del token vacío conserva el que ya tenías.
-4. Abre el selector de modelos. El modelo inicial es `zylon/default`; pulsa **Actualizar modelos** para consultar de nuevo la lista disponible.
+En la bienvenida, introduce el **Dominio de Zylon**, por ejemplo `https://zylon.example`, y pulsa **Conectar**. Utiliza la dirección HTTP o HTTPS que te facilite el administrador, con el puerto si hace falta. No añadas una ruta de API, credenciales ni parámetros.
 
-Esta conexión utiliza la API Anthropic Messages. Si quieres conectar otro servicio, consulta [Otros proveedores y modelos locales](/zylon-code/es/models/providers) y selecciona el protocolo que admita.
+| Dirección | Dónde se utiliza |
+| --- | --- |
+| `https://zylon.example` | Dominio de Zylon en la bienvenida o en Ajustes → General. |
+| `https://zylon.example/api/gpt` | URL de los modelos, que la aplicación calcula y muestra automáticamente. |
 
-## Comprueba la conexión
+Las instrucciones de Backoffice pueden mostrar la URL completa de los modelos. Si indican `https://zylon.example/api/gpt`, escribe solo `https://zylon.example` en **Dominio de Zylon**.
 
-Selecciona un proyecto pequeño y envía:
+La bienvenida se cierra cuando la aplicación comprueba una licencia vigente que incluye Zylon Code. Este paso no se puede omitir. Para cambiar el dominio más adelante, abre **Ajustes → General → Conexión con Zylon**. Si falla la comprobación, consulta [Licencia y acceso](/zylon-code/es/getting-started/license-and-access).
+
+Si el servidor utiliza un certificado privado, puede aparecer una confirmación con el servidor, la huella, el emisor y las fechas de validez. Contrasta esos datos con el administrador antes de pulsar **Confiar y conectar**. La autorización corresponde a ese certificado y dominio.
+
+## 2. Crea una clave de API del gateway
+
+1. En Backoffice, abre **Consola de desarrollo** y selecciona el gateway que te proporcione la organización.
+2. Abre **Claves de API** y pulsa **Nueva clave de API**.
+3. Escribe un nombre, elige **Lectura y escritura** y establece una fecha de caducidad adecuada.
+4. Crea la clave y cópiala enseguida. El valor secreto solo se muestra una vez.
+
+Tu cuenta necesita acceso de Desarrollador y acceso al gateway. Si te faltan, pídeselos al administrador. Cuando hay descargas disponibles, el diálogo de creación también incluye las instrucciones para instalar Zylon Code.
+
+Utiliza una clave del **gateway**, no un token exclusivo de Workspace. La [guía de tokens de la plataforma](/es/v1.58/developer-manual/get-started/token-management) explica los tipos de token y su gestión.
+
+## 3. Guarda la clave en Desktop
+
+Abre **Ajustes → Modelos**, busca la conexión de Zylon y pega la clave en **Token de desarrollador**. La **URL de los modelos** es de solo lectura; el dominio se cambia en General. Pulsa **Guardar conexión**.
+
+Antes de guardar, la aplicación consulta los modelos para comprobar la clave. Si editas una conexión que ya funciona, deja el token vacío para conservar la clave guardada. Si falla la consulta, se mantienen los ajustes, el token y el catálogo anteriores. **Actualizar modelos** consulta de nuevo la lista sin borrar las opciones de modelos que hayas personalizado.
+
+Abre el selector de modelos y elige uno disponible. El alias inicial de Zylon es `zylon/default`.
+
+## 4. Prueba una tarea pequeña
+
+Selecciona una carpeta de proyecto y envía:
 
 > Enumera los archivos de la carpeta principal del proyecto. Lee un archivo de texto pequeño y resume para qué sirve. No modifiques archivos ni instales nada.
 
-Contrasta el resultado con los archivos de tu ordenador. Así compruebas que el modelo responde y puede utilizar una herramienta; guardar el formulario no hace esa prueba. Si falla la verificación al guardar o actualizar modelos, la aplicación conserva los ajustes, el token y el catálogo anteriores. Revisa la URL y el token e inténtalo de nuevo; un catálogo existente no confirma que una conexión nueva funcione.
+Contrasta el resultado con los archivos de tu ordenador. La licencia permite utilizar la aplicación; la consulta de modelos comprueba la conexión; esta tarea confirma que el modelo seleccionado puede responder y usar una herramienta.
 
-Guarda los tokens en su campo de credenciales. Si falla la conexión, sigue los pasos de [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models).
+Guarda la clave en su campo de credenciales. Continúa con [Tu primera tarea](/zylon-code/es/getting-started/first-task), o consulta [problemas de conexión](/zylon-code/es/troubleshooting/setup-and-models) si falla algún paso.
 
 <Frame caption="Ajustes de conexión de Zylon con las credenciales ocultas">
   <img src="/images/zylon-code/screenshots/getting-started-connect-to-zylon-es.jpg" alt="Ajustes de conexión de Zylon con las credenciales ocultas" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/getting-started/connect-to-zylon)

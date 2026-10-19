@@ -18,9 +18,11 @@ Example steering message:
 
 > Keep the current investigation, but do not install dependencies. Use the existing tests and report any unavailable checks.
 
+If you enable [Conversation-following titles](/zylon-code/plugins/conversation-titles), generated titles can evolve with later prompts. [Session search](/zylon-code/plugins/session-search) separately lets an agent retrieve earlier work; ordinary sidebar search remains a title/project search.
+
 ## Fork or resume
 
-Use **Fork** to start a related conversation with inherited history. This creates conversation history, not an isolated Git worktree or a copy of your files. Both chats can affect the same checkout. Use a separately prepared folder if you need filesystem isolation.
+Use **Fork** to start a related conversation with inherited history. This creates conversation history, not an isolated Git worktree or a copy of your files. Both chats can affect the same checkout. Use a separately prepared folder or [Git Worktrees](/zylon-code/plugins/git-worktrees) if you need separate working files. A recorded working-directory change can move later tools without moving existing shells.
 
 Reloading restores recorded history. It does not reverse changes or necessarily restore external browser state. A failed or interrupted turn can be followed by a precise recovery request after you inspect the files and running jobs.
 
@@ -29,7 +31,3 @@ For long tasks, use [goals](/zylon-code/everyday-use/goals-and-task-lists) and [
 <Frame caption="A conversation and its task controls">
   <img src="/images/zylon-code/screenshots/everyday-use-conversations-en.jpg" alt="A conversation and its task controls" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/everyday-use/conversations)

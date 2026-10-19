@@ -1,0 +1,106 @@
+name: Publish offline documentation image
+
+on:
+  workflow_dispatch:
+    inputs:
+      documentation_sha:
+        description: Reviewed full documentation commit SHA (40 lowercase hexadecimal characters)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-offline-documentation
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: '918593742895'
+  REGISTRY: 918593742895.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: zylon-docs
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Require a full reviewed commit SHA
+        env:
+          DOCS_SHA: ${{ inputs.documentation_sha }}
+        run: |
+          [[ "$DOCS_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Provide a full lowercase 40-character commit SHA.' >&2; exit 1; }
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.documentation_sha }}
+          persist-credentials: false
+      - name: Resolve immutable image tag
+        id: image
+        env:
+          DOCS_SHA: ${{ inputs.documentation_sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$DOCS_SHA"
+          printf 'tag=docs-%s\n' "$DOCS_SHA" >> "$GITHUB_OUTPUT"
+      - name: Require publishing credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          test -n "$AWS_ACCESS_KEY_ID" && test -n "$AWS_SECRET_ACCESS_KEY" || {
+            echo 'Grant this repository access to AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY before publishing.' >&2
+            exit 1
+          }
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          allowed-account-ids: ${{ env.AWS_ACCOUNT_ID }}
+      - name: Require the provisioned immutable repository and skip existing tags
+        id: repository
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+        run: |
+          test "$(aws sts get-caller-identity --query Account --output text)" = "$AWS_ACCOUNT_ID"
+          mutability=$(aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --query 'repositories[0].imageTagMutability' --output text)
+          test "$mutability" = IMMUTABLE || { echo 'Provision the immutable zylon-docs ECR repository before publishing.' >&2; exit 1; }
+          existing_tag=$(aws ecr list-images --repository-name "$ECR_REPOSITORY" --filter tagStatus=TAGGED --query "imageIds[?imageTag=='$IMAGE_TAG'].imageTag" --output text)
+          if [ -n "$existing_tag" ]; then
+            echo 'exists=true' >> "$GITHUB_OUTPUT"
+            echo 'Immutable documentation tag already exists; keeping its published image.'
+          else
+            echo 'exists=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile and validate the actual runtime image
+        if: steps.repository.outputs.exists == 'false'
+        run: |
+          docker build -f offline/Dockerfile -t zylon-docs:release .
+          bash offline/check-container.sh zylon-docs:release
+      - name: Login to Amazon ECR
+        if: steps.repository.outputs.exists == 'false'
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Set up QEMU
+        if: steps.repository.outputs.exists == 'false'
+        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        if: steps.repository.outputs.exists == 'false'
+        uses: docker/setup-buildx-action@v4
+      - name: Publish the independent documentation image
+        if: steps.repository.outputs.exists == 'false'
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          DOCS_SHA: ${{ inputs.documentation_sha }}
+        run: |
+          docker buildx build -f offline/Dockerfile \
+            --platform linux/amd64,linux/arm64 --provenance=false \
+            --label "org.opencontainers.image.revision=$DOCS_SHA" \
+            --tag "$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" --push .
+      - name: Report the published image digest
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+        run: |
+          digest=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids "imageTag=$IMAGE_TAG" --query 'imageDetails[0].imageDigest' --output text)
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
+          printf '### Documentation image\n\n`%s/%s:%s`\n\nDigest: `%s`\n' "$REGISTRY" "$ECR_REPOSITORY" "$IMAGE_TAG" "$digest" >> "$GITHUB_STEP_SUMMARY"

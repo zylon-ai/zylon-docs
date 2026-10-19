@@ -8,12 +8,14 @@ You normally request an outcome in natural language. The agent chooses tools fro
 
 | Capability / names | Purpose and guide |
 | --- | --- |
+| `working_directory` | Read or change the conversation's working directory; existing processes and permissions stay separate. |
+| `create_worktree` | [Create and enter a separate Git checkout](/zylon-code/plugins/git-worktrees), when enabled. |
 | `read`, `read_image`, `write`, `edit`, `glob`, `grep` | [Inspect and change project files](/zylon-code/tools/files-and-code). Images need model support. |
 | `bash`, `pwsh`; `job_list`, `job_output`, `job_kill` | [Commands and background jobs](/zylon-code/tools/shell-and-jobs). OS and mode choose the shell. |
 | `web_fetch`; optional `web_search` | [Read URLs](/zylon-code/tools/web); [search](/zylon-code/plugins/web-search) needs a configured provider. |
 | `skill` | Load [reusable instructions](/zylon-code/customization/skills). |
 | `ask_user_question`, `exit_plan_mode`, `todo_write`, `create_goal`, `get_goal`, `update_goal` | [Questions/planning](/zylon-code/modes/plan-mode) and [task progress](/zylon-code/everyday-use/goals-and-task-lists). |
-| `subagent`, `subagent_fork`, `list_subagent_models`, `list_agents`, `interrupt_agent` | [Delegate and inspect work](/zylon-code/agents/delegation). |
+| `subagent`, `subagent_fork`, `list_subagent_models`, `send_message`, `list_agents`, `interrupt_agent` | [Delegate and inspect work](/zylon-code/agents/delegation). |
 | `workflow` | [Orchestrate an explicitly requested workflow](/zylon-code/tools/workflows). |
 | `run_code` | [Programmatic tool calling](/zylon-code/modes/ptc). |
 | `diff_approval_annotate` | [Review annotations](/zylon-code/plugins/diff), when Diff Review is enabled. |
@@ -24,16 +26,13 @@ You normally request an outcome in natural language. The agent chooses tools fro
 | `stagehand_navigate`, `stagehand_observe`, `stagehand_act`, `stagehand_extract`, `stagehand_screenshot`, `stagehand_tabs`; DevTools tools | [Browser automation](/zylon-code/plugins/browser-control); provider-specific catalog. |
 | Computer-use tools | [Desktop control](/zylon-code/plugins/computer-control); runtime/OS permissions required. |
 | `lsp` | [Optional symbol navigation](/zylon-code/plugins/language-servers). |
-| `terminal_open`, `terminal_list`, `terminal_read`, `terminal_send`, `terminal_signal`, `terminal_close` | [Persistent terminals](/zylon-code/tools/shell-and-jobs), when configured. |
-| `schedule_create`, `schedule_list`, `schedule_update`, `schedule_delete` | [Automated follow-ups](/zylon-code/plugins/automation-tasks), when enabled. |
-| `session_search`, `session_trace`, `session_event_read`, `session_event_search`, `session_event_trace` | Inspect saved conversation events in configurations that expose session-query tools. See [conversations](/zylon-code/everyday-use/conversations). |
+| `terminal_open`, `terminal_list`, `terminal_read`, `terminal_send`, `terminal_signal`, `terminal_close` | [Persistent terminals](/zylon-code/plugins/persistent-terminals), when enabled. |
+| `schedule_create`, `schedule_list`, `schedule_update`, `schedule_delete` | [Built-in automated follow-ups](/zylon-code/plugins/automation-tasks) in Standard, PTC and Creator; unavailable to delegated children. |
+| `session_search`, `session_trace`, `session_event_read`, `session_event_search`, `session_event_trace` | [Search and read earlier conversations](/zylon-code/plugins/session-search), when the optional plugin is enabled. |
 | `load_workspace_dependencies` | Discover a prepared document/runtime environment. See [documents](/zylon-code/tools/documents). |
-| `str_replace_editor`, `ralph` | Optional alternative file editor and iterative workflow with limits. See [files](/zylon-code/tools/files-and-code) and [workflows](/zylon-code/tools/workflows). |
+| `ralph` | [Repeat a bounded task with fresh agents](/zylon-code/plugins/ralph-loops), when enabled and explicitly requested. |
+| `subagent_codex`, `subagent_claude_code` | [External native agents](/zylon-code/advanced/external-agents), when their plugins and native accounts are ready. |
 
 Some tools in this reference require an optional integration; they are not all available in every chat. The installed tool catalog and [availability guide](/zylon-code/reference/availability) identify what your deployment exposes.
 
 A successful tool call is different from the model's description of it. Expand the result and inspect errors, cancellation and output limits. For a missing tool, check mode, enabled plugins and prerequisites before requesting broader permissions.
-
----
-
-[Leer esta página en español](/zylon-code/es/tools/catalog)

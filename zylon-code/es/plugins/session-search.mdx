@@ -1,0 +1,40 @@
+---
+title: "Búsqueda de sesiones"
+description: "Permite al agente localizar y consultar trabajo anterior del mismo proyecto."
+noindex: true
+---
+
+Búsqueda de sesiones permite al agente recuperar trabajo anterior sin que tengas que copiar una conversación entera en una tarea nueva. Busca conversaciones guardadas y después consulta los mensajes o las acciones relevantes. Sirve para recuperar una decisión, un error que ya investigaste o las comprobaciones de un cambio anterior.
+
+Es distinta de la búsqueda de la barra lateral, que encuentra chats por título o proyecto. Este plugin da al agente herramientas para buscar contenido; no añade todos los chats anteriores a cada petición al modelo.
+
+## Activa y elige el proyecto
+
+Abre **Plugins → Plugins experimentales → Más** y activa **Búsqueda de sesiones**. El plugin experimental empieza desactivado y aporta herramientas de solo lectura en todos los modos, incluido Mínimo.
+
+El acceso se limita a conversaciones autorizadas con el mismo directorio de proyecto registrado. Si abres una copia o un worktree como otro proyecto, su historial accesible puede ser distinto. Sin directorio de proyecto registrado, una conversación solo puede consultar su propio contenido.
+
+## Ejemplo: recupera una decisión antes de editar
+
+> Busca en las conversaciones anteriores de este proyecto la decisión sobre los resultados de búsqueda vacíos. Lee la discusión y las comprobaciones registradas por las herramientas. Resume lo acordado, identifica la conversación de origen y comprueba si los archivos actuales siguen coincidiendo. No edites nada.
+
+Un resultado útil sigue tres pasos: encontrar una conversación relevante, leer las comprobaciones y contrastarlas con el proyecto actual. Los nombres de archivo, los errores exactos y los términos poco comunes ayudan a acotar la búsqueda.
+
+| Herramienta | Qué recupera |
+| --- | --- |
+| `session_search` | Conversaciones anteriores con títulos y fragmentos relevantes; excluye el chat actual. |
+| `session_event_search` | Mensajes o eventos coincidentes dentro de una conversación autorizada. |
+| `session_event_read` | Un evento completo y, si se solicita, un resumen de los que lo rodean. |
+| `session_trace`, `session_event_trace` | Conversaciones relacionadas o las relaciones registradas entre eventos. |
+
+Puedes describir el resultado en lenguaje normal; el agente elige las llamadas.
+
+## Utiliza los resultados con criterio
+
+Una discusión anterior refleja lo que se sabía entonces. Una prueba puede corresponder a una versión antigua del código. Pide al agente que lea los archivos actuales antes de dar esa información por vigente. Si aparecen demasiadas coincidencias o se alcanza el límite, acota la búsqueda; un resultado incompleto no demuestra que una decisión nunca se tomara.
+
+El índice de contenido es local y se crea en la primera búsqueda. Se vuelve a crear al reiniciar la aplicación o al desactivar y reactivar el plugin. Desactivarlo retira las herramientas sin borrar las conversaciones. Utiliza un [resumen de tarea](/zylon-code/es/hardening/session-state) para el estado breve que quieras facilitar directamente al siguiente chat.
+
+<Frame caption="Componentes de Búsqueda de sesiones, desactivados en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-session-search-es.jpg" alt="Componentes de Búsqueda de sesiones, desactivados en este ejemplo" />
+</Frame>

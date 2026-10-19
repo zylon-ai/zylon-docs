@@ -1,35 +1,37 @@
 ---
 title: "Automation tasks"
-description: "Schedule local work and check its delivery and result."
+description: "Schedule local work, edit its timing and inspect saved deliveries."
 noindex: true
 ---
 
-Automation tasks schedule local work for later or on a recurring basis. The feature is included but disabled in a new installation. Enable **Plugins → Official → Automation tasks** and follow any restart notice.
+Automation tasks are built in. Standard, PTC and Creator can create reminders; Minimal and delegated subagents do not receive the reminder tools. The page is available from the sidebar without enabling a separate automation bundle.
 
-## Create a task
+## Create and verify a task
 
-Choose **Automation tasks → New**. This opens a conversation where you request the schedule:
+Choose **Automation tasks → New** and send a precise schedule request:
 
-> Create a task named Daily review. Every weekday at 09:00 Europe/Madrid, read this project's checklist and report pending work. Do not edit files.
+> Create a task named Daily review. Every weekday at 09:00 Europe/Madrid, read this project's checklist and report pending work. Do not edit files or install packages.
 
-Check the saved card's instruction, recurrence, time zone, next run and linked conversation. Use **Rules** to edit it and **Delivery records** to inspect scheduled messages.
+Check the saved task name, instruction, recurrence, time zone, next run and linked conversation. A recurring request should show a recurring rule, not a one-time date. The created task card can open its details in the right panel.
 
-## Keep Zylon Code running
+## Edit a task
 
-The application must remain running and the computer awake. There is no cloud worker or automatic wake-up. Work continues in the original conversation with its model and credentials.
+Open the task and use **Rules** to change its name, instruction or run time. Choose daily, weekly, weekday, fixed interval, one-time or custom five-field cron timing, then **Save changes**. Changes remain a draft until saved; Cancel restores the saved values. A conflicting save requires reviewing the latest rule before retrying. Inactive tasks are read-only.
 
-Use a named time zone such as `Europe/Madrid`. A daily local time follows daylight-saving changes; an interval of 24 hours does not. Intervals must be at least 60 seconds. After a delay or restart, a recurring task delivers only the latest missed occurrence; a one-time task can arrive late.
+Use the list's search and **All**, **Enabled** or **Inactive** filter. **Records** shows saved deliveries, with older records loaded on demand. The conversation header also shows a clock when it has active reminders. The linked-conversation action opens the original chat when it is available; inspecting a task does not unarchive a chat.
 
-## Stop or delete
+## Keep the application running
 
-There is no individual pause control. Disabling the bundle keeps its records, and re-enabling it can deliver a missed occurrence. **Delete task** removes the task and its delivery records after confirmation, while keeping the conversation.
+The computer must remain awake and Zylon Code must remain running. There is no cloud worker or automatic wake-up. Work continues in the original conversation with its model and credentials.
 
-A delivery record means the scheduled message was inserted, not that the agent completed it. Check the conversation for its result. Failed execution has no separate retry timer, and crash recovery can duplicate a delivery.
+A named zone such as `Europe/Madrid` follows daylight-saving changes for daily or weekly times; an elapsed interval does not. Intervals must be at least 60 seconds. After a restart, an overdue one-time task can arrive late, and a recurring task delivers only its latest missed occurrence.
+
+## Interpret delivery and delete safely
+
+A delivery record confirms that a message entered the conversation inbox, not that the agent finished its work. Read the conversation for actual results. A crash during delivery can cause a duplicate; saved history is bounded and older records can be unavailable.
+
+A delivered one-time task becomes inactive and remains under All or Inactive until deletion. There is no individual pause control. **Delete task** requires confirmation and removes the task and its saved delivery records. It retains the conversation and any message already queued there.
 
 <Frame caption="A demo automation task scheduled for 2099">
   <img src="/images/zylon-code/screenshots/plugins-automation-tasks-en.jpg" alt="A demo automation task scheduled for 2099" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/plugins/automation-tasks)

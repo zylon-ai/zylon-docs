@@ -8,9 +8,9 @@ Models have finite context windows. Messages, instructions, tool definitions and
 
 ## Compact a conversation
 
-Standard, PTC and Creator include compaction. Use **Compact** in the command menu or `/compact` when available. Compaction replaces part of the active model context with a summary; it does not delete the project files or turn the summary into independent proof of earlier results. Recorded conversation history remains the place to inspect actual tool activity.
+Standard, PTC, Minimal and Creator include compaction. Use **Compact** in the command menu or `/compact` when available. Compaction replaces part of the active model context with a summary; it does not delete the project files or turn the summary into independent proof of earlier results. Recorded conversation history remains the place to inspect actual tool activity.
 
-Minimal does not include the built-in compaction capability. Missing commands can reflect the mode rather than a broken installation.
+Run manual compaction when the agent is idle. If the summary fails or is truncated, the selected original history is retained; inspect the error and check the model's configured budgets before retrying. Compaction can also happen automatically as context fills.
 
 ## Preserve what matters
 
@@ -23,7 +23,3 @@ Keep durable project rules in [instructions](/zylon-code/customization/project-i
 ## Start a fresh task
 
 Use a new conversation for an unrelated objective. A fork can retain useful history but shares files unless you prepare another checkout. Check current files and jobs after interruption or restart; earlier model descriptions can be stale. [Recovery](/zylon-code/troubleshooting/recovery) explains what to inspect.
-
----
-
-[Leer esta página en español](/zylon-code/es/everyday-use/long-conversations)

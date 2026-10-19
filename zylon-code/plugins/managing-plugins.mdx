@@ -1,35 +1,34 @@
 ---
 title: "Manage plugins"
-description: "Install bundles and control their activation, configuration and removal."
+description: "Find supplied features, enable optional bundles and inspect their configuration."
 noindex: true
 ---
 
-Open **Plugins** in the sidebar to enable supplied features, install bundles and open feature settings. Shell, Agent execution and Subagent cards open their configuration pages.
+Open **Plugins** in the sidebar. The page separates **Built-in plugin settings**, **Experimental plugins** and any additional installed plugins. **Settings → Built-in plugins** is the component inventory, where you inspect runtime status rather than enable each internal component separately.
 
-## Enable an included feature
+## Enable a supplied feature
 
-Use its switch and follow any restart notice. When the feature changes the agent's tools, start a new conversation to check it. Each feature's guide explains what happens to its data when disabled.
+1. Find its card. Use **More** beside **Experimental plugins** for features such as worktrees, persistent terminals or session search.
+2. Open the details and read what it adds, its prerequisites and its data handling.
+3. Turn on its switch. Some entries need a download first; wait for the reported outcome and follow any restart notice.
+4. Check the feature in a small task. A switch that is on does not prove a provider, credential or external application is ready.
 
-## Install a bundle
+Enabled features from More also appear on the main list. Turning one off removes it from that main list but leaves it available in More. Built-in feature data and credentials follow the rules in each guide.
 
-1. Choose the installation action.
-2. Enter the supported source: a package and version, Git source, tarball or absolute local bundle folder.
-3. Review the code-trust and installation-script prompts.
-4. Finish installation, then enable the bundle or choose **Enable now** if offered.
-5. Check for activation errors and try its documented feature.
+## Configure and refresh
 
-Use packages prepared for the Zylon Code plugin manager. Downloading a general library does not make it an agent feature. Integrations such as browser control can also need provider configuration from Creator or your administrator.
+Shell, Agent execution and Subagent have their own forms under **Built-in plugin settings**. Change the values and choose **Save**; leaving a staged form discards unsaved edits. A bundle can also offer configuration for individual components in its details.
 
-## Update or remove
+Use **Refresh** to reload the list. A failed refresh can keep previously loaded cards visible with an error; retry before assuming they show the current state.
 
-Keep the bundle's source and configuration before updating it. Follow its instructions for reinstalling a version and restarting. Disable or uninstall it through Plugins; data retention and credential removal depend on the feature.
+## Installation and removal
 
-The default package source is the official npm registry. Your organization can configure another registry. If installation or activation fails, use [Plugin and MCP problems](/zylon-code/troubleshooting/plugins-and-mcp).
+This Zylon build does not expose the general **Add plugin** installation dialog or a public plugin market. Ask your administrator about adding a package that is not offered. Creator can prepare a custom feature, but it still needs review and an approved installation path.
+
+Switching off deselects a feature without uninstalling its package or undoing its file changes. Installation-supplied bundles have no uninstall action. An on-demand entry can offer **Update** when its installed version differs from the version offered by your application. Keep its configuration and follow the displayed result; a failed update can leave the package unavailable.
+
+For errors, use [Plugin and MCP problems](/zylon-code/troubleshooting/plugins-and-mcp).
 
 <Frame caption="Official plugins and their activation controls">
   <img src="/images/zylon-code/screenshots/plugins-managing-plugins-en.jpg" alt="Official plugins and their activation controls" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/plugins/managing-plugins)

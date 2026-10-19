@@ -1,27 +1,25 @@
 ---
 title: "Mínimo"
-description: "Utiliza una shell persistente e instrucciones fijas como referencia controlada."
+description: "Utiliza una shell persistente, imágenes y compactación con pocas herramientas."
 noindex: true
 ---
 
-Mínimo incluye una shell persistente y unas instrucciones de sistema fijas. Está pensado para tareas pequeñas y comparaciones controladas. No carga automáticamente las instrucciones del proyecto, habilidades, planificación, objetivos ni compactación de los modos más completos.
+Mínimo utiliza instrucciones de sistema fijas, una shell persistente para tu sistema operativo, lectura de imágenes y compactación del historial. No carga automáticamente instrucciones del proyecto, habilidades, planificación integrada, objetivos ni delegación habitual. Los plugins globales opcionales pueden añadir herramientas.
 
-## Utilízalo para una tarea sencilla
+Si no aparece al crear una tarea, activa **Ajustes → General → Vista de desarrollo**. Elige Mínimo antes del primer mensaje.
 
-Por ejemplo:
+## Prueba una tarea acotada
 
-> Ejecuta las pruebas existentes de este módulo, identifica el comportamiento que falla y explica la causa. No edites archivos ni instales paquetes.
+> Ejecuta las pruebas del analizador que ya están instaladas en el proyecto. Identifica el comportamiento que falla y explica la causa con la salida relevante. No edites archivos ni instales paquetes.
 
-Consulta los comandos y sus resultados. La shell puede leer, escribir y ejecutar scripts si los permisos lo permiten; disponer de menos herramientas no hace que el modo sea automáticamente más seguro.
+Consulta los comandos y sus resultados. La shell puede leer, escribir y ejecutar scripts si los permisos lo permiten. Disponer de menos herramientas no hace que la tarea sea automáticamente más segura.
 
-Si el repositorio tiene reglas en `AGENTS.md`, facilítalas en la petición o utiliza Estándar, que sí incluye su lectura automática.
+La shell conserva su estado entre llamadas. La lectura de imágenes necesita un modelo configurado para aceptarlas. La compactación automática y el comando `/compact`, cuando el agente está inactivo, resumen el contexto anterior; consulta la actividad original registrada si necesitas sus detalles.
+
+## Facilita las reglas del proyecto
+
+Mínimo no utiliza el lector habitual de instrucciones de `AGENTS.md`. Incluye las reglas relevantes en la petición o elige [Estándar](/zylon-code/es/modes/standard). La compactación no añade las convenciones que falten.
 
 ## Compara en las mismas condiciones
 
-Para comparar con otro modo, mantén el modelo, permisos, petición y archivos iniciales. Abrir un chat nuevo no restaura los archivos de un intento anterior.
-
-Para trabajo habitual o largo, empieza por [Estándar](/zylon-code/es/modes/standard). Si necesitas una selección distinta de herramientas, puedes [crear un modo personalizado](/zylon-code/es/customization/custom-modes).
-
----
-
-[Read this page in English](/zylon-code/modes/minimal)
+Mantén el modelo, los permisos, la petición, los plugins globales activos y los archivos iniciales. Abrir un chat nuevo no restaura los archivos. Para trabajar con habilidades, planificación o agentes locales, empieza por Estándar; utiliza un [modo personalizado](/zylon-code/es/customization/custom-modes) si necesitas otra combinación.

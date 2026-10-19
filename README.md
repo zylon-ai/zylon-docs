@@ -43,9 +43,9 @@ After publishing, verify the deployed home, section pages, and old bookmarks wit
 
 ## Zylon Code manual
 
-The bilingual user manual starts at `/zylon-code` (English) and `/zylon-code/es` (Spanish). It has 78 pages per language with its own complete sidebar. `docs.json` keeps the existing Zylon navigation under the Zylon product and adds a hidden Zylon Code product. Each manual page carries `noindex: true`. This is unlisted documentation: anyone with the URL can read it after deployment. [Mintlify's hidden-page reference](https://www.mintlify.com/docs/organize/hidden-pages) explains navigation and indexing behavior.
+The bilingual user manual starts at `/zylon-code` (English) and `/zylon-code/es` (Spanish). It has 86 pages per language with its own complete sidebar. `docs.json` keeps the existing Zylon navigation under the Zylon product and adds a hidden Zylon Code product. Each manual page carries `noindex: true`. This is unlisted documentation: anyone with the URL can read it after deployment. [Mintlify's hidden-page reference](https://www.mintlify.com/docs/organize/hidden-pages) explains navigation and indexing behavior.
 
-Edit the matching English/Spanish MDX files together and keep both sidebar groups in the same order. The language link at the foot of each page opens its matching translation; the native language chooser opens the language's landing page.
+Edit the matching English/Spanish MDX files together and keep both sidebar groups in the same order. Use the native language picker to change language; do not add translated-page links below the article. Spanish is the default language for navigation entry points.
 
 Before previewing:
 
@@ -55,6 +55,10 @@ mint broken-links
 mint dev --port 3010 --no-open
 ```
 
-The 58 product screenshots (29 per language) live in `images/zylon-code/screenshots/`. Capture the Spanish application first, then repeat the same states in English. Use an isolated demo project and retain descriptive alt text. Current captures use the Desktop build from `codex/zylon-reasoning` and a local demo model service that runs real file, test and agent tools. Timing shown in these fixtures is not a model benchmark. Gateway model discovery and reasoning were checked separately with the live Zylon service. Preserve the native JPEG exports without changing their pixels. The first-task example archive lives in `files/zylon-code/first-task-project.zip`; it intentionally contains a boundary bug for the tutorial.
+Product screenshots live in `images/zylon-code/screenshots/`, with a localized image for each interface state. Refresh the Spanish application states, then repeat them in English. Use an isolated Desktop build of the documented `main` revision, a demonstration project and a local model fixture; label fixture/model limitations in the capture record and never publish credentials. License bypasses are limited to a local capture build and loopback domains, and must never enter a release or this documentation repository. The first-task archive lives in `files/zylon-code/first-task-project.zip`; it intentionally contains the boundary bug used by the tutorial.
 
 Review the two landing pages, a nested plugin guide and an existing main-doc page. Site search is unavailable in local preview; check hosted search and sitemap exclusion after a preview deployment. Optional provider instructions require separate testing with their runtime and credentials.
+
+## Offline documentation
+
+`offline/` renders the same registered MDX pages and local assets as a standalone site under `/docs`. It uses its own open-source renderer, navigation and local search; it does not ship the Mintlify application or require Enterprise export. External videos remain clearly marked online links. See [the offline build guide](offline/README.md) for build, container and verification steps.

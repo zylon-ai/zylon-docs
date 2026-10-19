@@ -10,14 +10,18 @@ A mode selects the tools and instructions an agent uses for a task. The model is
 | --- | --- | --- |
 | [Standard](/zylon-code/modes/standard) | Everyday coding and file work | Direct tools, skills, planning, goals, delegation and workflows. |
 | [PTC](/zylon-code/modes/ptc) | Batch tasks and grouped results | The agent calls tools from a TypeScript program. |
-| [Minimal](/zylon-code/modes/minimal) | Small tasks and controlled comparisons | A persistent shell and fixed instructions. |
+| [Minimal](/zylon-code/modes/minimal) | Small tasks and controlled comparisons | A persistent shell, image reading and history compaction. |
 | [Creator](/zylon-code/modes/creator) | Creating tools, plugins and modes | Standard's capabilities plus application inspection and extension tools. |
 
 ## Choose before starting
 
-Select a mode when creating a task. In Settings, mode cards set the default for future tasks. A conversation that has already started keeps its tools; changing the default does not turn it into another mode.
+Select a mode when creating a task. In **Settings → Agent presets**, mode cards set the default for future tasks. A conversation that has already started keeps its recorded mode; changing the default does not turn it into another mode. Optional global plugins can still add or remove tools in existing conversations.
 
 **View configuration** is read-only. Use Creator to [create a mode](/zylon-code/customization/custom-modes), then verify it in a new conversation.
+
+## When PTC or Minimal is missing
+
+Open **Settings → General** and enable **Developer view**. Turning it off hides the built-in PTC and Minimal choices and resets a saved built-in PTC or Minimal default to Standard. Existing conversations retain their mode. Turning Developer view on again does not restore the old default.
 
 ## Planning and permissions
 
@@ -28,7 +32,3 @@ Start with Standard. Try another mode when you have a specific need, and compare
 <Frame caption="The available task modes">
   <img src="/images/zylon-code/screenshots/modes-overview-en.jpg" alt="The available task modes" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/modes/overview)

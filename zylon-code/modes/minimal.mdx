@@ -1,27 +1,25 @@
 ---
 title: "Minimal"
-description: "Use a persistent shell and fixed prompt as a controlled baseline."
+description: "Use a persistent shell, image reading and compaction for a small tool baseline."
 noindex: true
 ---
 
-Minimal contains one persistent shell tool and a fixed system prompt. It does not load the built-in skill system, project-instruction loader, planning, goals or context compaction supplied by the richer presets.
+Minimal uses a fixed system prompt, a persistent platform shell, image reading and history compaction. It does not automatically load project instructions, skills, integrated planning, goals or ordinary delegation. Optional global plugins can still add tools.
 
-## When to use it
+Enable **Settings → General → Developer view** if Minimal is absent from the new-task picker. Select it before the first message.
 
-Use Minimal for controlled experiments and small tasks where shell commands are enough. Fewer tools do not make it automatically easier for beginners or safer. The shell can still read files, edit them and execute scripts when permissions allow it.
+## Try a bounded task
 
-Example:
+> Run the project's already-installed parser tests. Identify the failing behavior and report the cause with the relevant output. Do not edit files or install packages.
 
-> Run the project's already-installed focused tests, identify the failing behavior and report the cause. Do not edit files or install packages.
+Inspect the shell commands and actual output. The shell can read files, write them and execute scripts when permissions allow it. A smaller tool catalog does not make the task automatically safer.
 
-Inspect the shell commands and actual output. If the project requires conventions in AGENTS.md, Minimal does not automatically load them through the standard instruction plugin; provide the relevant instruction explicitly or choose Standard.
+The persistent shell retains state between calls. Image reading requires a model configured to accept images. Automatic compaction and the idle-session `/compact` command summarize older context; review the original recorded activity when the detail matters.
+
+## Provide project rules explicitly
+
+Minimal does not use the standard instruction loader for `AGENTS.md`. Put the relevant rules in your task or choose [Standard](/zylon-code/modes/standard). Compaction does not add missing project conventions.
 
 ## Compare fairly
 
-Keep the model, permissions, prompt and starting files identical across runs. Restore the checkout between experiments using your normal project process. A new chat alone does not reset files.
-
-For long work, reusable skills, planning or delegation, choose [Standard](/zylon-code/modes/standard). To define a different baseline, create a [custom mode](/zylon-code/customization/custom-modes) rather than treating the built-in configuration viewer as an editor.
-
----
-
-[Leer esta página en español](/zylon-code/es/modes/minimal)
+Keep the model, permissions, prompt, enabled global plugins and starting files identical across runs. A new conversation does not reset files. For normal work involving skills, planning or local subagents, start with Standard; use a [custom mode](/zylon-code/customization/custom-modes) when you need a different composition.

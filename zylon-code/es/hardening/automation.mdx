@@ -18,7 +18,7 @@ Fin: después del informe, si faltan requisitos o si se deniega el acceso.
 No publicar, desplegar ni repetir indefinidamente una prueba que falla.
 ```
 
-Ejecuta primero el procedimiento a mano. Comprueba que el informe sirve tanto cuando las pruebas pasan como cuando aparece un fallo realista. Después puedes plantearte las [Tareas automatizadas](/zylon-code/es/plugins/automation-tasks), si tu instalación las tiene habilitadas.
+Ejecuta primero el procedimiento a mano. Comprueba que el informe sirve tanto cuando las pruebas pasan como cuando aparece un fallo realista. Después puedes crear una regla en [Automatización](/zylon-code/es/plugins/automation-tasks). Programar la ejecución y definir el procedimiento son tareas distintas: revisa el proyecto, la hora y los permisos antes de guardar la regla.
 
 ## Distingue la organización de la ejecución
 
@@ -42,10 +42,8 @@ Utiliza un [modo personalizado](/zylon-code/es/customization/custom-modes) y [pe
 
 Registra los fallos, las comprobaciones omitidas y el trabajo parcial para que la siguiente ejecución o persona pueda entender lo ocurrido. Evita avisos que solo digan «tarea terminada»: indica el resultado real y si hace falta intervenir.
 
+Si necesitas varios intentos dentro de una tarea, consulta los [bucles Ralph](/zylon-code/es/plugins/ralph-loops). Fija un límite de iteraciones y una comprobación concreta para dar el trabajo por terminado. Una regla programada inicia el trabajo a una hora; un bucle lo repite dentro de esa ejecución. Ninguno hace fiable un criterio de éxito ambiguo.
+
 Por último, [comprueba si el hardening está ayudando](/zylon-code/es/hardening/adoption-and-measurement) antes de ampliar la automatización.
 
 Lecturas: Walkinglabs sobre [ejecuciones con límites](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-13-loop-engineering/) y [dependencias entre pasos](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-14-graph-engineering/).
-
----
-
-[Read this page in English](/zylon-code/hardening/automation)

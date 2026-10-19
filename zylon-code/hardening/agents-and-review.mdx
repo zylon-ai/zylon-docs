@@ -20,6 +20,8 @@ Two read-only investigations can often run together: one checks the screen integ
 
 Zylon's [subagents](/zylon-code/agents/delegation) and [Agent Teams](/zylon-code/plugins/agent-teams) are different ways to coordinate work. Teams add a roster, messages and a shared task board. Neither guarantees isolated files or automatic conflict prevention. Members can share the same project directory.
 
+When a task needs separate working files, consider [Git worktrees](/zylon-code/plugins/git-worktrees). Choose them deliberately and review how the changes will be integrated. Isolation of files does not establish that the final combined implementation works.
+
 Do not ask several agents to rewrite the same function simultaneously. An apparently successful edit can overwrite another agent's work or make its test results stale. Recheck the combined implementation after integration, especially where the edits interact.
 
 ## Make handoffs explicit
@@ -46,7 +48,3 @@ Use delegation to reduce a specific bottleneck. If coordination and duplicate re
 Next, learn how to [automate a bounded procedure](/zylon-code/hardening/automation).
 
 Further reading: Walkinglabs on [dependencies and agent coordination](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-14-graph-engineering/) and [Anthropic's workflow patterns](https://www.anthropic.com/engineering/building-effective-agents).
-
----
-
-[Leer esta página en español](/zylon-code/es/hardening/agents-and-review)

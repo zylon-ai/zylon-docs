@@ -1,6 +1,6 @@
 ---
 title: "Privacidad y servicios externos"
-description: "Comprende el almacenamiento local y los datos que utilizan modelos, herramientas y plugins."
+description: "Comprende el almacenamiento local, la comprobación de licencia y los servicios a los que pueden acceder las tareas."
 noindex: true
 ---
 
@@ -10,12 +10,14 @@ Zylon Code guarda las conversaciones y los ajustes de proyecto en tu ordenador. 
 
 | Función | Destino |
 | --- | --- |
-| Conexión de modelos de Zylon | El gateway configurado y los servicios que ejecutan sus modelos. |
+| Comprobación de licencia | La dirección pública de licencias del dominio de Zylon configurado. Esta petición no incluye el token de desarrollador. |
+| Conexión de modelos de Zylon | La instalación configurada y los servicios que ejecutan sus modelos. |
 | Otro proveedor | El servicio de modelos de ese proveedor. |
 | MCP | El servidor conectado o los servicios que utilice un comando MCP local. |
 | Lectura y búsqueda web | La página solicitada o el proveedor de búsqueda. |
-| Instalación de plugins | El registro de paquetes o la fuente elegida. |
-| Comandos y acciones del navegador | Los servicios que utilice el comando o la página. |
+| Comandos, extensiones y acciones del navegador | Los servicios que utilice cada función. |
+
+El dominio y el resultado de una comprobación de licencia correcta se guardan con los ajustes. Los tokens de desarrollador se almacenan por separado, como credenciales. También se guarda la autorización del certificado si aceptas expresamente un certificado privado del servidor.
 
 Trabajar con una aplicación local no significa que toda la tarea se procese en tu ordenador. Un gateway interno tampoco impide que una herramienta o un plugin contacte con otro servicio. [Red y funcionamiento sin conexión](/zylon-code/es/advanced/network-and-offline) explica las restricciones gestionadas por la organización.
 
@@ -23,8 +25,6 @@ Trabajar con una aplicación local no significa que toda la tarea se procese en 
 
 Usa los proveedores y las integraciones que apruebe tu organización. Guarda los tokens en los campos protegidos. Revisa exportaciones, capturas, resultados de comandos y archivos de diagnóstico antes de compartirlos.
 
-Los plugins de terceros ejecutan código local y pueden realizar sus propias peticiones de red. Comprueba sus requisitos y la política de datos del proveedor antes de activarlos. [Permisos](/zylon-code/es/configuration/permissions) explica cómo limitar las operaciones de una tarea.
+Algunas credenciales reconocibles pueden aparecer ocultas en los mensajes enviados. Solo cambia cómo se dibujan: al copiar el texto o enviarlo al modelo se conserva el valor original. Evita poner secretos en el propio mensaje; ocultarlos en pantalla no los elimina.
 
----
-
-[Read this page in English](/zylon-code/configuration/privacy)
+Las extensiones y los comandos locales pueden ejecutar código y realizar sus propias peticiones de red. Comprueba sus requisitos y la política de datos del proveedor antes de activarlos. [Permisos](/zylon-code/es/configuration/permissions) explica cómo limitar las operaciones de una tarea.

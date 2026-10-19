@@ -8,23 +8,19 @@ Este plugin experimental revisa automáticamente las acciones que necesitan auto
 
 ## Actívalo para una tarea
 
-1. Activa **Revisión automática de autorización** en **Plugins → Oficiales**.
+1. Activa **Revisión automática de autorización** en **Plugins → Plugins experimentales**.
 2. Abre el selector de permisos de la conversación.
 3. Selecciona **Revisión automática** y lee la confirmación.
 4. Confirma si aceptas su comportamiento y comprueba el permiso activo.
 
 <Warning>
-La revisión automática funciona sin sandbox. El mismo modelo que utiliza el agente revisa las llamadas a herramientas, incluidas las internas de PTC. Puede permitir o rechazar una acción por error y consume tokens adicionales. Las acciones rechazadas vuelven a ti para que decidas si las autorizas.
+La revisión automática funciona sin sandbox. El mismo modelo que utiliza el agente revisa las llamadas a herramientas, incluidas las internas de PTC. Puede permitir o rechazar una acción por error y consume tokens adicionales. Las acciones rechazadas vuelven a ti para que decidas si las autorizas. Un agente delegado no puede consultarte, por lo que sus rechazos son definitivos.
 </Warning>
 
 Esta revisión no es un control de seguridad independiente. Las restricciones del sistema operativo y de los servicios externos siguen aplicándose.
 
 ## Vuelve a otro permiso
 
-Selecciona un [permiso habitual](/zylon-code/es/configuration/permissions) y compruébalo antes de continuar. Cambia la selección antes de desactivar el plugin; desactivarlo no debe interpretarse como una elección automática de Acceso completo.
+Selecciona un [permiso habitual](/zylon-code/es/configuration/permissions) y compruébalo antes de continuar. Elige el permiso habitual que quieras antes de desactivar el plugin. Desactivarlo pasa las conversaciones activas que usaban Revisión automática a Acceso completo, sin revisión de cada llamada. Una conversación guardada con Revisión automática no puede reabrirse sin esa integración. El interruptor no sirve para restringir el acceso.
 
 Utilízalo en tareas cuyos efectos entiendas y consulta las acciones y sus resultados en la conversación.
-
----
-
-[Read this page in English](/zylon-code/plugins/auto-authorization-review)

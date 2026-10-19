@@ -1,25 +1,27 @@
 ---
-title: "Red y operación sin conexión"
-description: "Prepara proxies, certificados y dependencias sin confundir gateway interno con funcionamiento sin conexión."
+title: "Red y funcionamiento sin conexión"
+description: "Prepara el acceso al despliegue, la licencia, los certificados y las dependencias."
 noindex: true
 ---
 
-Zylon Code puede conectarse a un gateway de modelos interno. Las herramientas, plugins y comandos del proyecto pueden necesitar otros servicios de red. La configuración de tu organización determina si puedes trabajar sin acceso a internet público.
+Un gateway interno puede mantener las peticiones al modelo dentro de una red aprobada. Las herramientas, las cuentas de otros proveedores, los plugins y los comandos del proyecto pueden contactar con otros servicios. Prepara y comprueba la instalación Desktop real en la red de tu organización.
 
-## Proxies y certificados corporativos
+## Verificación de licencia
 
-Si la red utiliza un proxy o inspección TLS, pide al administrador que prepare la conexión y los certificados de confianza de la aplicación. Reinicia Zylon Code después de cambiar su entorno de inicio. Que el navegador abra el gateway no confirma que la conexión del modelo utilice el mismo proxy o los mismos certificados.
+Al arrancar se comprueba la licencia del dominio de Zylon guardado. Tras una comprobación correcta, una autorización temporal para ese dominio puede permitir el uso durante un fallo de red o del servidor: por defecto, cinco días y nunca más allá de la caducidad de la licencia. El administrador puede configurar otro plazo admitido. Una licencia rechazada o inválida, un fallo de certificado o una autorización temporal caducada bloquean el acceso. Este margen afecta a la licencia; no garantiza que los modelos funcionen sin conexión.
 
-El entorno local lee `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` y `NO_PROXY` al arrancar. Esta conexión admite proxies HTTP y exclusiones por host o dominio; el acceso local permanece directo. No admite SOCKS ni exclusiones CIDR por esta vía.
+La configuración inicial y un cambio de dominio necesitan una verificación correcta. Mantén accesibles los servicios de licencia y modelos del despliegue mediante la red aprobada. Utilizar un modelo local no elimina el requisito de licencia de Zylon Code.
 
-Pueden añadirse certificados con `NODE_EXTRA_CA_CERTS` en el entorno de inicio aprobado. Mantén activada la verificación de certificados. Los comandos y procesos MCP pueden heredar variables de proxy, así que evita mostrar sus valores al recoger diagnósticos.
+## Certificados privados
 
-## Trabaja sin internet público
+El formulario de dominio de **Ajustes → General** puede pedir confirmación de un certificado válido cuyo emisor no reconoce. Contrasta con el administrador el dominio, la huella SHA-256, el emisor y las fechas antes de aceptarlo. La aprobación se limita a ese dominio y certificado; un certificado nuevo necesita otra confirmación. Retirar la aprobación también elimina la autorización temporal guardada. Los [proveedores personalizados](/zylon-code/es/models/providers) tienen su propia confirmación al consultar modelos.
 
-Solicita una instalación preparada para tu red. Los servicios de modelos, herramientas documentales, componentes del navegador y fuentes de plugins deben estar disponibles de forma local o mediante servicios internos aprobados.
+Si la organización utiliza certificados corporativos, pide que se prepare el almacén de confianza o el entorno de inicio aprobado. Mantén las comprobaciones del nombre y del certificado. Que el navegador abra el despliegue no confirma que la aplicación utilice la misma configuración de confianza.
 
-Comprueba el inicio, una tarea del modelo, el uso de herramientas y la reapertura de una conversación en ese entorno. [Privacidad](/zylon-code/es/configuration/privacy) explica los posibles destinos y [Disponibilidad](/zylon-code/es/reference/availability) resume las funciones opcionales.
+## Proxies y dependencias
 
----
+El entorno local lee `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` y `NO_PROXY` al arrancar. Esta vía admite proxies HTTP y exclusiones por equipo o dominio, con acceso local directo; no admite SOCKS ni exclusiones CIDR. Un entorno de inicio aprobado puede añadir confianza mediante `NODE_EXTRA_CA_CERTS`. Reinicia después de modificar ese entorno.
 
-[Read this page in English](/zylon-code/advanced/network-and-offline)
+Los comandos y procesos MCP locales pueden heredar variables de proxy. No muestres sus valores en diagnósticos compartidos. Las descargas opcionales, los modelos, las herramientas documentales y las fuentes de plugins deben estar disponibles de forma local o mediante servicios internos aprobados.
+
+Comprueba el inicio, una petición al modelo, el uso de herramientas y la reapertura de una conversación en la red prevista. [Privacidad](/zylon-code/es/configuration/privacy) explica los posibles destinos y [Disponibilidad](/zylon-code/es/reference/availability) recoge los requisitos opcionales.

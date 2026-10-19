@@ -1,31 +1,38 @@
 ---
-title: "Instalación e inicio"
-description: "Instala la aplicación de escritorio y prepara tu primera conexión."
+title: "Descarga e instalación"
+description: "Descarga la aplicación desde Backoffice y prepara el dominio y el acceso a Zylon."
 noindex: true
 ---
 
-Zylon Code se distribuye como una aplicación de escritorio ya compilada. Para instalarla no necesitas clonar el repositorio ni instalar Node, Python o un gestor de paquetes.
+Zylon Code es una aplicación de escritorio ya compilada. Descarga el instalador desde el Backoffice de tu organización; para instalarla no necesitas clonar el código ni preparar un entorno de programación. Tus proyectos sí pueden necesitar herramientas adicionales para compilar o ejecutar pruebas.
 
-<Note>
-Añadiremos aquí el enlace de descarga y los pasos de instalación cuando esté preparada la distribución para clientes. Mientras tanto, utiliza la aplicación y las instrucciones que te facilite tu contacto de Zylon.
-</Note>
+## Antes de descargar
 
-## Antes de empezar
+Pide al administrador el **dominio de Zylon**, por ejemplo `https://zylon.example`, y confirma que la instalación tiene una licencia vigente que incluye Zylon Code. También necesitarás una clave de API de un gateway para utilizar sus modelos. Son requisitos distintos; [Licencia y acceso](/zylon-code/es/getting-started/license-and-access) explica cada uno.
 
-Ten preparada una carpeta de proyecto. Para conectarte a través del gateway de tu organización, pide al administrador la **URL base** y un **token de desarrollador del gateway**. Puedes abrir la aplicación antes de configurar un modelo.
+## Descarga desde Backoffice
 
-## Abre la aplicación
+Si tienes acceso al área **Plataforma**:
 
-Abre Zylon Code y completa la configuración de bienvenida. Una instalación nueva empieza en español; puedes cambiar a inglés en **Ajustes → General**. Deberías ver el selector de proyecto, la zona de conversación y los ajustes.
+1. Inicia sesión en el Backoffice de tu organización.
+2. Abre **Plataforma → Puertas de enlace**.
+3. Pulsa **Descargar Zylon Code**.
+4. Descarga el instalador correspondiente a tu sistema operativo y a la arquitectura del procesador.
 
-Cerrar la ventana principal puede dejar la aplicación funcionando en segundo plano. Utiliza la opción **Salir** del sistema operativo cuando quieras detenerla por completo.
+El área Plataforma está disponible para cuentas con acceso de Operador o SuperAdmin. Si tienes acceso como desarrollador, también encontrarás la descarga de Zylon Code en las instrucciones que aparecen justo después de crear una clave de API de un gateway. [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) explica ese recorrido.
 
-Continúa con [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Si la aplicación no se abre, consulta [problemas de inicio](/zylon-code/es/troubleshooting/setup-and-models).
+La tarjeta de descarga muestra la versión y la arquitectura disponibles. Si puede identificar tu dispositivo, selecciona una versión compatible; si no, elige en **Otras plataformas**. Comprueba la arquitectura: `arm64` corresponde a procesadores ARM, incluidos los Apple Silicon; `x64`, a procesadores Intel o AMD de 64 bits. Utiliza una versión que se ofrezca para tu sistema.
+
+Los instaladores disponibles dependen de lo que publique tu organización. Si no aparece la descarga, pide al administrador que revise tu acceso a Backoffice y los instaladores publicados. Que falte el botón no basta para saber si hay un problema de licencia.
+
+## Instala y abre la aplicación
+
+Abre el instalador o el archivo descargado y sigue las instrucciones de instalación que acompañen a esa versión. Al iniciar Zylon Code por primera vez, la bienvenida te pide el dominio de Zylon y comprueba la licencia antes de permitirte trabajar. Continúa con [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) para completar el dominio y el acceso a los modelos.
+
+Una vez terminada la configuración, puedes elegir español o inglés en **Ajustes → General**. Cerrar la ventana principal puede dejar la aplicación funcionando en segundo plano; utiliza **Salir** cuando quieras detenerla por completo.
+
+Si la aplicación no se abre, consulta [problemas de inicio](/zylon-code/es/troubleshooting/setup-and-models).
 
 <Frame caption="Zylon Code Desktop después de abrir la aplicación">
   <img src="/images/zylon-code/screenshots/getting-started-installation-es.jpg" alt="Zylon Code Desktop después de abrir la aplicación" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/getting-started/installation)

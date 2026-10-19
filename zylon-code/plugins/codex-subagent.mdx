@@ -1,0 +1,39 @@
+---
+title: "Codex subagent"
+description: "Delegate one bounded task to Codex with its native account and settings."
+noindex: true
+---
+
+Codex subagent lets your Zylon agent hand one self-contained task to the native Codex coding agent, then use its answer in the main task. Choose it when you want Codex's own agent behavior and configured environment, for example for a separate review of a proposed change.
+
+This differs from selecting a model in Zylon: the external agent has its own runtime, account access and settings. [Zylon Code agents](/zylon-code/agents/delegation) are the simpler option when you need a continuing conversation inside Zylon Code.
+
+## Enable and prepare access
+
+1. Open **Plugins → Experimental plugins → More** and enable **Codex subagent**.
+2. Wait for any compatible runtime download and follow a restart notice if shown. The native process starts when a task is delegated, not merely when the switch is on.
+3. Have your administrator prepare native Codex authentication and its non-interactive permission policy for the user running Zylon Code. The plugin does not log you in or offer a native account-setup wizard.
+
+The integration uses its packaged Codex runtime, with no fallback to another executable on your computer. A successful enable does not yet confirm that authentication or a task works.
+
+Its optional model override and permission policy belong to the integration's [profile configuration](/zylon-code/advanced/profiles-and-yaml). Without a model override, native Codex settings choose the model. The parent's model picker and ordinary allowed-model list do not select it. Signing into ChatGPT in Zylon's Models settings is a separate connection.
+
+Native approval/sandbox settings are separate from the parent conversation's permissions. Have them checked before allowing edits; a “read-only” instruction describes the task but does not configure that native policy.
+
+## Example: a separate review
+
+> Delegate one read-only task to Codex: review the current diff in src/parser and its tests. Check whitespace-only input, error handling and whether the tests catch the changed behavior. Return actionable findings with file references, or state what remains unverified. Do not edit files, install packages or create more agents. Wait for its answer before applying changes.
+
+`subagent_codex` starts an asynchronous run and returns an agent ID. The main agent receives the answer or a failure report on completion. Give the child paths, requirements and restrictions: it starts a fresh task without the parent chat.
+
+## Review and finish
+
+The external agent shares the selected project directory. It does not receive an automatically isolated worktree, and its activation counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits).
+
+One run handles one task, without follow-up input or resume. For more work, send a new complete brief. The parent does not receive a local child chat containing native tool traffic or diffs, so inspect files and checks separately when edits were allowed.
+
+Ask the parent to cancel a run that should stop; completed edits remain. Missing runtime, account or permission setup can fail the first task. Read the reported failure before changing anything. Switching the plugin off removes its tool but keeps the downloaded package and project changes.
+
+<Frame caption="Codex subagent components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-codex-subagent-en.jpg" alt="Codex subagent components, disabled in this example" />
+</Frame>

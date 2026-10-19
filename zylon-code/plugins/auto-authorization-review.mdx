@@ -8,23 +8,19 @@ This supplied experimental bundle starts disabled. It adds an **Auto review** ac
 
 ## Enable for a task
 
-1. Enable **Auto Authorization Review** under Plugins → Official.
+1. Enable **Auto Authorization Review** under Plugins → Experimental plugins.
 2. Open the conversation's permission picker.
 3. Select **Auto review** and read its confirmation.
 4. Confirm only if you accept the stated behavior; check the active access label.
 
 <Warning>
-Auto review runs without a sandbox. The same model as the current agent reviews native tool calls and PTC inner calls. It can wrongly allow or deny an action and consumes additional tokens. Calls it denies return to you for approval or rejection.
+Auto review runs without a sandbox. The same model as the current agent reviews native tool calls and PTC inner calls. It can wrongly allow or deny an action and consumes additional tokens. Calls it denies return to you for approval or rejection. A delegated child cannot ask you, so its denials are final.
 </Warning>
 
 The review is not an independent security verifier. A tool's external service and operating-system restrictions still apply, and the model cannot guarantee that a requested action is harmless.
 
 ## Return to another policy
 
-Select an ordinary [permission preset](/zylon-code/configuration/permissions) and verify it before continuing. Resolve an active Auto selection before disabling its provider; do not assume disabling silently converts it to Full access.
+Select an ordinary [permission preset](/zylon-code/configuration/permissions) and verify it before continuing. Choose the ordinary policy you want before disabling the bundle. Disabling migrates running Auto conversations to Full access without per-call review. A saved Auto conversation cannot reopen without the integration; do not use the switch as a way to tighten access.
 
 Use this feature only for a task whose files, commands and external effects you understand. Inspect approvals and tool results, including rejected calls, in the conversation.
-
----
-
-[Leer esta página en español](/zylon-code/es/plugins/auto-authorization-review)

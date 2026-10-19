@@ -20,6 +20,8 @@ Dos investigaciones de solo lectura suelen poder hacerse a la vez: una revisa la
 
 Los [agentes secundarios](/zylon-code/es/agents/delegation) y los [Equipos de agentes](/zylon-code/es/plugins/agent-teams) ofrecen formas distintas de coordinarse en Zylon. Los equipos añaden una lista de miembros, mensajes y un tablero compartido. Ninguna opción garantiza archivos aislados ni evita automáticamente los conflictos. Los miembros pueden compartir el directorio del proyecto.
 
+Si una tarea necesita archivos de trabajo separados, consulta los [worktrees de Git](/zylon-code/es/plugins/git-worktrees). Decide cómo integrarás los cambios antes de empezar. Separar los archivos no demuestra que el resultado conjunto funcione.
+
 No pidas a varios agentes que reescriban la misma función al mismo tiempo. Una edición que parece correcta puede sobrescribir el trabajo de otro agente o dejar obsoletos sus resultados de pruebas. Comprueba la implementación conjunta después de integrar los cambios, sobre todo donde se relacionen entre sí.
 
 ## Explica los relevos
@@ -46,7 +48,3 @@ Delega para resolver una dificultad concreta. Si coordinar y leer lo mismo varia
 Después, aprende a [automatizar un procedimiento acotado](/zylon-code/es/hardening/automation).
 
 Lecturas: Walkinglabs sobre [dependencias y coordinación de agentes](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-14-graph-engineering/) y [los patrones de trabajo de Anthropic](https://www.anthropic.com/engineering/building-effective-agents).
-
----
-
-[Read this page in English](/zylon-code/hardening/agents-and-review)

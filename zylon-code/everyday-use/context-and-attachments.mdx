@@ -20,7 +20,7 @@ A reference tells the agent which resource you mean; it does not grant extra acc
 
 Use the attachment action, drag a file or paste supported content. Wait for any upload to finish before sending. You can retry or remove failed uploads.
 
-Local folders and non-image files can be added as path references. Keep those paths available while the task runs. For image attachments, choose a model that supports image input; see [model options](/zylon-code/models/model-options).
+A path reference points to the original file or folder, which must remain available. A file uploaded as an attachment instead saves a read-only copy with the conversation; the model receives a path it can read on demand, not all the file bytes in every prompt. Image attachments are validated and normalized before sending; a refused image prevents that message from being accepted. For image attachments, choose a model that supports image input; see [model options](/zylon-code/models/model-options).
 
 ## Choose useful context
 
@@ -31,7 +31,3 @@ Next, learn how to [review results](/zylon-code/everyday-use/reviewing-results).
 <Frame caption="Adding a folder reference and choosing a project file with @">
   <img src="/images/zylon-code/screenshots/everyday-use-context-and-attachments-en.jpg" alt="Adding a folder reference and choosing a project file with @" />
 </Frame>
-
----
-
-[Leer esta página en español](/zylon-code/es/everyday-use/context-and-attachments)

@@ -124,9 +124,9 @@ Tasks are executed by Zylon workers.
 
 All async APIs have a related endpoint that returns the status of the task and its result, once it is available
 
-- /ingest/tasks/{task_id}
-- /delete/tasks/{task_id}
-- /summarize/tasks/{task_id}
-- /report/tasks/{task_id}
+- `/ingest/tasks/{task_id}`
+- `/delete/tasks/{task_id}`
+- `/summarize/tasks/{task_id}`
+- `/report/tasks/{task_id}`
 
 Async tasks can also post updates to an amqp queue defined in the `callback` property when creating the task.

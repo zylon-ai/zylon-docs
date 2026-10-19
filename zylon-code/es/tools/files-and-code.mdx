@@ -4,7 +4,7 @@ description: "Solicita lecturas, búsquedas y ediciones acotadas y revisa sus re
 noindex: true
 ---
 
-Los modos habituales ofrecen herramientas para buscar archivos, leer texto, ver imágenes compatibles, escribir y sustituir contenido. Mínimo realiza ese trabajo mediante su shell.
+Los modos habituales ofrecen herramientas para buscar archivos, leer texto, ver imágenes compatibles, escribir y sustituir contenido. Mínimo trabaja con archivos de texto mediante la shell y también incluye lectura de imágenes. Los plugins globales opcionales pueden ampliar sus herramientas.
 
 ## Investiga antes de cambiar
 
@@ -18,12 +18,8 @@ Si conoces la subcarpeta o el nombre de archivo, inclúyelos. Los resultados de 
 
 El agente debe leer el archivo antes de editarlo. Si tú lo cambias en otro editor durante la tarea, pídele que lo lea de nuevo. Una sustitución puede fallar si el texto buscado ha cambiado o aparece varias veces.
 
-Las rutas relativas se interpretan desde la carpeta del proyecto. Para archivos externos hacen falta los permisos correspondientes. Leer imágenes requiere un modelo que las admita.
+Las rutas relativas parten del directorio actual de la conversación. La herramienta integrada `working_directory` permite consultarlo o cambiar a una carpeta existente; no mueve procesos que ya estén abiertos ni amplía permisos de escritura. [Worktrees de Git](/zylon-code/es/plugins/git-worktrees) permite crear y utilizar otra copia de trabajo. Para archivos externos hacen falta los permisos correspondientes. Leer imágenes requiere un modelo que las admita.
 
 ## Comprueba los cambios
 
 Abre el archivo y [revisa el resultado](/zylon-code/es/everyday-use/reviewing-results). Si activas [Zylon Diff Review](/zylon-code/es/plugins/diff), también puedes conservar o revertir cambios y enviar comentarios al agente desde su panel. Las ediciones ya están en el disco: detener la tarea no las deshace.
-
----
-
-[Read this page in English](/zylon-code/tools/files-and-code)

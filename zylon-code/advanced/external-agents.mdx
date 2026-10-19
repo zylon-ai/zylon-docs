@@ -1,25 +1,25 @@
 ---
 title: "External agents"
-description: "Prepare optional Codex, Claude Code and ACP delegation bridges explicitly."
+description: "Choose a native agent bridge and understand its authentication and limits."
 noindex: true
 ---
 
-External agents let Zylon Code delegate to another agent application, such as Codex, Claude Code or an ACP-compatible runtime. These bridges are optional and disabled in the normal modes.
+External agents delegate work to a separate product runtime. Choosing that vendor's model in Models is a different operation: model access alone does not enable its coding agent.
 
-Choosing a model from a vendor does not install that vendor's agent application. Ordinary [subagents](/zylon-code/agents/delegation) run within Zylon Code and are the simpler starting point.
+| Bridge | Setup | Result |
+| --- | --- | --- |
+| [Codex subagent](/zylon-code/plugins/codex-subagent) | Enable its offered plugin; prepare native Codex authentication and settings | One fresh task; final answer or safe error returned to the parent. |
+| [Claude Code subagent](/zylon-code/plugins/claude-code-subagent) | Enable its offered plugin; prepare native Claude authentication and settings | One fresh task; final answer or safe error returned to the parent. |
+| ACP or another configured runtime | Administrator-provided executable, connection and model access | Provider-specific one-shot delegation. |
 
-## Prepare a bridge
+## Prepare access deliberately
 
-Ask Creator or your administrator to configure a compatible runtime and expose its delegation tool. Codex and Claude Code need their own supported runtime and authentication. A Zylon developer token does not sign into those applications. ACP agents need a configured executable and their own model access.
+Codex and Claude Code are available in **Plugins → Experimental plugins → More**. Enabling can download a compatible packaged runtime. Neither falls back to an executable found on your computer. Authentication and model choices remain native to that product; a Zylon token does not sign into it. Native permission policies are configured separately from the parent conversation.
 
-Use explicit, approved credentials and configuration. The bridge does not automatically select any executable found on your computer.
+Ask your administrator to prepare ACP or another integration that is not offered as a plugin. Do not infer support from an executable's presence alone.
 
-## Check before important work
+## Verify one bounded task
 
-Try a small read-only task. Review its final output, permission requests, cancellation and errors. Confirm where it stores data and which provider receives its requests; the parent conversation's settings do not automatically define the external agent's policies.
+Start with a read-only task containing all required paths, facts and restrictions. The external agent does not inherit the parent conversation. Check its final answer, cancellation and reported failures. It shares the current project directory unless another is explicitly selected, so review files separately when edits were allowed.
 
-Keep the runtime's installation and compatibility information for future updates. For normal parallel work, return to [Delegate to agents](/zylon-code/agents/delegation).
-
----
-
-[Leer esta página en español](/zylon-code/es/advanced/external-agents)
+These runs do not accept follow-up messages or resume. The parent receives a completion result rather than a local conversation containing all native tool traffic. For continuing back-and-forth work, use Zylon's [local subagents](/zylon-code/agents/delegation). Both local and external activations count toward the [parallelism limit](/zylon-code/agents/models-and-limits).

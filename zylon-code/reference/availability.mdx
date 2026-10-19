@@ -1,33 +1,34 @@
 ---
 title: "Feature and platform availability"
-description: "Separate defaults, optional features and deployment-specific acceptance."
+description: "Check defaults, optional features and the preparation your build needs."
 noindex: true
 ---
 
-Features depend on your application version, selected mode and enabled plugins. Use this table when an expected control is missing.
+Features depend on your installed version, saved settings, selected mode and enabled plugins. A licensed deployment domain is required before tasks can run, even when the task uses another model provider.
 
 | Feature | Availability |
 | --- | --- |
-| Standard | Default for new tasks. |
-| PTC, Minimal, Creator | Included modes with different tools. |
-| Project instructions, skills, planning, goals and compaction | Standard, PTC and Creator; not the built-in Minimal mode. |
+| Standard and Creator | Included; Standard is the initial default. |
+| PTC and Minimal | Included; enable General → Developer view to offer them for new tasks. |
+| Project instructions, skills, planning, goals and local delegation | Standard, PTC and Creator; absent from built-in Minimal. |
+| Compaction and image reading | Available in all four built-in modes; images also need a compatible model. |
 | Workflows | Standard and Creator; disabled in PTC. |
-| MCP Manager | Enabled in new installations with no servers configured. |
-| Diff Review, Automation, Teams, Auto review and Companion | Included but disabled initially; some are experimental. |
+| Working directory | Built-in tool for reading or changing a conversation's directory; existing processes keep their own directories. |
+| Automation tasks | Built in; reminder tools belong to Standard, PTC and Creator, not delegated subagents. |
+| MCP Manager | Enabled in new installations, with no servers configured. |
+| Diff Review, Agent Teams, Auto review and Companion | Included but disabled initially; some are experimental. |
+| Worktrees, persistent terminals, session search, conversation-following titles and Ralph loops | Optional, disabled; find them in Plugins → Experimental plugins → More. |
+| Codex and Claude Code subagents | Optional; compatible runtime download and native authentication required. |
 | URL reading | Included in Standard, PTC and Creator. |
-| Web search | Requires provider credentials and mode configuration. |
+| Web search | Requires an approved provider, credentials and mode configuration. |
 | Browser panel | Included in Desktop. |
-| Browser/computer automation, LSP and external agents | Require explicit integration setup. |
-| Inspector | Optional support/developer diagnostics. |
+| Browser/computer automation and language servers | Require explicit provider and platform preparation. |
+| Developer Tools | Optional debugging and unredacted diagnostics; use with support. |
 
-Existing installations keep saved settings. A feature described in the manual may require additional preparation before it is usable in your build.
+Optional global tools can extend every mode, including Minimal. Existing installations retain their settings and can differ from new-installation defaults. The Zylon product hides the general third-party installer and several upstream-only plugins; use its actual [plugin catalog](/zylon-code/plugins/catalog).
 
 ## Operating systems and distribution
 
-Use the compiled application and platform instructions supplied by your Zylon contact. Current packaging targets include macOS ARM64/x64 and Windows x64; the installation information will specify which builds are available. This manual does not provide a Linux Desktop installer.
+Use the compiled Desktop application and platform-specific instructions supplied through [Installation](/zylon-code/getting-started/installation). A source package or an upstream feature's platform support does not establish availability in the binary supplied to you. Optional integrations can have additional operating-system and runtime requirements.
 
-An internal model connection alone does not guarantee offline operation. Follow [network guidance](/zylon-code/advanced/network-and-offline) for that setup. Custom and third-party plugins may have their own platform or language requirements.
-
----
-
-[Leer esta página en español](/zylon-code/es/reference/availability)
+An internal model connection does not guarantee offline operation. [Network guidance](/zylon-code/advanced/network-and-offline) explains licensing, certificates and external dependencies.

@@ -18,7 +18,7 @@ Stop: after the report, if prerequisites are missing, or if access is refused.
 Do not publish, deploy or keep retrying a failing test.
 ```
 
-Start by running the procedure manually. Check that the report is useful on both a passing case and a realistic failure. Only then consider [Automation Tasks](/zylon-code/plugins/automation-tasks), if enabled in your installation.
+Start by running the procedure manually. Check that the report is useful on both a passing case and a realistic failure. Only then create a rule in [Automation](/zylon-code/plugins/automation-tasks). Scheduling and the procedure being scheduled are separate: verify the selected project, time and permission settings before saving the rule.
 
 ## Distinguish organization from execution
 
@@ -42,10 +42,8 @@ Use a [custom mode](/zylon-code/customization/custom-modes) and [permissions](/z
 
 Record failures, skipped checks and partial work so the next run or person can understand what happened. Avoid generic notifications that say only “task finished”; report the actual outcome and the action needed.
 
+For repeated attempts within one task, see [Ralph loops](/zylon-code/plugins/ralph-loops). Set an iteration limit and a concrete completion check. A scheduled rule starts work at a chosen time; a loop repeats work inside its run. Neither makes an ambiguous success criterion reliable.
+
 Finally, [measure whether your hardening helps](/zylon-code/hardening/adoption-and-measurement) before expanding the automation.
 
 Further reading: Walkinglabs on [bounded working loops](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-13-loop-engineering/) and [dependencies between steps](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-14-graph-engineering/).
-
----
-
-[Leer esta página en español](/zylon-code/es/hardening/automation)

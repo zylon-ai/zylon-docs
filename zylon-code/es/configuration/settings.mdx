@@ -1,34 +1,38 @@
 ---
 title: "Ajustes"
-description: "Cambia idioma, apariencia y valores predeterminados; encuentra la configuración de cada función."
+description: "Localiza el dominio de Zylon, las credenciales de modelos, el idioma, la apariencia y los valores predeterminados."
 noindex: true
 ---
 
-Abre **Ajustes** en la parte inferior de la barra lateral. Puedes elegir español o inglés, apariencia clara u oscura y valores predeterminados para las conversaciones nuevas.
+Abre **Ajustes** en la parte inferior de la barra lateral. El dominio de Zylon se configura en General; el token de desarrollador y las opciones de modelos, en Modelos.
 
 | Área | Qué puedes configurar |
 | --- | --- |
-| General | Idioma, apariencia y preferencias de las conversaciones. |
-| Modelos | Credenciales, direcciones de conexión y modelos disponibles. |
-| Plugins integrados | Una lista de los componentes de la aplicación, que puedes consultar sin modificar. |
-| Plugins de la barra lateral | Funciones y ajustes, como Shell y los límites del agente. |
+| General → Conexión con Zylon | Comprobar o cambiar el dominio y gestionar un certificado autorizado expresamente. |
+| General | Idioma, apariencia, Vista de desarrollo y valores predeterminados para chats nuevos. |
+| Modelos | Guardar el token de desarrollador, actualizar el catálogo y editar las opciones de modelos. La URL de los modelos de Zylon se calcula a partir del dominio y aquí es de solo lectura. |
+| Plugins | Consultar el inventario de componentes cargados y su estado; el listado es de solo lectura. |
+| Modos | Elegir el modo predeterminado de las tareas nuevas y consultar su configuración. |
+| Plugins de la barra lateral | Configurar las funciones incluidas y las integraciones opcionales. |
 
-El interruptor **Herramientas de programación** cambia las opciones de ajustes y selección de modos. Para controlar el acceso a archivos o comandos, utiliza los [permisos](/zylon-code/es/configuration/permissions).
+## Cambia el dominio de Zylon
 
-## Valores predeterminados y conversaciones actuales
+En **General → Conexión con Zylon**, introduce una dirección como `https://zylon.example` y pulsa **Conectar**. La aplicación comprueba la licencia antes de guardar. Si falla el cambio a otro dominio, conserva la conexión que funcionaba. Si la nueva instalación necesita otra clave del gateway, cámbiala después en Modelos.
 
-Cambiar el modo predeterminado afecta a las tareas nuevas. Cambiar el modelo de una conversación se aplica a su siguiente petición. El selector de permisos controla el acceso de la conversación actual. Consulta la guía de cada función antes de modificar un valor mientras hay trabajo en curso.
+Puedes quitar un certificado privado autorizado con **Olvidar certificado autorizado**. También se borra la comprobación de licencia guardada: tendrás que conectar de nuevo con la validación normal del certificado o autorizar uno que hayas verificado. Si se bloquea el acceso, sigue [Licencia y acceso](/zylon-code/es/getting-started/license-and-access).
 
-## Guarda los cambios
+## Vista de desarrollo y valores predeterminados
 
-Los formularios de Shell, ejecución del agente y agentes secundarios mantienen un borrador hasta que pulses **Guardar**. Salir de esas páginas sin guardar descarta el borrador. Usa el control de restablecimiento para recuperar el valor predeterminado y sigue los avisos de reinicio que aparezcan.
+**Vista de desarrollo** muestra controles adicionales, como PTC y Mínimo en el selector de modos y las vistas de configuración avanzada. No limita por sí sola lo que el agente puede ejecutar. Utiliza los [permisos](/zylon-code/es/configuration/permissions) para controlar las operaciones de una tarea.
 
-**Abrir archivo de configuración**, cuando esté disponible, abre la configuración local de la aplicación. Utiliza los formularios habituales salvo que necesites un ajuste que no aparezca en ellos. [Perfiles y YAML](/zylon-code/es/advanced/profiles-and-yaml) explica esa opción avanzada.
+Al desactivar Vista de desarrollo, un modo predeterminado PTC o Mínimo pasa a Estándar. Las conversaciones ya iniciadas conservan su modo. Cambiar el modo predeterminado afecta a las tareas nuevas. Cambiar el modelo de una conversación se aplica a su siguiente petición. El selector de permisos controla la conversación actual. Consulta la guía de cada función antes de modificar un valor mientras hay trabajo en curso.
+
+## Guarda el formulario correspondiente
+
+Los formularios de Shell, ejecución del agente y agentes secundarios mantienen un borrador hasta que pulses **Guardar**. Salir sin guardarlo descarta los cambios. Sigue los avisos de reinicio que aparezcan.
+
+**Abrir archivo de configuración**, cuando esté disponible, abre la configuración local de la aplicación. Utiliza los formularios habituales salvo que necesites una opción que no aparezca en ellos; consulta [Perfiles y YAML](/zylon-code/es/advanced/profiles-and-yaml).
 
 <Frame caption="Ajustes de la aplicación y controles de idioma">
   <img src="/images/zylon-code/screenshots/configuration-settings-es.jpg" alt="Ajustes de la aplicación y controles de idioma" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/configuration/settings)

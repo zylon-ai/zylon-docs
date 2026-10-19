@@ -1,33 +1,34 @@
 ---
 title: "Disponibilidad de funciones y plataformas"
-description: "Distingue valores iniciales, funciones opcionales y validación del despliegue."
+description: "Comprueba los valores iniciales, las opciones y los requisitos de tu versión."
 noindex: true
 ---
 
-Las funciones dependen de la versión de la aplicación, el modo elegido y los plugins activados. Consulta esta tabla si no encuentras un control esperado.
+Las funciones dependen de la versión instalada, los ajustes guardados, el modo y los plugins activos. Para ejecutar tareas necesitas un dominio con licencia de Zylon, aunque utilices otro proveedor de modelos.
 
 | Función | Disponibilidad |
 | --- | --- |
-| Estándar | Predeterminado para tareas nuevas. |
-| PTC, Mínimo y Creador | Modos incluidos con herramientas distintas. |
-| Instrucciones, habilidades, planificación, objetivos y compactación | Estándar, PTC y Creador; no el modo Mínimo integrado. |
+| Estándar y Creador | Incluidos; Estándar es el predeterminado inicial. |
+| PTC y Mínimo | Incluidos; activa General → Vista de desarrollo para elegirlos en tareas nuevas. |
+| Instrucciones del proyecto, habilidades, planificación, objetivos y delegación local | Estándar, PTC y Creador; no se incluyen en Mínimo. |
+| Compactación y lectura de imágenes | En los cuatro modos integrados; las imágenes también requieren un modelo compatible. |
 | Flujos de trabajo | Estándar y Creador; desactivados en PTC. |
-| Gestor de MCPs | Activado en instalaciones nuevas, sin servidores configurados. |
-| Revisión de cambios, automatización, equipos, revisión automática y Companion | Incluidos, pero desactivados al empezar; algunos son experimentales. |
+| Directorio de trabajo | Herramienta integrada para consultar o cambiar el directorio de una conversación; los procesos existentes conservan el suyo. |
+| Tareas automatizadas | Integradas; Estándar, PTC y Creador tienen herramientas de recordatorios, pero los agentes delegados no. |
+| Gestor de MCP | Activado en instalaciones nuevas, sin servidores configurados. |
+| Revisión de cambios, equipos, revisión automática y Companion | Incluidos, pero desactivados inicialmente; algunos son experimentales. |
+| Worktrees, terminales persistentes, búsqueda de sesiones, títulos y bucles de Ralph | Opcionales y desactivados; están en Plugins → Plugins experimentales → Más. |
+| Subagentes de Codex y Claude Code | Opcionales; necesitan descargar un entorno compatible y preparar su autenticación nativa. |
 | Lectura de URL | Incluida en Estándar, PTC y Creador. |
-| Búsqueda web | Necesita credenciales del proveedor y configuración del modo. |
+| Búsqueda web | Requiere un proveedor aprobado, credenciales y configuración del modo. |
 | Panel de navegador | Incluido en Desktop. |
-| Automatización del navegador y ordenador, LSP y agentes externos | Necesitan configuración de la integración. |
-| Inspector | Diagnóstico opcional para soporte o desarrollo. |
+| Automatización del navegador y del ordenador, servidores de lenguaje | Requieren preparar el proveedor y el sistema. |
+| Herramientas de desarrollo | Depuración y diagnósticos sin ocultación de datos; utilízalas con soporte. |
 
-Una instalación existente conserva sus ajustes. Algunas funciones descritas necesitan preparación adicional antes de poder utilizarlas en tu versión.
+Las herramientas globales opcionales pueden ampliar cualquier modo, incluido Mínimo. Las instalaciones existentes conservan sus ajustes y pueden diferir de estos valores iniciales. Zylon oculta el instalador general de terceros y algunas funciones del proyecto original; consulta su [catálogo de plugins](/zylon-code/es/plugins/catalog).
 
 ## Sistemas operativos y distribución
 
-Utiliza la aplicación compilada y las instrucciones que te facilite tu contacto de Zylon. Los objetivos de empaquetado actuales incluyen macOS ARM64/x64 y Windows x64; la información de instalación indicará qué versiones están disponibles. Este manual no ofrece un instalador Desktop para Linux.
+Utiliza la aplicación Desktop compilada y las indicaciones de tu plataforma en [Instalación](/zylon-code/es/getting-started/installation). Que exista un paquete de código o que una función del proyecto original admita una plataforma no confirma que esté disponible en el binario que recibes. Las integraciones opcionales pueden tener requisitos adicionales.
 
-Una conexión interna de modelos no garantiza por sí sola el funcionamiento sin internet. Sigue la [guía de red](/zylon-code/es/advanced/network-and-offline) para ese entorno. Los plugins propios o de terceros pueden tener requisitos de plataforma e idioma diferentes.
-
----
-
-[Read this page in English](/zylon-code/reference/availability)
+Una conexión interna de modelos no garantiza el funcionamiento sin internet. La [guía de red](/zylon-code/es/advanced/network-and-offline) explica la licencia, los certificados y las dependencias externas.

@@ -4,13 +4,13 @@ description: "Crea un paquete de modo con Creador, instálalo y verifícalo en u
 noindex: true
 ---
 
-Un modo personalizado da a un tipo de tarea sus propias herramientas e instrucciones. Utiliza Creador para crearlo e instalarlo. El visor de configuración de Ajustes solo permite consultar los modos.
+Un modo personalizado da a un tipo de tarea sus propias herramientas e instrucciones. Utiliza Creador para crearlo e instalarlo. El visor de configuración de **Ajustes → Modos** solo permite consultar los modos.
 
 ## Crea el modo
 
 1. Inicia una conversación en [Creador](/zylon-code/es/modes/creator).
 2. Describe el nombre, la finalidad, las herramientas, las reglas y una tarea de prueba.
-3. Pide a Creador que consulte las capacidades disponibles, cree un paquete local y lo instale con el gestor de plugins.
+3. Pide a Creador que consulte las capacidades instaladas, cree un paquete local de modo y lo active con sus herramientas de gestión de plugins.
 4. Revisa la instalación y localiza el modo en el selector.
 5. Inicia una conversación nueva con él y comprueba cómo se comporta.
 
@@ -18,18 +18,14 @@ Por ejemplo:
 
 > Crea un modo llamado Revisión de configuración. Incluye las instrucciones del proyecto y herramientas de lectura y búsqueda. Omite la escritura de archivos y la shell. Instálalo como paquete local, comprueba sus herramientas en una tarea nueva y explica cómo desactivarlo.
 
-La lista de herramientas y los permisos son independientes. Elige también el acceso adecuado.
+La lista de herramientas y los permisos son independientes. Elige también el acceso adecuado. La página Plugins no incluye un instalador de paquetes arbitrarios; sigue el [proceso para crear plugins](/zylon-code/es/customization/custom-plugins) cuando el modo necesite código nuevo.
 
 ## Facilita su mantenimiento
 
 Si quieres conservar Estándar, crea un modo separado. Guarda el código del paquete, su configuración y la versión de la aplicación con la que es compatible.
 
-Las conversaciones existentes mantienen las herramientas con las que empezaron. Si falla la activación, corrige el paquete y prueba un chat nuevo. Desactiva su paquete para retirarlo de la lista activa.
+Las conversaciones existentes conservan el modo registrado. Los plugins globales pueden cambiar las herramientas disponibles dentro de ese modo. Si falla la activación, corrige el paquete y prueba un chat nuevo. Desactiva su paquete para retirarlo de la lista activa.
 
-<Frame caption="El modo personalizado Revisión de código en el selector de modos">
-  <img src="/images/zylon-code/screenshots/customization-custom-modes-es.jpg" alt="El modo personalizado Revisión de código en el selector de modos" />
+<Frame caption="Modos integrados y acceso al modo Creador para crear uno propio">
+  <img src="/images/zylon-code/screenshots/customization-custom-modes-es.jpg" alt="Modos integrados y acceso al modo Creador para crear uno propio" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/customization/custom-modes)

@@ -1,0 +1,37 @@
+---
+title: "Títulos que siguen la conversación"
+description: "Actualiza los títulos generados cuando evoluciona el tema del chat."
+noindex: true
+---
+
+El plugin Títulos que siguen la conversación mantiene útiles los títulos generados mientras evoluciona una tarea. El generador habitual utiliza la primera petición. Esta alternativa experimental puede revisar el título cuando los mensajes posteriores cambian o amplían el tema principal, para que reconozcas mejor el chat en la barra lateral.
+
+Cambia el título, no la tarea ni los archivos. Tampoco añade herramientas ni resume todo el historial de acciones para el agente principal.
+
+## Actívalo
+
+Abre **Plugins → Plugins experimentales → Más** y activa **Títulos que siguen la conversación**. Empieza desactivado. A partir de entonces, el generador se aplica a conversaciones existentes y nuevas cuando llegan mensajes que permiten actualizarlo.
+
+## Ejemplo: la tarea se amplía
+
+Empiezas con:
+
+> Investiga por qué una búsqueda vacía muestra un error. De momento, no edites.
+
+La investigación encuentra un problema compartido y continúas:
+
+> El filtro de categorías utiliza la misma validación. Amplía la revisión a ambos recorridos e indica la causa común antes de proponer una corrección.
+
+El título generado puede ajustarse para reflejar ese alcance. Si el anterior sigue describiendo bien el trabajo, debe conservarse. Un «gracias», una petición para continuar o una aclaración pequeña no deberían exigir otro título. Son instrucciones para el modelo que lo genera, así que no se garantiza que mantenga exactamente las mismas palabras.
+
+Las actualizaciones automáticas respetan los títulos que hayas escrito a mano. Utiliza **Renombrar** en el chat si quieres un nombre concreto y estable.
+
+## Comprueba el comportamiento y el consumo
+
+Generar títulos requiere peticiones independientes al modelo a partir de tus mensajes. Consume tokens y puede fallar aunque la tarea principal funcione. Si la petición falla o la entrada supera el tamaño configurado, se conserva el título anterior; que no cambie no significa que el agente se haya detenido.
+
+Desactiva el plugin para volver al generador de la primera petición. Los títulos existentes y el trabajo se conservan. Utiliza [Búsqueda de sesiones](/zylon-code/es/plugins/session-search) cuando quieras recuperar una decisión anterior, en lugar de cambiar el nombre del chat.
+
+<Frame caption="Componentes de Títulos de conversaciones, desactivados en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-conversation-titles-es.jpg" alt="Componentes de Títulos de conversaciones, desactivados en este ejemplo" />
+</Frame>

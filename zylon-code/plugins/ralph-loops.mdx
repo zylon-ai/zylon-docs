@@ -1,0 +1,41 @@
+---
+title: "Ralph loops"
+description: "Repeat a bounded task with fresh agents and explicit completion checks."
+noindex: true
+---
+
+A Ralph loop works toward one objective through successive fresh agents. Instead of extending the same long conversation, each round starts with a new context, reads the shared project and receives a short report from the previous round. Use it for a task with a clear check at the end of each round, where a fresh agent can continue from the files and a short handoff.
+
+For an ordinary long task, use [goals](/zylon-code/everyday-use/goals-and-task-lists). For independent parallel reviews, use [delegation](/zylon-code/agents/delegation). A Ralph loop runs its rounds in sequence.
+
+## Enable and set the limit
+
+Open **Plugins → Experimental plugins → More** and enable **Ralph loops**. The experimental plugin starts disabled. It adds the `ralph` tool; there is no separate Ralph mode.
+
+Ask explicitly for a small maximum number of rounds. Without a requested override, the tool uses its configured limit. Check the recorded call's `maxRounds` value rather than assuming the prompt itself enforces a limit.
+
+## Example: fix a bounded set of tests
+
+> Use a Ralph loop with at most three rounds to fix the failing parser tests. Keep this objective: all existing parser tests pass without changing their expected behavior. Preserve unrelated edits and do not install packages. Each round must record changed files, exact check results and the next step. Stop if a missing dependency or product decision prevents progress.
+
+Include every essential restriction in the objective: fresh workers do not inherit the parent chat or earlier workers' conversations.
+
+## What happens in each round
+
+1. A new agent receives the fixed objective, round number and previous structured report.
+2. It works in the shared project and records evidence, remaining work or a concrete blocker.
+3. A continuing report starts the next fresh round, up to the cap. Completion or a blocker ends the loop.
+
+Files persist between rounds; they are not reset. The report carries a concise handoff, not the complete earlier conversation. If the task needs a decision, a new agent does not supply that missing decision automatically.
+
+The parent waits for the tool's result. This is not a background job, a scheduled task or a run that resumes after restart.
+
+## Review the result
+
+The result includes the number of rounds and a worker-reported completion, blocker or round limit. An invalid handoff or failed worker can fail the run. The tool has no independent evaluator certifying the answer: inspect the current diff and actual checks.
+
+Each round makes additional model requests. A round cap does not enforce a token, cost or elapsed-time budget. Cancel when needed and inspect partial changes; cancellation does not undo them. Avoid “repeat until perfect” and review the evidence before starting another loop.
+
+<Frame caption="Ralph loops components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-ralph-loops-en.jpg" alt="Ralph loops components, disabled in this example" />
+</Frame>

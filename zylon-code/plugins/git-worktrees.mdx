@@ -1,0 +1,37 @@
+---
+title: "Git Worktrees"
+description: "Create a separate Git checkout and continue the conversation there."
+noindex: true
+---
+
+A Git worktree is another working copy of the same repository, with its own files and branch. Use it to investigate or implement a change while leaving your current checkout's files in place. It shares the repository's Git history; it is not a backup or a permission sandbox.
+
+## Enable and prepare
+
+Open **Plugins → Experimental plugins → More** and enable **Git Worktrees**. You need Git available to the application, an existing repository and a commit already stored locally. The conversation's permissions must allow creation of the checkout and its Git metadata.
+
+The plugin adds `create_worktree` to the agent's tools. You can request it in ordinary language; you do not need to write the tool call.
+
+## Start a task in a separate checkout
+
+> Create a Git worktree named parser-review from the current HEAD. Show its path, branch and base commit, then continue this conversation there. Read the parser tests and report coverage gaps. Do not edit files or install dependencies yet.
+
+The agent creates a new branch and checkout, then changes **this conversation's working directory**. By default, files go under `.agents/worktrees/<name>` inside the current checkout; your organization can configure another location. An existing destination or branch causes an error rather than being overwritten.
+
+Check the returned path before asking for edits. The sidebar's project entry still identifies the original project. Existing terminals and servers keep their own directories; they do not move with the conversation.
+
+## Know what starts in the copy
+
+The new checkout contains the selected commit, defaulting to HEAD. Uncommitted changes, untracked files and ignored files are not copied. Dependencies are not installed, submodules are not initialized and remote commits are not fetched. Git LFS files can remain pointer files because checkout skips repository filters.
+
+For example, a configuration file ignored by Git may be absent. Report that prerequisite before copying private files or installing packages.
+
+## Return and keep the result
+
+Ask the agent to use `working_directory` to return to the original path. The worktree, branch and edits remain. Review and integrate them through your normal Git process; removal is a separate action. Failed creation can also leave partial files, so inspect the reported path before retrying.
+
+Disabling the plugin removes its creation tool, not existing checkouts. A [forked chat](/zylon-code/everyday-use/conversations) still shares files by default; give each [delegated agent](/zylon-code/agents/delegation) a separate checkout explicitly when it needs one.
+
+<Frame caption="Git worktrees components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-git-worktrees-en.jpg" alt="Git worktrees components, disabled in this example" />
+</Frame>

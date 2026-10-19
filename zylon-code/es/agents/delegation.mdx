@@ -10,7 +10,7 @@ Estándar, PTC y Creador pueden encargar subtareas a otros agentes. Cada uno tra
 
 > Encarga a otro agente una revisión de solo lectura de las pruebas del parser. Mantén en este chat la investigación de la implementación. Espera su informe y combina ambos resultados.
 
-Indica qué debe revisar, qué puede modificar y qué debe entregar. Facilita las rutas y los datos necesarios. Los agentes comparten los archivos del proyecto: evita que dos editen los mismos archivos a la vez.
+Indica qué debe revisar, qué puede modificar y qué debe entregar. Facilita las rutas y los datos necesarios. Los agentes comparten los archivos del proyecto: evita que dos editen los mismos archivos a la vez. Heredan el directorio actual si no se les indica otro; cambiar después el directorio del principal no mueve al secundario. Utiliza [Worktrees de Git](/zylon-code/es/plugins/git-worktrees) si necesitas copias separadas.
 
 ## Sigue el trabajo
 
@@ -27,7 +27,3 @@ La siguiente página explica [modelos y límites](/zylon-code/es/agents/models-a
 <Frame caption="Actividad de agentes secundarios en una conversación">
   <img src="/images/zylon-code/screenshots/agents-delegation-es.jpg" alt="Actividad de agentes secundarios en una conversación" />
 </Frame>
-
----
-
-[Read this page in English](/zylon-code/agents/delegation)

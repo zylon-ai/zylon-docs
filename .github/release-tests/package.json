@@ -1,0 +1,12 @@
+{
+  "name": "zylon-docs-release-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test *.test.cjs"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "release-please": "17.3.0",
+    "yaml": "2.8.1"
+  }
+}

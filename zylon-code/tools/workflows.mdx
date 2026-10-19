@@ -12,14 +12,14 @@ Standard and Creator include the workflow tool. PTC does not. A workflow coordin
 
 > Use a workflow to review the configuration of these five services. Give each agent its service folder and a read-only task. Combine the findings into one report with file references and any failed checks.
 
-Specify the input, phases, ownership and final output. Under the hood, the agent writes a coordination script. Each worker needs its own task context and does not automatically receive every intermediate result.
+Specify the files to use, the sequence of tasks, who may edit each folder and the final output. Give each agent the information its task needs. If one task depends on another, state which result must be passed on before the next task starts.
 
 ## Follow the run
 
-The workflow view shows the run and its agents. A background workflow also appears in the job list with progress and output. Inspect the combined result and any failed or cancelled work. Useful partial results can be retained, but unfinished tasks still need a decision.
+The workflow view shows the run and its agents. A background workflow also appears in the job list with progress and output. Inspect the combined result and any failed or cancelled work. Keep useful partial results and decide whether each unfinished task should be retried, reassigned or omitted. Ask the agent to identify any gaps in the final report.
 
 Workers share files unless you prepared separate copies. Give them independent edit scopes or let one agent apply the combined findings. Stopping a workflow does not reverse changes already made.
 
-For explicitly requested repeated rounds with fresh agents and a fixed objective, use [Ralph loops](/zylon-code/plugins/ralph-loops) with a small round budget.
+For explicitly requested repeated rounds with fresh agents and a fixed objective, use [Ralph loops](/zylon-code/plugins/ralph-loops) with a small maximum number of rounds.
 
 For recurring work, use [Automation tasks](/zylon-code/plugins/automation-tasks). For a shared task board and teammate messages, use [Agent Teams](/zylon-code/plugins/agent-teams).

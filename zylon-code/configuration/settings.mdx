@@ -4,7 +4,7 @@ description: "Find your Zylon domain, model credentials, language, appearance an
 noindex: true
 ---
 
-Open **Settings** at the bottom of the sidebar. General settings own the Zylon domain; Models owns its developer token and model options.
+Open **Settings** at the bottom of the sidebar. Use **General** for the Zylon domain and **Models** for the developer token and model options.
 
 | Area | What you configure |
 | --- | --- |
@@ -17,7 +17,7 @@ Open **Settings** at the bottom of the sidebar. General settings own the Zylon d
 
 ## Change the Zylon domain
 
-In **General → Zylon connection**, enter an origin such as `https://zylon.example` and select **Connect**. The app verifies the license before saving the change. A failed change to another domain preserves the working connection. If the new deployment needs a different gateway key, update it afterward in Models.
+In **General → Zylon connection**, enter a domain URL such as `https://zylon.example` and select **Connect**. The app verifies the license before saving the change. A failed change to another domain preserves the working connection. If the new deployment needs a different developer token, update it afterward in **Models**.
 
 An approved private certificate can be removed with **Forget trusted certificate**. This also clears its cached license verification; reconnect using normal certificate validation or a newly verified certificate. Follow [License and access](/zylon-code/getting-started/license-and-access) if access becomes blocked.
 
@@ -25,14 +25,15 @@ An approved private certificate can be removed with **Forget trusted certificate
 
 **Developer view** exposes additional programming controls, including PTC and Minimal in the mode picker and advanced configuration views. It does not itself restrict what the agent can execute. Use [permissions](/zylon-code/configuration/permissions) to control task access.
 
-Turning Developer view off resets a saved PTC or Minimal default to Standard. Existing conversations keep their mode. A new mode default applies to new tasks. Changing the model in a conversation applies to its next model request. The permission picker controls the current conversation. Check the corresponding guide before changing a default while work is running.
+Changes take effect at different times:
+
+- A new default mode applies to new tasks. Existing conversations keep their mode.
+- Turning Developer view off resets a saved PTC or Minimal default to Standard.
+- Changing a conversation's [model](/zylon-code/models/choosing-a-model) applies to its next model request, including during a task.
+- The [permission picker](/zylon-code/configuration/permissions) controls the current conversation.
 
 ## Save the relevant form
 
-Shell, Agent execution and Subagent forms keep a draft until you select **Save**. Leaving those pages without saving discards the draft. Follow any restart notice.
+The **Shell**, **Agent loop** and **Subagent** forms keep a draft until you select **Save**. Leaving those pages without saving discards the draft. Follow any restart notice.
 
 **Open configuration file**, when available, opens the local application configuration. Prefer the normal forms unless you need a setting they do not expose; see [Profiles and YAML](/zylon-code/advanced/profiles-and-yaml).
-
-<Frame caption="Application settings and language controls">
-  <img src="/images/zylon-code/screenshots/configuration-settings-en.jpg" alt="Application settings and language controls" />
-</Frame>

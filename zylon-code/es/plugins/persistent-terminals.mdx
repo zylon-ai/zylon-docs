@@ -1,10 +1,10 @@
 ---
 title: "Terminales persistentes"
-description: "Permite que el agente vuelva a la misma shell entre llamadas a herramientas."
+description: "Permite que el agente vuelva a la misma sesión de terminal entre comandos."
 noindex: true
 ---
 
-Una terminal persistente mantiene una shell o un programa interactivo entre las llamadas del agente. Permite iniciar un servidor de desarrollo, volver a consultar su salida o enviar otro comando a la misma sesión. Resulta útil cuando el siguiente paso depende del proceso o del estado que ha dejado el anterior.
+Un terminal persistente mantiene una shell o un programa interactivo entre las llamadas del agente. Permite iniciar un servidor de desarrollo, volver a consultar su salida o enviar otro comando a la misma sesión. Resulta útil cuando el siguiente paso depende del proceso o del estado que ha dejado el anterior.
 
 Para ejecutar una prueba con un solo comando suelen bastar las [herramientas de shell habituales](/zylon-code/es/tools/shell-and-jobs). El [panel de terminal](/zylon-code/es/everyday-use/panels) es otra función: allí escribes tú los comandos.
 
@@ -16,27 +16,27 @@ La shell incluida utiliza Bash en macOS y PowerShell en Windows. Los ejecutables
 
 | Acción | Llamadas que puedes reconocer |
 | --- | --- |
-| Abrir o listar las terminales del agente | `terminal_open`, `terminal_list` |
-| Leer la salida o enviar texto a una terminal abierta | `terminal_read`, `terminal_send` |
-| Interrumpir un programa o cerrar la terminal | `terminal_signal`, `terminal_close` |
+| Abrir o listar los terminales del agente | `terminal_open`, `terminal_list` |
+| Leer la salida o enviar texto a un terminal abierto | `terminal_read`, `terminal_send` |
+| Interrumpir un programa o cerrar el terminal | `terminal_signal`, `terminal_close` |
 
 ## Ejemplo: seguir un servidor de desarrollo
 
-> Abre una terminal persistente en este proyecto y ejecuta su comando de servidor de desarrollo existente. Conserva el identificador de la terminal, comprueba la salida de inicio e indica la URL local. No instales dependencias ni publiques el servidor.
+> Abre un terminal persistente en este proyecto y ejecuta el comando que ya utiliza para iniciar el servidor de desarrollo. Conserva el identificador del terminal, comprueba la salida de inicio e indica la URL local. No instales dependencias ni publiques el servidor.
 
 Después, puedes pedir:
 
-> Consulta la última salida de esa terminal y dime si el servidor sigue funcionando. No inicies otra copia.
+> Consulta la última salida de ese terminal y dime si el servidor sigue funcionando. No inicies otra copia.
 
-El identificador permite volver a la sesión abierta. Solo puede manejarla el agente que la creó; otro no puede utilizarla por conocer su identificador. Cambiar el directorio de la conversación no mueve una terminal ya abierta.
+El identificador permite volver a la sesión abierta. Solo puede manejarla el agente que la creó; otro no puede utilizarla por conocer su identificador. Cambiar el directorio de la conversación no mueve un terminal ya abierto.
 
 ## Interpreta la salida y termina
 
 Una llamada puede devolver el control porque deja de aparecer salida o termina la espera. Ninguna de esas situaciones confirma que el comando haya acabado. Comprueba el estado y la salida antes de enviar más texto. Un envío en segundo plano puede devolver un identificador de trabajo; utiliza los [controles de procesos](/zylon-code/es/tools/shell-and-jobs) para consultarlo o detenerlo.
 
-La salida conservada tiene un límite. Pide un registro si necesitas guardarla entera. Las terminales y sus procesos activos no se recuperan después de reiniciar la aplicación.
+La salida conservada tiene un límite. Si necesitas conservar toda la salida, pide que se guarde en un archivo desde el inicio. Los terminales y sus procesos activos no se recuperan después de reiniciar la aplicación.
 
-Al terminar, pide al agente que detenga el servidor y cierre esa terminal. Cerrarla termina sus procesos sin deshacer cambios en archivos. Comprueba qué procesos siguen activos antes de desactivar el plugin.
+Al terminar, pide al agente que detenga el servidor y cierre ese terminal. Cerrarlo termina sus procesos sin deshacer cambios en archivos. Comprueba qué procesos siguen activos antes de desactivar el plugin.
 
 <Frame caption="Componentes de Terminales persistentes, desactivados en este ejemplo">
   <img src="/images/zylon-code/screenshots/plugins-persistent-terminals-es.jpg" alt="Componentes de Terminales persistentes, desactivados en este ejemplo" />

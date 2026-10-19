@@ -22,7 +22,7 @@ name: review-config
 description: "Revisa la configuración del proyecto comparándola con la implementación y las pruebas."
 ---
 
-Lee el parser de configuración y sus pruebas.
+Lee el código que interpreta la configuración y sus pruebas.
 Compara las claves y valores documentados con la implementación.
 Informa de diferencias con referencias a archivos. No edites sin una petición.
 ```
@@ -31,14 +31,8 @@ Usa un nombre en minúsculas con guiones y una descripción clara. Guarda los re
 
 ## Dónde se buscan y quién puede invocarlas
 
-Activa **Vista de desarrollo** en General y abre **Ajustes → Plugins**. Busca `habilidades` y selecciona un modo para consultar sus plugins de habilidades y su estado. Este listado es de solo consulta: muestra los componentes que permiten utilizar habilidades, no cada documento de instrucciones.
-
 La aplicación consulta las carpetas de habilidades del proyecto, como `.agents/skills` y `.dsh/skills`, y las ubicaciones del usuario configuradas. Las del proyecto tienen prioridad. Los cambios válidos se actualizan automáticamente; un encabezado inválido puede hacer que se omita una habilidad con un aviso.
 
 `disable-model-invocation: true` reserva su uso al usuario. `user-invocable: false` la oculta de los comandos del usuario. Estos campos no cambian los permisos de las herramientas.
 
 Comprueba que `/review-config` aparezca y cargue el texto esperado en una conversación compatible.
-
-<Frame caption="Plugins integrados de habilidades y su estado">
-  <img src="/images/zylon-code/screenshots/customization-skills-es.jpg" alt="Plugins integrados de habilidades y su estado" />
-</Frame>

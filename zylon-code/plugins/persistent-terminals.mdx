@@ -34,7 +34,7 @@ The terminal ID identifies the running session. Only the agent that opened it ca
 
 A send can return after output becomes quiet or a wait expires. Neither proves that the command finished. Check its reported status and output before sending more input. A background send can return a job ID; use [job controls](/zylon-code/tools/shell-and-jobs) to read or stop it.
 
-Output retention is bounded. Save a log when you need the full record. Terminals and their live processes do not survive an application restart.
+Output retention is bounded. Save output to a log file from the start when you need the full record. Terminals and their live processes do not survive an application restart.
 
 When finished, ask the agent to stop the server and close that terminal. Closing ends its process tree without undoing file changes. Check running work before disabling the plugin.
 

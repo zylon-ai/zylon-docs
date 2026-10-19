@@ -20,11 +20,11 @@ Pregunta antes de instalar dependencias o publicar cambios.
 Indica los archivos modificados, las comprobaciones y los fallos pendientes.
 ```
 
-Añade el comando de pruebas y su directorio real después de comprobarlos. Por ejemplo, indica `npm test -- config.test.ts` solo si ese comando existe en tu repositorio. Mantén el archivo breve para que destaquen las reglas importantes.
+Añade el comando de pruebas y su directorio real después de comprobarlos. Pide al agente que identifique la comprobación existente para la parte que quieras modificar y que indique qué necesita para ejecutarla. Mantén el archivo breve para que destaquen las reglas importantes.
 
 ## Coloca cada regla donde corresponda
 
-El lector habitual reconoce `AGENTS.md` y `CLAUDE.md`, además de los archivos adicionales `AGENTS.local.md` y `CLAUDE.local.md`. Las instrucciones de una subcarpeta pueden aplicarse cuando el agente la consulta. También pueden configurarse instrucciones globales para la aplicación.
+Zylon Code reconoce `AGENTS.md` y `CLAUDE.md`, además de los archivos adicionales `AGENTS.local.md` y `CLAUDE.local.md`. Las instrucciones de una subcarpeta pueden aplicarse cuando el agente la consulta. También pueden configurarse instrucciones globales para la aplicación.
 
 Excluye de Git los archivos locales privados cuando corresponda. Las instrucciones pasan al contexto del modelo: no guardes secretos en ellas.
 

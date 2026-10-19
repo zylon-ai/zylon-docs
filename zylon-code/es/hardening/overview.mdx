@@ -6,11 +6,11 @@ noindex: true
 
 Un agente puede editar bien un archivo y, aun así, resolver el problema equivocado. También puede entender lo que le pides y fallar porque falta una dependencia, una prueba no comprueba lo que debería o la información útil se ha perdido en una conversación larga. Cambiar de modelo no resuelve por sí solo todos estos problemas.
 
-**Hardening** consiste en preparar el proyecto y la forma de trabajar para que el agente tenga menos cosas que adivinar y puedas detectar sus errores. En esta sección hablamos de fiabilidad y de medidas de control: tareas claras, contexto útil, herramientas que funcionen, comprobaciones independientes y una forma de retomar el trabajo sin perder información.
+**Hardening** consiste en preparar el proyecto y la forma de trabajar para que el agente tenga menos cosas que adivinar y puedas detectar sus errores. En esta sección usamos el término para hablar de cómo trabajar con agentes de forma más fiable: tareas claras, contexto útil, herramientas que funcionen, comprobaciones independientes y una forma de retomar el trabajo sin perder información.
 
 ## ¿Qué es un harness?
 
-El **modelo** propone texto y llamadas a herramientas. El **harness** es el software que lo rodea: le proporciona instrucciones y contexto, ejecuta las herramientas permitidas, devuelve sus resultados y gestiona la conversación. Zylon Code ofrece ese entorno mediante modos, herramientas, permisos, plugins y sesiones. Las instrucciones del proyecto, sus comandos de prueba y la definición de cada tarea completan la preparación.
+El **modelo** interpreta tu petición y propone acciones. El **harness** es el entorno que le permite trabajar en tu proyecto: instrucciones, herramientas, permisos, historial de la conversación y resultados de cada acción. Zylon Code ofrece estas funciones. Tú preparas las instrucciones del proyecto, eliges las herramientas y los permisos, y decides cómo comprobar el resultado.
 
 Un mensaje puede pedir al agente que ejecute una prueba. Los permisos determinan qué operaciones puede realizar. La prueba comprueba un comportamiento concreto. Son funciones distintas: escribir «ten cuidado» no sustituye los controles de acceso ni las comprobaciones que puedes ejecutar.
 

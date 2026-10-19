@@ -1,38 +1,40 @@
 ---
 title: "Catálogo de herramientas"
-description: "Encuentra las capacidades del agente y los requisitos de cada una."
+description: "Elige la función que necesitas y consulta cómo configurarla."
 noindex: true
 ---
 
-Normalmente describes un resultado en lenguaje natural. El agente elige herramientas del catálogo activo; estos nombres ayudan a reconocer sus llamadas. El modo, los plugins y los permisos determinan qué herramientas están disponibles.
+Una herramienta permite al agente hacer algo más que responder: leer un archivo, ejecutar un comando o consultar un servicio conectado. Describe el resultado que quieres con tus propias palabras; no necesitas memorizar nombres de herramientas.
 
-| Capacidad / nombres | Uso y guía |
+Por ejemplo:
+
+> Lee los archivos de configuración de este proyecto y enumera los valores que faltan. Incluye la ruta del archivo en cada incidencia. No cambies nada.
+
+El agente elige entre las herramientas disponibles en la conversación. El modo seleccionado, los plugins activos, los permisos y las conexiones necesarias determinan cuáles puede utilizar.
+
+## Encuentra la función que necesitas
+
+| Qué quieres hacer | Guía y requisitos |
 | --- | --- |
-| `working_directory` | Consulta o cambia el directorio de la conversación; los procesos existentes y los permisos no cambian. |
-| `create_worktree` | [Crea y utiliza otra copia de trabajo de Git](/zylon-code/es/plugins/git-worktrees), si está activado. |
-| `read`, `read_image`, `write`, `edit`, `glob`, `grep` | [Inspeccionar y editar archivos](/zylon-code/es/tools/files-and-code). Las imágenes necesitan un modelo que las admita. |
-| `bash`, `pwsh`; `job_list`, `job_output`, `job_kill` | [Comandos y procesos](/zylon-code/es/tools/shell-and-jobs). El sistema y modo eligen la shell. |
-| `web_fetch`; `web_search` opcional | [Leer URLs](/zylon-code/es/tools/web); [buscar](/zylon-code/es/plugins/web-search) requiere proveedor. |
-| `skill` | Cargar [instrucciones reutilizables](/zylon-code/es/customization/skills). |
-| `ask_user_question`, `exit_plan_mode`, `todo_write`, `create_goal`, `get_goal`, `update_goal` | [Preguntas y planes](/zylon-code/es/modes/plan-mode) y [progreso](/zylon-code/es/everyday-use/goals-and-task-lists). |
-| `subagent`, `subagent_fork`, `list_subagent_models`, `send_message`, `list_agents`, `interrupt_agent` | [Delegar e inspeccionar trabajo](/zylon-code/es/agents/delegation). |
-| `workflow` | [Coordinar un flujo solicitado explícitamente](/zylon-code/es/tools/workflows). |
-| `run_code` | [Llamadas programáticas](/zylon-code/es/modes/ptc). |
-| `diff_approval_annotate` | [Anotaciones de revisión](/zylon-code/es/plugins/diff), con el plugin de revisión activado. |
-| `present` | [Presentar archivos generados](/zylon-code/es/everyday-use/reviewing-results). |
-| `cordis_inspect_list`, `cordis_inspect_query`, `plugin_manager` | [Inspección e instalación en Creador](/zylon-code/es/modes/creator). |
-| `mcp__<server>__<tool>`, `list_mcp_resources`, `list_mcp_resource_templates`, `read_mcp_resource` | [Servicios MCP](/zylon-code/es/plugins/mcp); las herramientas del servidor tienen nombres propios. |
-| `spawn_teammate`, `send_message`, `wait_agent`, `team_task_create`, `team_task_get`, `team_task_list`, `team_task_update` | [Miembros, mensajes y tareas](/zylon-code/es/plugins/agent-teams). |
-| `stagehand_navigate`, `stagehand_observe`, `stagehand_act`, `stagehand_extract`, `stagehand_screenshot`, `stagehand_tabs`; herramientas DevTools | [Automatización web](/zylon-code/es/plugins/browser-control); catálogo del proveedor. |
-| Herramientas del ordenador | [Control del escritorio](/zylon-code/es/plugins/computer-control); necesita un entorno compatible y permisos del sistema operativo. |
-| `lsp` | [Navegación opcional por símbolos](/zylon-code/es/plugins/language-servers). |
-| `terminal_open`, `terminal_list`, `terminal_read`, `terminal_send`, `terminal_signal`, `terminal_close` | [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals), si están activadas. |
-| `schedule_create`, `schedule_list`, `schedule_update`, `schedule_delete` | [Mensajes programados integrados](/zylon-code/es/plugins/automation-tasks) en Estándar, PTC y Creador; no disponibles para agentes delegados. |
-| `session_search`, `session_trace`, `session_event_read`, `session_event_search`, `session_event_trace` | [Busca y consulta conversaciones anteriores](/zylon-code/es/plugins/session-search), si el plugin opcional está activado. |
-| `load_workspace_dependencies` | Descubrir un entorno preparado para documentos. Véase [documentos](/zylon-code/es/tools/documents). |
-| `ralph` | [Repite una tarea acotada con agentes nuevos](/zylon-code/es/plugins/ralph-loops), si está activado y lo solicitas expresamente. |
-| `subagent_codex`, `subagent_claude_code` | [Agentes externos nativos](/zylon-code/es/advanced/external-agents), con sus plugins y cuentas preparados. |
+| Leer, buscar o editar archivos del proyecto | [Archivos y código](/zylon-code/es/tools/files-and-code). Para leer imágenes también hace falta un modelo compatible. |
+| Ejecutar comandos o gestionar procesos en segundo plano | [Shell y procesos en segundo plano](/zylon-code/es/tools/shell-and-jobs). La shell depende del sistema operativo y del modo. Para procesos interactivos, consulta [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals). |
+| Crear un documento, una hoja de cálculo o una presentación | [Documentos](/zylon-code/es/tools/documents). Deben estar disponibles las bibliotecas o aplicaciones necesarias. |
+| Leer una URL o buscar en la web | [Herramientas web](/zylon-code/es/tools/web). La [búsqueda web](/zylon-code/es/plugins/web-search) requiere un proveedor configurado. |
+| Interactuar con una web o una aplicación de escritorio | Configura el [control del navegador](/zylon-code/es/plugins/browser-control) o el [control del ordenador](/zylon-code/es/plugins/computer-control). Este último también necesita permisos del sistema operativo. |
+| Pedir un plan o seguir el progreso | [Modo de planificación](/zylon-code/es/modes/plan-mode) y [Objetivos y listas de tareas](/zylon-code/es/everyday-use/goals-and-task-lists). La disponibilidad depende del modo. |
+| Repartir trabajo entre agentes | [Delegación](/zylon-code/es/agents/delegation). Las alternativas opcionales incluyen [Equipos de agentes](/zylon-code/es/plugins/agent-teams) y [agentes externos](/zylon-code/es/advanced/external-agents), que requieren su propia configuración. |
+| Utilizar instrucciones reutilizables | [Habilidades](/zylon-code/es/customization/skills). |
+| Coordinar una secuencia repetible o procesar un lote | [Flujos de trabajo](/zylon-code/es/tools/workflows) para un flujo solicitado expresamente, o [PTC](/zylon-code/es/modes/ptc) para un programa escrito por el agente. |
+| Crear una herramienta, un plugin o un modo | [Creador](/zylon-code/es/modes/creator). |
+| Utilizar un servicio externo | [Servicios MCP](/zylon-code/es/plugins/mcp). El servidor debe estar configurado y conectado. |
+| Trabajar en otra copia del repositorio Git | Activa [Worktrees de Git](/zylon-code/es/plugins/git-worktrees). |
+| Revisar cambios y archivos generados | [Revisar resultados](/zylon-code/es/everyday-use/reviewing-results) y el plugin opcional de [revisión de cambios](/zylon-code/es/plugins/diff). |
+| Localizar símbolos en el código | Configura [Servidores de lenguaje](/zylon-code/es/plugins/language-servers). |
+| Programar una tarea o repetirla | Las [tareas automatizadas](/zylon-code/es/plugins/automation-tasks) se incluyen en Estándar, PTC y Creador, pero no están disponibles para agentes delegados. El plugin opcional [Bucles Ralph](/zylon-code/es/plugins/ralph-loops) repite una tarea acotada cuando lo pides expresamente. |
+| Encontrar conversaciones anteriores | Activa [Búsqueda de sesiones](/zylon-code/es/plugins/session-search). |
 
-Algunas herramientas de esta referencia necesitan una integración opcional; no están disponibles en todos los chats. Las herramientas de tu conversación y la [guía de disponibilidad](/zylon-code/es/reference/availability) indican cuáles expone tu despliegue.
+## Comprueba qué se ha hecho
 
-Despliega los resultados para comprobar qué se ha ejecutado y si hay errores o salida recortada. Si falta una herramienta, revisa el modo, los plugins y sus requisitos antes de ampliar permisos.
+Despliega el resultado de una herramienta para consultar su salida y los posibles errores o cancelaciones. La respuesta final, por sí sola, no confirma que la herramienta haya terminado correctamente. Los resultados largos pueden abreviarse; pide la sección relevante cuando necesites más detalle.
+
+Si falta una herramienta, revisa el modo, el plugin y los requisitos de configuración en su guía. La [referencia de disponibilidad](/zylon-code/es/reference/availability) resume qué funciones se incluyen y cuáles necesitan preparación adicional. Ampliar los permisos no hace que una herramienta sin instalar o sin conexión esté disponible.

@@ -4,23 +4,23 @@ description: "Give independent tasks to child agents and follow their conversati
 noindex: true
 ---
 
-Standard, PTC and Creator can delegate work to child agents. A fresh child receives a task prompt; a forked child begins with inherited context. Neither automatically receives an isolated checkout. A child inherits the current working directory unless the task selects another; later directory changes in the parent do not move that child.
+Standard, PTC and Creator can assign subtasks to other agents. Each works in its own conversation. A new agent receives a specific task; an agent created by forking also receives the existing conversation history. Delegation is useful when parts of a task can be investigated independently.
 
 ## Give a bounded task
 
 > Delegate a read-only review of the parser tests to a separate agent. Keep the implementation investigation in this chat. Wait for its findings and combine them with your own.
 
-Name scope, expected output and edit restrictions. Give fresh children the paths and facts they need. Avoid asking two agents to change the same files independently.
+State what to inspect, what may be changed and what to deliver. Give the agent the paths and facts it needs. Agents share project files unless you prepare separate copies, so avoid asking two agents to edit the same files at once. An agent starts in the main conversation's current directory unless another is selected; later changes to the main conversation's directory do not move it. Use [Git Worktrees](/zylon-code/plugins/git-worktrees) when you need separate working files.
 
 ## Follow the work
 
-The main conversation header shows its agents, including agents they have created. Open a child conversation in the main view or sidebar to read its tools and replies. Some agents accept follow-ups and can be stopped; others finish after one assigned task. Follow-up messages can queue while a continuable child is busy.
+The main conversation header shows its agents, including agents they have created. Open a child conversation in the main view or sidebar to read its tools and replies. Some agents accept follow-ups and can be stopped; others finish after one assigned task. Follow-up messages may be queued while an agent that supports them is busy.
 
-Mentioning an agent's name in ordinary text is not itself a routing command. Ask the parent to send the follow-up through its agent control or use the child conversation's supported input.
+To send a follow-up, use the agent's available controls or ask the main agent to send it. Writing an agent's name in a message does not send that message to it.
 
 ## Verify the outcome
 
-Read the child's final result and relevant tool evidence. The parent should report failed or cancelled children rather than treating their absence as success. If the parent is unavailable after recovery, some controls may be unavailable too.
+Read the child's final result and relevant tool evidence. The parent should report failed or cancelled children rather than treating their absence as success. If controls are unavailable after recovery, inspect the child conversation and current files before asking the main agent to resume or reassign the work.
 
 Configure [models and limits](/zylon-code/agents/models-and-limits). [Agent Teams](/zylon-code/plugins/agent-teams) provides a different roster/task-board collaboration feature.
 

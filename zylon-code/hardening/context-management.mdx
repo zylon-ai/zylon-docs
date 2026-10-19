@@ -4,7 +4,7 @@ description: "Supply relevant evidence without burying the task in unrelated fil
 noindex: true
 ---
 
-The **context window** is the amount of input and output a model can handle for a request. It is measured in **tokens**, pieces of text rather than whole words. Instructions, conversation history, available tool definitions and returned file contents all compete for that space; the exact accounting depends on the model and provider.
+The **context window** is the amount of input and output a model can handle for a request. It is measured in **tokens**, pieces of text that may be whole words, parts of words or punctuation. Instructions, conversation history, available tool definitions and returned file contents all compete for that space; the exact accounting depends on the model and provider.
 
 Having room for more text does not mean every detail will be used equally well. Aim for enough relevant evidence to solve the task, with a clear path to more information when needed.
 
@@ -19,8 +19,6 @@ This request gives direction without pretending you know every dependency. Let t
 ## Prefer current sources over repeated summaries
 
 Provide the exact error and the input that triggers it. A current file or test result is stronger evidence than an old conversational description of the code. Distinguish requirements (“empty means all items”) from observations (“the current handler throws”).
-
-If you have a dependency map or code graph, use it to find candidates faster, then verify its findings against current source. A graph can be incomplete or stale. You do not need to install a graph tool to do ordinary project search.
 
 For external material, include a relevant excerpt or link and explain why it matters. The model can only use a link's contents if a tool retrieves them or you supply them. Keep customer secrets and unrelated private files out of attachments; see [context and attachments](/zylon-code/everyday-use/context-and-attachments).
 

@@ -4,15 +4,15 @@ description: "Understand Cua Driver setup, OS permissions and screenshot require
 noindex: true
 ---
 
-Computer control lets the agent inspect and operate Desktop applications through Cua Driver. This experimental capability needs explicit setup and is separate from browser automation and file tools.
+Computer control lets the agent inspect and operate Desktop applications through Cua Driver. It is useful when a task needs interaction with a graphical application, such as checking a window or filling in a form. This experimental feature requires setup separately from browser automation and file tools.
 
 ## Prepare the integration
 
-Ask your administrator or Creator to configure one compatible Cua Driver provider. The native provider uses its platform SDK; the MCP alternative uses a separately installed `cua-driver` executable. Your build and operating system determine which is supported.
+Ask your administrator or Creator to configure one compatible Cua Driver provider. The MCP option requires a separately installed `cua-driver` executable. Your build and operating system determine which is supported.
 
 Grant the required operating-system permissions to Zylon Code or the application that launches its local runtime. For screenshot-based work, choose a model that supports image input.
 
-On macOS 14 or later, your administrator can also prepare the experimental native macOS provider. It is not mounted in the normal installation. It requires application consent as well as Accessibility and Screen Recording permissions; a locked desktop prevents observations and input. Ask which provider your supplied build supports before granting access.
+On macOS 14 or later, your administrator can also prepare the experimental native macOS provider. It is not enabled in the normal installation. It requires application consent as well as Accessibility and Screen Recording permissions; a locked desktop prevents observations and input. Ask which provider your supplied build supports before granting access.
 
 ## Inspect before interacting
 
@@ -23,7 +23,3 @@ Check that the correct window was found. Then request a bounded action and inspe
 The desktop is shared with your own actions and other sessions. Cancelling does not reverse clicks or input already sent. Before retrying, check whether the previous action took effect.
 
 Use file and shell tools for ordinary coding when graphical interaction is unnecessary. For runtime failures or missing permissions, follow [tool troubleshooting](/zylon-code/troubleshooting/tools-and-permissions).
-
-<Frame caption="Computer-control search in Built-in plugins, with no matching entry">
-  <img src="/images/zylon-code/screenshots/plugins-computer-control-en.jpg" alt="Computer-control search in Built-in plugins, with no matching entry" />
-</Frame>

@@ -1,26 +1,26 @@
 ---
-title: "Problemas de plugins y MCPs"
-description: "Comprueba las funciones incluidas, la activación, la autenticación de servidores y sus herramientas."
+title: "Problemas con plugins y MCP"
+description: "Recupera una función de un plugin o la conexión con un servidor MCP."
 noindex: true
 ---
 
-Empieza por el mensaje de la tarjeta del plugin o del servidor MCP. La aplicación de escritorio permite configurar los plugins incluidos, pero no muestra controles para instalar paquetes.
+Empieza por el mensaje de la tarjeta del plugin o del servidor MCP. La aplicación de escritorio permite activar y configurar los plugins que ofrece. Algunas funciones opcionales descargan software al activarlas; no hay un instalador general de plugins de terceros.
 
 | Problema | Qué hacer |
 | --- | --- |
-| No hay botón para añadir plugins | Esta versión oculta la instalación de paquetes. Configura las funciones incluidas en Plugins o pregunta al administrador por una extensión compatible. |
+| No hay botón para añadir plugins | No hay un diálogo general para añadir plugins. Configura las funciones incluidas en Plugins o pregunta al administrador por una extensión compatible. |
 | Falta una función | Comprueba el modo y el listado de plugins integrados. La integración puede necesitar un proveedor configurado por separado. |
-| El plugin está activo, pero falta su herramienta | Comprueba el modo de la conversación. Tras un cambio en sus componentes, prueba una conversación nueva. |
-| Falla la activación | Consulta los campos o componentes que faltan y sigue el aviso de reinicio. |
+| El plugin está activo, pero falta su herramienta | Comprueba el modo de la conversación. Prueba una conversación nueva después de cambiar los plugins o la configuración del modo. |
+| Falla la activación | Comprueba si el error indica que falta algún ajuste o componente. Reinicia si la aplicación lo solicita. |
 | No se puede crear un MCP | Comprueba la URL exacta o el ejecutable y sus argumentos, además de las credenciales. |
-| Falla o se cancela OAuth | Reintenta la creación o el inicio de sesión. Comprueba que el servidor admita el registro público y PKCE. |
-| La última prueba pasó, pero falla una llamada | Vuelve a probar la conexión y revisa los permisos de la tarea. |
+| Falla o se cancela OAuth | Reintenta el inicio de sesión. Si sigue fallando, pide al administrador del servidor que compruebe si admite el registro de clientes públicos y PKCE, necesarios para este método de acceso. |
+| La conexión funcionaba, pero ahora falla una llamada | Vuelve a probar la conexión y revisa los permisos de la tarea. |
 | Una mención impide enviar | Actualiza la referencia si el servidor se ha renombrado, eliminado o desactivado. |
 
 El listado de solo consulta está en **Ajustes → Plugins**, cuando está activada **Vista de desarrollo**. Es distinto de la página **Plugins**, donde se configuran las funciones incluidas.
 
-Para un comando MCP local, comprueba que el ejecutable exista y que cada argumento esté en su campo. Para HTTP, utiliza la dirección MCP del servicio, no su página principal. Revisa los registros antes de compartirlos.
+Para un comando MCP local, comprueba que el ejecutable exista y que cada argumento esté en su campo. Para HTTP, utiliza la dirección MCP del servicio, no su página principal. Quita los tokens y los datos privados de los registros antes de compartirlos.
 
 Reactivar el gestor recupera los servidores guardados. Eliminar un servidor borra su configuración y credenciales. La exportación excluye secretos; consulta la [guía de MCP](/zylon-code/es/plugins/mcp) para saber cómo funciona la importación en tu versión.
 
-Si el diálogo del dominio bloquea todas las peticiones al modelo y las herramientas, resuelve primero la [licencia](/zylon-code/es/getting-started/license-and-access). Reactivar una integración no arregla ese requisito. [Gestionar plugins](/zylon-code/es/plugins/managing-plugins) recoge los pasos de cada función.
+Si la ventana de configuración del dominio de Zylon bloquea las peticiones al modelo y el uso de herramientas, resuelve primero la [licencia](/zylon-code/es/getting-started/license-and-access). Reactivar una integración no arregla ese requisito. [Gestionar plugins](/zylon-code/es/plugins/managing-plugins) recoge los pasos de cada función.

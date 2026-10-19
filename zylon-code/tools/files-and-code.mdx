@@ -4,7 +4,7 @@ description: "Ask for focused reads, searches and edits, then inspect their exac
 noindex: true
 ---
 
-The normal presets provide tools for listing/searching paths, reading text, viewing supported images, writing files and replacing text. Minimal uses its shell for text-file work and also includes image reading. Optional global plugins can extend its tools.
+Standard, PTC and Creator let the agent search for files, read text, view supported images and edit content. Minimal uses its command-line shell for text files and also supports image reading. Optional global plugins can add tools.
 
 ## Investigate
 
@@ -16,10 +16,14 @@ Specify a subfolder or filename pattern when possible. Search results can be cap
 
 > Update the validation message in the existing implementation. Preserve unrelated changes and run the focused test. Show the resulting diff.
 
-The agent should inspect the current file before editing. If you changed it in another editor during the task, tell the agent to re-read it. Unique text replacement can fail when the expected text is absent or appears more than once; that needs a new read, not repeated blind edits.
+The agent should inspect the current file before editing. If you changed it in another editor during the task, tell the agent to re-read it. If an edit fails because the text has changed or appears more than once, ask the agent to read the file again and locate the intended section before retrying.
 
-Relative paths resolve from the conversation's current working directory. The built-in `working_directory` tool can read that path or change to an existing directory; it does not move existing processes or expand write permissions. [Git Worktrees](/zylon-code/plugins/git-worktrees) can create a separate checkout and enter it. Files outside it need the appropriate access. An `@` mention does not bypass that restriction. Image reading also requires image-capable model metadata.
+## Check the folder and access
+
+Paths such as `src/config.ts` are relative to the conversation's working directory. Ask the agent to show that directory if you are unsure, or to switch to an existing folder. This does not change the directory of processes already running or grant additional write access.
+
+[Git Worktrees](/zylon-code/plugins/git-worktrees) lets you work in a separate copy of a repository. Files outside the permitted folders still need the appropriate access; mentioning one with `@` does not grant it. For images, choose a model configured to accept image input.
 
 ## Verify
 
-Open the file and [review its diff](/zylon-code/everyday-use/reviewing-results). The optional [Zylon Diff Review](/zylon-code/plugins/diff) panel also lets you keep or revert changes and send comments to the agent. File tools write immediately when permitted; there is no implicit commit or automatic rollback on Stop. Use the project's normal tests and version-control workflow before releasing a change.
+Open the file and [review its diff](/zylon-code/everyday-use/reviewing-results). The optional [Zylon Diff Review](/zylon-code/plugins/diff) panel also lets you keep or revert changes and send comments to the agent. Edits are applied to the files as soon as permission allows them. They are not automatically committed to Git, and stopping the task does not undo them. Use the project's normal tests and version-control workflow before releasing a change.

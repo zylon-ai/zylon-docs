@@ -10,17 +10,21 @@ Expand the failed tool card and read the requested action and result before chan
 | --- | --- |
 | All model and tool work is blocked by license setup | Verify the Zylon domain and license; file permissions cannot repair a license failure. |
 | A tool is missing | Check the current mode and enabled plugins; confirm that its provider was configured. |
-| A write is blocked | Open the permission picker and check the target path and access restrictions. |
+| A file change is blocked | Open the permission picker and check the target path and access restrictions. |
 | A command cannot be found | Check that the executable is installed and available to the application on this computer. |
-| A command times out | Read the command limit and check the job list to see whether it is still running. |
+| A command times out | Check the command duration limit and ask the agent to list jobs to see whether the command is still running. |
 | An edit cannot match text | Ask the agent to read the current file again before retrying. |
-| A screenshot cannot be used | Choose an image-capable model and check the control provider. |
-| An Office preview fails | Keep the editable file and check the preview/conversion support for your build. |
+| A screenshot cannot be used | Choose a model that accepts images. If capture itself fails, check the browser or computer-control configuration. |
+| An Office preview fails | Keep the editable file, try opening it in its usual application and check which preview formats your version supports. |
 | You can browse but the agent cannot | Configure browser automation; opening a browser panel alone does not supply it. |
 
 ## Recover without unnecessary access
 
-Ask for a smaller read-only check or a clear explanation of the missing prerequisite. More access will not supply a missing provider or fix an unsupported API.
+Ask for a smaller read-only check or a clear explanation of the missing prerequisite. Broader permissions do not install a missing tool, connect a provider or add support for an unavailable feature.
+
+For example:
+
+> Explain why the command failed. Check whether it changed any files or left a process running. Do not repeat it or change permissions yet.
 
 Before retrying, inspect files and jobs to see which actions completed. Approve only the requested action whose target and effects you accept.
 

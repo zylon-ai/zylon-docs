@@ -4,13 +4,13 @@ description: "Ejecuta comandos, controla procesos y configura los límites de la
 noindex: true
 ---
 
-El agente ejecuta comandos en tu ordenador. El modo habitual utiliza Bash en macOS y PowerShell en Windows. Las llamadas de Estándar inician procesos nuevos; Mínimo mantiene una shell persistente.
+El agente ejecuta comandos en tu ordenador. La configuración predeterminada utiliza Bash en macOS y PowerShell en Windows. En Estándar, una ejecución nueva empieza con una shell nueva y no conserva el estado de la anterior. Mínimo mantiene la shell abierta entre ejecuciones.
 
 ## Pide una comprobación
 
-> Lee los scripts del proyecto y ejecuta la prueba existente del paquete modificado. Indica el comando, su salida y el código de finalización. No instales dependencias.
+> Lee los scripts del proyecto y ejecuta la prueba existente del paquete modificado. Indica el comando, su resultado y el código de salida. No instales dependencias.
 
-Comprueba el directorio y el comando en la tarjeta de herramienta. Si falta un ejecutable, hay que revisar el entorno. Un tiempo de espera agotado o una cancelación no confirma que la prueba haya pasado.
+Comprueba el directorio y el comando en la tarjeta de herramienta. Si no se encuentra un comando, comprueba que esté instalado y disponible para la aplicación. Si se agota el tiempo o se cancela la ejecución, eso no significa que la prueba se haya superado.
 
 ## Sigue el trabajo en segundo plano
 
@@ -18,10 +18,10 @@ Cuando se admite, el agente puede iniciar un comando como proceso en segundo pla
 
 La salida conservada tiene un límite. Pide que se guarde un archivo de registro cuando necesites toda la salida de un comando largo.
 
-El plugin opcional [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals) permite al agente abrir y reutilizar sus propias terminales en cualquier modo. Cambiar el directorio de la conversación afecta a los comandos nuevos; las shells y los servidores que ya están abiertos conservan el suyo.
+El plugin opcional [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals) permite al agente abrir y reutilizar sus propios terminales en cualquier modo. Cambiar el directorio de la conversación afecta a los comandos nuevos; los terminales y los servidores que ya están en marcha conservan el suyo.
 
 ## Ajusta los límites
 
-Abre **Plugins → Ajustes de plugins integrados → Shell** para modificar la duración de los comandos y los límites de salida. Guarda los cambios. Conservar más salida consume memoria y no aumenta la ventana de contexto del modelo.
+Abre **Plugins → Ajustes de plugins integrados → Terminal** para modificar la duración de los comandos y los límites de salida. Guarda los cambios. Conservar más texto de los resultados consume memoria y no aumenta la ventana de contexto del modelo.
 
 El [panel de terminal](/zylon-code/es/everyday-use/panels) sirve para tus propios comandos. Los ejecutables del proyecto y el acceso a la red corporativa deben estar disponibles en tu ordenador.

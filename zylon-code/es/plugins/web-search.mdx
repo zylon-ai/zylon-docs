@@ -8,7 +8,7 @@ La búsqueda web ayuda al agente a encontrar fuentes cuando aún no conoces su U
 
 ## Prepara la búsqueda
 
-Pide a Creador o al administrador que configure un proveedor compatible y active la búsqueda en el modo correspondiente. Poder leer una URL no la activa. La interfaz predeterminada de Zylon no ofrece un interruptor de búsqueda listo en Modelos.
+Pide a Creador o al administrador que configure un proveedor compatible y active la búsqueda en el modo correspondiente. Poder leer una URL no activa la búsqueda. La interfaz predeterminada de Zylon no ofrece un interruptor para activarla desde Modelos.
 
 Facilita las credenciales mediante la configuración aprobada. Exa puede utilizar `EXA_API_KEY`; Perplexity, `PERPLEXITY_API_KEY`. Los límites y los ajustes de las peticiones dependen del proveedor elegido.
 
@@ -16,6 +16,6 @@ Facilita las credenciales mediante la configuración aprobada. Exa puede utiliza
 
 > Busca fuentes primarias actuales sobre la función que te describa. Devuelve sus URL, las fechas de publicación disponibles y una explicación breve de cómo se aplica cada fuente.
 
-Consulta el resultado de `web_search` y abre alguna fuente. Un error de autenticación, cuota o conexión es distinto de no encontrar resultados relevantes.
+Consulta el resultado de `web_search` y abre alguna fuente. Si falla, utiliza el error para comprobar las credenciales, los límites de peticiones o la conexión. Que la búsqueda falle no significa que no haya fuentes relevantes.
 
-Para desactivar la búsqueda, hay que retirar o cambiar la selección del proveedor y la capacidad del modo de forma coherente. Si ya conoces la URL, utiliza [Leer páginas web](/zylon-code/es/tools/web).
+Para desactivarla, pide a Creador o al administrador que actualice tanto la configuración del proveedor como la disponibilidad de la búsqueda en ese modo. Si ya conoces la URL, utiliza [Leer páginas web](/zylon-code/es/tools/web).

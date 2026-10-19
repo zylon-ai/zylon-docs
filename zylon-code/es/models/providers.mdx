@@ -4,11 +4,11 @@ description: "Utiliza una cuenta compatible, una clave API o un servidor de mode
 noindex: true
 ---
 
-Abre **Ajustes → Modelos** para configurar una conexión. Zylon Code sigue necesitando un dominio de Zylon con licencia aunque elijas otro proveedor. Para el gateway de la empresa, consulta [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon).
+Abre **Ajustes → Modelos** para configurar una conexión. Zylon Code sigue necesitando un dominio de Zylon con licencia aunque elijas otro proveedor. Para el servicio de modelos de tu organización, consulta [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon).
 
 ## Inicia sesión con una cuenta de ChatGPT o Claude
 
-Si tu versión ofrece autorización por cuenta, las tarjetas de ChatGPT y Claude aparecen encima de los proveedores. Pulsa **Iniciar sesión** y sigue el enlace del proveedor, el código de dispositivo o las instrucciones de devolución de la autorización. Introduce la contraseña solo en la web del proveedor. Puedes cancelar un inicio pendiente; si se interrumpe, aparecerá una opción para reanudarlo o reintentarlo.
+Si tu versión permite iniciar sesión con una cuenta, las tarjetas de ChatGPT y Claude aparecen encima de los proveedores. Pulsa **Iniciar sesión** y sigue las instrucciones para abrir la web del proveedor, introducir un código o volver a la aplicación. Introduce la contraseña solo en la web del proveedor. Puedes cancelar un inicio pendiente; si se interrumpe, puede aparecer una opción para reanudarlo o reintentarlo.
 
 Después, selecciona un modelo disponible. **Usar cuenta** permite activar una cuenta que ya tenga sesión iniciada. El acceso depende del plan y los permisos del proveedor. Los modelos de una cuenta de ChatGPT utilizan una conexión distinta de la API de OpenAI con clave.
 
@@ -18,28 +18,24 @@ Después, selecciona un modelo disponible. **Usar cuenta** permite activar una c
 
 Abre la tarjeta del proveedor, introduce su clave API y guarda. Dejar vacío el campo de una clave ya guardada la conserva. Introducir una clave en una conexión que también admite cuenta puede cambiar su modo de autenticación; comprueba qué opción está activa antes de probar el modelo.
 
-Si aún no aparece el proveedor, pulsa **Añadir proveedor de modelos** y elige la opción de proveedor de terceros. Las claves API y las suscripciones de cuenta tienen condiciones de acceso y facturación diferentes.
+Si aún no aparece el proveedor, pulsa **Añadir proveedor → Proveedor del catálogo**. Las claves API y las suscripciones de cuenta tienen condiciones de acceso y facturación diferentes.
 
 ## Conecta un servicio personalizado o local
 
-1. Pulsa **Añadir proveedor de modelos → API de modelo personalizada**.
+1. Pulsa **Añadir proveedor → API personalizada**.
 2. Introduce un identificador único, un nombre reconocible, la URL base y el protocolo que implemente el servidor.
 3. Si necesita una clave, introdúcela en su campo de credenciales.
-4. Pulsa **Obtener modelos disponibles**, selecciona los resultados y añádelos. Si el servidor no permite consultar el catálogo, introduce sus identificadores exactos a mano.
+4. Pulsa **Buscar modelos**, selecciona los resultados y pulsa **Añadir seleccionados**. Si el servidor no permite consultar el catálogo, introduce sus identificadores exactos a mano.
 5. Guarda el proveedor, selecciona un modelo y prueba una tarea pequeña de solo lectura que utilice una herramienta.
 
 **OpenAI Chat Completions**, **OpenAI Responses** y **Anthropic Messages** son protocolos distintos. Decir «compatible con OpenAI» no basta para saber cuál implementa el servidor. Un modelo local necesita un servidor funcionando por separado y accesible; `localhost` se refiere a este ordenador.
 
 ## Certificados privados
 
-La consulta de modelos puede pedir confirmación de un certificado HTTPS válido emitido por una entidad que la aplicación no reconoce. Contrasta el dominio, la huella, el emisor y las fechas con el administrador antes de aceptarlo. La aprobación se limita a ese dominio y certificado; siguen comprobándose el nombre y la vigencia. Una aprobación provisional solo se conserva si la consulta y el guardado terminan correctamente. Puedes retirar la confianza desde el editor del proveedor y aplicar el cambio. Un certificado distinto necesita otra confirmación.
+La consulta de modelos puede pedir confirmación de un certificado HTTPS válido emitido por una entidad que la aplicación no reconoce. Contrasta la dirección del servidor, la huella SHA-256, el emisor y las fechas de validez con el administrador antes de aceptarlo. La aprobación se limita a ese origen exacto (protocolo, nombre de host y puerto) y certificado; siguen comprobándose el nombre y la vigencia. Una aprobación provisional solo se conserva si la consulta y el guardado terminan correctamente. **Olvidar certificado autorizado** retira la confianza cuando aplicas el cambio. Un certificado distinto necesita otra confirmación.
 
 El certificado del dominio de Zylon se gestiona en **Ajustes → General**, sin modificar la URL de modelos que deriva de él.
 
 ## Comprueba y mantén la conexión
 
-Después de guardar, prueba una petición real y consulta el resultado de una herramienta. El catálogo no confirma que la generación funcione. Eliminar un proveedor puede dejar sin servicio el modelo guardado en un chat. [Opciones de modelos](/zylon-code/es/models/model-options) explica capacidades y razonamiento; [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models) cubre los fallos de conexión.
-
-<Frame caption="Token del desarrollador y dirección del proveedor derivada del dominio de Zylon">
-  <img src="/images/zylon-code/screenshots/models-providers-es.jpg" alt="Token del desarrollador y dirección del proveedor derivada del dominio de Zylon" />
-</Frame>
+Después de guardar, prueba una petición real y consulta el resultado de una herramienta. Una búsqueda de modelos correcta confirma que puedes acceder al catálogo; una petición al modelo comprueba que el servicio puede generar una respuesta. Eliminar un proveedor puede dejar sin servicio el modelo guardado en un chat. [Opciones de modelos](/zylon-code/es/models/model-options) explica capacidades y razonamiento; [diagnóstico](/zylon-code/es/troubleshooting/setup-and-models) cubre los fallos de conexión.

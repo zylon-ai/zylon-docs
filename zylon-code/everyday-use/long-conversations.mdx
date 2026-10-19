@@ -4,13 +4,13 @@ description: "Manage context, compaction and handoffs during extended tasks."
 noindex: true
 ---
 
-Models have finite context windows. Messages, instructions, tool definitions and tool results all use part of that window. Long output can also be shortened before it reaches the model.
+A model can only work with a limited amount of information at once. This is its **context window**. Messages, instructions, available tools and their results all take up space. Long tool output may be shortened, so ask the agent to inspect a specific file or section when a detail matters.
 
 ## Compact a conversation
 
-Standard, PTC, Minimal and Creator include compaction. Use **Compact** in the command menu or `/compact` when available. Compaction replaces part of the active model context with a summary; it does not delete the project files or turn the summary into independent proof of earlier results. Recorded conversation history remains the place to inspect actual tool activity.
+Standard, PTC, Minimal and Creator include compaction. Use **Compact** in the command menu or `/compact` when available. Compaction replaces part of the information sent to the model with a summary. It preserves the project files and conversation history, so you can still inspect the original tool results.
 
-Run manual compaction when the agent is idle. If the summary fails or is truncated, the selected original history is retained; inspect the error and check the model's configured budgets before retrying. Compaction can also happen automatically as context fills.
+Run manual compaction when the agent is idle. If the summary fails or is truncated, the selected original history is retained; inspect the error and check the model's [context and output limits](/zylon-code/models/model-options) before retrying. Compaction can also happen automatically as context fills.
 
 ## Preserve what matters
 
@@ -18,7 +18,7 @@ Before continuing, ask for a concise handoff:
 
 > Summarize the goal, files changed, decisions, checks run, unresolved failures and the next concrete step. Include paths so I can verify the state.
 
-Keep durable project rules in [instructions](/zylon-code/customization/project-instructions), and reusable workflows in [skills](/zylon-code/customization/skills). A chat summary is unsuitable as the only record of a credential, release approval or test artifact.
+Keep durable project rules in [instructions](/zylon-code/customization/project-instructions), and reusable workflows in [skills](/zylon-code/customization/skills). Use the original tool result or changed file to verify completed work; the summary is an aid to continuing the task.
 
 ## Start a fresh task
 

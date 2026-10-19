@@ -1,10 +1,10 @@
 ---
 title: "Creador"
-description: "Pide al agente que cree, instale y verifique una capacidad personalizada."
+description: "Crea una herramienta, un plugin o un modo y compruébalo en una conversación nueva."
 noindex: true
 ---
 
-Creador te ayuda a crear herramientas, funciones de interfaz y modos propios. Incluye las capacidades generales de Estándar y herramientas para inspeccionar la aplicación instalada y crear extensiones.
+Creador te ayuda a crear herramientas, funciones de interfaz y modos propios. Úsalo cuando las herramientas o los modos existentes no cubran una tarea habitual. Incluye las funciones generales de Estándar y puede consultar la aplicación instalada para crear una extensión compatible.
 
 ## Describe la función
 
@@ -12,12 +12,12 @@ Inicia una conversación en Creador e indica el comportamiento, los ajustes, los
 
 > Crea un modo llamado Revisión que inspeccione los cambios e informe de problemas sin editar archivos. Instálalo como paquete de plugins local. Comprueba sus herramientas en una conversación nueva y explica cómo desactivarlo.
 
-Pide una instalación que funcione y una comprobación, para poder revisar la función además del código generado. Creador debe consultar las API disponibles e informar de errores de instalación o activación.
+Pide una instalación que funcione y una comprobación, para poder revisar la función además del código generado. Pide a Creador que compruebe qué admite la versión instalada y que indique cualquier error de instalación o activación.
 
 ## Revisa y conserva el resultado
 
 Consulta los archivos creados y la solicitud de instalación. Localiza el paquete en Plugins, inicia una tarea que lo utilice y comprueba su comportamiento. Las conversaciones existentes conservan su modo. Los plugins globales opcionales y los cambios de configuración pueden modificar las herramientas disponibles.
 
-Guarda el código y las instrucciones para reinstalar, actualizar y desactivar la función. Un plugin generado ejecuta código local y necesita comprobarse cuando cambie la aplicación.
+Guarda el código y las instrucciones para reinstalar, actualizar y desactivar la función. Un plugin generado ejecuta código local y necesita comprobarse cuando cambie la aplicación. Si la función falla, desactívala en Plugins y pide a Creador que investigue el error antes de volver a activarla.
 
 Continúa con [Modos personalizados](/zylon-code/es/customization/custom-modes), [Herramientas personalizadas](/zylon-code/es/customization/custom-tools) o [Plugins personalizados](/zylon-code/es/customization/custom-plugins).

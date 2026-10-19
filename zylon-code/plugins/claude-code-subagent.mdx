@@ -30,7 +30,7 @@ The `subagent_claude_code` call starts an asynchronous run and returns an agent 
 
 A fresh native session handles each assignment. Follow-up messages and resume are not supported; send another complete assignment for additional work. The result does not include a local child chat with all native tool activity or diffs. If edits were permitted, check the actual files and relevant tests yourself.
 
-The child shares the selected project directory unless you prepared another one. It also counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits). Cancellation stops ongoing work without restoring changed files.
+The delegated agent works in the selected project directory unless you prepared another one. It also counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits). Cancellation stops ongoing work without restoring changed files.
 
 An enabled switch does not prove native authentication, permissions or the runtime are ready. Start with the bounded read-only check above and investigate a reported failure before allowing edits. Switching the plugin off removes its tool while retaining the downloaded package and existing file changes.
 

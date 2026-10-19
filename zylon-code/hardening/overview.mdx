@@ -6,11 +6,11 @@ noindex: true
 
 An agent can edit a file correctly and still solve the wrong problem. It can also understand the request but fail because a dependency is missing, a test is misleading or the useful information was buried in a long conversation. Improving the model alone does not fix all of these problems.
 
-**Hardening** means preparing the project and the way you work so the agent has less to guess and you can detect its mistakes. Here it covers reliability as well as safeguards: clear tasks, useful context, working tools, independent checks and a reliable way to resume work.
+**Hardening** means preparing the project and the way you work so the agent has less to guess and you can detect its mistakes. In this section, the term refers to making agent work more reliable: clear tasks, useful context, working tools, independent checks and a reliable way to resume work.
 
 ## What is a harness?
 
-The **model** proposes text and tool calls. The **harness** is the software around it that supplies instructions and context, executes allowed tools, returns results and manages the conversation. Zylon Code provides this environment through modes, tools, permissions, plugins and sessions. Your project's instructions, test commands and task definitions complete the working setup.
+The **model** interprets your request and proposes actions. The **harness** is the environment that lets it work with your project: instructions, tools, permissions, conversation history and feedback from each action. Zylon Code provides these capabilities. You prepare the project instructions, choose the tools and permissions, and decide how to check the result.
 
 A prompt can ask the agent to run a test. A permission setting determines which operations it can perform. A test checks a particular behavior. These serve different purposes: writing “be careful” cannot replace either access controls or executable checks.
 

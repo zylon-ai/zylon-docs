@@ -16,19 +16,19 @@ Si necesitas un agente al que seguir enviando mensajes dentro de Zylon Code, uti
 
 Hace falta el entorno incluido en el paquete. La integración no recurre a un ejecutable `claude` encontrado en el ordenador. El token de Zylon y la conexión de cuenta en Modelos no configuran este agente independiente.
 
-La [configuración del perfil](/zylon-code/es/advanced/profiles-and-yaml) permite fijar el modelo y el modo de permisos nativo. Si no se fija un modelo, se utiliza el de los ajustes nativos de Claude. El modelo del principal y su lista de modelos autorizados no lo eligen. La configuración propia del usuario y del proyecto puede influir en el trabajo; pide al administrador que revise el entorno previsto.
+La [configuración del perfil](/zylon-code/es/advanced/profiles-and-yaml) permite fijar el modelo y el modo de permisos nativo. Si no se fija un modelo, se utiliza el de los ajustes nativos de Claude. El modelo elegido para el agente principal y su lista de modelos autorizados no se aplican a esta integración. La configuración propia del usuario y del proyecto puede influir en el trabajo; pide al administrador que revise el entorno previsto.
 
-Los permisos del principal no se copian automáticamente al entorno nativo. Si necesitas imponer solo lectura, configura también el acceso nativo adecuado; indicarlo en el encargo no basta. La ejecución no espera a que respondas a los diálogos nativos de permisos o aclaraciones.
+Los permisos del agente principal no se copian automáticamente al entorno nativo. Si necesitas imponer solo lectura, configura también el acceso nativo adecuado; indicarlo en el encargo no basta. La ejecución no espera a que respondas a los diálogos nativos de permisos o aclaraciones.
 
 ## Ejemplo: encuentra casos sin probar
 
 > Delega una tarea de solo lectura en Claude Code: lee el analizador de configuración y sus pruebas. Identifica casos que falten para claves desconocidas, valores vacíos y entradas mal formadas. Devuelve un informe breve con referencias a archivos y comprobaciones propuestas. No edites, instales dependencias ni crees más agentes. Espera el informe antes de implementar.
 
-`subagent_claude_code` inicia el trabajo en segundo plano y devuelve un identificador de agente. El principal recibe la respuesta final o un error resumido. El agente externo no tiene el historial del chat principal: incluye las rutas, los datos y las restricciones que necesite.
+`subagent_claude_code` inicia el trabajo en segundo plano y devuelve un identificador de agente. El agente principal recibe la respuesta final o un error resumido. El agente externo no tiene el historial del chat principal: incluye las rutas, los datos y las restricciones que necesite.
 
 ## Comprueba el resultado
 
-Cada encargo utiliza una sesión nativa nueva. No admite mensajes de seguimiento ni reanudación; envía otro encargo completo si hace falta más trabajo. El resultado no incluye un chat local con toda la actividad nativa ni sus diffs. Si permitiste ediciones, consulta los archivos y las pruebas relevantes por separado.
+Cada encargo utiliza una sesión nativa nueva. No admite mensajes de seguimiento ni reanudación; envía otro encargo completo si hace falta más trabajo. El resultado no incluye un chat local con toda la actividad nativa ni el detalle de sus cambios. Si permitiste ediciones, consulta los archivos y las pruebas relevantes por separado.
 
 El agente comparte el directorio del proyecto salvo que prepares otro. También cuenta para el [límite de agentes en paralelo](/zylon-code/es/agents/models-and-limits). Cancelar detiene el trabajo en curso sin restaurar los archivos modificados.
 

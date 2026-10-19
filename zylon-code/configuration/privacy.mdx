@@ -10,21 +10,21 @@ Zylon Code stores conversations and project settings locally. Model requests go 
 
 | Capability | Destination |
 | --- | --- |
-| License verification | The public license endpoint on your configured Zylon domain. This request does not include the developer token. |
+| License verification | Your configured Zylon deployment, to verify its license. |
 | Zylon model connection | Your configured deployment and the services that run its models. |
 | Another provider | That provider's model endpoint. |
 | MCP | The connected server, or services used by a local MCP command. |
 | Web reading and search | The requested site or search provider. |
 | Commands, extensions and browser actions | The services used by that capability. |
 
-The domain and a successful license-verification receipt are stored with application settings. Developer tokens stay in separate credential storage. The application also stores certificate approval when you explicitly trust a private server certificate.
-
-Using a local application does not mean all task processing stays on your computer. An internal model gateway also does not prevent a tool or plugin from contacting another service. See [Network and offline operation](/zylon-code/advanced/network-and-offline) for organization-managed restrictions.
+Using a local application does not mean all task processing stays on your computer. An internal model server also does not prevent a tool or plugin from contacting another service. See [Network and offline operation](/zylon-code/advanced/network-and-offline) for organization-managed restrictions.
 
 ## Before working with sensitive data
 
-Use the providers and integrations approved by your organization. Keep tokens in protected credential fields. Review exports, screenshots, command output and diagnostic files before sharing them.
+Use the providers and integrations approved by your organization. Enter tokens in the dedicated credential fields. Review exports, screenshots, command output and diagnostic files before sharing them.
 
-Recognized credentials in sent messages may look masked on screen. This only changes their display: the original text remains available to copying and model input. Keep secrets out of the message itself; masking is not removal.
+Some credentials in sent messages may appear masked on screen. The original text is still copied and sent to the model. Keep secrets out of messages; display masking does not remove them.
+
+Do not assume that saved credentials are out of the agent’s reach. Local tools may be able to read them with the available permissions. If your tasks must not have access to provider keys, ask your administrator how those credentials are protected.
 
 Extensions and local commands can run code and make their own network requests. Check their requirements and the provider's data policy before enabling them. [Permissions](/zylon-code/configuration/permissions) explains how to limit task operations.

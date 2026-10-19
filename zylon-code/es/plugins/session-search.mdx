@@ -23,9 +23,9 @@ Un resultado útil sigue tres pasos: encontrar una conversación relevante, leer
 | Herramienta | Qué recupera |
 | --- | --- |
 | `session_search` | Conversaciones anteriores con títulos y fragmentos relevantes; excluye el chat actual. |
-| `session_event_search` | Mensajes o eventos coincidentes dentro de una conversación autorizada. |
-| `session_event_read` | Un evento completo y, si se solicita, un resumen de los que lo rodean. |
-| `session_trace`, `session_event_trace` | Conversaciones relacionadas o las relaciones registradas entre eventos. |
+| `session_event_search` | Mensajes y actividad de herramientas que coinciden con la búsqueda dentro de una conversación autorizada. |
+| `session_event_read` | Una entrada completa de la conversación, como un mensaje o el resultado de una herramienta, con resúmenes de las entradas cercanas si se solicitan. |
+| `session_trace`, `session_event_trace` | Conversaciones relacionadas y vínculos entre las entradas de una conversación. |
 
 Puedes describir el resultado en lenguaje normal; el agente elige las llamadas.
 
@@ -33,7 +33,7 @@ Puedes describir el resultado en lenguaje normal; el agente elige las llamadas.
 
 Una discusión anterior refleja lo que se sabía entonces. Una prueba puede corresponder a una versión antigua del código. Pide al agente que lea los archivos actuales antes de dar esa información por vigente. Si aparecen demasiadas coincidencias o se alcanza el límite, acota la búsqueda; un resultado incompleto no demuestra que una decisión nunca se tomara.
 
-El índice de contenido es local y se crea en la primera búsqueda. Se vuelve a crear al reiniciar la aplicación o al desactivar y reactivar el plugin. Desactivarlo retira las herramientas sin borrar las conversaciones. Utiliza un [resumen de tarea](/zylon-code/es/hardening/session-state) para el estado breve que quieras facilitar directamente al siguiente chat.
+El índice de búsqueda se mantiene en el ordenador. Desactivar el plugin retira las herramientas sin borrar las conversaciones. Utiliza un [resumen de tarea](/zylon-code/es/hardening/session-state) para el estado breve que quieras facilitar directamente al siguiente chat.
 
 <Frame caption="Componentes de Búsqueda de sesiones, desactivados en este ejemplo">
   <img src="/images/zylon-code/screenshots/plugins-session-search-es.jpg" alt="Componentes de Búsqueda de sesiones, desactivados en este ejemplo" />

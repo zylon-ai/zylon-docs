@@ -1,6 +1,6 @@
 ---
 title: "Slash commands"
-description: "Look up built-in composer actions and their prerequisites."
+description: "Choose commands from the message box to manage your conversation."
 noindex: true
 ---
 
@@ -10,8 +10,8 @@ Type `/` or use **+** to open the command menu. Your mode and enabled plugins de
 | --- | --- |
 | `/model` | Select a model from the configured providers. |
 | `/permission` | Select the current session's access preset. |
-| `/plan` | Enter planning with a task; supported rich presets only. |
-| `/goal` | Add/manage an objective through the goal interaction. |
+| `/plan` | Plan a task in a supported mode. |
+| `/goal` | Add or manage a goal. |
 | `/compact` | Compact active model context when idle; all four built-in modes support it. |
 | `/export` | Open the selected conversation's download workflow. |
 | `/feedback` | Open feedback input when the feature is available. |
@@ -20,7 +20,7 @@ Type `/` or use **+** to open the command menu. Your mode and enabled plugins de
 
 ## Invocation
 
-Choose a row and follow its popup/input. Some commands execute directly; others open a selector or require arguments. A recognized command failure is not silently converted into an ordinary prompt. Check the displayed error and retained draft before retrying.
+Choose a row and follow its popup/input. Some commands execute directly; others open a selector or require arguments. If a command fails, check the error and your draft before sending it again.
 
 Attachments are accepted only by commands that declare support. If refused, keep the draft/attachments and choose a supported route. A skill name colliding with an application command remains the command.
 

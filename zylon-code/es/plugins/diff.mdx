@@ -10,7 +10,7 @@ Las ediciones que revisas ya están guardadas en disco. El plugin no espera tu a
 
 ## Abre los cambios pendientes
 
-Pulsa **Cambios pendientes** al pie de la barra lateral o en la cabecera de la conversación, o utiliza **Ctrl+D**. La revisión se abre en la barra lateral derecha. Mientras el plugin esté activo, se registran automáticamente las ediciones del agente que hayan finalizado sin error realizadas mediante `edit`, `write` y `str_replace_editor`.
+Pulsa **Cambios pendientes** al pie de la barra lateral o en la cabecera de la conversación, o utiliza **Ctrl+D**. La revisión se abre en la barra lateral derecha. Mientras el plugin esté activo, registra las ediciones que el agente complete sin errores con `edit`, `write` y `str_replace_editor`.
 
 Con el plugin activo, al pulsar una tarjeta o referencia de archivo puede abrirse su menú de revisión. Elige **Abrir como siempre** para utilizar la vista previa habitual.
 
@@ -38,13 +38,13 @@ Utiliza **Importar cambios del control de versiones** para revisar cambios sin c
 
 Los comandos de terminal y los editores externos no crean necesariamente nuevas entradas automáticas en la revisión. Se pueden detectar cambios en archivos ya registrados y puedes importar los demás desde el control de versiones. El panel no garantiza que aparezcan todos los archivos modificados del proyecto.
 
-## Ajustes y conservación del estado
+## Ajustes y revisiones guardadas
 
-Abre **Ajustes → Revisión de cambios de Zylon** para configurar la visualización, los atajos, los comentarios y la importación. Los cambios pendientes y los comentarios preparados se conservan al reiniciar la aplicación. Deshabilitar el plugin conserva ese estado; no revierte los archivos.
+Abre **Ajustes → Revisión de cambios de Zylon** para configurar la visualización, los atajos, los comentarios y la importación. Los cambios pendientes y los comentarios preparados se conservan al reiniciar la aplicación. Desactivar el plugin conserva ese estado; no revierte los archivos.
 
-Si no puede guardarse el estado, aparece un error y los cambios recién registrados permanecen en memoria hasta que se resuelva. Los datos guardados dañados o de una versión no admitida se conservan para poder investigar el problema. Mientras haya un error de guardado, no des por hecho que la última revisión está almacenada de forma duradera.
+Si aparece un error de guardado, las entradas de revisión recién registradas pueden perderse al cerrar la aplicación. Resuélvelo antes de confiar en que estarán disponibles tras un reinicio. El plugin conserva los datos guardados dañados o de una versión no admitida para investigar el problema; consulta [Recuperación](/zylon-code/es/troubleshooting/recovery) si el error persiste.
 
-Cuando está habilitado, el plugin también aporta `diff_approval_annotate` y habilidades para anotaciones y comentarios del agente. Puedes utilizar el panel sin aprenderte esos nombres.
+El agente también puede añadir anotaciones y comentarios a la revisión.
 
 Continúa con [la revisión de resultados](/zylon-code/es/everyday-use/reviewing-results), [las técnicas de comprobación](/zylon-code/es/hardening/verification-and-diffs) y [la recuperación](/zylon-code/es/troubleshooting/recovery).
 

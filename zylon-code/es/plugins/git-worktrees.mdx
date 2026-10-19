@@ -8,7 +8,7 @@ Un *worktree* es otra copia de trabajo del mismo repositorio, con sus propios ar
 
 ## Activa y prepara
 
-Abre **Plugins → Plugins experimentales → Más** y activa **Worktrees de Git**. La aplicación necesita acceso a Git, una carpeta que ya sea un repositorio y un commit disponible de forma local. Los permisos de la conversación deben permitir crear la copia y sus datos de Git.
+Abre **Plugins → Plugins experimentales → Más** y activa **Worktrees de Git**. La aplicación necesita acceso a Git, una carpeta que ya sea un repositorio y un commit disponible en el ordenador. Los permisos de la conversación deben permitir crear la copia y sus datos de Git.
 
 El plugin añade la herramienta `create_worktree`. Puedes pedirla en lenguaje normal; no tienes que escribir la llamada.
 
@@ -22,15 +22,15 @@ Comprueba la ruta antes de pedir cambios. La entrada del proyecto en la barra la
 
 ## Qué contiene la copia
 
-La copia parte del commit elegido; por defecto, HEAD. No incluye cambios sin confirmar, archivos sin seguimiento ni archivos ignorados. Tampoco instala dependencias, inicializa submódulos ni descarga commits del remoto. Los archivos de Git LFS pueden quedar como punteros porque no se ejecutan los filtros del repositorio.
+La copia parte del commit elegido; por defecto, HEAD. No incluye cambios sin confirmar, archivos sin seguimiento ni archivos ignorados. Tampoco instala dependencias, inicializa submódulos ni descarga commits del remoto. Los archivos de Git LFS pueden contener solo una referencia al archivo real, en lugar de su contenido, porque no se ejecutan los filtros del repositorio.
 
-Por ejemplo, puede faltar un archivo de configuración excluido de Git. Indica ese requisito antes de copiar archivos privados o instalar paquetes.
+Por ejemplo, puede faltar un archivo de configuración excluido de Git. Si el agente avisa de que falta un requisito, comprueba qué necesita antes de copiar archivos privados o instalar paquetes.
 
 ## Vuelve y conserva el resultado
 
 Pide al agente que utilice `working_directory` para volver a la ruta original. El worktree, la rama y sus cambios se conservan. Revísalos e intégralos mediante el proceso de Git del equipo; eliminar la copia es otra acción. Si la creación falla, pueden quedar archivos parciales: consulta la ruta indicada antes de reintentar.
 
-Desactivar el plugin retira la herramienta, pero no elimina las copias. Un [chat bifurcado](/zylon-code/es/everyday-use/conversations) sigue compartiendo archivos por defecto; asigna expresamente un worktree a cada [agente delegado](/zylon-code/es/agents/delegation) que lo necesite.
+Desactivar el plugin retira la herramienta, pero no elimina las copias. Una [conversación bifurcada](/zylon-code/es/everyday-use/conversations) sigue compartiendo archivos por defecto; asigna expresamente un worktree a cada [agente delegado](/zylon-code/es/agents/delegation) que lo necesite.
 
 <Frame caption="Componentes de Worktrees de Git, desactivados en este ejemplo">
   <img src="/images/zylon-code/screenshots/plugins-git-worktrees-es.jpg" alt="Componentes de Worktrees de Git, desactivados en este ejemplo" />

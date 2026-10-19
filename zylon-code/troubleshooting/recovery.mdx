@@ -1,6 +1,6 @@
 ---
 title: "Recovery and support reports"
-description: "Reconnect, inspect interrupted work and collect useful diagnostics while preserving originals."
+description: "Resume interrupted work and prepare the information support needs."
 noindex: true
 ---
 
@@ -10,11 +10,11 @@ Inspect the current state before repeating interrupted work. A disconnected inte
 
 Use the retry action beside Settings if the interface reports disconnection. If it remains disconnected, quit the application completely and reopen it. Keep any error for support. Avoid resetting the data folder just to repair a connection.
 
-If the mandatory domain dialog appears, follow [License and access](/zylon-code/getting-started/license-and-access). It is separate from a disconnected interface. Resolve it before resuming; it does not undo edits or terminate every previously started command.
+If the application asks you to configure a Zylon domain, follow [License and access](/zylon-code/getting-started/license-and-access). It is separate from a disconnected interface. Resolve it before resuming; it does not undo edits or terminate every previously started command.
 
 ## Check interrupted work
 
-Review current files, Git changes, job status and the last recorded tool result. External browser tabs and login state may need restoring after a provider restart.
+Review current files, Git changes, job status and the last recorded tool result. If browser automation was interrupted, check its tabs and sign-in state too; you may need to reopen a page or sign in again.
 
 Give the agent the facts:
 
@@ -22,6 +22,13 @@ Give the agent the facts:
 
 ## Report a problem
 
-Include the application version, operating system and architecture, selected mode, provider/model, affected plugin, reproduction steps and exact error. Remove credentials and private data from logs, screenshots and conversation exports before sharing them.
+Include enough information for support to understand and reproduce the problem:
+
+- Application version, operating system and processor type, if known.
+- Selected mode, model provider and model, and affected plugin.
+- What you expected, what happened and the steps that led to it.
+- Exact error and relevant logs or screenshots.
+
+Remove credentials and private data from logs, screenshots and conversation exports before sharing them.
 
 Preserve original records and share a sanitized copy. If recovery will change stored data, back it up first; [Data and backups](/zylon-code/configuration/data-and-backups) explains what to retain.

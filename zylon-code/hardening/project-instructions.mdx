@@ -19,9 +19,9 @@ docs/testing.md           Test setup and relevant test groups
 .agents/skills/...        Reusable procedures, when the mode supports skills
 ```
 
-Folder names alone do not make information visible to the model. Instructions follow Zylon's loading rules; linked documents still need to be read. Ordinary Markdown files are not automatically loaded because they appear in this layout. Skill discovery also depends on the configured [skill locations](/zylon-code/customization/skills).
+Zylon reads project instructions from supported locations. Ask the agent to read any linked guide needed for the task; linking a document does not load its contents. Put skills in a configured [skill location](/zylon-code/customization/skills).
 
-For the search task, a concise instruction might say:
+For the search example below, replace the file paths and test command with those from your project:
 
 ```markdown
 # Search project
@@ -29,7 +29,6 @@ For the search task, a concise instruction might say:
 Search behavior is documented in docs/search.md.
 The screen uses src/search.mjs; tests live in tests/search.test.mjs.
 Run `node --test tests/search.test.mjs` for a focused search change.
-This command is for this example project; replace it in your own repository.
 Preserve unrelated local changes. Ask before changing the public search API.
 ```
 

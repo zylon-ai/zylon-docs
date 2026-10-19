@@ -1,56 +1,61 @@
 ---
 title: "Tu primera tarea"
-description: "Corrige un fallo pequeño y reproducible y comprueba el resultado antes de trabajar en tu proyecto."
+description: "Convierte unas notas de reunión en un plan, revisa el resultado y conoce los controles básicos."
 noindex: true
 ---
 
-Empieza con un cambio pequeño que puedas comprobar. En este tutorial, una función permite añadir una reserva cuando la tienda ya está llena. El resultado esperado es sencillo: aceptar reservas mientras queden plazas y rechazarlas al alcanzar el aforo.
+Empieza con una tarea pequeña que puedas comprobar por tu cuenta. Vas a pedir a Zylon Code que convierta dos documentos breves en un plan para organizar un taller. Todo se hace desde la aplicación: no necesitas un terminal, un gestor de paquetes ni herramientas de desarrollo.
 
 ## 1. Abre el proyecto de ejemplo
 
-Conecta un modelo siguiendo [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Descarga el [proyecto de ejemplo](/files/zylon-code/first-task-project.zip), descomprímelo y selecciona su carpeta en Zylon Code. Elige **Estándar**. El proyecto no tiene dependencias de terceros y utiliza Node.js para las pruebas. Si no se encuentra el entorno de ejecución al lanzar el comando, pide al agente que examine lo disponible e indique qué falta antes de continuar.
+Conecta un modelo siguiendo [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Descarga los [documentos de ejemplo](/files/zylon-code/first-task-desktop-es.zip), descomprime el archivo y [selecciona la carpeta `first-task` en Zylon Code](/zylon-code/es/everyday-use/projects).
 
-También puedes utilizar tu repositorio. Guarda primero el trabajo que ya tengas y sustituye los archivos, el comportamiento y el comando de los mensajes siguientes por los de tu proyecto.
+La carpeta contiene `brief.md`, que describe la tarea, y `notes.md`, con las notas de la reunión. Son archivos de texto normales. Abre una conversación en ese proyecto con **Nueva sesión** y elige **Estándar** en el selector de modo situado encima del cuadro de mensajes.
 
-## 2. Investiga sin editar
+## 2. Lee antes de cambiar nada
 
-Selecciona el permiso **Solo lectura** y envía:
-
-```text
-Lee AGENTS.md, src/capacity.mjs y tests/capacity.test.mjs.
-Resultado esperado: canReserve(9, 10) devuelve true y canReserve(10, 10), false.
-Ejecuta las pruebas existentes si el entorno lo permite. Explica qué caso falla,
-por qué y cuál sería la corrección más pequeña. No edites archivos, instales
-dependencias ni cambies permisos. Si no puedes comprobar algo, indica el bloqueo.
-```
-
-Abre las tarjetas de herramientas para ver qué archivos ha leído y la salida real de las pruebas. El caso de aforo completo debe fallar con el código inicial. Si aparece un error de comando o de permisos, resuelve esa preparación antes de interpretarlo como un fallo del código.
-
-## 3. Pide una corrección acotada
-
-Selecciona **Escritura en el espacio de trabajo** y envía:
+Elige **Solo lectura** en el menú de permisos del cuadro de mensajes y envía:
 
 ```text
-Corrige canReserve para que rechace una reserva cuando las reservas actuales
-igualen o superen el aforo. Conserva la aceptación mientras queden plazas.
-Limita el cambio a src/capacity.mjs y añade una prueba específica del exceso
-de aforo si hace falta. Ejecuta npm test. No añadas dependencias, refactorices
-código ajeno a la tarea ni publiques nada.
-Terminado significa que pasan los cuatro casos de prueba y que los cambios
-solo afectan a este comportamiento. Indica archivos, comando, resultado y
-cualquier parte que no hayas podido verificar.
+Lee brief.md y notes.md con las herramientas de lectura de archivos.
+Explica el resultado esperado, identifica las tres tareas de preparación e indica
+qué información falta. No crees ni edites archivos, ejecutes comandos,
+contactes con nadie ni hagas reservas.
 ```
 
-Los cuatro casos del ejemplo son: quedan plazas, aforo completo, aforo superado y tienda vacía con capacidad. Revisa las solicitudes de aprobación teniendo en cuenta la tarea. Si el agente pregunta algo, responde con los controles que aparezcan. Puedes [detenerlo o darle nuevas indicaciones mientras trabaja](/zylon-code/es/everyday-use/conversations).
+Abre las tarjetas de herramientas para comprobar qué archivos ha leído el agente. La respuesta debería identificar las invitaciones, la reserva de la sala y las diapositivas. Estas últimas tienen fecha límite, pero todavía no tienen responsable. Si el agente inventa uno, señala lo que dicen las notas y pídele que corrija la respuesta.
+
+## 3. Crea el plan
+
+Para revisar el archivo desde la aplicación, activa [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) **antes de pedir el cambio**. También puedes abrir el archivo resultante en el panel de archivos.
+
+Selecciona los permisos **Escritura en el espacio de trabajo** y envía:
+
+```text
+Crea plan.md con las herramientas de escritura de archivos y utiliza solo
+los datos de brief.md y notes.md. Incluye la fecha del taller, el presupuesto
+y una tabla con tres filas de tareas y las columnas tarea, responsable y fecha límite.
+Escribe Pendiente cuando falte un responsable. Conserva los dos archivos
+originales. No ejecutes comandos, instales nada, contactes con nadie,
+reserves servicios ni publiques el plan.
+Al terminar, vuelve a leer plan.md, compáralo con los documentos originales
+e indica qué archivo has creado y qué información sigue faltando.
+```
+
+Revisa cualquier solicitud de aprobación antes de aceptarla. Si el agente pregunta algo, responde mediante los controles que aparezcan. Puedes [detenerlo o darle nuevas indicaciones mientras trabaja](/zylon-code/es/everyday-use/conversations).
 
 ## 4. Comprueba el resultado
 
-Lee la salida de las pruebas y revisa las ediciones. Una respuesta que diga que todo ha salido bien no demuestra que la función funcione. Si habías habilitado [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff), abre **Cambios pendientes** para examinar el archivo o añadir un comentario. Las ediciones ya están guardadas en disco: **Conservar** las acepta para la revisión y **Revertir** restaura el contenido anterior registrado.
+Abre `plan.md` y compáralo con las notas originales. Debe contener lo siguiente:
 
-Comprueba que la comparación del aforo ha cambiado como esperabas, que pasan las cuatro pruebas y que se conservan los archivos ajenos a la tarea. Si una comprobación no se ha ejecutado, sigue pendiente.
+| Tarea | Responsable | Fecha límite |
+| --- | --- | --- |
+| Preparar las invitaciones | Marta | 10 de noviembre |
+| Reservar la sala | Pablo | 12 de noviembre |
+| Preparar las diapositivas | Pendiente | 13 de noviembre |
 
-Cuando conozcas este recorrido, aplícalo a un proyecto real con un síntoma concreto y una comprobación de finalización. Continúa con [Uso diario](/zylon-code/es/everyday-use/projects) y después aprende a mejorar tus peticiones y comprobaciones en [Hardening](/zylon-code/es/hardening/overview).
+La fecha del taller debe ser el **14 de noviembre** y el presupuesto, **200 EUR como máximo**. Comprueba también que los archivos originales no han cambiado. Crear este plan no envía invitaciones ni reserva una sala.
 
-<Frame caption="Una tarea de ejemplo terminada, con operaciones de archivos y resultados de pruebas">
-  <img src="/images/zylon-code/screenshots/getting-started-first-task-es.jpg" alt="Zylon Code Desktop con la corrección del aforo, los resultados de herramientas y el informe final en español" />
-</Frame>
+Si has activado Revisión de cambios, abre **Cambios pendientes** para examinar el archivo nuevo o añadir un comentario. El archivo ya está guardado: **Conservar** lo marca como revisado y **Revertir** elimina este archivo recién creado después de una confirmación. Ninguna de estas acciones crea un commit de Git.
+
+Cuando te hayas familiarizado con estos pasos, prueba con una tarea de tu proyecto. Explica el resultado que buscas, aporta los archivos necesarios y decide cómo comprobarlo. Continúa con el [recorrido por la interfaz](/zylon-code/es/getting-started/interface-tour); la sección de [Hardening](/zylon-code/es/hardening/overview) te ayudará después a aplicar estas pautas a trabajos más complejos.

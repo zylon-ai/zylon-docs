@@ -1,6 +1,6 @@
 ---
 title: "Contexto y adjuntos"
-description: "Referencia archivos, carpetas y MCPs; adjunta documentos e imágenes con un modelo compatible."
+description: "Indica qué archivos, carpetas y servicios debe consultar el agente o adjunta documentos e imágenes."
 noindex: true
 ---
 
@@ -20,11 +20,13 @@ La referencia identifica el recurso que quieres utilizar; no concede permisos ad
 
 Utiliza la opción de adjuntar, arrastra un archivo o pega contenido compatible. Espera a que termine la subida antes de enviar. Si falla, puedes reintentarlo o quitar el adjunto.
 
-Una referencia a una ruta apunta al archivo o la carpeta original, que deben seguir disponibles. Un archivo subido como adjunto guarda una copia de solo lectura junto a la conversación; el modelo recibe una ruta para consultarlo cuando lo necesite, no todo su contenido en cada petición. Las imágenes adjuntas se validan y normalizan antes del envío; si se rechaza una, el mensaje no se admite. Para adjuntar imágenes, elige un modelo que las admita; consulta [opciones de modelos](/zylon-code/es/models/model-options).
+Una referencia apunta al archivo o la carpeta original, que deben seguir disponibles. Al adjuntar un archivo, se guarda una copia de solo lectura junto a la conversación para que el agente la consulte cuando la necesite.
+
+Para adjuntar imágenes, elige un modelo que las admita; consulta [opciones de modelos](/zylon-code/es/models/model-options). Si se rechaza una imagen, sigue las indicaciones del error o quítala antes de volver a enviar el mensaje.
 
 ## Elige contexto útil
 
-Indica la carpeta relevante, explica la tarea y deja que el agente consulte lo que necesite. Los adjuntos grandes y los resultados de herramientas consumen la capacidad de contexto del modelo. [Conversaciones largas](/zylon-code/es/everyday-use/long-conversations) explica cómo gestionarla.
+Indica la carpeta relevante, explica la tarea y deja que el agente consulte lo que necesite. El contenido que lee el agente y los resultados de sus herramientas ocupan parte del contexto disponible del modelo. [Conversaciones largas](/zylon-code/es/everyday-use/long-conversations) explica cómo gestionarlo.
 
 Continúa con [Revisar resultados](/zylon-code/es/everyday-use/reviewing-results).
 

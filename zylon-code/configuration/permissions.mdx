@@ -8,12 +8,12 @@ Permissions determine which operations the agent may perform. Choose a preset in
 
 | Preset | When to use it |
 | --- | --- |
-| Read Only | Investigate a project without ordinary writes to its files. Some operations can still require approval. |
+| Read Only | Investigate a project with file writes restricted. A tool may ask for approval to make a change. |
 | Workspace Write | Edit within the project under the configured sandbox and approval policy. |
 | Full access | Run with broader access when you understand and accept the task's effects. |
-| Auto review | Let the optional experimental plugin review requested actions; read its [guide](/zylon-code/plugins/auto-authorization-review) first. |
+| Auto review | Use model-based reviews without a sandbox. This optional experimental feature consumes additional tokens; read its [guide](/zylon-code/plugins/auto-authorization-review) first. |
 
-A **sandbox** is an execution restriction that limits access to files, processes or the network. The preset combines these restrictions with rules for requesting approval. Enforcement can vary by operating system and your organization's configuration.
+A **sandbox** restricts what a tool or command can do. Depending on your operating system and configuration, it may limit file access, processes or network access. A permission preset combines the available restrictions with rules for requesting approval. Read Only does not by itself guarantee that a task cannot send data over the network.
 
 ## Respond to an approval
 
@@ -21,7 +21,7 @@ Read the requested action, affected files, external destination and reason. Appr
 
 Selecting Full access shows a confirmation. Check the active label afterward. Auto review requires both its enabled plugin and your selection in the conversation.
 
-Disabling the Auto review plugin moves active conversations using Auto review to **Full access**. Check the permission label and choose Read Only or Workspace Write if that is the access you intend before resuming. Re-enabling the plugin does not switch them back automatically.
+Before disabling Auto review, select the permission preset you want in each conversation that uses it. If you disable the plugin while a conversation still uses Auto review, that conversation changes to **Full access**. Check the permission label before continuing. Re-enabling the plugin does not switch it back automatically.
 
 The Zylon license requirement applies independently of these presets; broader permissions cannot repair a license failure.
 

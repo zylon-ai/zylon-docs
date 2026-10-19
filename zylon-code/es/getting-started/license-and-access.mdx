@@ -1,37 +1,33 @@
 ---
 title: "Licencia y acceso"
-description: "Distingue la licencia de la instalación, las credenciales de modelos y la comprobación temporal sin conexión."
+description: "Qué necesitas para usar Zylon Code y qué hacer si no se puede comprobar la licencia."
 noindex: true
 ---
 
-Zylon Code necesita una licencia vigente de la instalación de Zylon de tu organización que incluya **Zylon Code**. La gestiona el administrador o tu contacto de Zylon. En Desktop introduces el dominio de la instalación; esta configuración no pide subir un archivo de licencia ni escribir una clave de activación.
+Para usar Zylon Code, la licencia de Zylon de tu organización debe estar vigente e incluir **Zylon Code**. El administrador o tu contacto de Zylon puede confirmar si tienes acceso.
 
-## Tres comprobaciones distintas
+## Qué necesitas
 
-| Requisito | Qué permite |
+| Requisito | Para qué sirve |
 | --- | --- |
-| Licencia vigente que incluya Zylon Code | Crear agentes, enviar peticiones al modelo y ejecutar herramientas en la aplicación. |
-| Clave de API del gateway y acceso de la cuenta | Utilizar los modelos con los permisos y las cuotas que correspondan. |
-| Servicio de modelos accesible | Completar las peticiones al modelo durante la tarea. |
+| Una licencia vigente que incluya Zylon Code | Utilizar la aplicación, también si eliges otro proveedor de modelos. |
+| El dominio de Zylon de tu organización | Conectar la aplicación con Zylon durante la configuración. |
+| Una clave de API de un gateway y acceso a él | Utilizar los modelos que tu organización ofrece a través de Zylon. |
 
-Elegir otro proveedor o ampliar los permisos no evita el requisito de licencia de Zylon Code. [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) explica cómo configurar primero el dominio y después la clave.
+Necesitas conexión con Zylon para la configuración inicial y con el servicio del modelo mientras trabajas. La licencia y la clave de API cumplen funciones distintas: una clave válida no resuelve una licencia caducada, y la licencia por sí sola no da acceso a los modelos.
 
-## Qué comprueba Desktop
-
-La aplicación consulta la licencia pública del dominio configurado. Esa petición no envía tu token de desarrollador. La instalación debe indicar que Zylon Code está habilitado y que la licencia no ha caducado. Si falta esa habilitación, no hay licencia o está caducada, se bloquea el uso aunque hayas podido descargar la aplicación.
-
-Para el administrador, los campos relevantes son `metadata.zylon_code_enabled` y `valid_until` en `GET /api/v1/license`. La licencia también puede incluir un número de puestos de Zylon Code; esta comprobación de Desktop no los asigna ni los cuenta. Confirma el acceso contratado con el administrador: esos datos no son una pantalla de activación por dispositivo.
+Durante la configuración, introduce el dominio que te facilite el administrador, por ejemplo `https://zylon.example`. Sigue los pasos de [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) para completar la configuración y guardar la clave de API.
 
 ## Si Zylon no está disponible temporalmente
 
-Desktop intenta comprobar la licencia al arrancar y renueva la autorización cuando hace falta. Si ya hubo una comprobación correcta para el mismo dominio, puede utilizarla temporalmente ante un fallo de red o del servidor. El periodo predeterminado es de cinco días desde esa comprobación, sin superar la caducidad de la licencia; el administrador puede configurar otro periodo admitido.
+Si ya te habías conectado correctamente, es posible que puedas seguir usando la aplicación durante un fallo temporal de red o del servidor. Por defecto, este margen dura hasta cinco días desde la última comprobación de licencia correcta y nunca supera la fecha de caducidad de la licencia. Tu organización puede configurar un plazo distinto.
 
-Este margen no proporciona conexión a los modelos. La tarea sigue necesitando acceso al servicio del modelo que utilice. La primera configuración y la conexión a otro dominio requieren una comprobación correcta.
+Sigues necesitando acceso al servicio del modelo. La primera configuración y el cambio a otro dominio requieren conexión con Zylon. Si la licencia ha caducado o se rechaza, o hay un problema con el certificado, tendrás que resolverlo antes de continuar.
 
-Una denegación explícita, una respuesta inválida, una comprobación caducada, otro dominio o un problema de certificado no permiten utilizar ese margen. Si falta la autorización, el diálogo del dominio impide trabajar hasta resolverlo. Cambiar la clave de API no arregla una licencia caducada o sin Zylon Code.
+## Si no puedes pasar de la pantalla de bienvenida
 
-## Resuelve un problema de licencia
+1. Comprueba que el dominio coincide con el que te ha dado el administrador. Introduce la dirección base, como `https://zylon.example`, sin `/api/gpt`.
+2. Comprueba la conexión de red. Si aparece un aviso sobre el certificado, contrasta sus datos con el administrador antes de aceptarlo.
+3. Pide al administrador que confirme que la licencia está vigente e incluye Zylon Code.
 
-Revisa el dominio en **Ajustes → General** o en la bienvenida que bloquea la aplicación. Debe ser una dirección como `https://zylon.example`, sin `/api/gpt`. Confirma con el administrador el acceso de red y cualquier certificado privado. Si el dominio es correcto, pídele que compruebe que la licencia siga vigente e incluya Zylon Code, o contacta con ventas de Zylon.
-
-Conserva los archivos del proyecto y los datos de la aplicación mientras investigas. Reinstalar o borrar conversaciones no renueva la licencia de una instalación. [Problemas de inicio y modelos](/zylon-code/es/troubleshooting/setup-and-models) distingue los fallos de licencia de los problemas de modelos y tokens.
+No necesitas borrar conversaciones ni reinstalar la aplicación para resolver un problema de licencia. Para otros errores, consulta [Problemas de inicio, licencia y modelos](/zylon-code/es/troubleshooting/setup-and-models).

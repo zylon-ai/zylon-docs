@@ -12,7 +12,7 @@ Open the model picker in the composer or enter `/model`. Search the configured p
 
 You can change models in an existing chat. The change applies to the next model request, including the next step of a task already in progress. A request already running finishes with its original model and effort. Changing connection settings alone does not select a different model for the conversation.
 
-If a saved model is unavailable, configure its provider or select another. Run a small task to check that the selected service accepts the request.
+If a saved model is unavailable, configure its provider or select another. Start with a small read-only task to check the connection before relying on it for changes.
 
 ## Choose reasoning effort
 
@@ -32,7 +32,7 @@ For example, compare Low and High on the same failing test. Check the result and
 - For image attachments and visual inspection, choose a model with image input.
 - For large inputs, check its context window and output limit.
 
-Ask your administrator which model to use for your data policy, quota and latency requirements. Subagents, scheduled tasks and Auto review can make additional requests. Configure another service in [Other providers and local models](/zylon-code/models/providers).
+Ask your administrator which model fits your data policy, quota, cost and response-time requirements. Subagents, scheduled tasks and Auto review can make additional model requests and use more of your quota. Configure another service in [Other providers and local models](/zylon-code/models/providers).
 
 <Frame caption="Choosing a model in the composer">
   <img src="/images/zylon-code/screenshots/models-choosing-a-model-en.jpg" alt="Choosing a model in the composer" />

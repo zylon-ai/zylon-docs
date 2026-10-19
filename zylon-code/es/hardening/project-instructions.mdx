@@ -19,9 +19,9 @@ docs/testing.md           Preparación y grupos de pruebas
 .agents/skills/...        Procedimientos reutilizables, si el modo admite habilidades
 ```
 
-El nombre de una carpeta no hace que el modelo vea su contenido. Las instrucciones siguen las reglas de carga de Zylon; los documentos enlazados todavía tienen que leerse. Un archivo Markdown normal no se carga automáticamente por aparecer en esta lista. La detección de habilidades también depende de las [ubicaciones configuradas](/zylon-code/es/customization/skills).
+Zylon lee las instrucciones del proyecto desde las ubicaciones admitidas. Pide al agente que lea las guías enlazadas que necesite para la tarea; un enlace no carga su contenido. Guarda las habilidades en una de las [ubicaciones configuradas](/zylon-code/es/customization/skills).
 
-Para la búsqueda, unas instrucciones breves podrían decir:
+Este ejemplo utiliza los archivos y el comando del buscador; sustitúyelos por los de tu proyecto:
 
 ```markdown
 # Proyecto de búsqueda
@@ -29,7 +29,6 @@ Para la búsqueda, unas instrucciones breves podrían decir:
 El comportamiento se describe en docs/search.md.
 La pantalla utiliza src/search.mjs; las pruebas están en tests/search.test.mjs.
 Para un cambio en la búsqueda, ejecuta `node --test tests/search.test.mjs`.
-Este comando corresponde al proyecto del ejemplo; sustitúyelo en tu repositorio.
 Conserva los cambios locales ajenos. Pregunta antes de cambiar la API pública.
 ```
 

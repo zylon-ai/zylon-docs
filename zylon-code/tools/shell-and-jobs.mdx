@@ -4,13 +4,13 @@ description: "Run commands, manage background output and configure shell executi
 noindex: true
 ---
 
-The agent runs commands on your computer. The normal mode uses Bash on macOS and PowerShell on Windows. Standard-style calls start fresh processes; Minimal keeps a persistent shell.
+The agent runs commands on your computer. The default setup uses Bash on macOS and PowerShell on Windows. In Standard, a new execution starts with a fresh shell; it does not retain the previous shell's state. Minimal keeps a shell open between executions.
 
 ## Ask for a check
 
 > Read this project's scripts and run the existing test for the changed package. Report the command, output and exit status. Do not install dependencies.
 
-Check the working directory and command in the tool card. A missing executable means the environment needs attention; a timeout or cancellation does not confirm that a test passed.
+Check the working directory and command in the tool card. If a command cannot be found, check that it is installed and available to the application. A timeout or cancellation does not mean a test passed.
 
 ## Follow background work
 
@@ -18,7 +18,7 @@ When supported, the agent can start a command as a background job. Its ID and st
 
 Retained output is limited. Ask for an explicit log file when you need the complete output of a long command.
 
-The optional [Persistent terminals](/zylon-code/plugins/persistent-terminals) plugin lets an agent open and revisit its own terminals in any mode. A conversation directory change affects new commands, while existing shells and servers retain their process-local directory.
+The optional [Persistent terminals](/zylon-code/plugins/persistent-terminals) plugin lets an agent open and revisit its own terminals in any mode. Changing the conversation's working directory affects new commands; terminals and servers already running keep their own directory.
 
 ## Set command limits
 

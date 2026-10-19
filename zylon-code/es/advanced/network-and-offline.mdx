@@ -4,24 +4,26 @@ description: "Prepara el acceso al despliegue, la licencia, los certificados y l
 noindex: true
 ---
 
-Un gateway interno puede mantener las peticiones al modelo dentro de una red aprobada. Las herramientas, las cuentas de otros proveedores, los plugins y los comandos del proyecto pueden contactar con otros servicios. Prepara y comprueba la instalación Desktop real en la red de tu organización.
+Un servidor de modelos interno puede mantener las peticiones al modelo dentro de una red aprobada. Las herramientas, las cuentas de otros proveedores, los plugins y los comandos del proyecto pueden contactar con otros servicios. Antes de trabajar con datos sensibles, comprueba la aplicación de escritorio instalada en la red donde vayas a utilizarla.
 
 ## Verificación de licencia
 
-Al arrancar se comprueba la licencia del dominio de Zylon guardado. Tras una comprobación correcta, una autorización temporal para ese dominio puede permitir el uso durante un fallo de red o del servidor: por defecto, cinco días y nunca más allá de la caducidad de la licencia. El administrador puede configurar otro plazo admitido. Una licencia rechazada o inválida, un fallo de certificado o una autorización temporal caducada bloquean el acceso. Este margen afecta a la licencia; no garantiza que los modelos funcionen sin conexión.
+Al arrancar se comprueba la licencia del dominio de Zylon guardado. Tras una comprobación correcta, la verificación guardada puede permitir temporalmente el uso con ese mismo dominio durante un fallo de red o del servidor. Dura cinco días por defecto y nunca supera la fecha de caducidad de la licencia; el administrador puede fijar un plazo de tres a siete días. Una licencia rechazada o inválida, un fallo de certificado o una verificación guardada caducada bloquean el acceso. Este margen solo cubre la comprobación de licencia: los modelos siguen necesitando un servidor accesible.
 
 La configuración inicial y un cambio de dominio necesitan una verificación correcta. Mantén accesibles los servicios de licencia y modelos del despliegue mediante la red aprobada. Utilizar un modelo local no elimina el requisito de licencia de Zylon Code.
 
 ## Certificados privados
 
-El formulario de dominio de **Ajustes → General** puede pedir confirmación de un certificado válido cuyo emisor no reconoce. Contrasta con el administrador el dominio, la huella SHA-256, el emisor y las fechas antes de aceptarlo. La aprobación se limita a ese dominio y certificado; un certificado nuevo necesita otra confirmación. Retirar la aprobación también elimina la autorización temporal guardada. Los [proveedores personalizados](/zylon-code/es/models/providers) tienen su propia confirmación al consultar modelos.
+El formulario de dominio de **Ajustes → General** puede pedir confirmación de un certificado válido cuyo emisor no reconoce. Contrasta con el administrador la dirección del servidor, la huella SHA-256, el emisor y las fechas de validez antes de aceptarlo. La aprobación se limita al origen exacto del servidor (protocolo, nombre de host y puerto) y a ese certificado; un certificado nuevo necesita otra confirmación. Retirar la aprobación también elimina la comprobación de licencia guardada. Los [proveedores personalizados](/zylon-code/es/models/providers) tienen su propia confirmación al consultar modelos.
 
 Si la organización utiliza certificados corporativos, pide que se prepare el almacén de confianza o el entorno de inicio aprobado. Mantén las comprobaciones del nombre y del certificado. Que el navegador abra el despliegue no confirma que la aplicación utilice la misma configuración de confianza.
 
 ## Proxies y dependencias
 
-El entorno local lee `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` y `NO_PROXY` al arrancar. Esta vía admite proxies HTTP y exclusiones por equipo o dominio, con acceso local directo; no admite SOCKS ni exclusiones CIDR. Un entorno de inicio aprobado puede añadir confianza mediante `NODE_EXTRA_CA_CERTS`. Reinicia después de modificar ese entorno.
+Si tu red necesita un proxy o certificados corporativos, pide al administrador que prepare la aplicación instalada. Zylon Code admite proxies HTTP y HTTPS, pero no utiliza automáticamente los ajustes de proxy del sistema operativo. El administrador debe comprobar la configuración compatible y reiniciar la aplicación después de modificarla.
 
-Los comandos y procesos MCP locales pueden heredar variables de proxy. No muestres sus valores en diagnósticos compartidos. Las descargas opcionales, los modelos, las herramientas documentales y las fuentes de plugins deben estar disponibles de forma local o mediante servicios internos aprobados.
+Configurar un proxy no impide por sí solo el acceso directo a la red. Una dirección no válida o incompatible puede hacer que la conexión vaya directamente al destino; las conexiones a este ordenador, como `localhost`, también son directas. Para trabajar en una red aislada, el administrador debe restringir las conexiones salientes y comprobar cada función activada.
 
-Comprueba el inicio, una petición al modelo, el uso de herramientas y la reapertura de una conversación en la red prevista. [Privacidad](/zylon-code/es/configuration/privacy) explica los posibles destinos y [Disponibilidad](/zylon-code/es/reference/availability) recoge los requisitos opcionales.
+Los servicios de modelos, las descargas de plugins opcionales, los servidores MCP locales y las herramientas del proyecto deben estar disponibles a través de la red que permita tu organización. Pide al administrador que prepare las dependencias que falten; instalar Zylon Code no instala todas las integraciones opcionales.
+
+Comprueba el inicio, una respuesta del modelo, el uso de herramientas y la reapertura de una conversación en la red prevista. [Privacidad](/zylon-code/es/configuration/privacy) explica adónde pueden enviarse los datos y [Disponibilidad](/zylon-code/es/reference/availability) recoge los requisitos opcionales.

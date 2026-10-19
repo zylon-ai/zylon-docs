@@ -4,7 +4,7 @@ description: "Choose a native agent bridge and understand its authentication and
 noindex: true
 ---
 
-External agents delegate work to a separate product runtime. Choosing that vendor's model in Models is a different operation: model access alone does not enable its coding agent.
+External agents let you delegate a task to another coding assistant, such as Codex or Claude Code. Choosing that vendor's model in Models is a different operation: model access alone does not enable its coding agent.
 
 | Bridge | Setup | Result |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ External agents delegate work to a separate product runtime. Choosing that vendo
 
 ## Prepare access deliberately
 
-Codex and Claude Code are available in **Plugins → Experimental plugins → More**. Enabling can download a compatible packaged runtime. Neither falls back to an executable found on your computer. Authentication and model choices remain native to that product; a Zylon token does not sign into it. Native permission policies are configured separately from the parent conversation.
+Codex and Claude Code are available in **Plugins → Experimental plugins → More**. Enabling a plugin can download the software it needs. Follow its guide even if you already use that assistant separately. Authentication and model choices remain native to that product; a Zylon token does not sign into it. Native permission policies are configured separately from the parent conversation.
 
 Ask your administrator to prepare ACP or another integration that is not offered as a plugin. Do not infer support from an executable's presence alone.
 
@@ -22,4 +22,4 @@ Ask your administrator to prepare ACP or another integration that is not offered
 
 Start with a read-only task containing all required paths, facts and restrictions. The external agent does not inherit the parent conversation. Check its final answer, cancellation and reported failures. It shares the current project directory unless another is explicitly selected, so review files separately when edits were allowed.
 
-These runs do not accept follow-up messages or resume. The parent receives a completion result rather than a local conversation containing all native tool traffic. For continuing back-and-forth work, use Zylon's [local subagents](/zylon-code/agents/delegation). Both local and external activations count toward the [parallelism limit](/zylon-code/agents/models-and-limits).
+These runs do not accept follow-up messages or resume. The main agent receives the result; you will not see the external assistant’s full conversation in Zylon Code. For continuing back-and-forth work, use Zylon's [local subagents](/zylon-code/agents/delegation). Both local and external activations count toward the [parallelism limit](/zylon-code/agents/models-and-limits).

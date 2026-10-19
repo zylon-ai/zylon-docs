@@ -8,7 +8,7 @@ Una respuesta final convincente no demuestra que el cambio funcione. Elige compr
 
 ## Reproduce el comportamiento que quieres corregir
 
-Para la búsqueda vacía, la prueba del fallo debe pasar por la función o la pantalla que ahora falla. Cuando sea posible, comprueba que falla con la implementación original y pasa después de corregirla. Así puedes ver que detecta este problema y no que pasa con cualquier código.
+Para la búsqueda vacía, la prueba del fallo debe pasar por la función o la pantalla que ahora falla. Cuando sea posible, comprueba que falla con la implementación original y pasa después de corregirla. Así compruebas que la prueba detecta el fallo original.
 
 Los requisitos del ejemplo implican varios casos:
 
@@ -33,7 +33,7 @@ Pide un informe relacionado con los criterios:
 
 ## Revisa con el plugin de cambios de Zylon
 
-Habilita [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) y abre **Cambios pendientes**. Las ediciones del agente ya están guardadas en disco: este panel permite revisarlas después. **Conservar** acepta el contenido actual; **Revertir** restaura el contenido anterior registrado para la revisión. Si reviertes un archivo recién creado, se elimina después de una confirmación. El panel no sustituye los permisos, las pruebas ni el control de versiones.
+Activa [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) antes de pedir al agente que edite archivos. Cuando haya hecho cambios, abre **Cambios pendientes**. Las ediciones del agente ya están guardadas en disco: este panel permite revisarlas después. **Conservar** acepta el contenido actual; **Revertir** restaura el contenido anterior registrado para la revisión. Si reviertes un archivo recién creado, se elimina después de una confirmación. El panel no sustituye los permisos, las pruebas ni el control de versiones.
 
 Examina archivos, bloques o líneas concretas. Añade comentarios para señalar un problema y envíalos con el siguiente mensaje. Si un cambio procede de un comando o de un editor externo, utiliza **Importar cambios del control de versiones** cuando corresponda; no des por hecho que el panel incluye automáticamente todos los cambios del repositorio.
 

@@ -8,10 +8,10 @@ Zylon Code normally stores its application data in `~/.zylon-code`, where `~` me
 
 | Data | What to back up |
 | --- | --- |
-| Code and deliverables | Your project folders, using Git or your usual file backups. |
+| Code and deliverables | Your project folders. Git preserves tracked versions; include untracked and ignored files in your file backups when needed. |
 | Conversations and attachments | The application's data folder and session storage. |
 | Model and plugin settings | Configuration saved in the application's data folder. |
-| Credentials | Their separate storage; protect any backup that contains them. |
+| Credentials | The local credential file, normally `.credentials.yaml` inside the data folder. Protect backups that contain it. |
 
 ## Export a conversation
 
@@ -19,9 +19,13 @@ Choose **Export** or `/export` in a conversation. Complete the download dialog a
 
 ## Back up or move your data
 
+To find the default folder, use **Go → Go to Folder** in macOS Finder and enter `~/.zylon-code`. On Windows, enter `%USERPROFILE%\.zylon-code` in the File Explorer address bar. These are folder locations, not terminal commands. If your organization uses another location, ask your administrator for it.
+
 1. Quit Zylon Code completely.
-2. Copy its data folder and back up your project folders separately.
+2. Copy the entire data folder, including hidden files, and back up your project folders separately.
 3. Keep the originals until you have verified that restored conversations, attachments and settings open correctly.
+
+If your organization supplies credentials through another store or the launch environment, follow its instructions for restoring them.
 
 Restoring settings does not grant a new license or renew an expired one. The app verifies the configured domain at startup. Review any saved private-certificate approval before using the restored connection.
 

@@ -1,6 +1,6 @@
 ---
 title: "Editor and ACP integration"
-description: "Distinguish opening local editors from running the optional ACP server."
+description: "Open your project in an editor and check whether your organization provides an ACP integration."
 noindex: true
 ---
 
@@ -10,8 +10,8 @@ If you edit a file while the agent is working, tell it to read the current conte
 
 ## ACP integrations
 
-Agent Client Protocol (ACP) connects an agent runtime to a compatible editor or client. It is a separate integration, not a stock Desktop connection wizard. A compatible editor alone does not configure your Zylon model gateway.
+Agent Client Protocol (ACP) lets a compatible editor work with an agent. If your organization provides this integration, ask your administrator for its setup instructions. Zylon Code does not include a setup wizard for it.
 
-Your integration owner must prepare the runtime, model connection and permission handling for the installed version. Confirm a read-only task, an approval response and cancellation before using it for changes.
+Before allowing changes through an editor integration, check with your administrator how it connects to models and requests permission. Try a read-only task and confirm that you can approve or stop its work.
 
 For delegating from Zylon Code to an external ACP agent, see [External agents](/zylon-code/advanced/external-agents). For everyday local work, [Panels and local applications](/zylon-code/everyday-use/panels) covers the supported opening controls.

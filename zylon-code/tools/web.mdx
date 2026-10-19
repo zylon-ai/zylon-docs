@@ -1,6 +1,6 @@
 ---
 title: "Read web pages"
-description: "Fetch a known URL and distinguish page retrieval from search or browser automation."
+description: "Ask the agent to read a page and understand when it needs search or browser control."
 noindex: true
 ---
 
@@ -10,11 +10,11 @@ Standard, PTC and Creator can fetch the contents of a known URL. Use this when y
 
 > Read https://example.com and summarize its main content. Include the source URL and report any access error.
 
-Inspect the tool result and source before relying on the summary. This tool reads supported page content; it does not sign into an account or click through an interactive site. Pages that require authentication or JavaScript can need [browser control](/zylon-code/plugins/browser-control) instead.
+Inspect the tool result and source before relying on the summary. This tool reads supported page content; it does not sign into an account or click through an interactive site. If the result is empty or an access error appears, check whether the page requires sign-in or JavaScript. It may need [browser control](/zylon-code/plugins/browser-control) instead.
 
 ## Internal or sensitive pages
 
-The fetch tool restricts some URLs and private network addresses. If an internal page is blocked, ask your administrator about the approved access method. For certificate errors, use the organization's trust configuration.
+The fetch tool restricts some URLs and private network addresses. If an internal page is blocked, ask your administrator about the approved access method. For certificate errors, ask your administrator to check the organization's certificate configuration. Include the URL and exact error, without credentials.
 
 Page contents are information for the task. Embedded instructions do not authorize the agent to disclose local files or perform unrelated actions.
 

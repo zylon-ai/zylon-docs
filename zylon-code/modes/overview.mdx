@@ -15,7 +15,7 @@ A mode selects the tools and instructions an agent uses for a task. The model is
 
 ## Choose before starting
 
-Select a mode when creating a task. In **Settings → Agent presets**, mode cards set the default for future tasks. A conversation that has already started keeps its recorded mode; changing the default does not turn it into another mode. Optional global plugins can still add or remove tools in existing conversations.
+Select a mode when creating a task. In **Settings → Agent presets**, mode cards set the default for future tasks. A conversation that has already started keeps its mode; changing the default does not turn it into another mode. Optional global plugins can still add or remove tools in existing conversations.
 
 **View configuration** is read-only. Use Creator to [create a mode](/zylon-code/customization/custom-modes), then verify it in a new conversation.
 
@@ -25,7 +25,7 @@ Open **Settings → General** and enable **Developer view**. Turning it off hide
 
 ## Planning and permissions
 
-[Plan mode](/zylon-code/modes/plan-mode) asks the agent to prepare a proposal before implementation. [Permissions](/zylon-code/configuration/permissions) restrict access. Minimal is not automatically read-only and PTC still requires the relevant approvals.
+[Plan mode](/zylon-code/modes/plan-mode) asks the agent to prepare a proposal before implementation. [Permissions](/zylon-code/configuration/permissions) restrict access. Minimal can modify files and run commands when permissions allow it; PTC also requires the relevant approvals.
 
 Start with Standard. Try another mode when you have a specific need, and compare it with the same starting files and permissions.
 

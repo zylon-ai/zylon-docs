@@ -10,21 +10,21 @@ Zylon Code guarda las conversaciones y los ajustes de proyecto en tu ordenador. 
 
 | Función | Destino |
 | --- | --- |
-| Comprobación de licencia | La dirección pública de licencias del dominio de Zylon configurado. Esta petición no incluye el token de desarrollador. |
+| Comprobación de licencia | La instalación de Zylon que hayas configurado, para comprobar su licencia. |
 | Conexión de modelos de Zylon | La instalación configurada y los servicios que ejecutan sus modelos. |
 | Otro proveedor | El servicio de modelos de ese proveedor. |
 | MCP | El servidor conectado o los servicios que utilice un comando MCP local. |
 | Lectura y búsqueda web | La página solicitada o el proveedor de búsqueda. |
 | Comandos, extensiones y acciones del navegador | Los servicios que utilice cada función. |
 
-El dominio y el resultado de una comprobación de licencia correcta se guardan con los ajustes. Los tokens de desarrollador se almacenan por separado, como credenciales. También se guarda la autorización del certificado si aceptas expresamente un certificado privado del servidor.
-
-Trabajar con una aplicación local no significa que toda la tarea se procese en tu ordenador. Un gateway interno tampoco impide que una herramienta o un plugin contacte con otro servicio. [Red y funcionamiento sin conexión](/zylon-code/es/advanced/network-and-offline) explica las restricciones gestionadas por la organización.
+Trabajar con una aplicación local no significa que toda la tarea se procese en tu ordenador. Un servidor de modelos interno tampoco impide que una herramienta o un plugin contacte con otro servicio. [Red y funcionamiento sin conexión](/zylon-code/es/advanced/network-and-offline) explica las restricciones gestionadas por la organización.
 
 ## Antes de utilizar datos sensibles
 
-Usa los proveedores y las integraciones que apruebe tu organización. Guarda los tokens en los campos protegidos. Revisa exportaciones, capturas, resultados de comandos y archivos de diagnóstico antes de compartirlos.
+Usa los proveedores y las integraciones que apruebe tu organización. Introduce los tokens en los campos destinados a credenciales. Revisa exportaciones, capturas, resultados de comandos y archivos de diagnóstico antes de compartirlos.
 
-Algunas credenciales reconocibles pueden aparecer ocultas en los mensajes enviados. Solo cambia cómo se dibujan: al copiar el texto o enviarlo al modelo se conserva el valor original. Evita poner secretos en el propio mensaje; ocultarlos en pantalla no los elimina.
+Algunas credenciales pueden aparecer ocultas en los mensajes enviados. Al copiar el texto o enviarlo al modelo se conserva el valor original. Evita incluir secretos en los mensajes; ocultarlos en pantalla no los elimina.
+
+No des por hecho que las credenciales guardadas quedan fuera del alcance del agente. Las herramientas locales pueden acceder a ellas con los permisos disponibles. Si las tareas no deben acceder a las claves de los proveedores, consulta al administrador cómo protegerlas.
 
 Las extensiones y los comandos locales pueden ejecutar código y realizar sus propias peticiones de red. Comprueba sus requisitos y la política de datos del proveedor antes de activarlos. [Permisos](/zylon-code/es/configuration/permissions) explica cómo limitar las operaciones de una tarea.

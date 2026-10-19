@@ -4,11 +4,11 @@ description: "Make project checks reproducible and expose only the capabilities 
 noindex: true
 ---
 
-Zylon Code Desktop is delivered as a compiled application. That does not mean every project is ready to build or test: your repository can still need a particular runtime, dependencies, services or configuration. Prepare those requirements before asking the agent to diagnose code through a broken test setup.
+Before asking the agent to change code, check that the project can run its tests. Your project may need a particular version of Node.js or Python, installed dependencies, a database or other services. Its setup guide should explain these requirements.
 
 ## Establish a baseline
 
-Have the agent read the project's setup guide, inspect the available environment and identify the verification command. Then run the relevant existing check before changing code when practical.
+Have the agent read the project's setup guide, inspect the available environment and identify the verification command. Then, when practical, ask the agent to run the relevant existing check before changing code.
 
 > Check the documented prerequisites for the search tests. Report missing dependencies or services before installing or changing anything. Run the existing focused test if the environment is ready, and distinguish setup failures from failing assertions.
 

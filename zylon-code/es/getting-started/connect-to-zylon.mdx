@@ -1,55 +1,48 @@
 ---
 title: "Conectar con Zylon"
-description: "Comprueba el dominio y la licencia de Zylon y guarda una clave del gateway para acceder a sus modelos."
+description: "Introduce la dirección de Zylon de tu organización, guarda la clave de API y elige un modelo."
 noindex: true
 ---
 
-La configuración tiene dos pasos: comprobar el **dominio y la licencia de Zylon** y guardar un **token de desarrollador** para acceder a los modelos. La licencia no sustituye a la clave de API, y la clave no activa una licencia.
+Ten a mano el **dominio de Zylon** de tu organización, por ejemplo `https://zylon.example`. Su [licencia debe incluir Zylon Code](/zylon-code/es/getting-started/license-and-access). También necesitarás una **clave de API de un gateway** para acceder a los modelos de Zylon; el paso 2 explica cómo crearla.
 
 ## 1. Conecta el dominio de Zylon
 
-En la bienvenida, introduce el **Dominio de Zylon**, por ejemplo `https://zylon.example`, y pulsa **Conectar**. Utiliza la dirección HTTP o HTTPS que te facilite el administrador, con el puerto si hace falta. No añadas una ruta de API, credenciales ni parámetros.
+Abre Zylon Code, introduce el **Dominio de Zylon** en la pantalla de bienvenida y pulsa **Conectar**. Utiliza la dirección que te facilite el administrador, con `http://` o `https://` y el puerto si hace falta.
 
-| Dirección | Dónde se utiliza |
-| --- | --- |
-| `https://zylon.example` | Dominio de Zylon en la bienvenida o en Ajustes → General. |
-| `https://zylon.example/api/gpt` | URL de los modelos, que la aplicación calcula y muestra automáticamente. |
+Introduce solo la dirección base. Por ejemplo, si Backoffice muestra `https://zylon.example/api/gpt`, escribe `https://zylon.example`. No añadas credenciales ni parámetros.
 
-Las instrucciones de Backoffice pueden mostrar la URL completa de los modelos. Si indican `https://zylon.example/api/gpt`, escribe solo `https://zylon.example` en **Dominio de Zylon**.
+Cuando se haya comprobado la licencia, podrás acceder a la aplicación. Para cambiar el dominio más adelante, abre **Ajustes → General → Conexión con Zylon**. Si no puedes conectar, consulta [Licencia y acceso](/zylon-code/es/getting-started/license-and-access).
 
-La bienvenida se cierra cuando la aplicación comprueba una licencia vigente que incluye Zylon Code. Este paso no se puede omitir. Para cambiar el dominio más adelante, abre **Ajustes → General → Conexión con Zylon**. Si falla la comprobación, consulta [Licencia y acceso](/zylon-code/es/getting-started/license-and-access).
-
-Si el servidor utiliza un certificado privado, puede aparecer una confirmación con el servidor, la huella, el emisor y las fechas de validez. Contrasta esos datos con el administrador antes de pulsar **Confiar y conectar**. La autorización corresponde a ese certificado y dominio.
+Si tu organización utiliza un certificado privado, puede aparecer una confirmación con el servidor, la huella, el emisor y las fechas de validez. Contrasta esos datos con el administrador antes de pulsar **Confiar y conectar**.
 
 ## 2. Crea una clave de API del gateway
 
-1. En Backoffice, abre **Consola de desarrollo** y selecciona el gateway que te proporcione la organización.
+Un gateway da acceso a los modelos que ofrece tu organización. Para crear una clave, tu cuenta necesita acceso de Desarrollador y acceso a ese gateway. Si te falta alguno de los dos, pídeselo al administrador.
+
+1. En Backoffice, abre **Consola de desarrollo** y selecciona el gateway.
 2. Abre **Claves de API** y pulsa **Nueva clave de API**.
-3. Escribe un nombre, elige **Lectura y escritura** y establece una fecha de caducidad adecuada.
-4. Crea la clave y cópiala enseguida. El valor secreto solo se muestra una vez.
+3. Escribe un nombre, elige **Lectura y escritura** y establece una fecha de caducidad.
+4. Crea la clave y cópiala enseguida. Su valor solo se muestra una vez.
 
-Tu cuenta necesita acceso de Desarrollador y acceso al gateway. Si te faltan, pídeselos al administrador. Cuando hay descargas disponibles, el diálogo de creación también incluye las instrucciones para instalar Zylon Code.
+Cuando hay descargas disponibles, este diálogo también incluye las instrucciones para instalar Zylon Code. Si todavía no tienes la aplicación, descárgala desde ahí y sigue [Descarga e instalación](/zylon-code/es/getting-started/installation).
 
-Utiliza una clave del **gateway**, no un token exclusivo de Workspace. La [guía de tokens de la plataforma](/es/v1.58/developer-manual/get-started/token-management) explica los tipos de token y su gestión.
+Utiliza una clave del **gateway**, en lugar de un token que solo dé acceso a Workspace.
 
-## 3. Guarda la clave en Desktop
+## 3. Guarda la clave y elige un modelo
 
-Abre **Ajustes → Modelos**, busca la conexión de Zylon y pega la clave en **Token de desarrollador**. La **URL de los modelos** es de solo lectura; el dominio se cambia en General. Pulsa **Guardar conexión**.
+Abre **Ajustes → Modelos**, busca la conexión de Zylon y pega la clave en **Token de desarrollador**. Pulsa **Guardar conexión**. La **URL de los modelos** se rellena automáticamente a partir del dominio que has indicado; no necesitas editarla.
 
-Antes de guardar, la aplicación consulta los modelos para comprobar la clave. Si editas una conexión que ya funciona, deja el token vacío para conservar la clave guardada. Si falla la consulta, se mantienen los ajustes, el token y el catálogo anteriores. **Actualizar modelos** consulta de nuevo la lista sin borrar las opciones de modelos que hayas personalizado.
+Una vez guardada la conexión, abre el selector de modelos del cuadro de mensajes y elige uno disponible. Si la lista está vacía o no puedes guardar la conexión, consulta [Acceso a modelos](/zylon-code/es/troubleshooting/setup-and-models#acceso-a-modelos).
 
-Abre el selector de modelos y elige uno disponible. El alias inicial de Zylon es `zylon/default`.
+Guarda la clave en **Token de desarrollador**; no la pegues en una conversación.
 
-## 4. Prueba una tarea pequeña
+## 4. Prueba una tarea sencilla
 
-Selecciona una carpeta de proyecto y envía:
+[Selecciona una carpeta de proyecto](/zylon-code/es/everyday-use/projects) y abre una conversación con **Nueva sesión**. Elige los permisos **Solo lectura** en el cuadro de mensajes y envía:
 
 > Enumera los archivos de la carpeta principal del proyecto. Lee un archivo de texto pequeño y resume para qué sirve. No modifiques archivos ni instales nada.
 
-Contrasta el resultado con los archivos de tu ordenador. La licencia permite utilizar la aplicación; la consulta de modelos comprueba la conexión; esta tarea confirma que el modelo seleccionado puede responder y usar una herramienta.
+Comprueba que la respuesta describe un archivo de la carpeta que has elegido. Despliega las tarjetas de herramientas para ver qué ha leído el agente. Si aparece un error, consulta [problemas de conexión](/zylon-code/es/troubleshooting/setup-and-models).
 
-Guarda la clave en su campo de credenciales. Continúa con [Tu primera tarea](/zylon-code/es/getting-started/first-task), o consulta [problemas de conexión](/zylon-code/es/troubleshooting/setup-and-models) si falla algún paso.
-
-<Frame caption="Ajustes de conexión de Zylon con las credenciales ocultas">
-  <img src="/images/zylon-code/screenshots/getting-started-connect-to-zylon-es.jpg" alt="Ajustes de conexión de Zylon con las credenciales ocultas" />
-</Frame>
+Continúa con [Tu primera tarea](/zylon-code/es/getting-started/first-task) para hacer y revisar un cambio pequeño.

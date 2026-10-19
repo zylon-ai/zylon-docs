@@ -4,22 +4,24 @@ description: "Configure a model’s identity, image support and capacity."
 noindex: true
 ---
 
-Edit the provider in **Settings → Models** and open its customized model settings. These values describe the endpoint; they do not increase its actual capacity.
+Edit the provider in **Settings → Models** and open its **Customized settings**. These values tell the app what the model supports; they do not increase its actual capacity.
 
 | Option | What to enter |
 | --- | --- |
 | Model ID | Exact API identifier accepted by the endpoint. |
 | Display name | A recognizable label for the picker. |
 | Context window | The model’s supported token capacity for a request. |
-| Maximum output | The model's supported output capacity. |
-| Request output limit | Default output budget for an ordinary request; separate from the model's capacity. |
+| Max output tokens | The maximum number of tokens the model can generate in one request. |
+| Request output limit | The default number of output tokens reserved for an ordinary request, up to the model's output capacity. |
 | Input types | Text and/or image only when the model supports them. |
 
 ## Capacity and request budget
 
+Models measure text in **tokens**, which can be words, parts of words or punctuation. Token counts are not the same as word counts.
+
 For example, a deployment may support a 131,072-token context and 32,768 output tokens while reserving 8,192 for an ordinary reply. Enter the server-supported capacities and choose a request limit no larger than its output capacity. These example numbers are not performance recommendations.
 
-Newly discovered Zylon models default to a request limit of 8,192 tokens, or their lower advertised output capacity. Refresh preserves existing model fields and manual rows; it does not replace old limits with new discovery values. Review existing rows explicitly after a server change.
+Newly discovered Zylon models default to a request limit of 8,192 tokens, or their lower advertised output capacity. Refreshing preserves settings for existing models, including models added manually. It does not replace their limits with the latest values from the server. Review existing models after a server change.
 
 A large output reservation leaves less room for input. The summary used for [compaction](/zylon-code/everyday-use/long-conversations) has a separate budget; reducing the normal reply limit does not automatically reduce that summary limit. Ask your administrator to align compaction with a small model's capacity.
 
@@ -29,17 +31,17 @@ Expand the model's options and select **Image** if supported. At least one input
 
 ## Reasoning capabilities
 
-Reasoning controls come from the selected model's advertised capabilities. Zylon models that report support offer **Off** and their supported effort levels in the composer. Use **Refresh models** to add newly available models. Refresh preserves saved reasoning declarations too; ask your administrator to update an existing model's declarations when its capabilities change. Without configured reasoning capabilities, the Effort control is absent.
+Reasoning controls come from the selected model's advertised capabilities. Zylon models that report support offer **Off** and their supported effort levels in the composer. Use **Refresh models** to add newly available models. Refreshing also preserves saved reasoning settings; ask your administrator to update an existing model's settings when its capabilities change. Without configured reasoning capabilities, the Effort control is absent.
 
 Use [Choose a model](/zylon-code/models/choosing-a-model) for the steps to enable, disable or change effort. Selecting another model applies that model's default. Editing a model's configured default does not replace an effort already selected in a conversation. **Default**, when offered, sends no explicit reasoning choice for Zylon.
 
-The gateway's model adapter ultimately decides how the requested level is used. Some adapters map Off to a low level or Max to High when the underlying model cannot honor the exact setting. Ask your administrator about the behavior of your deployment if that distinction matters to a task.
+The model service may use a different level when it cannot honor the requested setting. For example, Off may become a low level or Max may become High. Ask your administrator how your deployment handles these choices if the difference matters to your task.
 
 ## Defaults and errors
 
-Inherited catalog values and saved overrides are different. Restoring a whole provider catalog can remove other edits too; review the form before resetting it. A wrong model ID or protocol can save successfully and still fail during inference.
+Restoring a provider's default catalog can remove your saved model settings; review the form before resetting it. A wrong model ID or protocol can save successfully and still fail when you send a request.
 
-For adapter-only options such as headers, request compatibility, retries and timeouts, use [profiles and YAML](/zylon-code/advanced/profiles-and-yaml) with the installed configuration schema. Keep keys out of YAML literals.
+For advanced options such as headers, request compatibility, retries and timeouts, use [Profiles and YAML](/zylon-code/advanced/profiles-and-yaml) and the settings supported by your installation. Keep keys in credential fields, not directly in YAML.
 
 <Frame caption="Reasoning effort levels for the selected model">
   <img src="/images/zylon-code/screenshots/models-model-options-en.jpg" alt="Reasoning effort levels for the selected model" />

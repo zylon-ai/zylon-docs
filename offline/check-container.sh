@@ -61,11 +61,15 @@ fetch /docs/_offline/site.css > "$scratch/site.css"
 fetch /docs/_offline/site.js > "$scratch/site.js"
 fetch /docs/logo/light.svg > "$scratch/logo.svg"
 fetch /docs/_offline/fonts/inter-latin.woff2 > "$scratch/font.woff2"
-fetch /docs/files/zylon-code/first-task-project.zip > "$scratch/project.zip"
+fetch /docs/files/zylon-code/first-task-desktop-en.zip > "$scratch/project-en.zip"
+fetch /docs/files/zylon-code/first-task-desktop-es.zip > "$scratch/project-es.zip"
 test -s "$scratch/site.css" && test -s "$scratch/site.js" && test -s "$scratch/logo.svg" && test -s "$scratch/font.woff2"
-python3 - "$scratch/project.zip" <<'PY'
+python3 - "$scratch/project-en.zip" "$scratch/project-es.zip" <<'PY'
 import sys,zipfile
-with zipfile.ZipFile(sys.argv[1]) as archive: assert archive.namelist()
+for path in sys.argv[1:]:
+    with zipfile.ZipFile(path) as archive:
+        assert archive.testzip() is None
+        assert set(archive.namelist()) == {"first-task/brief.md", "first-task/notes.md"}
 PY
 
 # Both explicit redirects and Nginx directory redirects must preserve the TLS proxy's origin.

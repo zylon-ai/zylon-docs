@@ -4,16 +4,16 @@ description: "Inspect session records and the local runtime with support guidanc
 noindex: true
 ---
 
-The optional **Developer Tools** bundle is for troubleshooting and development. It starts disabled. Enable it from **Plugins → Experimental plugins** only when you need its diagnostic access.
+The optional **Developer Tools** plugin helps you investigate failures and collect diagnostics for support. It starts disabled. Enable it from **Plugins → Experimental plugins** only when you need its diagnostic access.
 
 ## Inspect a conversation
 
-Use the sidebar's new-tab menu to open **Session Log**. Its **Raw Log** and **Chat Group** presentations let you inspect the recorded conversation and grouped messages. Use the normal conversation or Trajectory view first when those already show the information you need.
+Use the sidebar's new-tab menu to open **Session Log**. Its **Raw Log** and **Chat Group** presentations let you inspect the recorded conversation and grouped messages. For example, if a tool call failed, find its error in the conversation and inspect the corresponding record in Session Log when support needs more detail. Use the normal conversation or Trajectory view first when those already show the information you need.
 
 **Ctrl/Cmd+Shift+.** opens or collapses **NodeJS Inspector** in the bottom panel. This debugger examines the application's local runtime.
 
 <Warning>
-Enabling Developer Tools starts a debugging backend and unredacted capture of Host network requests. A debugger can execute code and expose credentials, prompts and private files. Keep access local and review diagnostics before sharing them.
+Enabling Developer Tools starts a debugging backend and capture of local application network requests without removing sensitive data. A debugger can execute code and expose credentials, prompts and private files. Keep access local and review diagnostics before sharing them.
 </Warning>
 
 ## Finish the investigation

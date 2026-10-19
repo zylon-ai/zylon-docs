@@ -1,10 +1,12 @@
 ---
 title: "Minimal"
-description: "Use a persistent shell, image reading and compaction for a small tool baseline."
+description: "Work through command-line tools with fewer built-in features."
 noindex: true
 ---
 
-Minimal uses a fixed system prompt, a persistent platform shell, image reading and history compaction. It does not automatically load project instructions, skills, integrated planning, goals or ordinary delegation. Optional global plugins can still add tools.
+Minimal lets the agent work through a command-line shell that keeps its state between commands. It also supports reading images and summarizing long conversations. Use it for small tasks or to compare how the same task works with fewer built-in tools.
+
+It does not automatically load project instructions, and it does not include skills, integrated planning, goals or ordinary delegation. Optional global plugins can still add tools.
 
 Enable **Settings → General → Developer view** if Minimal is absent from the new-task picker. Select it before the first message.
 
@@ -14,12 +16,12 @@ Enable **Settings → General → Developer view** if Minimal is absent from the
 
 Inspect the shell commands and actual output. The shell can read files, write them and execute scripts when permissions allow it. A smaller tool catalog does not make the task automatically safer.
 
-The persistent shell retains state between calls. Image reading requires a model configured to accept images. Automatic compaction and the idle-session `/compact` command summarize older context; review the original recorded activity when the detail matters.
+Image reading requires a model configured to accept images. Automatic compaction and the idle-session `/compact` command summarize older context; review the original recorded activity when the detail matters.
 
 ## Provide project rules explicitly
 
-Minimal does not use the standard instruction loader for `AGENTS.md`. Put the relevant rules in your task or choose [Standard](/zylon-code/modes/standard). Compaction does not add missing project conventions.
+Minimal does not automatically read project rules from `AGENTS.md`. Put the relevant rules in your task or choose [Standard](/zylon-code/modes/standard). Compaction does not add missing project conventions.
 
 ## Compare fairly
 
-Keep the model, permissions, prompt, enabled global plugins and starting files identical across runs. A new conversation does not reset files. For normal work involving skills, planning or local subagents, start with Standard; use a [custom mode](/zylon-code/customization/custom-modes) when you need a different composition.
+Keep the model, permissions, prompt, enabled global plugins and starting files identical across runs. A new conversation does not reset files. If a task needs skills, planning or local subagents, use Standard. You can also [create a mode](/zylon-code/customization/custom-modes) with the combination of features you need.

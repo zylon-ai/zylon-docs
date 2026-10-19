@@ -1,6 +1,6 @@
 ---
 title: "Context and attachments"
-description: "Reference files, folders and MCPs; attach documents and images with the right model capabilities."
+description: "Point the agent to files, folders and connected services, or attach documents and images."
 noindex: true
 ---
 
@@ -20,11 +20,13 @@ A reference tells the agent which resource you mean; it does not grant extra acc
 
 Use the attachment action, drag a file or paste supported content. Wait for any upload to finish before sending. You can retry or remove failed uploads.
 
-A path reference points to the original file or folder, which must remain available. A file uploaded as an attachment instead saves a read-only copy with the conversation; the model receives a path it can read on demand, not all the file bytes in every prompt. Image attachments are validated and normalized before sending; a refused image prevents that message from being accepted. For image attachments, choose a model that supports image input; see [model options](/zylon-code/models/model-options).
+A reference points to the original file or folder, which must remain available. Uploading a file saves a read-only copy with the conversation for the agent to consult when needed.
+
+For images, choose a model that supports image input; see [model options](/zylon-code/models/model-options). If an image is rejected, follow the error instructions or remove it before sending the message again.
 
 ## Choose useful context
 
-Name the relevant folder, explain the task and let the agent inspect what it needs. Large attachments and tool results use up the model's limited context. [Long conversations](/zylon-code/everyday-use/long-conversations) explains how to manage it.
+Name the relevant folder, explain the task and let the agent inspect what it needs. The content the agent reads and the results its tools return use up the model's limited context. [Long conversations](/zylon-code/everyday-use/long-conversations) explains how to manage it.
 
 Next, learn how to [review results](/zylon-code/everyday-use/reviewing-results).
 

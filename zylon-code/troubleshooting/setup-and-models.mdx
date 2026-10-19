@@ -1,36 +1,36 @@
 ---
 title: "Setup, license and model problems"
-description: "Separate download, domain, license, credential and model-request failures."
+description: "Find help when you cannot download Zylon Code, connect to Zylon or use a model."
 noindex: true
 ---
 
-Start with the step that failed. Downloading the app, verifying a license, saving a developer token and completing a model task are different checks.
+Find the symptom that matches your problem. Start with download and license issues if you cannot open the application or get past the welcome screen. If the application opens but you cannot use a model, go to [Model access](#model-access).
 
 ## Download and license
 
 | Symptom | What to do |
 | --- | --- |
-| No download button in Backoffice | Ask the administrator to check your account access and published installers. Platform → Gateways is an administrator route; developers can also download from the instructions after creating a gateway key. |
+| No download button in Backoffice | Ask the administrator to check your account access and published installers. Accounts with Operator or SuperAdmin access can use Platform → Gateways. Developers can use the download instructions shown after creating a gateway API key. |
 | No installer is selected | Choose the correct OS and architecture from Other platforms. The browser may not identify the architecture. |
 | The application does not open | Check the build's OS and architecture and follow its supplied installation instructions. Keep the startup error for support. |
-| The domain is rejected | Enter only an HTTP or HTTPS origin, such as `https://zylon.example`, without `/api/gpt`, credentials or query parameters. |
-| The license cannot be verified | Confirm network access, the exact domain and a current deployment license that includes Zylon Code. The developer token is not used for this check. |
-| The welcome dialog returns after earlier use | The saved authorization may have expired or verification failed. Reconnect the same domain; ask the administrator to check the license and server. Do not delete your data. |
+| The domain is rejected | Enter the base HTTP or HTTPS address, such as `https://zylon.example`, without `/api/gpt`, credentials or query parameters. |
+| The license cannot be verified | Confirm network access, the exact domain and a current deployment license that includes Zylon Code. Ask your administrator to confirm the license. |
+| The welcome dialog returns after earlier use | Check the Zylon domain and reconnect. If the problem continues, ask your administrator to check the license and server availability. You do not need to delete your conversations. |
 | A private certificate confirmation appears | Compare its server, fingerprint, issuer and validity dates with the administrator before approving it. An expired or changed certificate needs investigation. |
 
-[License and access](/zylon-code/getting-started/license-and-access) explains temporary offline verification and which failures still block use.
+[License and access](/zylon-code/getting-started/license-and-access) explains what you need to connect and what happens during a temporary outage.
 
 ## Model access
 
 | Symptom | What to do |
 | --- | --- |
-| The Zylon connection cannot be saved | Check the domain in Settings → General and the gateway key in Settings → Models. A failed model-list request keeps the previous settings and key. |
+| The Zylon connection cannot be saved | Check the domain in Settings → General and the gateway key in Settings → Models. Confirm that the key is valid and your account has access to the gateway. Use the error message to identify the problem. |
 | The key worked before but no longer does | Check its expiry, revocation and the account's active gateway access. Create a replacement key if needed and save it in Models. |
 | A request is denied despite a valid key | Check the key's Read & Write access and the gateway's permissions, model availability and quotas. Broader local file permissions do not change API access. |
-| The model API URL cannot be edited | This is expected for Zylon. Change the domain in General; the app derives the model URL. |
-| The selected model is unavailable | Configure its provider or choose another model in the composer. Refresh the catalog if the deployment has changed. |
-| An image is rejected | Check both the model's image option and the actual server's image support. |
+| The model API URL cannot be edited | To use a different Zylon address, change the domain in Settings → General. The model API URL updates automatically. |
+| The selected model is unavailable | Configure its provider or choose another model in the message box. To reload the Zylon model list, open Settings → Models and select Refresh models. |
+| An image is rejected | Choose a model that supports images and check that its [image option](/zylon-code/models/model-options#images) is enabled. If you are unsure which model to use, ask your administrator. |
 
-Use a small read-only task to test both a reply and a tool call. Save the error text with secrets removed. Keep tokens in credential fields rather than pasting them into a conversation.
+After changing the settings, try the [small read-only task](/zylon-code/getting-started/connect-to-zylon#4-try-a-small-task) from the setup guide. If it still fails, save the error message for support, removing any credentials or private data before sharing it. Keep API keys in their settings fields, not in a conversation.
 
 If your project list is empty, check the [data location](/zylon-code/configuration/data-and-backups) before resetting anything. See [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) for the setup sequence and [Network](/zylon-code/advanced/network-and-offline) for proxies and certificates.

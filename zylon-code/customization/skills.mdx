@@ -25,16 +25,10 @@ Compare documented keys and defaults with the implementation.
 Report mismatches with file references. Do not edit without a request.
 ```
 
-Use a lowercase kebab-case name and a nonempty description. The provider scans direct skill directories or flat Markdown files, not arbitrary nested trees. Keep supporting files beside the skill and reference them explicitly.
+Use a lowercase kebab-case name and a nonempty description. Use a skill subfolder containing SKILL.md, as above, or a Markdown file directly inside a configured skills folder. Additional folder levels can prevent discovery. Keep supporting files beside the skill and reference them explicitly.
 
 ## Discovery and controls
 
-Enable **Developer view** in General, then open **Settings → Built-in plugins**, search for `skill` and select a mode to inspect its skill plugins and their status. This inventory is read-only; it lists the components that support skills, rather than individual skill documents.
+Locations include project `.dsh/skills` and `.agents/skills`, configured custom directories and the application’s user skills folder. Project roots take priority over later roots. Valid additions and edits are picked up automatically. An invalid metadata header can cause a skill to be skipped with a warning.
 
-Locations include project `.dsh/skills` and `.agents/skills`, configured custom directories and the application’s user skills folder. Project roots take priority over later roots. Watchers refresh valid additions/edits; invalid frontmatter can be skipped with a warning.
-
-`disable-model-invocation: true` reserves a skill for human invocation. `user-invocable: false` removes it from human commands. Neither adds a permission grant. Verify `/review-config` appears in a supported mode and loads the intended text. Minimal has no built-in skill provider.
-
-<Frame caption="Built-in skill plugins and their status">
-  <img src="/images/zylon-code/screenshots/customization-skills-en.jpg" alt="Built-in skill plugins and their status" />
-</Frame>
+`disable-model-invocation: true` reserves a skill for human invocation. `user-invocable: false` removes it from human commands. Neither adds a permission grant. Verify `/review-config` appears in a supported mode and loads the intended text. Minimal does not include skills by default.

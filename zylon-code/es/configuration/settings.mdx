@@ -17,7 +17,7 @@ Abre **Ajustes** en la parte inferior de la barra lateral. El dominio de Zylon s
 
 ## Cambia el dominio de Zylon
 
-En **General → Conexión con Zylon**, introduce una dirección como `https://zylon.example` y pulsa **Conectar**. La aplicación comprueba la licencia antes de guardar. Si falla el cambio a otro dominio, conserva la conexión que funcionaba. Si la nueva instalación necesita otra clave del gateway, cámbiala después en Modelos.
+En **General → Conexión con Zylon**, introduce una dirección como `https://zylon.example` y pulsa **Conectar**. La aplicación comprueba la licencia antes de guardar. Si falla el cambio a otro dominio, conserva la conexión que funcionaba. Si la nueva instalación necesita otro token de desarrollador, cámbialo después en **Modelos**.
 
 Puedes quitar un certificado privado autorizado con **Olvidar certificado autorizado**. También se borra la comprobación de licencia guardada: tendrás que conectar de nuevo con la validación normal del certificado o autorizar uno que hayas verificado. Si se bloquea el acceso, sigue [Licencia y acceso](/zylon-code/es/getting-started/license-and-access).
 
@@ -25,14 +25,15 @@ Puedes quitar un certificado privado autorizado con **Olvidar certificado autori
 
 **Vista de desarrollo** muestra controles adicionales, como PTC y Mínimo en el selector de modos y las vistas de configuración avanzada. No limita por sí sola lo que el agente puede ejecutar. Utiliza los [permisos](/zylon-code/es/configuration/permissions) para controlar las operaciones de una tarea.
 
-Al desactivar Vista de desarrollo, un modo predeterminado PTC o Mínimo pasa a Estándar. Las conversaciones ya iniciadas conservan su modo. Cambiar el modo predeterminado afecta a las tareas nuevas. Cambiar el modelo de una conversación se aplica a su siguiente petición. El selector de permisos controla la conversación actual. Consulta la guía de cada función antes de modificar un valor mientras hay trabajo en curso.
+Los cambios se aplican en momentos distintos:
+
+- Un nuevo modo predeterminado afecta a las tareas nuevas. Las conversaciones ya iniciadas conservan su modo.
+- Al desactivar Vista de desarrollo, un modo predeterminado PTC o Mínimo pasa a Estándar.
+- Cambiar el [modelo](/zylon-code/es/models/choosing-a-model) de una conversación afecta a su siguiente petición, incluso durante una tarea.
+- El [selector de permisos](/zylon-code/es/configuration/permissions) controla la conversación actual.
 
 ## Guarda el formulario correspondiente
 
-Los formularios de Shell, ejecución del agente y agentes secundarios mantienen un borrador hasta que pulses **Guardar**. Salir sin guardarlo descarta los cambios. Sigue los avisos de reinicio que aparezcan.
+Los formularios de **Terminal**, **Ejecución de herramientas** y **Subagentes** mantienen un borrador hasta que pulses **Guardar**. Salir sin guardarlo descarta los cambios. Sigue los avisos de reinicio que aparezcan.
 
-**Abrir archivo de configuración**, cuando esté disponible, abre la configuración local de la aplicación. Utiliza los formularios habituales salvo que necesites una opción que no aparezca en ellos; consulta [Perfiles y YAML](/zylon-code/es/advanced/profiles-and-yaml).
-
-<Frame caption="Ajustes de la aplicación y controles de idioma">
-  <img src="/images/zylon-code/screenshots/configuration-settings-es.jpg" alt="Ajustes de la aplicación y controles de idioma" />
-</Frame>
+**Archivo de configuración**, cuando esté disponible, abre la configuración local de la aplicación. Utiliza los formularios habituales salvo que necesites una opción que no aparezca en ellos; consulta [Perfiles y YAML](/zylon-code/es/advanced/profiles-and-yaml).

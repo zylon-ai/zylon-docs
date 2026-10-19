@@ -4,11 +4,11 @@ description: "Haz que las comprobaciones se puedan repetir y utiliza las capacid
 noindex: true
 ---
 
-Zylon Code Desktop se entrega como una aplicación compilada. Eso no significa que todos los proyectos estén listos para compilar o ejecutar sus pruebas: tu repositorio puede necesitar un entorno concreto, dependencias, servicios o configuración. Prepara esos requisitos antes de pedir al agente que busque errores en el código con unas pruebas que ni siquiera pueden arrancar.
+Antes de pedir al agente que cambie código, comprueba que el proyecto puede ejecutar sus pruebas. Puede necesitar una versión concreta de Node.js o Python, dependencias instaladas, una base de datos u otros servicios. La guía de preparación del proyecto debería indicar estos requisitos.
 
 ## Comprueba el punto de partida
 
-Pide al agente que lea la guía de preparación del proyecto, examine el entorno disponible e identifique el comando de comprobación. Cuando sea posible, ejecuta la prueba relevante antes de cambiar código.
+Pide al agente que lea la guía de preparación del proyecto, examine el entorno disponible e identifique el comando de comprobación. Cuando sea posible, pídele que ejecute la prueba relevante antes de cambiar código.
 
 > Comprueba los requisitos documentados para las pruebas del buscador. Indica qué dependencias o servicios faltan antes de instalar o cambiar nada. Si el entorno está listo, ejecuta la prueba específica existente y distingue los fallos de preparación de las comprobaciones que no pasan.
 

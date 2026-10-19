@@ -6,7 +6,7 @@ noindex: true
 
 Un MCP permite al agente utilizar herramientas de otro servicio. Por ejemplo, puede consultar incidencias en un gestor de proyectos o leer documentación compartida. El **servidor MCP** proporciona esas herramientas y Zylon Code se conecta a él.
 
-El gestor de MCPs está activado en instalaciones nuevas, pero no trae servidores configurados. Si no aparece la pestaña **MCPs**, activa su paquete en Plugins.
+El gestor de MCPs está activado en instalaciones nuevas, pero no trae servidores configurados. Las instalaciones existentes conservan su selección. Si no aparece la pestaña **MCPs**, activa el plugin MCP de Zylon en Plugins.
 
 ## Añade un servidor HTTP
 
@@ -21,13 +21,13 @@ El servidor se guarda cuando la conexión inicial y la consulta de herramientas 
 
 ## Añade un comando local
 
-Algunos servicios funcionan como un proceso en tu ordenador. Elige **Comando local (STDIO)** y sigue las instrucciones del proveedor.
+Algunos servicios funcionan como un proceso en tu ordenador. Elige **Comando local (STDIO)** y rellena el formulario con los datos del proveedor; no necesitas abrir un terminal. Si falta el programa necesario, pide al administrador que lo prepare o que facilite un servidor HTTP.
 
 | Campo | Qué introducir |
 | --- | --- |
 | Comando | El ejecutable, como `npx` o `uvx`, si el proveedor lo requiere. |
 | Argumentos | Un argumento por campo, en el orden indicado. |
-| Directorio de trabajo | La carpeta desde la que se inicia el proceso, si hace falta. |
+| Directorio de trabajo | La carpeta desde la que se inicia el proceso, si hace falta. No concede permisos de acceso. |
 | Variables de entorno | Los nombres y valores que requiera el servicio. |
 | Cabeceras HTTP | Los campos que pida el proveedor para un servidor HTTP. |
 
@@ -35,11 +35,13 @@ No pegues una línea de shell completa en Comando. Guarda credenciales en los ca
 
 ## Utiliza y mantén la conexión
 
-Escribe `@` en un chat y selecciona un MCP activado. Actualiza la referencia si has renombrado, eliminado o desactivado el servidor. Sus herramientas siguen sujetas a los permisos del chat.
+Escribe `@` en un chat del proyecto y selecciona un MCP activado. Actualiza la referencia si has renombrado, eliminado o desactivado el servidor. Sus herramientas siguen sujetas a los permisos del chat y a las restricciones del modo.
 
-**Probar conexión** consulta el servidor y sus herramientas sin ejecutar una herramienta ni llamar al modelo. **Última prueba** muestra ese resultado anterior, no su estado en tiempo real. **Iniciar sesión** permite recuperar el acceso OAuth. El menú de la tarjeta ofrece Editar y Eliminar.
+Si has conectado un servidor de incidencias que permite buscar, puedes pedir: «Busca las incidencias abiertas sobre errores de inicio de sesión en este proyecto y resume su estado. No modifiques ninguna incidencia».
 
-Desactivar el paquete conserva la configuración y las credenciales. Eliminar un servidor borra ambas. **Exportar configuración** guarda los ajustes sin secretos ni resultados de pruebas; esta versión no permite importarlos desde el gestor. Las entradas definidas externamente son de solo lectura.
+**Probar conexión** consulta el servidor y sus herramientas sin ejecutar una herramienta ni llamar al modelo. **Última prueba** muestra ese resultado anterior, no su estado en tiempo real. **Iniciar sesión** permite recuperar el acceso OAuth. El menú de la tarjeta permite editar o eliminar el servidor.
+
+Desactivar el plugin conserva la configuración y las credenciales. Eliminar un servidor borra ambas. **Exportar configuración** guarda los ajustes sin secretos ni resultados de pruebas; esta versión no permite importarlos desde el gestor. Los servidores definidos en un perfil externo son de solo lectura en el gestor. Si trasladas la configuración a otra instalación, vuelve a introducir las credenciales.
 
 Consulta [Problemas de MCPs](/zylon-code/es/troubleshooting/plugins-and-mcp) si falla la conexión o una herramienta.
 

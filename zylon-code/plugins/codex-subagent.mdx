@@ -28,7 +28,7 @@ Native approval/sandbox settings are separate from the parent conversation's per
 
 ## Review and finish
 
-The external agent shares the selected project directory. It does not receive an automatically isolated worktree, and its activation counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits).
+The external agent shares the selected project directory. It does not receive an automatically isolated worktree, and it counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits).
 
 One run handles one task, without follow-up input or resume. For more work, send a new complete brief. The parent does not receive a local child chat containing native tool traffic or diffs, so inspect files and checks separately when edits were allowed.
 

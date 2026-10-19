@@ -12,7 +12,7 @@ A conversation keeps prompts, model replies and tool activity for one task. Sele
 - **Queue** saves a follow-up for later processing.
 - **Steer** delivers a new instruction during the running task.
 
-The busy-send preference determines the normal Enter behavior. Inspect the active control instead of assuming every send interrupts the agent. Queued messages have their own edit/remove/steer controls once the application acknowledges them; a “Sending…” entry has not yet become an actionable queue item.
+Your send preference determines what Enter does while the agent is busy. Check the active button before sending. Once a queued message has been sent, its controls let you edit it, remove it or deliver it as an immediate instruction. Wait for “Sending…” to disappear before using those controls.
 
 Example steering message:
 
@@ -22,9 +22,9 @@ If you enable [Conversation-following titles](/zylon-code/plugins/conversation-t
 
 ## Fork or resume
 
-Use **Fork** to start a related conversation with inherited history. This creates conversation history, not an isolated Git worktree or a copy of your files. Both chats can affect the same checkout. Use a separately prepared folder or [Git Worktrees](/zylon-code/plugins/git-worktrees) if you need separate working files. A recorded working-directory change can move later tools without moving existing shells.
+Use **Fork** to start a related conversation with inherited history. Both chats can affect the same files: forking a conversation does not copy or isolate them. Use a separately prepared folder or [Git Worktrees](/zylon-code/plugins/git-worktrees) if you need separate working files. Changing the conversation's working directory affects later tool actions, but terminals that are already open keep their own directory.
 
-Reloading restores recorded history. It does not reverse changes or necessarily restore external browser state. A failed or interrupted turn can be followed by a precise recovery request after you inspect the files and running jobs.
+Reopening a chat restores its history. It does not undo file changes or necessarily restore a browser to its previous state. After an interruption, inspect the files and running processes before asking the agent to continue. See [Recovery](/zylon-code/troubleshooting/recovery).
 
 For long tasks, use [goals](/zylon-code/everyday-use/goals-and-task-lists) and [compaction](/zylon-code/everyday-use/long-conversations). Child-agent controls are documented under [delegation](/zylon-code/agents/delegation).
 

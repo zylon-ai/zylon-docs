@@ -4,11 +4,11 @@ description: "Compara Estándar, PTC, Mínimo y Creador; distingue modos, planif
 noindex: true
 ---
 
-Un modo define las herramientas y las instrucciones con las que trabaja el agente. El modelo determina qué IA utiliza; los permisos, qué acciones puede ejecutar. Son tres elecciones diferentes.
+Un modo define las herramientas y las instrucciones con las que trabaja el agente. El modelo es la IA que realiza el trabajo; los permisos determinan qué acciones puede ejecutar.
 
 | Modo | Cuándo elegirlo | Qué aporta |
 | --- | --- | --- |
-| [Estándar](/zylon-code/es/modes/standard) | Trabajo diario con código y archivos | Herramientas directas, habilidades, planificación, objetivos, delegación y flujos. |
+| [Estándar](/zylon-code/es/modes/standard) | Trabajo diario con código y archivos | Herramientas directas, habilidades, planificación, objetivos, delegación y flujos de trabajo. |
 | [PTC](/zylon-code/es/modes/ptc) | Tareas por lotes o resultados que conviene agrupar | El agente llama a herramientas desde un programa TypeScript. |
 | [Mínimo](/zylon-code/es/modes/minimal) | Tareas pequeñas y comparaciones controladas | Shell persistente, lectura de imágenes y compactación del historial. |
 | [Creador](/zylon-code/es/modes/creator) | Crear herramientas, plugins y modos | Funciones de Estándar y herramientas para inspeccionar y ampliar la aplicación. |
@@ -21,11 +21,11 @@ Selecciona el modo al crear una tarea. Las tarjetas de **Ajustes → Modos** per
 
 ## Si no aparecen PTC o Mínimo
 
-Abre **Ajustes → General** y activa **Vista de desarrollo**. Al desactivarlo se ocultan las opciones integradas PTC y Mínimo; si una de ellas era el modo predeterminado, pasa a ser Estándar. Las conversaciones existentes conservan su modo. Volver a activarlo no recupera el valor predeterminado anterior.
+Abre **Ajustes → General** y activa **Vista de desarrollo**. Al desactivar esta opción se ocultan las opciones integradas PTC y Mínimo; si una de ellas era el modo predeterminado, pasa a ser Estándar. Las conversaciones existentes conservan su modo. Volver a activarla no recupera el valor predeterminado anterior.
 
 ## Planificación y permisos
 
-El [modo de planificación](/zylon-code/es/modes/plan-mode) pide al agente que prepare una propuesta antes de implementar. Los [permisos](/zylon-code/es/configuration/permissions) limitan el acceso. Elegir Mínimo no significa trabajar en solo lectura y PTC sigue sujeto a las autorizaciones.
+El [modo de planificación](/zylon-code/es/modes/plan-mode) pide al agente que prepare una propuesta antes de implementar. Los [permisos](/zylon-code/es/configuration/permissions) limitan el acceso. Mínimo puede modificar archivos y ejecutar comandos si los permisos lo permiten; PTC también requiere las autorizaciones correspondientes.
 
 Si estás empezando, elige Estándar. Prueba otro modo cuando tengas una necesidad concreta y compara con los mismos archivos y permisos.
 

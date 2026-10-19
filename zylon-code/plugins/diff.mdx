@@ -38,13 +38,13 @@ Use **Import version-control changes** to review uncommitted changes from Git, S
 
 Shell commands and external editors do not necessarily create new automatic review entries. Changes to files already being tracked can be detected, and version-control import lets you bring other changes into review. The panel is not a guarantee that every modified project file is listed.
 
-## Settings and persistence
+## Settings and saved reviews
 
 Open **Settings → Zylon Diff Review** for display options, shortcuts, comment preferences and import behavior. Pending review state and staged comments persist across application restarts. Disabling the plugin preserves that state; it does not revert files.
 
-If state cannot be saved, the plugin shows a persistence error and newly captured changes remain in memory until recovery. Unsupported or damaged stored state is preserved for diagnosis. Avoid assuming the latest review state is durable while a save error is visible.
+If a save error appears, newly captured review entries may be lost when you close the application. Resolve the error before relying on them after a restart. The plugin keeps damaged or unsupported saved data for diagnosis; see [recovery](/zylon-code/troubleshooting/recovery) if the error persists.
 
-When enabled, the plugin also supplies `diff_approval_annotate` and related runtime skills for agent annotations and comments. You can use the review panel without memorizing these tool names.
+The agent can also add annotations and comments to the review.
 
 Continue with [reviewing results](/zylon-code/everyday-use/reviewing-results), [verification techniques](/zylon-code/hardening/verification-and-diffs) and [recovery](/zylon-code/troubleshooting/recovery).
 

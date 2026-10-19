@@ -6,7 +6,7 @@ noindex: true
 
 Un bucle de Ralph persigue un objetivo mediante varios agentes nuevos, uno tras otro. En lugar de alargar la misma conversación, cada ronda empieza con un contexto nuevo, consulta el proyecto compartido y recibe un informe breve de la anterior. Úsalo en tareas con una comprobación clara al finalizar cada ronda, en las que otro agente pueda continuar con los archivos y un resumen breve.
 
-Para una tarea larga normal, utiliza [objetivos](/zylon-code/es/everyday-use/goals-and-task-lists). Para revisiones independientes en paralelo, [delegación](/zylon-code/es/agents/delegation). Las rondas de Ralph se ejecutan en secuencia.
+Para una tarea larga que pueda continuar en el mismo chat, utiliza [objetivos](/zylon-code/es/everyday-use/goals-and-task-lists). Para revisiones independientes en paralelo, [delegación](/zylon-code/es/agents/delegation). Las rondas de Ralph se ejecutan en secuencia.
 
 ## Activa y limita las rondas
 
@@ -22,17 +22,17 @@ Incluye las restricciones importantes en el objetivo: los agentes nuevos no here
 
 ## Qué ocurre en cada ronda
 
-1. Un agente nuevo recibe el objetivo fijo, el número de ronda y el informe estructurado anterior.
+1. Un agente nuevo recibe el objetivo fijo, el número de ronda y el informe de la ronda anterior.
 2. Trabaja sobre el proyecto compartido y registra las comprobaciones, lo pendiente o un bloqueo concreto.
 3. Si indica que queda trabajo, comienza otra ronda hasta alcanzar el máximo. Si da el objetivo por terminado o informa de un bloqueo, acaba el bucle.
 
-Los archivos se conservan entre rondas; no se restauran. El informe sirve de relevo, pero no incluye toda la conversación anterior. Si falta una decisión, empezar con otro agente no la resuelve por sí solo.
+Los archivos se conservan entre rondas; no se restauran. El informe permite continuar el trabajo, pero no incluye toda la conversación anterior. Si falta una decisión, empezar con otro agente no la resuelve por sí solo.
 
 El agente principal espera al resultado de la herramienta. No es un proceso en segundo plano, una tarea programada ni una ejecución que se reanude después de reiniciar.
 
 ## Revisa el resultado
 
-El resultado indica cuántas rondas han empezado y si un agente ha comunicado que ha terminado, que hay un bloqueo o que se ha alcanzado el máximo. Un informe inválido o el fallo de un agente pueden hacer fallar el bucle. No hay un evaluador independiente que certifique la respuesta: revisa los cambios actuales y las comprobaciones reales.
+El resultado indica cuántas rondas han empezado y si un agente ha comunicado que ha terminado, que hay un bloqueo o que se ha alcanzado el máximo. El bucle puede fallar si un agente falla o entrega un informe que la herramienta no puede utilizar. No hay un evaluador independiente que certifique la respuesta: revisa los cambios actuales y las comprobaciones reales.
 
 Cada ronda genera más peticiones al modelo. Limitar las rondas no impone un presupuesto de tokens, coste o tiempo. Cancela cuando haga falta y revisa los cambios parciales; cancelar no los deshace. Evita «repite hasta que esté perfecto» y comprueba los resultados antes de iniciar otro bucle.
 

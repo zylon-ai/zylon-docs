@@ -4,7 +4,7 @@ description: "Prepare one browser provider and verify automation before using it
 noindex: true
 ---
 
-Browser control lets the agent inspect a page and interact with its controls. It is an optional experimental capability. The browser panel alone does not enable automation.
+Browser control lets the agent inspect a page and interact with its controls, for example to check a local web application or gather information from a page. It is an optional experimental capability. The browser panel alone does not enable automation.
 
 ## Prepare a provider
 
@@ -31,7 +31,3 @@ Check the observed page and tool results. Screenshot inspection needs a model th
 A provider can launch a separate browser or attach to an existing one, depending on configuration. It does not automatically choose your usual signed-in browser. Other people and processes can change an attached browser while the task runs.
 
 After a runtime restart, tabs and login state may need to be restored. Check current state before repeating an action. For startup or access problems, see [Plugin troubleshooting](/zylon-code/troubleshooting/plugins-and-mcp).
-
-<Frame caption="Browser-control search in Built-in plugins, with no matching entry">
-  <img src="/images/zylon-code/screenshots/plugins-browser-control-en.jpg" alt="Browser-control search in Built-in plugins, with no matching entry" />
-</Frame>

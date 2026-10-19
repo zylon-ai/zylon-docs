@@ -1,10 +1,10 @@
 ---
 title: "Revisión automática de autorización"
-description: "Comprende la revisión experimental por el mismo modelo antes de elegirla."
+description: "Conoce cómo funciona la revisión automática de permisos y sus límites antes de activarla."
 noindex: true
 ---
 
-Este plugin experimental revisa automáticamente las acciones que necesitan autorización. Está incluido, pero empieza desactivado. Al activarlo aparece **Revisión automática** en el selector de permisos; aún debes elegirla para la conversación.
+Este plugin experimental utiliza un modelo para revisar las acciones de las herramientas antes de ejecutarlas. Está incluido, pero empieza desactivado. Al activarlo aparece **Revisión automática** en el selector de permisos; aún debes elegirla para la conversación.
 
 ## Actívalo para una tarea
 
@@ -21,6 +21,6 @@ Esta revisión no es un control de seguridad independiente. Las restricciones de
 
 ## Vuelve a otro permiso
 
-Selecciona un [permiso habitual](/zylon-code/es/configuration/permissions) y compruébalo antes de continuar. Elige el permiso habitual que quieras antes de desactivar el plugin. Desactivarlo pasa las conversaciones activas que usaban Revisión automática a Acceso completo, sin revisión de cada llamada. Una conversación guardada con Revisión automática no puede reabrirse sin esa integración. El interruptor no sirve para restringir el acceso.
+Selecciona un [permiso habitual](/zylon-code/es/configuration/permissions) y compruébalo antes de continuar. Hazlo antes de desactivar el plugin: si lo desactivas mientras una conversación usa Revisión automática, esta pasa a Acceso completo, sin revisar cada llamada. Una conversación guardada con Revisión automática no puede reabrirse sin esa integración. El interruptor no sirve para restringir el acceso.
 
-Utilízalo en tareas cuyos efectos entiendas y consulta las acciones y sus resultados en la conversación.
+Utilízalo en tareas cuyos archivos, comandos y efectos externos entiendas. Para una primera prueba, usa una copia desechable del proyecto y pide un cambio pequeño que conozcas, como corregir una prueba que falla. Consulta las acciones y sus resultados en la conversación, incluidos los rechazos.

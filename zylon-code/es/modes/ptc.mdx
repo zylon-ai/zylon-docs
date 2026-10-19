@@ -1,10 +1,10 @@
 ---
 title: "PTC"
-description: "Utiliza llamadas programáticas para bucles, agregación y procesamiento por lotes."
+description: "Procesa archivos por lotes y reúne los resultados con un programa escrito por el agente."
 noindex: true
 ---
 
-PTC significa *Programmatic Tool Calling*: llamadas a herramientas desde un programa. El agente utiliza `run_code` para escribir TypeScript y coordinar las llamadas. Tú describes el resultado; no necesitas escribir ese programa.
+PTC significa *Programmatic Tool Calling*: llamadas a herramientas desde un programa. El agente escribe un programa TypeScript para coordinar tareas, como revisar muchos archivos o reunir los resultados en un informe. Tú describes el resultado; no necesitas escribir ese programa.
 
 Elige PTC antes de iniciar la conversación. Si no aparece, activa **Ajustes → General → Vista de desarrollo**.
 
@@ -14,11 +14,11 @@ Es útil para recorrer muchos archivos, agrupar resultados o continuar después 
 
 > Comprueba los archivos JSON de configs/ con schema.json. Guarda un CSV con una fila por incidencia. Incluye los archivos que no puedas leer y continúa con los demás. No modifiques los originales.
 
-Los resultados llegan primero al programa. El modelo recibe lo que este imprime o devuelve, con el tratamiento correspondiente para las imágenes. Las llamadas internas quedan registradas y siguen sujetas a los permisos.
+El programa puede pasar al modelo solo los resultados necesarios, en lugar de todos los pasos intermedios. Puedes consultar la actividad de sus herramientas en la conversación y siguen aplicándose los permisos habituales.
 
 ## Comprueba el resultado
 
-Despliega la ejecución para consultar el programa y sus llamadas. Revisa que incluya los archivos fallidos en lugar de omitirlos. Abre el CSV y contrasta algunas filas con los originales.
+Despliega la ejecución para consultar el programa y las herramientas que ha utilizado. Revisa que incluya los archivos fallidos en lugar de omitirlos. Abre el CSV y contrasta algunas filas con los originales. Pide un informe concreto, sin incluir todos los resultados intermedios.
 
 ## Qué incluye
 

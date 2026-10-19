@@ -8,10 +8,10 @@ Zylon Code guarda normalmente los datos de la aplicación en `~/.zylon-code`; `~
 
 | Datos | Qué conservar |
 | --- | --- |
-| Código y entregables | Las carpetas de proyecto, mediante Git o tus copias habituales. |
+| Código y entregables | Las carpetas de proyecto. Git conserva las versiones de los archivos que sigue; incluye también los archivos sin seguimiento o ignorados que necesites en tus copias. |
 | Conversaciones y adjuntos | La carpeta de datos de la aplicación y su almacenamiento de sesiones. |
 | Ajustes de modelos y plugins | La configuración guardada en la carpeta de datos. |
-| Credenciales | Su almacenamiento separado; protege las copias que las incluyan. |
+| Credenciales | El archivo local de credenciales, normalmente `.credentials.yaml` dentro de la carpeta de datos. Protege las copias que lo incluyan. |
 
 ## Exporta una conversación
 
@@ -19,9 +19,13 @@ Selecciona **Exportar** o `/export` en un chat. Completa el diálogo de descarga
 
 ## Haz una copia o traslada tus datos
 
+Para abrir la carpeta predeterminada en macOS, utiliza **Ir → Ir a la carpeta** en Finder e introduce `~/.zylon-code`. En Windows, escribe `%USERPROFILE%\.zylon-code` en la barra de direcciones del Explorador de archivos. Son ubicaciones de carpetas, no comandos de terminal. Si tu organización utiliza otra ubicación, pídesela al administrador.
+
 1. Sal de Zylon Code por completo.
-2. Copia su carpeta de datos y guarda por separado las carpetas de proyecto.
+2. Copia la carpeta de datos completa, incluidos los archivos ocultos, y guarda por separado las carpetas de proyecto.
 3. Conserva los originales hasta comprobar que puedes abrir las conversaciones, adjuntos y ajustes restaurados.
+
+Si tu organización proporciona las credenciales mediante otro almacén o el entorno de inicio, sigue sus instrucciones para restaurarlas.
 
 Restaurar los ajustes no concede otra licencia ni renueva una caducada. La aplicación comprueba el dominio al arrancar. Revisa cualquier autorización de certificado privado antes de utilizar la conexión restaurada.
 

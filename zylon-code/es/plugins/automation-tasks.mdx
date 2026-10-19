@@ -4,15 +4,15 @@ description: "Programa trabajo local, cambia su horario y consulta las entregas 
 noindex: true
 ---
 
-Las tareas automatizadas están integradas. Estándar, PTC y Creador pueden crear recordatorios; Mínimo y los agentes delegados no reciben esas herramientas. La página está en la barra lateral y no requiere activar un paquete de automatización aparte.
+Las tareas automatizadas permiten programar recordatorios y trabajo periódico, como una revisión diaria de las tareas pendientes del proyecto. Están integradas en la aplicación. Estándar, PTC y Creador pueden crear recordatorios; Mínimo y los agentes delegados no reciben esas herramientas. La página está en la barra lateral y no requiere activar otro plugin.
 
 ## Crea y comprueba una tarea
 
 Selecciona **Tareas automatizadas → Nueva** y envía una petición con un horario preciso:
 
-> Crea una tarea llamada Revisión diaria. Cada día laborable a las 09:00, con zona horaria Europe/Madrid, lee la lista del proyecto e informa del trabajo pendiente. No edites archivos ni instales paquetes.
+> Crea una tarea llamada Revisión diaria. Cada día laborable a las 09:00, con zona horaria Europe/Madrid, lee la lista de tareas del proyecto e informa del trabajo pendiente. No edites archivos ni instales paquetes.
 
-Comprueba el nombre, la instrucción, la repetición, la zona horaria, la próxima ejecución y la conversación asociada. Una petición recurrente debe mostrar una regla recurrente, no una fecha única. La tarjeta de la tarea creada permite abrir los detalles en el panel derecho.
+Comprueba el nombre, la instrucción, la repetición, la zona horaria, la próxima ejecución y la conversación asociada. Si has pedido que se repita, comprueba que la programación incluye esa repetición. La tarjeta de la tarea creada permite abrir los detalles en el panel derecho.
 
 ## Modifica una tarea
 
@@ -22,9 +22,9 @@ Utiliza la búsqueda de la lista y el filtro de todas las tareas, activadas o in
 
 ## Mantén la aplicación en funcionamiento
 
-El ordenador debe estar despierto y Zylon Code debe seguir funcionando. No hay un ejecutor en la nube ni encendido automático. El trabajo continúa en la conversación original con su modelo y credenciales.
+El ordenador debe estar despierto y Zylon Code debe seguir funcionando. Las tareas no se ejecutan en la nube ni pueden despertar el ordenador. El trabajo continúa en la conversación original con su modelo y credenciales.
 
-Una zona como `Europe/Madrid` sigue los cambios de horario de verano en las reglas diarias o semanales; un intervalo de tiempo transcurrido no. Los intervalos deben ser de al menos 60 segundos. Tras un reinicio, una tarea única pendiente puede llegar tarde y una recurrente entrega solo la última repetición pendiente.
+Una zona como `Europe/Madrid` sigue los cambios de horario de verano en las reglas diarias o semanales; un intervalo de tiempo transcurrido no. Los intervalos deben ser de al menos 60 segundos. Tras un reinicio, una tarea de una sola vez puede llegar tarde; si es periódica, solo se entrega la última ejecución pendiente.
 
 ## Interpreta las entregas y elimina con cuidado
 

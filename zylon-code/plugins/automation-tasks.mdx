@@ -4,7 +4,7 @@ description: "Schedule local work, edit its timing and inspect saved deliveries.
 noindex: true
 ---
 
-Automation tasks are built in. Standard, PTC and Creator can create reminders; Minimal and delegated subagents do not receive the reminder tools. The page is available from the sidebar without enabling a separate automation bundle.
+Automation tasks let you schedule reminders and recurring work, such as a daily review of pending project tasks. They are built in. Standard, PTC and Creator can create reminders; Minimal and delegated subagents do not receive the reminder tools. The page is available from the sidebar without enabling another plugin.
 
 ## Create and verify a task
 
@@ -28,7 +28,7 @@ A named zone such as `Europe/Madrid` follows daylight-saving changes for daily o
 
 ## Interpret delivery and delete safely
 
-A delivery record confirms that a message entered the conversation inbox, not that the agent finished its work. Read the conversation for actual results. A crash during delivery can cause a duplicate; saved history is bounded and older records can be unavailable.
+A delivery record confirms that the scheduled message reached the conversation; read the conversation to check whether the agent finished its work. A crash during delivery can cause a duplicate; saved history is bounded and older records can be unavailable.
 
 A delivered one-time task becomes inactive and remains under All or Inactive until deletion. There is no individual pause control. **Delete task** requires confirmation and removes the task and its saved delivery records. It retains the conversation and any message already queued there.
 

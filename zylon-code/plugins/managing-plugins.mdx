@@ -1,6 +1,6 @@
 ---
 title: "Manage plugins"
-description: "Find supplied features, enable optional bundles and inspect their configuration."
+description: "Find included features, enable optional plugins and inspect their settings."
 noindex: true
 ---
 
@@ -17,7 +17,7 @@ Enabled features from More also appear on the main list. Turning one off removes
 
 ## Configure and refresh
 
-Shell, Agent execution and Subagent have their own forms under **Built-in plugin settings**. Change the values and choose **Save**; leaving a staged form discards unsaved edits. A bundle can also offer configuration for individual components in its details.
+Shell, Agent execution and Subagent have their own forms under **Built-in plugin settings**. Change the values and choose **Save**; leaving a staged form discards unsaved edits. A plugin can also offer settings for individual components in its details.
 
 Use **Refresh** to reload the list. A failed refresh can keep previously loaded cards visible with an error; retry before assuming they show the current state.
 
@@ -25,7 +25,7 @@ Use **Refresh** to reload the list. A failed refresh can keep previously loaded 
 
 This Zylon build does not expose the general **Add plugin** installation dialog or a public plugin market. Ask your administrator about adding a package that is not offered. Creator can prepare a custom feature, but it still needs review and an approved installation path.
 
-Switching off deselects a feature without uninstalling its package or undoing its file changes. Installation-supplied bundles have no uninstall action. An on-demand entry can offer **Update** when its installed version differs from the version offered by your application. Keep its configuration and follow the displayed result; a failed update can leave the package unavailable.
+Switching off a feature keeps its installed package and any file changes it made. Plugins supplied with the application have no uninstall action. An on-demand entry can offer **Update** when its installed version differs from the version offered by your application. Keep a copy of its configuration and check the displayed result; a failed update can leave the package unavailable.
 
 For errors, use [Plugin and MCP problems](/zylon-code/troubleshooting/plugins-and-mcp).
 

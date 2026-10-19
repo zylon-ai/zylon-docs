@@ -18,7 +18,7 @@ Stop: after the report, if prerequisites are missing, or if access is refused.
 Do not publish, deploy or keep retrying a failing test.
 ```
 
-Start by running the procedure manually. Check that the report is useful on both a passing case and a realistic failure. Only then create a rule in [Automation](/zylon-code/plugins/automation-tasks). Scheduling and the procedure being scheduled are separate: verify the selected project, time and permission settings before saving the rule.
+First, ask the agent to carry out the procedure once in a conversation you supervise. Check that the report is useful on both a passing case and a realistic failure. Only then create a rule in [Automation](/zylon-code/plugins/automation-tasks). Scheduling and the procedure being scheduled are separate: verify the selected project, time and permission settings before saving the rule.
 
 ## Distinguish organization from execution
 
@@ -26,7 +26,7 @@ Start by running the procedure manually. Check that the report is useful on both
 
 Keep Zylon Code running and the computer awake for local automation to execute. Quitting the application stops it; closing a window may leave the application running in the background. Check the scheduling guide for supported behavior; do not assume a missed run will catch up exactly as you intended.
 
-A prompt can state a time or retry limit, but it is not necessarily a mechanically enforced quota. Use the actual configured tool, agent and provider limits where available, and monitor the resulting run. Never present a conversational instruction as a guaranteed kill switch.
+Set execution limits in the available tool, agent or provider settings, and monitor the first runs. A time or retry limit written only in the prompt depends on the agent following it.
 
 ## Build useful feedback into the loop
 

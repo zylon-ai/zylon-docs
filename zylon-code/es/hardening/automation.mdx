@@ -18,15 +18,15 @@ Fin: después del informe, si faltan requisitos o si se deniega el acceso.
 No publicar, desplegar ni repetir indefinidamente una prueba que falla.
 ```
 
-Ejecuta primero el procedimiento a mano. Comprueba que el informe sirve tanto cuando las pruebas pasan como cuando aparece un fallo realista. Después puedes crear una regla en [Automatización](/zylon-code/es/plugins/automation-tasks). Programar la ejecución y definir el procedimiento son tareas distintas: revisa el proyecto, la hora y los permisos antes de guardar la regla.
+Pide primero al agente que lleve a cabo el procedimiento una vez en una conversación que puedas supervisar. Comprueba que el informe sirve tanto cuando las pruebas pasan como cuando aparece un fallo realista. Después puedes crear una regla en [Automatización](/zylon-code/es/plugins/automation-tasks). Programar la ejecución y definir el procedimiento son tareas distintas: revisa el proyecto, la hora y los permisos antes de guardar la regla.
 
 ## Distingue la organización de la ejecución
 
 Las [listas de tareas](/zylon-code/es/everyday-use/goals-and-task-lists) registran el progreso. Los objetivos ayudan a organizar trabajos largos. Los [flujos de trabajo](/zylon-code/es/tools/workflows) pueden coordinar pasos. La programación determina cuándo debe ejecutarse una tarea. Son capacidades relacionadas, pero marcar una tarea como terminada no demuestra que el código funcione.
 
-Mantén Zylon Code abierto y el ordenador despierto para ejecutar la automatización local. Salir de la aplicación la detiene; cerrar una ventana puede dejar la aplicación en segundo plano. Consulta la guía de programación para conocer lo que admite; no des por hecho que una ejecución perdida se recuperará exactamente como esperabas.
+Mantén Zylon Code abierto y el ordenador sin suspender para ejecutar la automatización local. Salir de la aplicación la detiene; cerrar una ventana puede dejar la aplicación en segundo plano. Consulta la guía de programación para conocer lo que admite; no des por hecho que una ejecución perdida se recuperará exactamente como esperabas.
 
-Un mensaje puede indicar un límite de tiempo o de reintentos, pero no necesariamente impone una cuota. Utiliza los límites reales de herramientas, agentes y proveedor cuando existan y comprueba la ejecución. No presentes una instrucción de la conversación como un mecanismo que garantiza detener el proceso.
+Configura los límites de ejecución disponibles en las herramientas, los agentes o el proveedor, y supervisa las primeras ejecuciones. Un límite de tiempo o de reintentos escrito solo en el mensaje depende de que el agente lo respete.
 
 ## Incluye información útil en cada paso
 

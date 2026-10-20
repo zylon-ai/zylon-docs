@@ -1,0 +1,29 @@
+name: Release documentation
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please-documentation
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the release automation token
+        env:
+          CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+        run: test -n "$CI_GITHUB_TOKEN"
+      - uses: googleapis/release-please-action@v4.4.1
+        with:
+          # A PAT allows the resulting release event and release PR to run CI.
+          token: ${{ secrets.CI_GITHUB_TOKEN }}
+          target-branch: main
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

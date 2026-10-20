@@ -1,0 +1,36 @@
+---
+title: "Problemas de inicio, licencia y modelos"
+description: "Encuentra ayuda si no puedes descargar Zylon Code, conectar con Zylon o utilizar un modelo."
+noindex: true
+---
+
+Busca el síntoma que coincida con tu problema. Empieza por descarga y licencia si no puedes abrir la aplicación o pasar de la bienvenida. Si la aplicación se abre pero no puedes utilizar un modelo, consulta [Acceso a modelos](#acceso-a-modelos).
+
+## Descarga y licencia
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| No aparece el botón de descarga en Backoffice | Pide al administrador que revise tu acceso y los instaladores publicados. Las cuentas con acceso de Operador o SuperAdmin pueden usar Plataforma → Puertas de enlace. Los desarrolladores pueden descargarla desde las instrucciones que aparecen al crear una clave de API del gateway. |
+| No se selecciona un instalador | Elige el sistema y la arquitectura correctos en Otras plataformas. El navegador puede no detectar la arquitectura. |
+| La aplicación no se abre | Comprueba el sistema y la arquitectura de la versión descargada y sigue sus instrucciones de instalación. Conserva el error para soporte. |
+| Se rechaza el dominio | Introduce solo una dirección HTTP o HTTPS como `https://zylon.example`, sin `/api/gpt`, credenciales ni parámetros. |
+| No se puede comprobar la licencia | Confirma la conexión de red, el dominio exacto y una licencia vigente que incluya Zylon Code. Pide al administrador que confirme la licencia. |
+| Vuelve a aparecer la bienvenida después de haber trabajado | Revisa el dominio de Zylon y vuelve a conectar. Si el problema continúa, pide al administrador que compruebe la licencia y la disponibilidad del servidor. No necesitas borrar las conversaciones. |
+| Aparece una confirmación de certificado privado | Contrasta con el administrador el servidor, la huella, el emisor y las fechas antes de aceptarlo. Un certificado caducado o cambiado necesita revisión. |
+
+[Licencia y acceso](/zylon-code/es/getting-started/license-and-access) explica qué necesitas para conectar y qué ocurre si hay un fallo temporal.
+
+## Acceso a modelos
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| No se puede guardar la conexión de Zylon | Revisa el dominio en Ajustes → General y la clave del gateway en Ajustes → Modelos. Confirma que la clave es válida y tu cuenta tiene acceso al gateway. Utiliza el mensaje de error para identificar el problema. |
+| La clave funcionaba y ha dejado de hacerlo | Revisa si ha caducado, se ha revocado o ha cambiado el acceso de la cuenta al gateway. Si hace falta, crea otra y guárdala en Modelos. |
+| Se deniega una petición con una clave válida | Revisa Lectura y escritura, los permisos del gateway, los modelos disponibles y las cuotas. Ampliar los permisos locales no cambia el acceso a la API. |
+| No se puede editar la URL de los modelos | Para utilizar otra dirección de Zylon, cambia el dominio en Ajustes → General. La URL de los modelos se actualizará automáticamente. |
+| El modelo seleccionado no está disponible | Configura su proveedor o elige otro en el cuadro de mensajes. Para actualizar la lista de modelos de Zylon, abre Ajustes → Modelos y pulsa Actualizar modelos. |
+| Se rechaza una imagen | Elige un modelo que admita imágenes y comprueba que su [opción de imagen](/zylon-code/es/models/model-options#imágenes) está activada. Si no sabes cuál utilizar, consulta al administrador. |
+
+Después de cambiar los ajustes, prueba la [tarea sencilla de solo lectura](/zylon-code/es/getting-started/connect-to-zylon#4-prueba-una-tarea-sencilla) de la guía de configuración. Si sigue fallando, guarda el mensaje de error para soporte y elimina las credenciales o los datos privados antes de compartirlo. Guarda las claves de API en sus campos de ajustes, no en una conversación.
+
+Si la lista de proyectos está vacía, comprueba la [ubicación de los datos](/zylon-code/es/configuration/data-and-backups) antes de restablecer nada. [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) recoge el orden de configuración y [Red](/zylon-code/es/advanced/network-and-offline) explica proxies y certificados.

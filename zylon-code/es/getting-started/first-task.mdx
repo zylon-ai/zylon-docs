@@ -1,0 +1,61 @@
+---
+title: "Tu primera tarea"
+description: "Convierte unas notas de reunión en un plan, revisa el resultado y conoce los controles básicos."
+noindex: true
+---
+
+Empieza con una tarea pequeña que puedas comprobar por tu cuenta. Vas a pedir a Zylon Code que convierta dos documentos breves en un plan para organizar un taller. Todo se hace desde la aplicación: no necesitas un terminal, un gestor de paquetes ni herramientas de desarrollo.
+
+## 1. Abre el proyecto de ejemplo
+
+Conecta un modelo siguiendo [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon). Descarga los [documentos de ejemplo](/files/zylon-code/first-task-desktop-es.zip), descomprime el archivo y [selecciona la carpeta `first-task` en Zylon Code](/zylon-code/es/everyday-use/projects).
+
+La carpeta contiene `brief.md`, que describe la tarea, y `notes.md`, con las notas de la reunión. Son archivos de texto normales. Abre una conversación en ese proyecto con **Nueva sesión** y elige **Estándar** en el selector de modo situado encima del cuadro de mensajes.
+
+## 2. Lee antes de cambiar nada
+
+Elige **Solo lectura** en el menú de permisos del cuadro de mensajes y envía:
+
+```text
+Lee brief.md y notes.md con las herramientas de lectura de archivos.
+Explica el resultado esperado, identifica las tres tareas de preparación e indica
+qué información falta. No crees ni edites archivos, ejecutes comandos,
+contactes con nadie ni hagas reservas.
+```
+
+Abre las tarjetas de herramientas para comprobar qué archivos ha leído el agente. La respuesta debería identificar las invitaciones, la reserva de la sala y las diapositivas. Estas últimas tienen fecha límite, pero todavía no tienen responsable. Si el agente inventa uno, señala lo que dicen las notas y pídele que corrija la respuesta.
+
+## 3. Crea el plan
+
+Para revisar el archivo desde la aplicación, activa [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) **antes de pedir el cambio**. También puedes abrir el archivo resultante en el panel de archivos.
+
+Selecciona los permisos **Escritura en el espacio de trabajo** y envía:
+
+```text
+Crea plan.md con las herramientas de escritura de archivos y utiliza solo
+los datos de brief.md y notes.md. Incluye la fecha del taller, el presupuesto
+y una tabla con tres filas de tareas y las columnas tarea, responsable y fecha límite.
+Escribe Pendiente cuando falte un responsable. Conserva los dos archivos
+originales. No ejecutes comandos, instales nada, contactes con nadie,
+reserves servicios ni publiques el plan.
+Al terminar, vuelve a leer plan.md, compáralo con los documentos originales
+e indica qué archivo has creado y qué información sigue faltando.
+```
+
+Revisa cualquier solicitud de aprobación antes de aceptarla. Si el agente pregunta algo, responde mediante los controles que aparezcan. Puedes [detenerlo o darle nuevas indicaciones mientras trabaja](/zylon-code/es/everyday-use/conversations).
+
+## 4. Comprueba el resultado
+
+Abre `plan.md` y compáralo con las notas originales. Debe contener lo siguiente:
+
+| Tarea | Responsable | Fecha límite |
+| --- | --- | --- |
+| Preparar las invitaciones | Marta | 10 de noviembre |
+| Reservar la sala | Pablo | 12 de noviembre |
+| Preparar las diapositivas | Pendiente | 13 de noviembre |
+
+La fecha del taller debe ser el **14 de noviembre** y el presupuesto, **200 EUR como máximo**. Comprueba también que los archivos originales no han cambiado. Crear este plan no envía invitaciones ni reserva una sala.
+
+Si has activado Revisión de cambios, abre **Cambios pendientes** para examinar el archivo nuevo o añadir un comentario. El archivo ya está guardado: **Conservar** lo marca como revisado y **Revertir** elimina este archivo recién creado después de una confirmación. Ninguna de estas acciones crea un commit de Git.
+
+Cuando te hayas familiarizado con estos pasos, prueba con una tarea de tu proyecto. Explica el resultado que buscas, aporta los archivos necesarios y decide cómo comprobarlo. Continúa con el [recorrido por la interfaz](/zylon-code/es/getting-started/interface-tour); la sección de [Hardening](/zylon-code/es/hardening/overview) te ayudará después a aplicar estas pautas a trabajos más complejos.

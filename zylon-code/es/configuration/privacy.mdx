@@ -1,0 +1,30 @@
+---
+title: "Privacidad y servicios externos"
+description: "Comprende el almacenamiento local, la comprobación de licencia y los servicios a los que pueden acceder las tareas."
+noindex: true
+---
+
+Zylon Code guarda las conversaciones y los ajustes de proyecto en tu ordenador. Las peticiones al modelo se envían al proveedor que configures. Pueden incluir tus mensajes, instrucciones, contenido relevante de archivos, resultados de herramientas e imágenes compatibles.
+
+## Dónde pueden enviarse los datos
+
+| Función | Destino |
+| --- | --- |
+| Comprobación de licencia | La instalación de Zylon que hayas configurado, para comprobar su licencia. |
+| Conexión de modelos de Zylon | La instalación configurada y los servicios que ejecutan sus modelos. |
+| Otro proveedor | El servicio de modelos de ese proveedor. |
+| MCP | El servidor conectado o los servicios que utilice un comando MCP local. |
+| Lectura y búsqueda web | La página solicitada o el proveedor de búsqueda. |
+| Comandos, extensiones y acciones del navegador | Los servicios que utilice cada función. |
+
+Trabajar con una aplicación local no significa que toda la tarea se procese en tu ordenador. Un servidor de modelos interno tampoco impide que una herramienta o un plugin contacte con otro servicio. [Red y funcionamiento sin conexión](/zylon-code/es/advanced/network-and-offline) explica las restricciones gestionadas por la organización.
+
+## Antes de utilizar datos sensibles
+
+Usa los proveedores y las integraciones que apruebe tu organización. Introduce los tokens en los campos destinados a credenciales. Revisa exportaciones, capturas, resultados de comandos y archivos de diagnóstico antes de compartirlos.
+
+Algunas credenciales pueden aparecer ocultas en los mensajes enviados. Al copiar el texto o enviarlo al modelo se conserva el valor original. Evita incluir secretos en los mensajes; ocultarlos en pantalla no los elimina.
+
+No des por hecho que las credenciales guardadas quedan fuera del alcance del agente. Las herramientas locales pueden acceder a ellas con los permisos disponibles. Si las tareas no deben acceder a las claves de los proveedores, consulta al administrador cómo protegerlas.
+
+Las extensiones y los comandos locales pueden ejecutar código y realizar sus propias peticiones de red. Comprueba sus requisitos y la política de datos del proveedor antes de activarlos. [Permisos](/zylon-code/es/configuration/permissions) explica cómo limitar las operaciones de una tarea.

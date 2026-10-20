@@ -1,0 +1,30 @@
+---
+title: "Privacy and external services"
+description: "Understand local data, license verification and the services your tasks can contact."
+noindex: true
+---
+
+Zylon Code stores conversations and project settings locally. Model requests go to the provider you configure. They can include your messages, instructions, relevant file contents, tool results and supported images.
+
+## Where data can go
+
+| Capability | Destination |
+| --- | --- |
+| License verification | Your configured Zylon deployment, to verify its license. |
+| Zylon model connection | Your configured deployment and the services that run its models. |
+| Another provider | That provider's model endpoint. |
+| MCP | The connected server, or services used by a local MCP command. |
+| Web reading and search | The requested site or search provider. |
+| Commands, extensions and browser actions | The services used by that capability. |
+
+Using a local application does not mean all task processing stays on your computer. An internal model server also does not prevent a tool or plugin from contacting another service. See [Network and offline operation](/zylon-code/advanced/network-and-offline) for organization-managed restrictions.
+
+## Before working with sensitive data
+
+Use the providers and integrations approved by your organization. Enter tokens in the dedicated credential fields. Review exports, screenshots, command output and diagnostic files before sharing them.
+
+Some credentials in sent messages may appear masked on screen. The original text is still copied and sent to the model. Keep secrets out of messages; display masking does not remove them.
+
+Do not assume that saved credentials are out of the agent’s reach. Local tools may be able to read them with the available permissions. If your tasks must not have access to provider keys, ask your administrator how those credentials are protected.
+
+Extensions and local commands can run code and make their own network requests. Check their requirements and the provider's data policy before enabling them. [Permissions](/zylon-code/configuration/permissions) explains how to limit task operations.

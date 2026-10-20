@@ -1,0 +1,35 @@
+---
+title: "Contexto y adjuntos"
+description: "Indica qué archivos, carpetas y servicios debe consultar el agente o adjunta documentos e imágenes."
+noindex: true
+---
+
+Facilita al agente los archivos y las restricciones que necesita para la tarea. Seleccionar un proyecto le indica dónde trabajar; no añade el contenido completo de todos sus archivos a cada petición al modelo.
+
+## Indica un archivo, una carpeta o un servicio
+
+Escribe `@` y elige un archivo o una carpeta de las sugerencias. El agente podrá leerlo con las herramientas y permisos disponibles. En este menú también aparecen los servidores activados en el [gestor de MCPs](/zylon-code/es/plugins/mcp).
+
+Por ejemplo, selecciona dos archivos reales y pide:
+
+> Compara @src/config.ts con @docs/config.md. Enumera las diferencias con referencias a archivos y líneas. No edites ninguno.
+
+La referencia identifica el recurso que quieres utilizar; no concede permisos adicionales.
+
+## Adjunta contenido
+
+Utiliza la opción de adjuntar, arrastra un archivo o pega contenido compatible. Espera a que termine la subida antes de enviar. Si falla, puedes reintentarlo o quitar el adjunto.
+
+Una referencia apunta al archivo o la carpeta original, que deben seguir disponibles. Al adjuntar un archivo, se guarda una copia de solo lectura junto a la conversación para que el agente la consulte cuando la necesite.
+
+Para adjuntar imágenes, elige un modelo que las admita; consulta [opciones de modelos](/zylon-code/es/models/model-options). Si se rechaza una imagen, sigue las indicaciones del error o quítala antes de volver a enviar el mensaje.
+
+## Elige contexto útil
+
+Indica la carpeta relevante, explica la tarea y deja que el agente consulte lo que necesite. El contenido que lee el agente y los resultados de sus herramientas ocupan parte del contexto disponible del modelo. [Conversaciones largas](/zylon-code/es/everyday-use/long-conversations) explica cómo gestionarlo.
+
+Continúa con [Revisar resultados](/zylon-code/es/everyday-use/reviewing-results).
+
+<Frame caption="Selección de referencias a archivos, carpetas y conversaciones con @">
+  <img src="/images/zylon-code/screenshots/everyday-use-context-and-attachments-es.jpg" alt="Selección de referencias a archivos, carpetas y conversaciones con @" />
+</Frame>

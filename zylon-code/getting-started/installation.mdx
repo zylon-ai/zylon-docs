@@ -1,0 +1,38 @@
+---
+title: "Download and install"
+description: "Download Zylon Code from Backoffice and open it for the first time."
+noindex: true
+---
+
+Download Zylon Code from your organization's Zylon Backoffice and install it on your computer. Your projects may need additional tools to build code or run tests.
+
+## Before downloading
+
+Ask your administrator for the **Zylon domain**, such as `https://zylon.example`, and confirm that the deployment has a valid license that includes Zylon Code. You will also need a gateway API key to use its models. These are separate requirements; [License and access](/zylon-code/getting-started/license-and-access) explains them.
+
+## Download from Backoffice
+
+If you have access to the **Platform** area:
+
+1. Sign in to your organization's Backoffice.
+2. Open **Platform → Gateways**.
+3. Select **Download Zylon Code**.
+4. Download the installer for your operating system and processor architecture.
+
+The Platform area is available to accounts with Operator or SuperAdmin access. A developer can also find the Zylon Code download in the instructions shown immediately after creating a gateway API key. Follow [Get a gateway API key](/zylon-code/getting-started/connect-to-zylon#2-get-a-gateway-api-key) to find that download.
+
+The download card shows the available version and architecture. When it can identify your device, it selects a compatible build; otherwise choose from **Other platforms**. Check the architecture yourself: `arm64` is for ARM processors, including Apple Silicon; `x64` is for Intel/AMD 64-bit processors. Use only a build offered for your system.
+
+Available installers depend on what your organization publishes. If no download option appears, ask the administrator to check your Backoffice access and the published installers.
+
+## Install and open
+
+Open the downloaded installer or archive and follow the installation instructions supplied for that build. Launch Zylon Code. On first launch, enter the Zylon domain in the welcome dialog. The application checks that your organization has a valid license. Continue with [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) to finish connecting and choose a model.
+
+You can choose Spanish or English in **Settings → General** once setup is complete. Closing the main window can leave the application running in the background; use the operating system's **Quit** action to stop it completely.
+
+If the application does not open, follow [startup troubleshooting](/zylon-code/troubleshooting/setup-and-models).
+
+<Frame caption="The Zylon Code welcome screen">
+  <img src="/images/zylon-code/screenshots/getting-started-installation-en.jpg" alt="The Zylon Code welcome screen" />
+</Frame>

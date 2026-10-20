@@ -1,0 +1,55 @@
+---
+title: "Prepara unas instrucciones útiles para el proyecto"
+description: "Haz que las reglas estables sean fáciles de encontrar y consulta los procedimientos cuando hagan falta."
+noindex: true
+---
+
+El agente no debería tener que descubrir de nuevo el comando de pruebas o las convenciones del proyecto en cada sesión. Guarda los datos estables en el repositorio para que las personas y los agentes consulten la misma información y puedan revisar sus cambios.
+
+## Empieza con un AGENTS.md breve
+
+Utiliza el [mecanismo de instrucciones del proyecto](/zylon-code/es/customization/project-instructions) para explicar lo esencial: qué hace el proyecto, dónde está el código importante, cómo comprobar un cambio y qué restricciones se aplican. Enlaza los documentos detallados en lugar de copiarlos en un archivo enorme.
+
+Una organización de ejemplo:
+
+```text
+AGENTS.md                 Mapa del proyecto, comprobaciones y restricciones
+docs/search.md            Comportamiento del buscador y decisiones de diseño
+docs/testing.md           Preparación y grupos de pruebas
+.agents/skills/...        Procedimientos reutilizables, si el modo admite habilidades
+```
+
+Zylon lee las instrucciones del proyecto desde las ubicaciones admitidas. Pide al agente que lea las guías enlazadas que necesite para la tarea; un enlace no carga su contenido. Guarda las habilidades en una de las [ubicaciones configuradas](/zylon-code/es/customization/skills).
+
+Este ejemplo utiliza los archivos y el comando del buscador; sustitúyelos por los de tu proyecto:
+
+```markdown
+# Proyecto de búsqueda
+
+El comportamiento se describe en docs/search.md.
+La pantalla utiliza src/search.mjs; las pruebas están en tests/search.test.mjs.
+Para un cambio en la búsqueda, ejecuta `node --test tests/search.test.mjs`.
+Conserva los cambios locales ajenos. Pregunta antes de cambiar la API pública.
+```
+
+Cada línea debe ayudar al agente a tomar una decisión real. Sustituye reglas vagas como «escribe buen código» por el patrón que ya utiliza el proyecto o una referencia concreta.
+
+## Separa las reglas estables del progreso de la tarea
+
+Guarda la arquitectura, las convenciones y los comandos admitidos en las instrucciones del proyecto. Anota el estado temporal —qué acabas de probar, una prueba fallida, el siguiente paso— en un [resumen para continuar](/zylon-code/es/hardening/session-state). Mezclar ambas cosas hace que las instrucciones crezcan con cada conversación y acaben contradiciéndose.
+
+Utiliza una [habilidad o skill](/zylon-code/es/customization/skills) cuando un procedimiento se repita y solo haga falta en ciertas tareas, como revisar una migración de base de datos. Debe explicar cuándo se aplica, los pasos necesarios y cómo comprobar el resultado. Una habilidad proporciona instrucciones; no añade por sí sola una conexión a la base de datos ni concede permisos.
+
+## Mantén la información al día
+
+Si cambia un comando o la organización del proyecto, actualiza el documento que lo explica. Evita que dos archivos pretendan ser la referencia definitiva de las pruebas. Cuando haya contradicciones, aclara qué regla se aplica y retira las indicaciones obsoletas, en lugar de añadir otra excepción.
+
+Antes de fiarse de una instrucción, el agente puede contrastarla con los archivos actuales. Una buena petición inicial sería:
+
+> Lee AGENTS.md y la guía del buscador. Confirma que existen los archivos y el comando de pruebas que mencionan. Si la guía contradice la implementación actual, muéstrame la diferencia antes de editar.
+
+No guardes contraseñas, tokens ni datos personales de clientes en estos archivos. Los documentos externos y los resultados de herramientas también pueden contener instrucciones ajenas a tu tarea. Trátalos como información que debes examinar, no como autorización para cambiar el objetivo o acceder a más datos.
+
+Continúa con [cómo elegir el contexto adecuado](/zylon-code/es/hardening/context-management).
+
+Lecturas: Walkinglabs sobre [el conocimiento del repositorio](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/) y [cómo dividir las instrucciones demasiado largas](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-04-why-one-giant-instruction-file-fails/).

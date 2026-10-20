@@ -1,0 +1,33 @@
+---
+title: "License and access"
+description: "Find out what access you need and what to do if Zylon Code cannot verify your license."
+noindex: true
+---
+
+To use Zylon Code, your organization's Zylon license must be valid and include **Zylon Code**. Your administrator or Zylon contact can confirm your access.
+
+## What you need
+
+| Requirement | What it is for |
+| --- | --- |
+| A valid license that includes Zylon Code | Using the application, including with other model providers. |
+| Your organization's Zylon domain | Connecting the application to Zylon during setup. |
+| A gateway API key and access to that gateway | Using the models your organization provides through Zylon. |
+
+You need network access to Zylon for initial setup, and to your chosen model service while working. The license and API key serve different purposes: a valid key does not resolve an expired license, and a license does not grant access to the models by itself.
+
+During setup, enter the domain your administrator provides, such as `https://zylon.example`. Follow [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon) to complete the setup and save your API key.
+
+## If Zylon is temporarily unavailable
+
+If you have already connected successfully, you may be able to keep using the application during a temporary network or server outage. By default, this period lasts up to five days from the last successful license check, and never beyond the license's expiry. Your organization may configure a different period.
+
+You still need access to the model service. First-time setup and switching to another Zylon domain require a connection to Zylon. An expired or rejected license, or a certificate problem, must be resolved before you can continue.
+
+## If you cannot get past the welcome screen
+
+1. Check that the domain matches the address your administrator gave you. Enter the base address, such as `https://zylon.example`, without `/api/gpt`.
+2. Check your network access. If a certificate warning appears, verify its details with your administrator before accepting it.
+3. Ask your administrator to confirm that the license is current and includes Zylon Code.
+
+You do not need to delete conversations or reinstall the application to resolve a license issue. For other errors, see [Setup, license and model problems](/zylon-code/troubleshooting/setup-and-models).

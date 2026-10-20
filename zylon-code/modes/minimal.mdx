@@ -1,0 +1,27 @@
+---
+title: "Minimal"
+description: "Work through command-line tools with fewer built-in features."
+noindex: true
+---
+
+Minimal lets the agent work through a command-line shell that keeps its state between commands. It also supports reading images and summarizing long conversations. Use it for small tasks or to compare how the same task works with fewer built-in tools.
+
+It does not automatically load project instructions, and it does not include skills, integrated planning, goals or ordinary delegation. Optional global plugins can still add tools.
+
+Enable **Settings → General → Developer view** if Minimal is absent from the new-task picker. Select it before the first message.
+
+## Try a bounded task
+
+> Run the project's already-installed parser tests. Identify the failing behavior and report the cause with the relevant output. Do not edit files or install packages.
+
+Inspect the shell commands and actual output. The shell can read files, write them and execute scripts when permissions allow it. A smaller tool catalog does not make the task automatically safer.
+
+Image reading requires a model configured to accept images. Automatic compaction and the idle-session `/compact` command summarize older context; review the original recorded activity when the detail matters.
+
+## Provide project rules explicitly
+
+Minimal does not automatically read project rules from `AGENTS.md`. Put the relevant rules in your task or choose [Standard](/zylon-code/modes/standard). Compaction does not add missing project conventions.
+
+## Compare fairly
+
+Keep the model, permissions, prompt, enabled global plugins and starting files identical across runs. A new conversation does not reset files. If a task needs skills, planning or local subagents, use Standard. You can also [create a mode](/zylon-code/customization/custom-modes) with the combination of features you need.

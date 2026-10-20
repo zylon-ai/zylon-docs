@@ -1,0 +1,40 @@
+---
+title: "Tool catalog"
+description: "Choose the capability you need and find its setup guide."
+noindex: true
+---
+
+A tool lets the agent do something beyond replying: read a file, run a command or consult a connected service. Describe the result you want in ordinary language; you do not need to memorize tool names.
+
+For example:
+
+> Read the configuration files in this project and list missing values. Include the file path for each issue. Do not change anything.
+
+The agent chooses from the tools available in your conversation. The selected mode, enabled plugins, permissions and any required connections determine what it can use.
+
+## Find a capability
+
+| What you want to do | Guide and requirements |
+| --- | --- |
+| Read, search or edit project files | [Files and code](/zylon-code/tools/files-and-code). Reading images also requires a compatible model. |
+| Run commands or manage background processes | [Shell and background jobs](/zylon-code/tools/shell-and-jobs). The shell depends on your operating system and mode. For interactive processes, see [Persistent terminals](/zylon-code/plugins/persistent-terminals). |
+| Create a document, spreadsheet or presentation | [Documents](/zylon-code/tools/documents). The necessary libraries or applications must be available. |
+| Read a URL or search the web | [Web tools](/zylon-code/tools/web). [Web search](/zylon-code/plugins/web-search) requires a configured provider. |
+| Interact with a website or desktop application | Set up [Browser control](/zylon-code/plugins/browser-control) or [Computer control](/zylon-code/plugins/computer-control). Computer control also needs operating-system permissions. |
+| Ask for a plan or track progress | [Plan mode](/zylon-code/modes/plan-mode) and [Goals and task lists](/zylon-code/everyday-use/goals-and-task-lists). Availability depends on the mode. |
+| Divide work among agents | [Delegation](/zylon-code/agents/delegation). Optional alternatives include [Agent Teams](/zylon-code/plugins/agent-teams) and separately configured [external agents](/zylon-code/advanced/external-agents). |
+| Use reusable instructions | [Skills](/zylon-code/customization/skills). |
+| Coordinate a repeatable sequence or process a batch | [Workflows](/zylon-code/tools/workflows) for an explicitly requested workflow, or [PTC](/zylon-code/modes/ptc) for a program written by the agent. |
+| Build a tool, plugin or mode | [Creator](/zylon-code/modes/creator). |
+| Use an external service | [MCP services](/zylon-code/plugins/mcp). The server must be configured and connected. |
+| Work in a separate Git checkout | Enable [Git Worktrees](/zylon-code/plugins/git-worktrees). |
+| Review changes and generated files | [Review results](/zylon-code/everyday-use/reviewing-results) and the optional [Diff Review plugin](/zylon-code/plugins/diff). |
+| Navigate code symbols | Configure [Language Servers](/zylon-code/plugins/language-servers). |
+| Schedule a follow-up or repeat a task | [Automation tasks](/zylon-code/plugins/automation-tasks) are included in Standard, PTC and Creator, but are unavailable to delegated agents. Optional [Ralph Loops](/zylon-code/plugins/ralph-loops) repeats a bounded task when explicitly requested. |
+| Find earlier conversations | Enable [Session Search](/zylon-code/plugins/session-search). |
+
+## Check what happened
+
+Expand a tool result to see its output, errors or cancellation. A final answer alone does not establish that the tool completed successfully. Long output may be shortened; ask for the relevant section when you need more detail.
+
+If a tool is missing, check the mode, plugin and setup requirements in its guide. The [availability reference](/zylon-code/reference/availability) summarizes which features are included and which need additional setup. Broader permissions cannot make an uninstalled or disconnected tool available.

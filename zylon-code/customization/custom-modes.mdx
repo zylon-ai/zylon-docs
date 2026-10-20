@@ -1,0 +1,31 @@
+---
+title: "Create a custom mode"
+description: "Give recurring tasks their own tools and instructions with Creator."
+noindex: true
+---
+
+A custom mode gives a new kind of task its own tools and instructions. Use Creator to build and install it. The mode configuration viewer in **Settings → Agent presets** is read-only.
+
+## Create the mode
+
+1. Start a new [Creator](/zylon-code/modes/creator) conversation.
+2. Describe the name, purpose, tools, rules and a test task.
+3. Ask Creator to inspect the installed capabilities, create a local mode bundle and activate it with its plugin-management tools.
+4. Review the installation result and find the mode in the picker.
+5. Start a new conversation with it and check its behavior.
+
+For example:
+
+> Create a mode named Config Review. Include project instructions and file-reading and search tools. Exclude file-writing and shell tools. Install it as a local bundle, verify its tool list in a new task and explain how to disable it.
+
+The mode's tool list and its permission preset are separate. Choose suitable access as well. If the mode needs a new capability, follow the [custom plugin guide](/zylon-code/customization/custom-plugins).
+
+## Keep it maintainable
+
+Prefer a separate mode when you want to keep Standard intact. Keep the bundle source, its configuration and compatible application version.
+
+Existing conversations keep their recorded mode. Global plugins can still change the tools available within that mode. If activation fails, fix the bundle and test a new conversation. Disable its bundle to remove the mode from the active list.
+
+<Frame caption="Built-in modes and the Creator entry for creating your own mode">
+  <img src="/images/zylon-code/screenshots/customization-custom-modes-en.jpg" alt="Built-in modes and the Creator entry for creating your own mode" />
+</Frame>

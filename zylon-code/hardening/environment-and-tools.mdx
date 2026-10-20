@@ -1,0 +1,41 @@
+---
+title: "Prepare the environment and tools"
+description: "Make project checks reproducible and expose only the capabilities needed for the task."
+noindex: true
+---
+
+Before asking the agent to change code, check that the project can run its tests. Your project may need a particular version of Node.js or Python, installed dependencies, a database or other services. Its setup guide should explain these requirements.
+
+## Establish a baseline
+
+Have the agent read the project's setup guide, inspect the available environment and identify the verification command. Then, when practical, ask the agent to run the relevant existing check before changing code.
+
+> Check the documented prerequisites for the search tests. Report missing dependencies or services before installing or changing anything. Run the existing focused test if the environment is ready, and distinguish setup failures from failing assertions.
+
+“Command not found” is an environment problem. An assertion that reproduces the empty-query error is evidence about the application. A service timeout could be either; investigate the output before choosing a fix.
+
+Record the useful baseline: command, working directory, essential versions, exit status and known failures. Do not copy environment variables containing secrets into chat or handoff files. If a dependency must be installed, follow your project's approved process and the configured permissions.
+
+## Choose a mode that fits the work
+
+Zylon's [modes](/zylon-code/modes/overview) determine which tools and instructions are available. Begin with a mode whose tools suit the task. For a small code change, file operations and relevant command execution are usually enough. Web browsing, computer control and team coordination add value only when the task needs them.
+
+Fewer exposed choices can simplify work for a smaller model, but removing a needed tool can make completion impossible. Check the actual tool catalog instead of assuming every installed plugin is available to the current conversation.
+
+For integrations, prefer a specific operation—such as retrieving a named issue—over asking the model to invent requests to a broad API. [MCP](/zylon-code/plugins/mcp) can supply tools, but each server still needs its own setup, authorization and useful descriptions.
+
+## Give clear feedback after each action
+
+A useful tool result tells the agent whether the operation succeeded, what changed and what it should inspect next. You cannot change every tool's behavior, but you can ask the agent to report concrete evidence and handle errors explicitly.
+
+> If a check fails, include the failing command and relevant error. Do not silently skip it or change the test setup to hide the failure. Explain whether the next action fixes the environment, the code or the check itself.
+
+Long logs are often better searched than pasted in full. Keep the summary short while preserving where the complete output can be inspected. A truncated log must not be treated as evidence that the unseen remainder succeeded.
+
+## Use permissions as actual controls
+
+Choose [permissions](/zylon-code/configuration/permissions) appropriate to the work, and review approval requests in their task context. Prompt instructions and tool limits complement permissions; they do not replace them. Expanding permissions to make a task succeed is a decision about access, not a debugging shortcut.
+
+With a working environment, continue to [verification and diff review](/zylon-code/hardening/verification-and-diffs).
+
+Further reading: Walkinglabs on [initialization](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-06-why-initialization-needs-its-own-phase/) and [feedback inside the working loop](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-13-loop-engineering/).

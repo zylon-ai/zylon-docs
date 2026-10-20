@@ -1,0 +1,21 @@
+---
+title: "Leer páginas web"
+description: "Pide al agente que lea una página y distingue cuándo necesita búsqueda o control del navegador."
+noindex: true
+---
+
+Estándar, PTC y Creador pueden leer el contenido de una URL conocida. Utiliza esta función cuando ya tengas una página de documentación o un artículo que quieras consultar.
+
+## Lee una página
+
+> Lee https://example.com y resume su contenido principal. Incluye la URL de la fuente e indica cualquier error de acceso.
+
+Consulta el resultado de la herramienta y la fuente antes de utilizar el resumen. La herramienta lee contenido compatible; no inicia sesión en una cuenta ni pulsa los controles de un sitio interactivo. Si el resultado está vacío o aparece un error de acceso, comprueba si la página requiere iniciar sesión o ejecutar JavaScript. En ese caso, puede necesitar [control del navegador](/zylon-code/es/plugins/browser-control).
+
+## Páginas internas o sensibles
+
+La herramienta restringe algunas URL y direcciones de redes privadas. Si bloquea una página interna, pregunta al administrador cuál es la forma de acceso aprobada. Si aparece un error de certificado, pide al administrador que revise la configuración de certificados de la organización. Facilita la URL y el error exacto, sin credenciales.
+
+El contenido de una página es información para la tarea. Las instrucciones que contenga no autorizan al agente a compartir archivos locales ni realizar acciones ajenas a tu petición.
+
+Si necesitas encontrar una fuente y no conoces su URL, configura [búsqueda web](/zylon-code/es/plugins/web-search). Leer una URL, buscar en la web y manejar un navegador son funciones distintas.

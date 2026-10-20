@@ -1,0 +1,21 @@
+---
+title: "Ajustes de ejecución del agente"
+description: "Limita cuántas llamadas independientes puede ejecutar un agente a la vez."
+noindex: true
+---
+
+Este ajuste limita cuántas llamadas a herramientas puede ejecutar un agente a la vez cuando no dependen unas de otras. Por ejemplo, puede leer varios archivos que no dependan unos de otros. No controla cuántos agentes secundarios hay ni decide si una acción está autorizada.
+
+## Cambia el límite
+
+1. Abre **Plugins → Ajustes de plugins integrados** y entra en **Ejecución de herramientas**.
+2. Introduce un número válido en **Llamadas a herramientas en paralelo**.
+3. Guarda el cambio. El campo indica cuándo tu valor sustituye al predeterminado.
+
+Utiliza **Restablecer valor predeterminado** para quitar la modificación y guarda si el formulario lo requiere. Salir sin guardar descarta el borrador.
+
+## Cuándo modificarlo
+
+Empieza con el valor predeterminado. Aumentarlo puede ayudar con lecturas independientes, pero también consume más recursos y genera más peticiones simultáneas a servicios externos. Las operaciones que dependen de otras siguen necesitando un orden.
+
+Si las llamadas continúan ejecutándose una a una, puede deberse a sus dependencias o reglas de ejecución. Consulta [Modelos y límites de agentes](/zylon-code/es/agents/models-and-limits) para configurar agentes delegados y [Ajustes de Terminal](/zylon-code/es/tools/shell-and-jobs) para los tiempos de espera y la salida de comandos.

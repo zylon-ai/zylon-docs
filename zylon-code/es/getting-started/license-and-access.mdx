@@ -1,0 +1,33 @@
+---
+title: "Licencia y acceso"
+description: "Qué necesitas para usar Zylon Code y qué hacer si no se puede comprobar la licencia."
+noindex: true
+---
+
+Para usar Zylon Code, la licencia de Zylon de tu organización debe estar vigente e incluir **Zylon Code**. El administrador o tu contacto de Zylon puede confirmar si tienes acceso.
+
+## Qué necesitas
+
+| Requisito | Para qué sirve |
+| --- | --- |
+| Una licencia vigente que incluya Zylon Code | Utilizar la aplicación, también si eliges otro proveedor de modelos. |
+| El dominio de Zylon de tu organización | Conectar la aplicación con Zylon durante la configuración. |
+| Una clave de API de un gateway y acceso a él | Utilizar los modelos que tu organización ofrece a través de Zylon. |
+
+Necesitas conexión con Zylon para la configuración inicial y con el servicio del modelo mientras trabajas. La licencia y la clave de API cumplen funciones distintas: una clave válida no resuelve una licencia caducada, y la licencia por sí sola no da acceso a los modelos.
+
+Durante la configuración, introduce el dominio que te facilite el administrador, por ejemplo `https://zylon.example`. Sigue los pasos de [Conectar con Zylon](/zylon-code/es/getting-started/connect-to-zylon) para completar la configuración y guardar la clave de API.
+
+## Si Zylon no está disponible temporalmente
+
+Si ya te habías conectado correctamente, es posible que puedas seguir usando la aplicación durante un fallo temporal de red o del servidor. Por defecto, este margen dura hasta cinco días desde la última comprobación de licencia correcta y nunca supera la fecha de caducidad de la licencia. Tu organización puede configurar un plazo distinto.
+
+Sigues necesitando acceso al servicio del modelo. La primera configuración y el cambio a otro dominio requieren conexión con Zylon. Si la licencia ha caducado o se rechaza, o hay un problema con el certificado, tendrás que resolverlo antes de continuar.
+
+## Si no puedes pasar de la pantalla de bienvenida
+
+1. Comprueba que el dominio coincide con el que te ha dado el administrador. Introduce la dirección base, como `https://zylon.example`, sin `/api/gpt`.
+2. Comprueba la conexión de red. Si aparece un aviso sobre el certificado, contrasta sus datos con el administrador antes de aceptarlo.
+3. Pide al administrador que confirme que la licencia está vigente e incluye Zylon Code.
+
+No necesitas borrar conversaciones ni reinstalar la aplicación para resolver un problema de licencia. Para otros errores, consulta [Problemas de inicio, licencia y modelos](/zylon-code/es/troubleshooting/setup-and-models).

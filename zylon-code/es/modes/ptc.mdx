@@ -1,0 +1,25 @@
+---
+title: "PTC"
+description: "Procesa archivos por lotes y reúne los resultados con un programa escrito por el agente."
+noindex: true
+---
+
+PTC significa *Programmatic Tool Calling*: llamadas a herramientas desde un programa. El agente escribe un programa TypeScript para coordinar tareas, como revisar muchos archivos o reunir los resultados en un informe. Tú describes el resultado; no necesitas escribir ese programa.
+
+Elige PTC antes de iniciar la conversación. Si no aparece, activa **Ajustes → General → Vista de desarrollo**.
+
+## Cuándo resulta útil
+
+Es útil para recorrer muchos archivos, agrupar resultados o continuar después de un fallo aislado. Por ejemplo:
+
+> Comprueba los archivos JSON de configs/ con schema.json. Guarda un CSV con una fila por incidencia. Incluye los archivos que no puedas leer y continúa con los demás. No modifiques los originales.
+
+El programa puede pasar al modelo solo los resultados necesarios, en lugar de todos los pasos intermedios. Puedes consultar la actividad de sus herramientas en la conversación y siguen aplicándose los permisos habituales.
+
+## Comprueba el resultado
+
+Despliega la ejecución para consultar el programa y las herramientas que ha utilizado. Revisa que incluya los archivos fallidos en lugar de omitirlos. Abre el CSV y contrasta algunas filas con los originales. Pide un informe concreto, sin incluir todos los resultados intermedios.
+
+## Qué incluye
+
+PTC tiene habilidades, instrucciones, objetivos, planificación, delegación y compactación. No incluye la herramienta de [flujos de trabajo](/zylon-code/es/tools/workflows). El consumo y la velocidad dependen de la tarea y del programa; compara con [Estándar](/zylon-code/es/modes/standard) si quieres saber cuál conviene a tu caso.

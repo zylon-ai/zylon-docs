@@ -1,0 +1,27 @@
+---
+title: "Documents, spreadsheets and slides"
+description: "Create and review documents, spreadsheets and presentations."
+noindex: true
+---
+
+Ask Zylon Code to create Word documents, spreadsheets or presentations from your project files. The formats and checks available depend on the skills and document tools included in your application.
+
+## Describe the deliverable
+
+> Create an XLSX summary from the CSV files in reports/. Keep the originals unchanged. Include source filenames, totals calculated with formulas and a summary sheet. Deliver the editable workbook and explain how you checked it.
+
+Specify the input files, output format, content and checks. Ask the agent to confirm that the tools it needs are available. If anything is missing, ask it to explain what is needed before installing anything.
+
+## Preview the output
+
+Open the generated file in the right panel or its usual application. Word and PowerPoint previews are generated locally; spreadsheets have their own viewer.
+
+These panels also display project reports in formats such as HTML. If a report needs scripts, check **Settings → General → Developer view**; HTML preview behavior follows that setting. If Diff Review opens a menu from the file card, choose **Open as usual** for the document preview.
+
+Check page breaks, overlapping text and slide layout. In a spreadsheet, check formulas and totals as well as formatting. A file can be valid and still have layout problems or values that need recalculating. Ask for a PDF export or recalculation when your task requires them.
+
+For the agent to inspect the appearance, it needs a way to generate previews and a model that supports images. If preview fails, keep the editable source and consult [tool troubleshooting](/zylon-code/troubleshooting/tools-and-permissions).
+
+<Frame caption="An HTML review report in the document viewer">
+  <img src="/images/zylon-code/screenshots/tools-documents-en.jpg" alt="An HTML review report in the document viewer" />
+</Frame>

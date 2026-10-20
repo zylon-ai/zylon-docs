@@ -1,0 +1,29 @@
+---
+title: "Delegar en agentes"
+description: "Asigna tareas independientes a agentes secundarios y sigue sus resultados."
+noindex: true
+---
+
+Estándar, PTC y Creador pueden encargar subtareas a otros agentes. Cada uno trabaja en su propia conversación. Un agente nuevo recibe una petición concreta; uno creado por bifurcación también recibe el historial de la conversación. Delegar resulta útil cuando varias partes de una tarea se pueden investigar de forma independiente.
+
+## Asigna una tarea concreta
+
+> Encarga a otro agente una revisión de solo lectura de las pruebas del código que lee la configuración. Investiga en este chat cómo funciona ese código. Espera su informe y combina ambos resultados.
+
+Indica qué debe revisar, qué puede modificar y qué debe entregar. Facilita las rutas y los datos necesarios. Los agentes comparten los archivos del proyecto: evita que dos editen los mismos archivos a la vez. Heredan el directorio actual si no se les indica otro; cambiar después el directorio del principal no mueve al secundario. Utiliza [Worktrees de Git](/zylon-code/es/plugins/git-worktrees) si necesitas copias separadas.
+
+## Sigue el trabajo
+
+La cabecera de la conversación principal muestra la actividad de sus agentes, incluidos los que ellos hayan creado. Abre una conversación secundaria para consultar sus herramientas y respuestas.
+
+Algunos agentes admiten nuevas indicaciones y otros terminan tras su única tarea. Cuando se permite continuar, un mensaje puede ponerse en cola mientras el agente está ocupado. Para enviarlo, utiliza los controles del agente o pide al principal que lo haga; escribir su nombre en el chat no dirige el mensaje por sí solo.
+
+## Comprueba el resultado
+
+Lee el informe y los resultados de las herramientas relevantes. El agente principal debe indicar qué subtareas han fallado o se han cancelado. Si faltan controles después de recuperar una conversación, revisa el chat secundario y los archivos actuales antes de pedir al principal que reanude o reasigne el trabajo.
+
+La siguiente página explica [modelos y límites](/zylon-code/es/agents/models-and-limits). Para colaboración con un tablero de tareas compartido, consulta [Equipos de agentes](/zylon-code/es/plugins/agent-teams).
+
+<Frame caption="Actividad de agentes secundarios en una conversación">
+  <img src="/images/zylon-code/screenshots/agents-delegation-es.jpg" alt="Actividad de agentes secundarios en una conversación" />
+</Frame>

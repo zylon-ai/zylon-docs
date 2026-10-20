@@ -1,0 +1,48 @@
+---
+title: "Comprueba el comportamiento y revisa los cambios"
+description: "Utiliza comprobaciones útiles y el plugin de revisión de cambios antes de dar el resultado por válido."
+noindex: true
+---
+
+Una respuesta final convincente no demuestra que el cambio funcione. Elige comprobaciones capaces de detectar el error real y revisa tanto sus resultados como los archivos editados.
+
+## Reproduce el comportamiento que quieres corregir
+
+Para la búsqueda vacía, la prueba del fallo debe pasar por la función o la pantalla que ahora falla. Cuando sea posible, comprueba que falla con la implementación original y pasa después de corregirla. Así compruebas que la prueba detecta el fallo original.
+
+Los requisitos del ejemplo implican varios casos:
+
+| Entrada | Resultado esperado |
+| --- | --- |
+| Cadena vacía | Todos los elementos en su orden actual |
+| Solo espacios | El mismo comportamiento que una consulta vacía |
+| Consulta no vacía con coincidencias | El filtrado que ya existía |
+| Consulta sin coincidencias | El comportamiento habitual de lista sin resultados |
+
+No hace falta añadir una prueba para cada retoque visual. Elige una comprobación proporcional al cambio y aprovecha las herramientas del proyecto. Una prueba específica sirve para la lógica del filtro; un cambio de pantalla puede necesitar también una comprobación con el navegador o una revisión manual.
+
+## Comprueba el recorrido del usuario cuando haga falta
+
+La prueba de una función puede pasar y, aun así, la pantalla rechazar la entrada vacía antes de llamar a esa función. En este caso, revisa el recorrido desde que envías la consulta hasta que aparece la lista. Una prueba de extremo a extremo comprueba partes conectadas de la aplicación; solo cubre las condiciones y los resultados que incluye.
+
+Para revisar la pantalla, indica qué hay que observar: no aparece el error, se muestran los elementos esperados, conservan su orden y termina el estado de carga. Una captura puede apoyar esa observación, pero no permite saber si ha fallado alguna petición interna ni si funciona toda la navegación con el teclado.
+
+Pide un informe relacionado con los criterios:
+
+> Para cada requisito, indica qué comprobación has utilizado y qué resultado has observado. Incluye los comandos exactos y las comprobaciones omitidas o bloqueadas. No des por pasada una prueba que no has ejecutado. Revisa los cambios finales para detectar ediciones ajenas a la tarea.
+
+## Revisa con el plugin de cambios de Zylon
+
+Activa [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) antes de pedir al agente que edite archivos. Cuando haya hecho cambios, abre **Cambios pendientes**. Las ediciones del agente ya están guardadas en disco: este panel permite revisarlas después. **Conservar** acepta el contenido actual; **Revertir** restaura el contenido anterior registrado para la revisión. Si reviertes un archivo recién creado, se elimina después de una confirmación. El panel no sustituye los permisos, las pruebas ni el control de versiones.
+
+Examina archivos, bloques o líneas concretas. Añade comentarios para señalar un problema y envíalos con el siguiente mensaje. Si un cambio procede de un comando o de un editor externo, utiliza **Importar cambios del control de versiones** cuando corresponda; no des por hecho que el panel incluye automáticamente todos los cambios del repositorio.
+
+Vuelve a ejecutar la comprobación relevante si una corrección o una reversión modifica el código. Un resultado anterior corresponde al código de aquel momento. Conservar un cambio o marcar una tarea como terminada no garantiza que las ediciones posteriores lo mantengan.
+
+## Decide si el trabajo está terminado
+
+Da el resultado por válido cuando se haya demostrado el comportamiento acordado, los cambios sean adecuados y las limitaciones queden claras. Si no puedes ejecutar una comprobación, explica qué sigue sin verificar y decide si eso impide terminar.
+
+Continúa con [cómo dejar un resumen útil para la siguiente sesión](/zylon-code/es/hardening/session-state).
+
+Lecturas: Walkinglabs sobre [dar el trabajo por terminado demasiado pronto](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-09-why-agents-declare-victory-too-early/) y [las comprobaciones de extremo a extremo](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-10-why-end-to-end-testing-changes-results/).

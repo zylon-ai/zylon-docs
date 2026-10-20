@@ -1,0 +1,37 @@
+---
+title: "Tareas automatizadas"
+description: "Programa trabajo local, cambia su horario y consulta las entregas guardadas."
+noindex: true
+---
+
+Las tareas automatizadas permiten programar recordatorios y trabajo periódico, como una revisión diaria de las tareas pendientes del proyecto. Están integradas en la aplicación. Estándar, PTC y Creador pueden crear recordatorios; Mínimo y los agentes delegados no reciben esas herramientas. La página está en la barra lateral y no requiere activar otro plugin.
+
+## Crea y comprueba una tarea
+
+Selecciona **Tareas automatizadas → Nueva** y envía una petición con un horario preciso:
+
+> Crea una tarea llamada Revisión diaria. Cada día laborable a las 09:00, con zona horaria Europe/Madrid, lee la lista de tareas del proyecto e informa del trabajo pendiente. No edites archivos ni instales paquetes.
+
+Comprueba el nombre, la instrucción, la repetición, la zona horaria, la próxima ejecución y la conversación asociada. Si has pedido que se repita, comprueba que la programación incluye esa repetición. La tarjeta de la tarea creada permite abrir los detalles en el panel derecho.
+
+## Modifica una tarea
+
+Abre la tarea y utiliza **Reglas** para cambiar su nombre, instrucción u horario. Elige una repetición diaria, semanal, de días laborables, por intervalo, de una sola vez o mediante una expresión cron de cinco campos; después guarda los cambios. Hasta entonces, son un borrador: Cancelar recupera los valores guardados. Si hay un conflicto al guardar, revisa la regla actual antes de reintentarlo. Las tareas inactivas son de solo lectura.
+
+Utiliza la búsqueda de la lista y el filtro de todas las tareas, activadas o inactivas. **Registros de entrega** muestra los mensajes programados que se han entregado y permite cargar registros anteriores. La cabecera de la conversación también muestra un reloj cuando tiene recordatorios activos. El enlace al chat original funciona cuando está disponible; consultar una tarea no desarchiva la conversación.
+
+## Mantén la aplicación en funcionamiento
+
+El ordenador debe estar despierto y Zylon Code debe seguir funcionando. Las tareas no se ejecutan en la nube ni pueden despertar el ordenador. El trabajo continúa en la conversación original con su modelo y credenciales.
+
+Una zona como `Europe/Madrid` sigue los cambios de horario de verano en las reglas diarias o semanales; un intervalo de tiempo transcurrido no. Los intervalos deben ser de al menos 60 segundos. Tras un reinicio, una tarea de una sola vez puede llegar tarde; si es periódica, solo se entrega la última ejecución pendiente.
+
+## Interpreta las entregas y elimina con cuidado
+
+Un registro de entrega confirma que el mensaje ha entrado en la conversación, no que el agente haya terminado. Lee el chat para comprobar el resultado. Un cierre inesperado durante la entrega puede duplicar un mensaje; el historial guardado tiene límites y algunos registros antiguos pueden dejar de estar disponibles.
+
+Una tarea de una sola vez queda inactiva después de entregarse. Sigue disponible en el filtro de todas las tareas o inactivas hasta que la elimines. No hay una pausa individual. **Eliminar tarea** pide confirmación y borra la tarea con sus registros de entrega. Conserva la conversación y los mensajes que ya estuvieran en cola.
+
+<Frame caption="Una tarea automatizada de ejemplo programada para 2099">
+  <img src="/images/zylon-code/screenshots/plugins-automation-tasks-es.jpg" alt="Una tarea automatizada de ejemplo programada para 2099" />
+</Frame>

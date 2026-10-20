@@ -1,0 +1,34 @@
+---
+title: "Permissions and approvals"
+description: "Choose task access and respond to approval requests."
+noindex: true
+---
+
+Permissions determine which operations the agent may perform. Choose a preset in the composer or enter `/permission`. In General settings, you can set a default for future conversations.
+
+| Preset | When to use it |
+| --- | --- |
+| Read Only | Investigate a project with file writes restricted. A tool may ask for approval to make a change. |
+| Workspace Write | Edit within the project under the configured sandbox and approval policy. |
+| Full access | Run with broader access when you understand and accept the task's effects. |
+| Auto review | Use model-based reviews without a sandbox. This optional experimental feature consumes additional tokens; read its [guide](/zylon-code/plugins/auto-authorization-review) first. |
+
+A **sandbox** restricts what a tool or command can do. Depending on your operating system and configuration, it may limit file access, processes or network access. A permission preset combines the available restrictions with rules for requesting approval. Read Only does not by itself guarantee that a task cannot send data over the network.
+
+## Respond to an approval
+
+Read the requested action, affected files, external destination and reason. Approve it if those effects match your task, or reject it and ask the agent to continue within its current access.
+
+Selecting Full access shows a confirmation. Check the active label afterward. Auto review requires both its enabled plugin and your selection in the conversation.
+
+Before disabling Auto review, select the permission preset you want in each conversation that uses it. If you disable the plugin while a conversation still uses Auto review, that conversation changes to **Full access**. Check the permission label before continuing. Re-enabling the plugin does not switch it back automatically.
+
+The Zylon license requirement applies independently of these presets; broader permissions cannot repair a license failure.
+
+## Planning and access
+
+[Plan mode](/zylon-code/modes/plan-mode) asks the agent to investigate and propose changes before implementing them. Its tools can remain available. Select Read Only as well when you want execution restrictions during that investigation.
+
+<Frame caption="Choosing a task’s permissions">
+  <img src="/images/zylon-code/screenshots/configuration-permissions-en.jpg" alt="Choosing a task’s permissions" />
+</Frame>

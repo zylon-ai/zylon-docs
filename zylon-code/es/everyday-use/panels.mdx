@@ -1,0 +1,38 @@
+---
+title: "Paneles y aplicaciones locales"
+description: "Consulta archivos y documentos, ejecuta comandos y abre páginas web desde los paneles."
+noindex: true
+---
+
+Utiliza los paneles de la derecha para consultar archivos y documentos generados sin salir de la tarea. Abre un elemento desde una tarjeta de la conversación o el árbol de archivos y organiza los paneles como te resulte más cómodo.
+
+| Panel | Para qué sirve |
+| --- | --- |
+| Archivos | Explorar el proyecto seleccionado y abrir archivos. |
+| Vista previa | Ver texto, Markdown, código, imágenes, PDF, HTML y archivos Office compatibles. |
+| Terminal | Ejecutar tus propios comandos interactivos en el proyecto. |
+| Navegador | Abrir páginas web compatibles dentro de la aplicación. |
+
+Algunas vistas previas permiten elegir cómo se muestra el archivo y si se recarga automáticamente o a mano. Las vistas previas de Word y PowerPoint se generan de forma local; las hojas de cálculo tienen un visor específico. Si un archivo no se puede mostrar, ábrelo en una aplicación compatible con su formato.
+
+Si [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff) muestra un menú al pulsar la tarjeta de un archivo, elige **Abrir como siempre** para abrir su vista previa habitual.
+
+En **Ajustes → General**, el ajuste para abrir enlaces del chat permite elegir entre el panel integrado y el navegador predeterminado. Los clics con teclas modificadoras mantienen su comportamiento habitual. Los enlaces a archivos abren su vista previa; una referencia de línea puede llevarte al código correspondiente.
+
+El comportamiento de las vistas HTML depende de **Vista de desarrollo**. Al activarla, la vista aislada puede ejecutar scripts; eso no le concede acceso a la aplicación ni a cualquier archivo del proyecto. Revisa los recursos externos que utilice un informe HTML.
+
+## Terminal y comandos del agente
+
+El terminal sirve para los comandos que escribes tú. Los comandos y procesos en segundo plano que inicia el agente aparecen por separado en la conversación. Un servidor que inicies en el terminal no se convierte automáticamente en un proceso del agente; consulta [Shell y procesos en segundo plano](/zylon-code/es/tools/shell-and-jobs).
+
+## Navegador y automatización
+
+Abrir una página permite verla. Para que el agente interactúe con ella, también debe estar configurado el [control del navegador](/zylon-code/es/plugins/browser-control).
+
+## Abre otra aplicación
+
+La cabecera de la conversación puede ofrecer **Abrir en** cuando tengas una aplicación compatible instalada. Utilízalo para continuar en tu editor o en otra aplicación local.
+
+<Frame caption="Informe de revisión HTML junto a la conversación">
+  <img src="/images/zylon-code/screenshots/everyday-use-panels-es.jpg" alt="Informe de revisión HTML junto a la conversación" />
+</Frame>

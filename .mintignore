@@ -1,0 +1,3 @@
+# Local audit state and evidence are not documentation pages.
+.codex/**
+offline/**

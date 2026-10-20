@@ -1,0 +1,33 @@
+---
+title: "Conversations"
+description: "Continue, steer, stop, fork and organize tasks without losing track of their work."
+noindex: true
+---
+
+A conversation keeps prompts, model replies and tool activity for one task. Select its project and open the chat from the sidebar to continue. Renaming changes its display title; pinning keeps it prominent. Archiving changes visibility rather than deleting the project files.
+
+## While the agent works
+
+- **Stop** requests interruption. Actions already completed are not undone.
+- **Queue** saves a follow-up for later processing.
+- **Steer** delivers a new instruction during the running task.
+
+Your send preference determines what Enter does while the agent is busy. Check the active button before sending. Once a queued message has been sent, its controls let you edit it, remove it or deliver it as an immediate instruction. Wait for “Sending…” to disappear before using those controls.
+
+Example steering message:
+
+> Keep the current investigation, but do not install dependencies. Use the existing tests and report any unavailable checks.
+
+If you enable [Conversation-following titles](/zylon-code/plugins/conversation-titles), generated titles can evolve with later prompts. [Session search](/zylon-code/plugins/session-search) separately lets an agent retrieve earlier work; ordinary sidebar search remains a title/project search.
+
+## Fork or resume
+
+Use **Fork** to start a related conversation with inherited history. Both chats can affect the same files: forking a conversation does not copy or isolate them. Use a separately prepared folder or [Git Worktrees](/zylon-code/plugins/git-worktrees) if you need separate working files. Changing the conversation's working directory affects later tool actions, but terminals that are already open keep their own directory.
+
+Reopening a chat restores its history. It does not undo file changes or necessarily restore a browser to its previous state. After an interruption, inspect the files and running processes before asking the agent to continue. See [Recovery](/zylon-code/troubleshooting/recovery).
+
+For long tasks, use [goals](/zylon-code/everyday-use/goals-and-task-lists) and [compaction](/zylon-code/everyday-use/long-conversations). Child-agent controls are documented under [delegation](/zylon-code/agents/delegation).
+
+<Frame caption="A conversation and its task controls">
+  <img src="/images/zylon-code/screenshots/everyday-use-conversations-en.jpg" alt="A conversation and its task controls" />
+</Frame>

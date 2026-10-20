@@ -1,0 +1,50 @@
+---
+title: "Opciones de modelos"
+description: "Configura el identificador, la compatibilidad con imágenes y la capacidad del modelo."
+noindex: true
+---
+
+En **Ajustes → Modelos**, edita el proveedor y abre **Opciones avanzadas**. Estos valores indican a la aplicación qué admite el modelo; no aumentan su capacidad real.
+
+| Opción | Qué introducir |
+| --- | --- |
+| ID del modelo | El nombre exacto que acepta la API del servidor. |
+| Nombre visible | Una etiqueta que puedas reconocer en el selector. |
+| Ventana de contexto | La cantidad de tokens que admite el modelo en una petición. |
+| Salida máxima (tokens) | El máximo de tokens que puede generar el modelo en una petición. |
+| Límite por respuesta | Los tokens de salida reservados por defecto para una petición habitual, sin superar la capacidad de salida del modelo. |
+| Tipos de entrada | Texto e imagen, según lo que admita. |
+
+## Capacidad y presupuesto por petición
+
+Los modelos miden el texto en **tokens**, que pueden ser palabras, partes de palabras o signos de puntuación. El número de tokens no equivale al de palabras.
+
+Por ejemplo, un despliegue puede admitir 131.072 tokens de contexto y 32.768 de salida, y reservar 8.192 para una respuesta normal. Introduce las capacidades reales del servidor y un límite por petición que no supere la salida máxima. Estas cifras ilustran la diferencia; no son una recomendación de rendimiento.
+
+Los modelos de Zylon recién descubiertos reciben un límite por petición de 8.192 tokens, o su capacidad de salida si es menor. Actualizar el catálogo conserva los campos existentes y los modelos añadidos a mano; no sustituye sus límites por los que anuncie ahora el servidor. Revisa los modelos ya configurados cuando cambie el servidor.
+
+Reservar más salida deja menos espacio para la entrada. El resumen de la [compactación](/zylon-code/es/everyday-use/long-conversations) tiene su propio presupuesto: reducir la respuesta habitual no reduce automáticamente ese resumen. Pide al administrador que ajuste la compactación a la capacidad de los modelos pequeños.
+
+## Imágenes
+
+Abre **Opciones del modelo** y selecciona **Imagen** solo si el modelo es compatible. Debe quedar al menos un tipo de entrada seleccionado. Un modelo personalizado sin una capacidad visual heredada empieza configurado para texto.
+
+Las herramientas que utilizan capturas necesitan un modelo compatible con imágenes y un servidor que permita enviárselas. Si el modelo no puede procesar una captura, comprueba ambos, no solo la casilla.
+
+## Capacidades de razonamiento
+
+Los controles de razonamiento dependen de las capacidades que anuncie el modelo seleccionado. Los modelos de Zylon compatibles muestran **Desactivado** y sus niveles de esfuerzo en el cuadro de mensajes. Pulsa **Actualizar modelos** para añadir los modelos nuevos. La actualización también conserva los ajustes de razonamiento guardados: pide al administrador que revise los de un modelo existente si cambian sus capacidades. Sin capacidades de razonamiento configuradas, no aparece el control de Esfuerzo.
+
+Consulta [Elegir un modelo](/zylon-code/es/models/choosing-a-model) para activar, desactivar o cambiar el esfuerzo. Al seleccionar otro modelo se aplica su valor predeterminado. Modificar el valor predeterminado de un modelo no sustituye el esfuerzo que ya hayas elegido en una conversación. **Predeterminado**, si aparece, no envía una elección explícita de razonamiento a Zylon.
+
+El servicio de modelos puede utilizar otro nivel si no admite el ajuste solicitado. Por ejemplo, Desactivado puede convertirse en un nivel bajo y Máximo en Alto. Pregunta al administrador cómo se comporta tu instalación si esa diferencia afecta a la tarea.
+
+## Restablecer valores y corregir errores
+
+Restablecer el catálogo predeterminado de un proveedor puede eliminar los ajustes de modelos que hayas guardado; revisa el formulario antes de hacerlo. Un identificador o un protocolo incorrecto puede guardarse y fallar después al utilizar el modelo.
+
+Para las opciones avanzadas, como cabeceras, compatibilidad de peticiones, reintentos y tiempos de espera, consulta [Perfiles y YAML](/zylon-code/es/advanced/profiles-and-yaml) y utiliza los ajustes que admita tu instalación. Mantén las claves en los campos de credenciales, sin escribirlas directamente en YAML.
+
+<Frame caption="Niveles de esfuerzo de razonamiento del modelo seleccionado">
+  <img src="/images/zylon-code/screenshots/models-model-options-es.jpg" alt="Niveles de esfuerzo de razonamiento del modelo seleccionado" />
+</Frame>

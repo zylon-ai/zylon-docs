@@ -1,0 +1,53 @@
+---
+title: "Zylon Diff Review"
+description: "Review saved edits, keep or revert changes and send comments to the agent."
+noindex: true
+---
+
+Zylon Diff Review helps you inspect changes without leaving the conversation. It is an optional plugin, disabled by default. Open **Plugins** and enable **Zylon Diff Review**.
+
+The edits being reviewed are already on disk. This plugin does not hold changes back until you approve them, and it does not replace permission controls, tests or version control.
+
+## Open pending changes
+
+Use **Pending changes** in the sidebar footer or the conversation header, or press **Ctrl+D**. The review opens in the right sidebar. Successful agent edits made through `edit`, `write` and `str_replace_editor` are captured automatically while the plugin is enabled.
+
+With the plugin enabled, clicking a file card or file reference can open its review menu. Choose **Open as usual** to open the normal file preview.
+
+Select a file to inspect the changed lines. You can work with a whole file, a block or a selected line range. Review the final content as well as the difference: a small diff can still introduce an incorrect behavior.
+
+## Keep or revert
+
+**Keep** accepts the current content for review. It does not create a commit or prove that the code works. **Revert** restores the earlier content recorded by the review. Reverting a newly created file deletes it after a confirmation.
+
+If another tool or editor has changed the file in the meantime, the plugin checks for that change before applying the operation. Inspect the new state instead of forcing an older review over current work. Filesystem permissions can also prevent a revert.
+
+Undo and redo are available for review operations during the running application session. Their history is kept in memory and resets after a restart; do not use it as your only recovery plan. Run relevant checks again when a revert or correction changes the implementation.
+
+## Comment on specific lines
+
+Enter comment mode, select the relevant lines and write what should change. A precise comment might be:
+
+> This comparison still accepts a reservation when the shop is full. Reject equality as well, and check the full-capacity case before returning the result.
+
+Comments become reference chips in the composer. You can stage several comments and send them with your next ordinary message. Staging a comment does not call the model by itself. Include the action you want in the message; the agent's response language follows your message.
+
+## Import existing changes
+
+Use **Import version-control changes** to review uncommitted changes from Git, SVN or Perforce. The corresponding command-line tool must be available. Importing untracked files is an opt-in preference, so verify whether the files you need are included.
+
+Shell commands and external editors do not necessarily create new automatic review entries. Changes to files already being tracked can be detected, and version-control import lets you bring other changes into review. The panel is not a guarantee that every modified project file is listed.
+
+## Settings and saved reviews
+
+Open **Settings → Zylon Diff Review** for display options, shortcuts, comment preferences and import behavior. Pending review state and staged comments persist across application restarts. Disabling the plugin preserves that state; it does not revert files.
+
+If a save error appears, newly captured review entries may be lost when you close the application. Resolve the error before relying on them after a restart. The plugin keeps damaged or unsupported saved data for diagnosis; see [recovery](/zylon-code/troubleshooting/recovery) if the error persists.
+
+The agent can also add annotations and comments to the review.
+
+Continue with [reviewing results](/zylon-code/everyday-use/reviewing-results), [verification techniques](/zylon-code/hardening/verification-and-diffs) and [recovery](/zylon-code/troubleshooting/recovery).
+
+<Frame caption="Pending changes with a file diff and review actions">
+  <img src="/images/zylon-code/screenshots/plugins-diff-en.jpg" alt="Zylon Diff Review displaying a reservation function change with Keep and Revert controls in English" />
+</Frame>

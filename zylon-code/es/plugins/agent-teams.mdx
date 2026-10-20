@@ -1,0 +1,29 @@
+---
+title: "Equipos de agentes"
+description: "Coordina el trabajo de varios agentes con tareas, mensajes y archivos compartidos."
+noindex: true
+---
+
+Equipos de agentes permite que varios agentes se coordinen mediante mensajes y un tablero de tareas compartido. Es una función experimental incluida, pero desactivada de serie. Actívala en **Plugins → Plugins experimentales → Equipos de agentes** e inicia una tarea nueva.
+
+## Asigna trabajo al equipo
+
+> Utiliza Equipos de agentes para revisar este cambio. Asigna las pruebas de API a un miembro y las de interfaz a otro. Mantén ambas revisiones en solo lectura, organiza sus tareas en el tablero y reúne las conclusiones cuando terminen.
+
+El agente responsable puede incorporar otros agentes al equipo, enviarles mensajes y asignarles tareas. Abre sus conversaciones para consultar el trabajo. Indica quién se encarga de cada tarea y qué debe entregar para darla por terminada.
+
+## Coordina las ediciones
+
+Los miembros comparten los archivos del proyecto. La función no crea copias separadas ni bloquea archivos automáticamente. Asigna archivos distintos a cada agente o pide que revisen mientras uno aplica los cambios conjuntos.
+
+Más miembros generan más peticiones al modelo y consumen más recursos. Empieza con un equipo pequeño y tareas independientes.
+
+## Comprueba y desactiva
+
+Revisa los miembros, los estados de las tareas y el informe final. Decide qué hacer con el trabajo fallido o cancelado. Desactiva Equipos de agentes en Plugins cuando ya no lo necesites y comprueba las herramientas disponibles en una tarea nueva. Los cambios en archivos se mantienen.
+
+Utiliza [delegación](/zylon-code/es/agents/delegation) para una revisión independiente más sencilla o [flujos de trabajo](/zylon-code/es/tools/workflows) para una secuencia coordinada mediante un script.
+
+<Frame caption="El plugin Equipos de agentes y sus componentes, desactivado en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-agent-teams-es.jpg" alt="El plugin Equipos de agentes y sus componentes, desactivado en este ejemplo" />
+</Frame>

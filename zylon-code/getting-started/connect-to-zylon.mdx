@@ -1,0 +1,48 @@
+---
+title: "Connect to Zylon"
+description: "Enter your organization's Zylon address, save your API key and choose a model."
+noindex: true
+---
+
+Have your organization's **Zylon domain** ready, for example `https://zylon.example`. Its [license must include Zylon Code](/zylon-code/getting-started/license-and-access). You will also need a **gateway API key** to use Zylon's models; step 2 explains how to create one.
+
+## 1. Connect your Zylon domain
+
+Open Zylon Code, enter **Zylon domain** in the welcome dialog and select **Connect**. Use the address your administrator provides, including `http://` or `https://` and a port if required.
+
+Enter only the base address. For example, if Backoffice shows `https://zylon.example/api/gpt`, enter `https://zylon.example`. Do not add credentials or query parameters.
+
+Once the license has been verified, you can continue to the application. To change the domain later, open **Settings → General → Zylon connection**. If you cannot connect, see [License and access](/zylon-code/getting-started/license-and-access).
+
+If your organization uses a private certificate, a confirmation may appear with the server, fingerprint, issuer and validity dates. Check those details with your administrator before selecting **Trust and connect**.
+
+## 2. Get a gateway API key
+
+A gateway gives you access to the models your organization provides. To create a key, your account needs Developer access and access to that gateway. Ask your administrator if either is missing.
+
+1. In Backoffice, open **Developer Console** and select your gateway.
+2. Open **API Keys** and select **New API Key**.
+3. Enter a name, choose **Read & Write** and set an expiry date.
+4. Create the key and copy it immediately. Its value is shown only once.
+
+When downloads are available, this dialog also includes Zylon Code installation instructions. If you have not installed the application yet, download it there and follow [Download and install](/zylon-code/getting-started/installation).
+
+Use a key for the **gateway**, rather than a token that only provides access to Workspace.
+
+## 3. Save the key and choose a model
+
+Open **Settings → Models**, find the Zylon connection and paste the key into **Developer token**. Select **Save connection**. The **Model API URL** is filled in automatically from the domain you entered; you do not need to edit it.
+
+Once the connection is saved, open the model picker in the message box and choose an available model. If the model list is empty or the connection cannot be saved, see [Model access](/zylon-code/troubleshooting/setup-and-models#model-access).
+
+Keep the key in **Developer token**; do not paste it into a conversation.
+
+## 4. Try a small task
+
+[Select a project folder](/zylon-code/everyday-use/projects) and start a conversation with **New Session**. Choose **Read Only** permissions in the message box and send:
+
+> List the files in the project's top-level folder. Read one small text file and summarize its purpose. Do not change files or install anything.
+
+Check that the response describes a file in the folder you selected. Expand the tool cards to see what the agent read. If it reports an error, follow [connection troubleshooting](/zylon-code/troubleshooting/setup-and-models).
+
+Continue with [Your first task](/zylon-code/getting-started/first-task) to make and review a small change.

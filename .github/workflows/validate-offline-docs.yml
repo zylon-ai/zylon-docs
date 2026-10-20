@@ -1,0 +1,39 @@
+name: Validate offline documentation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: .github/release-tests/package-lock.json
+      - run: npm --prefix .github/release-tests ci --ignore-scripts --no-audit --no-fund
+      - name: Test release versioning and publication guards without external services
+        run: npm --prefix .github/release-tests test
+
+  build-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Compile all documentation and run behavior tests in the image build
+        run: docker build -f offline/Dockerfile -t zylon-docs:ci .
+      - name: Verify offline image with no network and a read-only filesystem
+        run: bash offline/check-container.sh zylon-docs:ci

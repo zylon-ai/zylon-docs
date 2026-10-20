@@ -79,12 +79,13 @@ Usa esta página para seleccionar el flujo de token adecuado para tu integració
 
     ### Crea un token de Gateway
 
-    1. Abre **Developer Console**.
+    1. Abre la **Consola de desarrollo**.
     2. Selecciona el gateway de destino.
-    3. Haz clic en **Create API Token**.
-    4. Introduce un nombre para el token.
-    5. Genera el token.
-    6. Copia el secreto del token que aparece en el modal.
+    3. Pulsa **Nueva clave de API**.
+    4. Introduce un nombre.
+    5. Elige **Lectura y escritura** si vas a configurar Zylon Code u otra herramienta de programación.
+    6. Establece la fecha de caducidad y crea la clave.
+    7. Copia el valor secreto que aparece en el diálogo.
 
     <iframe
       src="https://www.youtube.com/embed/pDVi1KfesMI"
@@ -122,6 +123,6 @@ Si un token tiene varios scopes, sus permisos se combinan. Después, los permiso
 
 `Read.All` no requiere `gateway_id` al crear el token. Sin ese contexto de gateway, el token puede usar sus demás permisos de lectura, pero no puede llamar a ZylonGPT.
 
-La creación de tokens de gateway solo acepta `PrivateGPT.Read.All` y `PrivateGPT.ReadWrite.All`; solicitar otro scope devuelve `400`. Por compatibilidad, el endpoint de tokens de gateway convierte una lista de scopes legacy vacía explícita en `PrivateGPT.ReadWrite.All`.
+La creación de tokens de gateway también admite `Read.All` y `ReadWrite.All`. El formulario de Backoffice ofrece **Lectura** y **Lectura y escritura**; selecciona `ReadWrite.All` de forma predeterminada para herramientas de programación como Zylon Code. El token queda asociado al gateway elegido y, al crearlo, se comprueba el acceso de la cuenta a ese gateway. Por compatibilidad, el endpoint de tokens de gateway convierte una lista de scopes vacía explícita en `ReadWrite.All`.
 
 Consulta la [visión general de ZylonGPT API](/es/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/overview) para ver la lista de endpoints de solo lectura y los requisitos de lectura y escritura.

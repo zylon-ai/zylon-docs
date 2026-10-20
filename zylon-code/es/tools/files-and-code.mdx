@@ -1,0 +1,29 @@
+---
+title: "Archivos y código"
+description: "Solicita lecturas, búsquedas y ediciones acotadas y revisa sus resultados."
+noindex: true
+---
+
+Estándar, PTC y Creador permiten al agente buscar archivos, leer texto, ver imágenes compatibles y editar contenido. Mínimo utiliza la shell para trabajar con archivos de texto y también puede leer imágenes. Los plugins globales opcionales pueden añadir herramientas.
+
+## Investiga antes de cambiar
+
+> Localiza dónde valida el formulario de acceso las direcciones de correo. Lee la implementación y sus pruebas. Indica los archivos y las líneas relevantes sin editarlos.
+
+Si conoces la subcarpeta o el nombre de archivo, inclúyelos. Los resultados de búsqueda tienen límites; cuando se recorten, pide una búsqueda más concreta.
+
+## Solicita un cambio
+
+> Actualiza el mensaje de validación en la implementación existente. Conserva los demás cambios y ejecuta la prueba de ese comportamiento. Muestra el diff resultante.
+
+El agente debe leer el archivo antes de editarlo. Si tú lo cambias en otro editor durante la tarea, pídele que lo lea de nuevo. Si una edición falla porque el texto ha cambiado o aparece varias veces, pide al agente que vuelva a leer el archivo y localice la sección correcta antes de reintentarlo.
+
+## Comprueba la carpeta y el acceso
+
+Las rutas como `src/config.ts` parten del directorio de trabajo de la conversación. Si no tienes claro cuál es, pide al agente que lo muestre o que cambie a una carpeta existente. Esto no cambia el directorio de los procesos que ya estén en marcha ni concede más permisos de escritura.
+
+[Worktrees de Git](/zylon-code/es/plugins/git-worktrees) permite trabajar en otra copia del repositorio. Los archivos fuera de las carpetas permitidas siguen necesitando los permisos correspondientes; mencionarlos con `@` no los concede. Para leer imágenes, elige un modelo configurado para admitirlas.
+
+## Comprueba los cambios
+
+Abre el archivo y [revisa el resultado](/zylon-code/es/everyday-use/reviewing-results). Si activas [Revisión de cambios de Zylon](/zylon-code/es/plugins/diff), también puedes conservar o revertir cambios y enviar comentarios al agente desde su panel. Los archivos se modifican en cuanto los permisos lo permiten. Los cambios no se guardan automáticamente en un commit de Git y detener la tarea no los deshace. Antes de publicar un cambio, ejecuta las pruebas del proyecto y sigue su procedimiento habitual de control de versiones.

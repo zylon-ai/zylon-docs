@@ -1,0 +1,34 @@
+---
+title: "Permisos y autorizaciones"
+description: "Elige el acceso de la tarea y responde a las solicitudes de autorización."
+noindex: true
+---
+
+Los permisos determinan qué operaciones puede realizar el agente. Elige una opción en el cuadro de mensajes o escribe `/permission`. En los ajustes generales puedes establecer el valor predeterminado de las conversaciones nuevas.
+
+| Permiso | Cuándo utilizarlo |
+| --- | --- |
+| Solo lectura | Investigar un proyecto con la escritura de archivos restringida. Una herramienta puede pedir autorización para hacer un cambio. |
+| Escritura en el espacio de trabajo | Editar dentro del proyecto con las restricciones y autorizaciones configuradas. |
+| Acceso completo | Trabajar con acceso más amplio cuando entiendas y aceptes los efectos de la tarea. |
+| Revisión automática | Usar la revisión del modelo sin sandbox. Esta función opcional y experimental consume tokens adicionales; lee antes su [guía](/zylon-code/es/plugins/auto-authorization-review). |
+
+Un **sandbox** restringe lo que puede hacer una herramienta o un comando. Según el sistema operativo y la configuración, puede limitar el acceso a archivos, los procesos o la red. Cada opción de permisos combina las restricciones disponibles con las reglas para pedir autorización. Solo lectura no garantiza por sí sola que una tarea no pueda enviar datos por la red.
+
+## Responde a una solicitud
+
+Lee la acción, los archivos afectados, el destino externo y el motivo. Apruébala si sus efectos corresponden a tu tarea. Si no, recházala y pide al agente que continúe con el acceso que ya tiene.
+
+Elegir Acceso completo muestra una confirmación. Comprueba después la etiqueta activa. La revisión automática necesita que actives su plugin y la selecciones para la conversación.
+
+Antes de desactivar Revisión automática, elige los permisos que quieras conservar en cada conversación que la utilice. Si desactivas el plugin mientras una conversación sigue usando Revisión automática, pasa a **Acceso completo**. Comprueba la etiqueta de permisos antes de continuar. Reactivar el plugin no vuelve a seleccionar Revisión automática por sí solo.
+
+La licencia de Zylon se comprueba por separado; ampliar los permisos no arregla un fallo de licencia.
+
+## Planificación y acceso
+
+El [modo de planificación](/zylon-code/es/modes/plan-mode) pide al agente que investigue y proponga los cambios antes de implementarlos. Las herramientas pueden seguir disponibles. Selecciona también Solo lectura si quieres limitar su ejecución durante la investigación.
+
+<Frame caption="Elegir los permisos de una tarea">
+  <img src="/images/zylon-code/screenshots/configuration-permissions-es.jpg" alt="Elegir los permisos de una tarea" />
+</Frame>

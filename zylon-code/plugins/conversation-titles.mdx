@@ -1,0 +1,35 @@
+---
+title: "Conversation-following titles"
+description: "Update generated titles as the conversation develops."
+noindex: true
+---
+
+The Conversation-following titles plugin keeps generated chat titles useful as a task develops. Titles normally come from the first prompt. This experimental alternative can revise the title after later messages change or expand the main topic, making the chat easier to recognize in the sidebar.
+
+## Enable it
+
+Open **Plugins → Experimental plugins → More** and enable **Conversation-following titles**. It starts disabled. It can then update titles in existing and new conversations when new messages warrant a change.
+
+## Example: a task grows beyond its original question
+
+You start with:
+
+> Investigate why an empty search shows an error. Do not edit yet.
+
+The investigation finds a shared problem, so you continue:
+
+> The category filter uses the same validation. Extend the review to both paths and report the common cause before proposing a fix.
+
+The generated title can change to reflect that wider task. Small clarifications, requests to continue or a “thanks” usually leave the title unchanged, although generated wording can vary.
+
+Automatic updates preserve titles you set manually. Use the chat's **Rename** action when you want a specific stable name.
+
+## Check behavior and usage
+
+Title generation uses separate model requests based on your eligible messages. It can consume tokens and fail independently of the main task. A failed request or an input that exceeds its configured size retains the previous title; an unchanged title does not mean the main agent stopped.
+
+Disable the plugin to return to generating titles from the first prompt. Existing conversation titles and work remain. Use [Session search](/zylon-code/plugins/session-search) when you need the agent to retrieve an earlier decision rather than rename a chat.
+
+<Frame caption="Conversation titles components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-conversation-titles-en.jpg" alt="Conversation titles components, disabled in this example" />
+</Frame>

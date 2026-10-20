@@ -1,0 +1,53 @@
+---
+title: "Revisión de cambios de Zylon"
+description: "Revisa las ediciones guardadas, conserva o revierte cambios y envía comentarios al agente."
+noindex: true
+---
+
+Revisión de cambios de Zylon permite examinar las ediciones sin salir de la conversación. Es un plugin opcional, desactivado de serie. Abre **Plugins** y activa **Revisión de cambios de Zylon**.
+
+Las ediciones que revisas ya están guardadas en disco. El plugin no espera tu aprobación para aplicarlas y no sustituye los permisos, las pruebas ni el control de versiones.
+
+## Abre los cambios pendientes
+
+Pulsa **Cambios pendientes** al pie de la barra lateral o en la cabecera de la conversación, o utiliza **Ctrl+D**. La revisión se abre en la barra lateral derecha. Mientras el plugin esté activo, registra las ediciones que el agente complete sin errores con `edit`, `write` y `str_replace_editor`.
+
+Con el plugin activo, al pulsar una tarjeta o referencia de archivo puede abrirse su menú de revisión. Elige **Abrir como siempre** para utilizar la vista previa habitual.
+
+Selecciona un archivo para ver las líneas modificadas. Puedes trabajar con el archivo completo, un bloque o un intervalo de líneas. Revisa también el contenido final: un cambio pequeño puede introducir un comportamiento incorrecto.
+
+## Conserva o revierte
+
+**Conservar** acepta el contenido actual para la revisión. No crea un commit ni demuestra que el código funcione. **Revertir** restaura el contenido anterior registrado. Si reviertes un archivo recién creado, se elimina después de una confirmación.
+
+Si otra herramienta o un editor han cambiado el archivo mientras tanto, el plugin comprueba esa modificación antes de actuar. Examina el estado nuevo en lugar de imponer una revisión antigua sobre el trabajo actual. Los permisos del sistema de archivos también pueden impedir la reversión.
+
+Puedes deshacer y rehacer operaciones de revisión durante la sesión de la aplicación. Ese historial se mantiene en memoria y se reinicia al volver a abrirla; no lo utilices como único método de recuperación. Repite las comprobaciones relevantes si una reversión o una corrección modifica el código.
+
+## Comenta líneas concretas
+
+Activa el modo de comentarios, selecciona las líneas relevantes y explica qué debe cambiar. Un comentario preciso sería:
+
+> Esta comparación todavía acepta una reserva cuando la tienda está llena. Rechaza también el caso de igualdad. Ejecuta la prueba de aforo completo e indica su resultado.
+
+Los comentarios se añaden al cuadro de mensaje como referencias. Puedes preparar varios y enviarlos con el siguiente mensaje normal. Preparar un comentario no llama al modelo por sí solo. Incluye en el mensaje qué quieres que haga el agente; el idioma de la respuesta sigue el de tu petición.
+
+## Importa cambios existentes
+
+Utiliza **Importar cambios del control de versiones** para revisar cambios sin confirmar de Git, SVN o Perforce. Debe estar disponible el comando correspondiente. La importación de archivos sin seguimiento se activa en las preferencias; comprueba si se incluyen los archivos que necesitas.
+
+Los comandos de terminal y los editores externos no crean necesariamente nuevas entradas automáticas en la revisión. Se pueden detectar cambios en archivos ya registrados y puedes importar los demás desde el control de versiones. El panel no garantiza que aparezcan todos los archivos modificados del proyecto.
+
+## Ajustes y revisiones guardadas
+
+Abre **Ajustes → Revisión de cambios de Zylon** para configurar la visualización, los atajos, los comentarios y la importación. Los cambios pendientes y los comentarios preparados se conservan al reiniciar la aplicación. Desactivar el plugin conserva ese estado; no revierte los archivos.
+
+Si aparece un error de guardado, las entradas de revisión recién registradas pueden perderse al cerrar la aplicación. Resuélvelo antes de confiar en que estarán disponibles tras un reinicio. El plugin conserva los datos guardados dañados o de una versión no admitida para investigar el problema; consulta [Recuperación](/zylon-code/es/troubleshooting/recovery) si el error persiste.
+
+El agente también puede añadir anotaciones y comentarios a la revisión.
+
+Continúa con [la revisión de resultados](/zylon-code/es/everyday-use/reviewing-results), [las técnicas de comprobación](/zylon-code/es/hardening/verification-and-diffs) y [la recuperación](/zylon-code/es/troubleshooting/recovery).
+
+<Frame caption="Cambios pendientes con las diferencias de un archivo y los controles de revisión">
+  <img src="/images/zylon-code/screenshots/plugins-diff-es.jpg" alt="Revisión de cambios de Zylon con una corrección del aforo y los controles Conservar y Revertir en español" />
+</Frame>

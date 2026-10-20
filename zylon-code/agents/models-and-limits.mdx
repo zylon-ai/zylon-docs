@@ -1,0 +1,32 @@
+---
+title: "Agent models and limits"
+description: "Set delegation limits and choose the models agents may use."
+noindex: true
+---
+
+Open **Plugins → Built-in plugin settings → Subagent** to set delegation limits and the models agents may choose. External agent applications need separate setup.
+
+| Setting | Meaning |
+| --- | --- |
+| Maximum recursion depth | Limits how many levels of agents can delegate to further agents. A delegation tool with its own depth limit uses that value instead. |
+| Parallelism limit | Limits agents that are running or starting under one main agent, including agents they create and external agents. The main agent does not count toward the limit. |
+| Model selection | Lets the agent choose from the provider and model combinations you allow. |
+| Allowed routes | The specific provider and model each agent may use. |
+
+## Save a configuration
+
+Enter valid whole-number limits. If you enable model selection, choose at least one provider and model combination, then save. Leaving the page discards unsaved edits. A saved model may remain listed even if its provider is unavailable; remove it or fix the connection before using it.
+
+If a save reports a conflict, someone or something changed the settings while you were editing. Reload that section and review the current values before trying again. Check the save result in each section; saving one does not guarantee the other was saved.
+
+A main conversation and its agents use the model choices allowed when that conversation started. Start a new conversation to use models you have allowed since then.
+
+Depth changes apply at the next delegation attempt for tools that inherit this setting. The parallelism limit is checked when starting or resuming an agent: lowering it leaves existing agents running and blocks additional starts until capacity is available.
+
+At capacity, a new start is rejected rather than queued. Wait for an existing child to finish or continue with one already running. An agent waiting for its own agents, or one that has not finished shutting down, may still count toward the limit. This limit controls simultaneous work; it does not cap total token use.
+
+## Choose practical limits
+
+More parallel agents increase simultaneous model calls and machine load. Start with a small limit and independent tasks: for example, ask one agent to review tests while another reviews documentation. Limit changes do not make shared files safe for concurrent editing. Tell the parent which model and expected outcome to use when the task requires consistency.
+
+For Codex or Claude Code integrations, use [external agents](/zylon-code/advanced/external-agents).

@@ -1,0 +1,46 @@
+---
+title: "Glossary"
+description: "Distinguish the product’s concepts before configuring or extending it."
+noindex: true
+---
+
+Use this reference when a term appears in a guide. The first group covers working with models; the second covers application features.
+
+## Models and tasks
+
+| Term | Meaning |
+| --- | --- |
+| Agent | A model working through instructions and tools to complete a task. |
+| Provider | The service that runs the selected model. |
+| API key / token credential | A secret value used to authenticate to a service. |
+| Account sign-in | Provider authorization through its own login flow; separate from an API-key connection and from an external coding agent. |
+| Request output limit | The output budget reserved for a normal request, which can be smaller than the model's maximum capacity. |
+| Token | A unit of text processed by a model, often part of a word. This is different from an access token credential. |
+| Context window | A request’s information capacity, including instructions, tool results and the generated response, as defined by the model and provider. |
+| Tool call | A model's request for an operation, such as reading a file or running a command. |
+| Conversation / session | The recorded messages, tool activity and state for a task. |
+| Turn | The work initiated by one user message, which may include several model requests and tool calls. |
+| Compaction | Replacing some active context with a summary while retaining recorded history. |
+| Subagent | Another agent assigned part of the main task. |
+
+## Zylon Code features
+
+| Term | Meaning |
+| --- | --- |
+| Project | A selected folder on your computer and its conversations. Separate from a server-side Zylon Workspace project. |
+| Working directory | Current folder used to resolve a conversation's relative paths; can change independently of the original project. |
+| Git worktree | Another checkout of the same repository with its own branch and working files. |
+| Mode | The tools and instructions selected for a new agent task. |
+| Plan mode | A state for investigating and proposing work before implementation. |
+| Permission preset | Access restrictions and approval rules for a task. |
+| Sandbox | Execution restrictions on files, processes or network access. |
+| Plugin | An extension that adds tools, behavior, settings or interface features. |
+| Bundle | An installable package grouping a feature's plugin components. |
+| Skill | Reusable task instructions, with optional supporting resources. |
+| MCP server | A service that supplies tools and resources through Model Context Protocol. |
+| Job | A background command or task with status and output. |
+| Workflow | A coordinated sequence of agent tasks. |
+| Deliverable | A file presented as the result of a task. |
+| Profile | The application's saved plugin and service configuration. |
+
+Model names identify models, not installed external agent applications. Standard, PTC, Minimal and Creator are the supplied modes; names such as Review or Repair can describe a task or a custom mode.

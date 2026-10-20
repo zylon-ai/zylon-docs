@@ -1,0 +1,26 @@
+---
+title: "Revisión automática de autorización"
+description: "Conoce cómo funciona la revisión automática de permisos y sus límites antes de activarla."
+noindex: true
+---
+
+Este plugin experimental utiliza un modelo para revisar las acciones de las herramientas antes de ejecutarlas. Está incluido, pero empieza desactivado. Al activarlo aparece **Revisión automática** en el selector de permisos; aún debes elegirla para la conversación.
+
+## Actívalo para una tarea
+
+1. Activa **Revisión automática de autorización** en **Plugins → Plugins experimentales**.
+2. Abre el selector de permisos de la conversación.
+3. Selecciona **Revisión automática** y lee la confirmación.
+4. Confirma si aceptas su comportamiento y comprueba el permiso activo.
+
+<Warning>
+La revisión automática funciona sin sandbox. El mismo modelo que utiliza el agente revisa las llamadas a herramientas, incluidas las internas de PTC. Puede permitir o rechazar una acción por error y consume tokens adicionales. Las acciones rechazadas vuelven a ti para que decidas si las autorizas. Un agente delegado no puede consultarte, por lo que sus rechazos son definitivos.
+</Warning>
+
+Esta revisión no es un control de seguridad independiente. Las restricciones del sistema operativo y de los servicios externos siguen aplicándose.
+
+## Vuelve a otro permiso
+
+Selecciona un [permiso habitual](/zylon-code/es/configuration/permissions) y compruébalo antes de continuar. Hazlo antes de desactivar el plugin: si lo desactivas mientras una conversación usa Revisión automática, esta pasa a Acceso completo, sin revisar cada llamada. Una conversación guardada con Revisión automática no puede reabrirse sin esa integración. El interruptor no sirve para restringir el acceso.
+
+Utilízalo en tareas cuyos archivos, comandos y efectos externos entiendas. Para una primera prueba, usa una copia desechable del proyecto y pide un cambio pequeño que conozcas, como corregir una prueba que falla. Consulta las acciones y sus resultados en la conversación, incluidos los rechazos.

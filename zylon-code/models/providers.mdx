@@ -1,0 +1,41 @@
+---
+title: "Other providers and local models"
+description: "Use supported account sign-in, API keys or a compatible model server."
+noindex: true
+---
+
+Open **Settings → Models** to configure a connection. A licensed Zylon deployment domain is still required to use Zylon Code, including when you select another provider. For your organization's model service, follow [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon).
+
+## Sign in with a ChatGPT or Claude account
+
+When your version offers account sign-in, the ChatGPT and Claude cards appear above provider rows. Choose **Sign in** and follow the instructions to open the provider's website, enter a code or return to the app. Enter your password only on the provider's website. A pending login can be cancelled; an interrupted one can offer Resume sign-in or Retry.
+
+After sign-in, select an available model. **Use account** activates an already signed-in account when needed. Access depends on the provider's plan and permissions. ChatGPT account models use a separate connection from an OpenAI API-key connection.
+
+**Sign out** removes that account authorization. It does not automatically switch to a previously stored API key. A conversation can retain its old model selection while that model is unavailable; choose a working connection or sign in again.
+
+## Use an API-key provider
+
+Open a listed provider's card, enter its API key and save. Leaving a saved key field blank preserves it. For a provider that also supports account sign-in, entering an API key can switch the connection to that key. Check which method is active before testing a model.
+
+If the provider is not yet listed, use **Add model provider** and choose the third-party provider option. API keys and account subscriptions have different access and billing arrangements.
+
+## Connect a custom or local service
+
+1. Choose **Add model provider → Custom model API**.
+2. Enter a unique Provider ID, recognizable name, Base URL and the API protocol implemented by your server.
+3. If the service requires a key, enter it in the credential field.
+4. Use **Fetch available models**, select results and choose **Add selected**. Alternatively, enter exact model IDs manually when discovery is unavailable.
+5. Save the provider, select a model and test a small read-only task using a tool.
+
+**OpenAI Chat Completions**, **OpenAI Responses** and **Anthropic Messages** are different protocols. “OpenAI-compatible” alone does not identify which one your server implements. A local model needs a separately running, reachable server; `localhost` means this computer.
+
+## Private certificates
+
+Discovery can request confirmation for a valid HTTPS certificate from an untrusted issuer. Compare the displayed server address, SHA-256 fingerprint, issuer and validity dates with your administrator before approving it. Approval applies to that exact origin (scheme, hostname and port) and certificate; hostname and validity checks still apply. A provisional approval is retained only when discovery and saving succeed. **Forget trusted certificate** removes approval when you apply the edit. A changed certificate needs a new confirmation.
+
+Zylon's own domain certificate is managed in **Settings → General**, not by changing its derived model URL.
+
+## Verify and maintain
+
+Check a real model request and tool result after saving. A successful model search confirms that the catalog is reachable; a model request checks that the service can generate a response. Deleting a provider can leave a saved conversation selection unavailable. [Model options](/zylon-code/models/model-options) covers capacities and reasoning; [troubleshooting](/zylon-code/troubleshooting/setup-and-models) covers connection failures.

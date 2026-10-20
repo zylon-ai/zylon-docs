@@ -1,0 +1,29 @@
+---
+title: "Files and code"
+description: "Ask for focused reads, searches and edits, then inspect their exact results."
+noindex: true
+---
+
+Standard, PTC and Creator let the agent search for files, read text, view supported images and edit content. Minimal uses its command-line shell for text files and also supports image reading. Optional global plugins can add tools.
+
+## Investigate
+
+> Find where the login form validates email addresses. Read the relevant implementation and tests. Report the files and line references without editing them.
+
+Specify a subfolder or filename pattern when possible. Search results can be capped; an incomplete listing does not prove that no other matches exist. Ask the agent to narrow the query when output is truncated.
+
+## Make a change
+
+> Update the validation message in the existing implementation. Preserve unrelated changes and run the focused test. Show the resulting diff.
+
+The agent should inspect the current file before editing. If you changed it in another editor during the task, tell the agent to re-read it. If an edit fails because the text has changed or appears more than once, ask the agent to read the file again and locate the intended section before retrying.
+
+## Check the folder and access
+
+Paths such as `src/config.ts` are relative to the conversation's working directory. Ask the agent to show that directory if you are unsure, or to switch to an existing folder. This does not change the directory of processes already running or grant additional write access.
+
+[Git Worktrees](/zylon-code/plugins/git-worktrees) lets you work in a separate copy of a repository. Files outside the permitted folders still need the appropriate access; mentioning one with `@` does not grant it. For images, choose a model configured to accept image input.
+
+## Verify
+
+Open the file and [review its diff](/zylon-code/everyday-use/reviewing-results). The optional [Zylon Diff Review](/zylon-code/plugins/diff) panel also lets you keep or revert changes and send comments to the agent. Edits are applied to the files as soon as permission allows them. They are not automatically committed to Git, and stopping the task does not undo them. Use the project's normal tests and version-control workflow before releasing a change.

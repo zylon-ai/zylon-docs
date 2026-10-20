@@ -1,0 +1,25 @@
+---
+title: "Create a custom tool"
+description: "Define a bounded tool, its configuration and observable success criteria."
+noindex: true
+---
+
+A custom tool lets the agent request a specific operation, such as reading an internal service or checking project data. Define what it may do before asking Creator to implement it.
+
+## Request a small tool
+
+> Create a read-only tool that counts TODO markers in a configurable project subfolder. Return file paths and counts. Add a clear result card, preserve file permissions and install it as a local bundle. Test it with known input and an unavailable folder.
+
+Include:
+
+- Inputs, defaults and settings.
+- Files or services it can access and any credentials it needs.
+- Results, output limits and useful error messages.
+- Any writes, network requests or background work.
+- How to show progress and the final result.
+
+## Verify and maintain
+
+Start a [Creator](/zylon-code/modes/creator) conversation and ask it to create and install the tool for your version of Zylon Code. Review the code and dependencies. Try a known input and one relevant failure, then check the tool card and actual files or service state.
+
+If external credentials are missing, keep that limitation visible until the integration has been tested. Save the source, settings and disabling instructions. [Custom plugins](/zylon-code/customization/custom-plugins) explains how to combine tools with a larger interface feature.

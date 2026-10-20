@@ -1,0 +1,49 @@
+---
+title: "Define una tarea que el agente pueda terminar"
+description: "Convierte una petición ambigua en un objetivo, un alcance y criterios que puedas comprobar."
+noindex: true
+---
+
+«Arregla el buscador» deja muchas decisiones en el aire. ¿Una consulta vacía debe devolver todos los elementos o ninguno? ¿Hay que distinguir mayúsculas y minúsculas? ¿Se puede rediseñar la pantalla? Si sabes la respuesta, indícala. Si no, pide al agente que investigue y te plantee la decisión antes de implementarla.
+
+## Incluye cinco datos útiles
+
+Una buena petición explica el **resultado esperado**, el **comportamiento actual**, el **alcance**, las **comprobaciones** y **cuándo detenerse**. Para un cambio pequeño, bastan unas pocas frases.
+
+Para el ejemplo del buscador:
+
+```text
+Objetivo: una consulta vacía o formada solo por espacios muestra todos los
+          elementos en el orden que ya tienen.
+Ahora: al enviar una consulta vacía aparece un error.
+Alcance: gestión de la búsqueda y sus pruebas. Conserva el comportamiento de las consultas no vacías.
+Comprobación: reproduce el fallo y añade una prueba específica que lo detecte.
+Terminado: funcionan las consultas vacías y con espacios, siguen pasando las
+           pruebas de los filtros y los cambios se limitan a este comportamiento.
+Detente y pregunta si el comportamiento esperado es ambiguo o hay que cambiar
+una API pública.
+```
+
+«Terminado» debe describir algo que puedas observar. «Mejorar la calidad» marca una dirección; «mostrar todos los elementos con una consulta vacía y pasar la prueba del fallo» permite comprobar un resultado. Una prueba no verifica todos los requisitos, así que señala también lo que necesite una revisión visual o humana.
+
+## Separa la investigación de la implementación
+
+Si no sabes qué archivos intervienen, empieza con una [tarea de solo lectura](/zylon-code/es/configuration/permissions):
+
+> Localiza el código que utiliza la pantalla de búsqueda y sus pruebas. Lee las instrucciones del proyecto. Explica la causa probable del error con consultas vacías, el cambio mínimo que propones y cómo lo comprobarías. No edites archivos ni instales dependencias.
+
+Cuando la explicación encaje con lo que sabes, pide el cambio. Incluye las decisiones en la petición de implementación; evita depender de un «haz lo que hemos hablado» después de una conversación larga.
+
+> Implementa el comportamiento acordado para las consultas vacías. Utiliza las pruebas existentes y limita el cambio a la búsqueda. Ejecuta las comprobaciones que has identificado. Indica los archivos modificados, los comandos y sus resultados, y cualquier requisito que no hayas podido verificar. Si hace falta una refactorización ajena a este cambio, detente y explica por qué.
+
+## Deja margen donde sea útil
+
+Explica las restricciones que importan: compatibilidad, carpetas permitidas, trabajo previo que debe conservarse y acciones que requieren tu aprobación. No hace falta dictar cada paso intermedio si el agente puede examinar el repositorio y elegir una solución razonable.
+
+Si hay varios resultados independientes, pide primero uno completo. «Arregla la búsqueda vacía, cambia la ordenación, migra la base de datos y mejora la accesibilidad» complica la ejecución y la revisión. Un cambio acotado puede afectar a varios archivos si todos hacen falta para resolver el mismo comportamiento.
+
+Evita instrucciones contradictorias como «no preguntes nunca» y «pregunta antes de decidir cualquier cosa». Indica qué decisiones requieren tu respuesta y deja que el agente resuelva las cuestiones habituales de implementación. El mensaje orienta el trabajo; los [permisos](/zylon-code/es/configuration/permissions) limitan de verdad el acceso.
+
+Después, guarda los datos estables en las [instrucciones del proyecto](/zylon-code/es/hardening/project-instructions), para no repetirlos en cada tarea.
+
+Lecturas: Walkinglabs sobre [el alcance de una tarea](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-07-why-agents-overreach-and-under-finish/) y [criterios de finalización observables](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-08-why-feature-lists-are-harness-primitives/).

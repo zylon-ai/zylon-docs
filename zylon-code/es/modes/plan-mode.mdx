@@ -1,0 +1,29 @@
+---
+title: "Modo de planificación"
+description: "Revisa la propuesta antes de pedir al agente que la lleve a cabo."
+noindex: true
+---
+
+La planificación permite investigar una tarea y revisar una propuesta antes de implementarla. Está disponible en Estándar, PTC y Creador.
+
+## Pide un plan
+
+Selecciona **Plan** en el menú **+** o escribe `/plan`. Describe lo que quieres conseguir:
+
+> Planifica cómo añadir paginación a los resultados de búsqueda. Revisa la API y los componentes existentes. Propón los cambios, casos límite, pruebas y criterios para darlo por terminado. No lo implementes todavía.
+
+El agente debe consultar el proyecto sin modificarlo y preguntar por las decisiones que no pueda resolver con la información disponible. Responder a esas preguntas no aprueba la implementación.
+
+## Revisa y continúa
+
+El plan aparece como una tarjeta junto a los controles de revisión. El documento completo puede abrirse automáticamente en el panel derecho; utiliza la tarjeta para consultarlo de nuevo. Cerrar la vista previa no aprueba la implementación. Comprueba qué incluye el plan, qué da por hecho, qué archivos afecta y cómo se comprobará el resultado. Utiliza los controles para aprobar la implementación o solicitar ajustes.
+
+Si no aparecen los controles de revisión, utiliza los de planificación para salir de ese modo y comprueba el indicador antes de pedir al agente que lleve a cabo el plan. Un «de acuerdo» en el chat no termina por sí solo el estado de planificación.
+
+## Elige también los permisos
+
+Las herramientas pueden seguir disponibles mientras se planifica. Si quieres limitar las escrituras durante la investigación, selecciona un [permiso](/zylon-code/es/configuration/permissions) adecuado, como Solo lectura. Mínimo no incluye la planificación integrada.
+
+<Frame caption="Borrador de una petición de planificación con /plan">
+  <img src="/images/zylon-code/screenshots/modes-plan-mode-es.jpg" alt="Borrador de una petición de planificación con /plan" />
+</Frame>

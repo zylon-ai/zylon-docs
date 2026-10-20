@@ -1,0 +1,25 @@
+---
+title: "Agentes externos"
+description: "Elige una integración nativa y comprende su autenticación y sus límites."
+noindex: true
+---
+
+Los agentes externos permiten encargar una tarea a otro asistente de programación, como Codex o Claude Code. Elegir el modelo de ese proveedor en Modelos es una operación distinta: tener acceso al modelo no activa su agente de programación.
+
+| Integración | Preparación | Resultado |
+| --- | --- | --- |
+| [Subagente de Codex](/zylon-code/es/plugins/codex-subagent) | Activar el plugin ofrecido y preparar la autenticación y los ajustes nativos de Codex | Una tarea nueva; devuelve la respuesta final o un error al principal. |
+| [Subagente de Claude Code](/zylon-code/es/plugins/claude-code-subagent) | Activar el plugin ofrecido y preparar la autenticación y los ajustes nativos de Claude | Una tarea nueva; devuelve la respuesta final o un error al principal. |
+| ACP u otro entorno configurado | Ejecutable, conexión y acceso al modelo preparados por el administrador | Delegación de una tarea según el proveedor. |
+
+## Prepara el acceso
+
+Codex y Claude Code están en **Plugins → Plugins experimentales → Más**. Al activar un plugin puede descargarse el software que necesita. Sigue su guía aunque ya utilices ese asistente por separado. La autenticación y el modelo siguen dependiendo de cada producto; un token de Zylon no inicia sesión en ellos. Sus permisos nativos se configuran por separado de los de la conversación principal.
+
+Pide al administrador que prepare ACP u otra integración que no se ofrezca como plugin. La presencia de un ejecutable no confirma que la integración esté lista.
+
+## Comprueba una tarea acotada
+
+Empieza con una tarea de solo lectura que incluya las rutas, los datos y las restricciones necesarios. El agente externo no hereda la conversación principal. Comprueba la respuesta final, la cancelación y los errores. Comparte el directorio actual del proyecto salvo que se indique otro; si permitiste cambios, revisa también los archivos por separado.
+
+Estas ejecuciones no admiten mensajes de seguimiento ni reanudación. El agente principal recibe el resultado; la conversación completa del asistente externo no aparece en Zylon Code. Para continuar el trabajo con más mensajes, utiliza [agentes locales de Zylon](/zylon-code/es/agents/delegation). Tanto los agentes locales como los externos cuentan para el [límite de concurrencia](/zylon-code/es/agents/models-and-limits).

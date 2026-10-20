@@ -1,0 +1,19 @@
+---
+title: "Language servers"
+description: "Add optional symbol navigation using a configured language server."
+noindex: true
+---
+
+A language server helps the agent find definitions, references and documentation for code elements such as functions, classes and variables. The optional `lsp` tool uses it for read-only navigation when text search alone is not enough.
+
+## Prepare the integration
+
+Ask Creator or your administrator to configure the language server for your project and expose the LSP tool. The server executable and project dependencies must be available on your computer. An extension installed in your editor does not necessarily supply them to Zylon Code.
+
+## Ask about a symbol
+
+> Find the definition and references of this function. Read its documentation and report which parts of the project call it. Do not edit files.
+
+Inspect the returned paths and code locations. Large results can be shortened or report omitted locations. A missing documentation comment is different from a server failure.
+
+If a lookup fails, check the server executable, language, project folder and diagnostic output. Keep ordinary search and file-reading tools as a fallback for tasks that do not need symbol navigation.

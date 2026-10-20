@@ -1,0 +1,52 @@
+---
+title: "Aplica el hardening y comprueba el resultado"
+description: "Empieza por los fallos recurrentes y compara el trabajo terminado, la revisión y las correcciones."
+noindex: true
+---
+
+El hardening sirve si mejora el trabajo que puedes terminar y revisar con confianza. El número de instrucciones, plugins o agentes no es una medida útil por sí solo.
+
+## Elige tareas representativas
+
+Selecciona trabajos que hagas habitualmente: corregir un fallo concreto, añadir una prueba, consultar el repositorio o cambiar una pantalla. Define los resultados esperados y las comprobaciones antes de comparar configuraciones.
+
+Para cada tarea, anota el estado del proyecto, el modelo, los ajustes relevantes, el modo y el entorno de pruebas. Compara puntos de partida equivalentes con los mismos criterios. Si das más ayuda a un intento, no atribuyas automáticamente la diferencia a una mejora del modelo.
+
+Observa resultados útiles:
+
+| Medida | Qué anotar |
+| --- | --- |
+| Finalización | Qué criterios originales se han cumplido y cómo se han comprobado |
+| Correcciones | Qué ha habido que arreglar después del primer resultado |
+| Revisión | Tiempo dedicado a examinar y aclarar el trabajo |
+| Alcance | Archivos o comportamientos modificados sin necesidad |
+| Fiabilidad | Fallos repetidos y si el agente los ha explicado con precisión |
+| Recursos | Tiempo transcurrido y consumo o coste del modelo, cuando puedas consultarlo |
+
+Incluye las tareas fallidas y bloqueadas. «Parece que el modelo suele hacerlo mejor» resulta difícil de aprovechar; «ha dejado de inventar el comando de pruebas desde que lo documentamos» señala una mejora concreta.
+
+## Corrige un problema recurrente
+
+Empieza por la causa observada. Si faltan datos del proyecto, documenta lo necesario. Si el alcance se amplía, mejora la petición. Si se da el trabajo por terminado demasiado pronto, revisa las comprobaciones y los informes. Si se pierde la continuidad, añade un resumen. Si fallan las llamadas a herramientas, comprueba la compatibilidad del modelo y la configuración.
+
+Cuando sea posible, cambia una parte importante cada vez y compara. Las respuestas del modelo varían: no saques una conclusión general de una única ejecución correcta. Repite una tarea representativa si el resultado es dudoso; no necesitas una plataforma de evaluación enorme para tomar una decisión útil en tu proyecto.
+
+## Mantén la preparación sencilla
+
+Retira las instrucciones que ya no se aplican, actualiza las guías de comandos y evita repetir la misma regla en varios archivos. Revisa los ejemplos cuando cambie el producto. Una guía obsoleta puede ser peor que no tenerla, porque dirige el trabajo al lugar equivocado con aparente seguridad.
+
+Añade estructura cuando el trabajo la necesite. Un equipo puede necesitar un tablero pequeño y compartido; quien corrige una función quizá solo necesite una petición clara y una prueba. Al decidir si la automatización ahorra tiempo, incluye también el esfuerzo de revisión humana.
+
+## Una forma práctica de empezar
+
+1. Elige una tarea real y acotada, y define cuándo estará terminada.
+2. Confirma los datos relevantes del proyecto y el comando de comprobación.
+3. Ejecútala con el modelo y el modo que piensas utilizar.
+4. Revisa los cambios y las comprobaciones reales, y anota el resultado.
+5. Mejora el mayor obstáculo observado y compara otro intento equivalente.
+
+Estos pasos te ayudan a decidir qué funciona en tu proyecto. Si la tarea sigue superando al modelo o requiere un acceso que no tienes, anota la limitación y elige otro enfoque.
+
+Ya tienes los conceptos para elegir con criterio la [configuración](/zylon-code/es/configuration/settings), el [modelo](/zylon-code/es/models/choosing-a-model) y el [modo](/zylon-code/es/modes/overview). El resto del manual te sirve como referencia para utilizar la aplicación.
+
+Lecturas: [el curso y las fuentes de Walkinglabs](https://github.com/walkinglabs/learn-harness-engineering) y [las recomendaciones de Anthropic para tareas largas](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents). El objetivo es avanzar de forma repetible y comprobable en tu trabajo, no seguir una receta universal.

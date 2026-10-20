@@ -1,0 +1,23 @@
+---
+title: "Creator"
+description: "Create a tool, plugin or mode, then check it in a new conversation."
+noindex: true
+---
+
+Creator helps you build tools, interface features and custom modes. Use it when the existing tools or modes do not cover a recurring task. It includes Standard's general capabilities and can inspect the installed application to create a compatible extension.
+
+## Describe the feature
+
+Start a new Creator conversation and state its behavior, settings, permissions and a way to check it:
+
+> Create a mode named Review that inspects changes and reports issues without editing files. Install it as a local plugin bundle. Verify its tools in a new conversation and explain how to disable it.
+
+Ask for a working installation and a check, so you can review the feature rather than only its generated source. Ask Creator to check what the installed version supports and report any installation or activation error.
+
+## Review and keep the result
+
+Inspect the generated files and installation request. Find the bundle in Plugins, start a new task using it and check the expected behavior. Existing conversations keep their mode, although changes to global plugins can affect their available tools.
+
+Keep the source and instructions for reinstalling, updating and disabling the feature. A generated plugin runs local code and needs compatibility checks when the application changes. If the new feature fails, disable it in Plugins and ask Creator to diagnose the error before enabling it again.
+
+Continue with [Custom modes](/zylon-code/customization/custom-modes), [Custom tools](/zylon-code/customization/custom-tools) or [Custom plugins](/zylon-code/customization/custom-plugins).

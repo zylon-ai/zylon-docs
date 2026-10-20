@@ -1,0 +1,26 @@
+---
+title: "Plugin and MCP problems"
+description: "Restore missing plugin features or an MCP server connection."
+noindex: true
+---
+
+Start with the message on the plugin or MCP server card. The desktop application lets you enable and configure the plugins it offers. Some optional features download additional software when enabled; there is no general third-party plugin installer.
+
+| Problem | What to do |
+| --- | --- |
+| There is no Add plugin button | There is no general Add plugin dialog. Configure the included features in Plugins or ask your administrator about a supported extension. |
+| A feature is absent | Check its mode and the built-in plugin inventory. An integration may need a separately configured provider. |
+| A plugin is enabled but its tool is missing | Check the mode used by this conversation; try a new conversation after changing the plugins or mode configuration. |
+| Activation fails | Check the error for missing settings or required components. Restart if the application asks you to. |
+| MCP creation fails | Check the exact URL or executable and separate arguments, plus credentials. |
+| OAuth fails or is cancelled | Retry sign-in. If it still fails, ask the server administrator to check support for public-client registration and PKCE, which this sign-in method requires. |
+| The last test passed but a call fails | Test the connection again and check the task's current permissions. |
+| A mention prevents sending | Update the reference if its server was renamed, removed or disabled. |
+
+The read-only inventory is under **Settings → Built-in plugins** when **Developer view** is enabled. It is different from the **Plugins** page used to configure included features.
+
+For a local MCP command, confirm the executable exists and each argument has its own field. For HTTP, use the service's MCP endpoint instead of its website home page. Remove tokens and private data from diagnostic output before sharing it.
+
+Re-enabling the manager restores saved servers. Deleting a server removes its configuration and credentials. Configuration export excludes secrets; see the [MCP guide](/zylon-code/plugins/mcp) for the import behavior supported by your build.
+
+If the Zylon domain setup dialog blocks all model requests and tool use, resolve [licensing](/zylon-code/getting-started/license-and-access) first. Re-enabling an integration does not repair that requirement. Continue with [Manage plugins](/zylon-code/plugins/managing-plugins) for feature-specific steps.

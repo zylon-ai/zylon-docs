@@ -1,0 +1,35 @@
+---
+title: "Títulos que siguen la conversación"
+description: "Actualiza los títulos generados cuando evoluciona el tema del chat."
+noindex: true
+---
+
+El plugin Títulos que siguen la conversación actualiza los títulos a medida que evoluciona una tarea. Normalmente, los títulos se generan a partir de la primera petición. Esta alternativa experimental puede revisar el título cuando los mensajes posteriores cambian o amplían el tema principal, para que reconozcas mejor el chat en la barra lateral.
+
+## Actívalo
+
+Abre **Plugins → Plugins experimentales → Más** y activa **Títulos que siguen la conversación**. Empieza desactivado. A partir de entonces, puede actualizar los títulos de conversaciones existentes y nuevas cuando los mensajes justifican un cambio.
+
+## Ejemplo: la tarea se amplía
+
+Empiezas con:
+
+> Investiga por qué una búsqueda vacía muestra un error. De momento, no edites.
+
+La investigación encuentra un problema compartido y continúas:
+
+> El filtro de categorías utiliza la misma validación. Amplía la revisión a ambos casos e indica la causa común antes de proponer una corrección.
+
+El título puede cambiar para reflejar la ampliación de la tarea. Una aclaración pequeña, una petición para continuar o un «gracias» suelen conservar el título, aunque la redacción generada puede variar.
+
+Las actualizaciones automáticas respetan los títulos que hayas escrito a mano. Utiliza **Renombrar** en el chat si quieres un nombre concreto y estable.
+
+## Comprueba el comportamiento y el consumo
+
+Generar títulos requiere peticiones independientes al modelo a partir de tus mensajes. Consume tokens y puede fallar aunque la tarea principal funcione. Si la petición falla o la entrada supera el tamaño configurado, se conserva el título anterior; que no cambie no significa que el agente se haya detenido.
+
+Desactiva el plugin para volver a generar los títulos a partir de la primera petición. Los títulos existentes y el trabajo se conservan. Utiliza [Búsqueda de sesiones](/zylon-code/es/plugins/session-search) cuando quieras recuperar una decisión anterior, en lugar de cambiar el nombre del chat.
+
+<Frame caption="Componentes de Títulos de conversaciones, desactivados en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-conversation-titles-es.jpg" alt="Componentes de Títulos de conversaciones, desactivados en este ejemplo" />
+</Frame>

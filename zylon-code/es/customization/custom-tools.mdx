@@ -1,0 +1,25 @@
+---
+title: "Crear una herramienta"
+description: "Define una herramienta acotada, su configuración y criterios comprobables."
+noindex: true
+---
+
+Una herramienta personalizada permite al agente solicitar una operación concreta, como leer un servicio interno o comprobar datos del proyecto. Define qué puede hacer antes de pedir a Creador que la implemente.
+
+## Solicita una herramienta pequeña
+
+> Crea una herramienta de solo lectura que cuente los marcadores TODO de una subcarpeta configurable. Devuelve las rutas y los recuentos. Añade una tarjeta de resultado clara, respeta los permisos e instálala como paquete local. Pruébala con datos conocidos y con una carpeta que no esté disponible.
+
+Indica:
+
+- Entradas, valores predeterminados y ajustes.
+- Archivos o servicios a los que accede y las credenciales que necesita.
+- Resultados, límites de salida y mensajes de error útiles.
+- Cualquier escritura, petición de red o trabajo en segundo plano.
+- Cómo mostrar el progreso y el resultado final.
+
+## Comprueba y mantén
+
+Abre una conversación en [Creador](/zylon-code/es/modes/creator) y pídele que cree e instale la herramienta para tu versión de Zylon Code. Revisa el código y las dependencias. Prueba una entrada conocida y un fallo relevante; después comprueba la tarjeta y el estado de los archivos o del servicio.
+
+Si faltan credenciales de otro servicio, deja claro qué falta por comprobar hasta que puedas probar la integración. Guarda el código, los ajustes y las instrucciones para desactivarla. [Plugins personalizados](/zylon-code/es/customization/custom-plugins) explica cómo combinar herramientas con una función de interfaz más amplia.

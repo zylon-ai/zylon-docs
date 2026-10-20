@@ -1,0 +1,29 @@
+---
+title: "Agent Teams"
+description: "Enable team collaboration and coordinate shared tasks, messages and files."
+noindex: true
+---
+
+Agent Teams helps several agents coordinate through messages and a shared task board. It is an experimental feature included but disabled by default. Enable **Plugins → Experimental plugins → Agent Teams**, then start a new task.
+
+## Assign a team task
+
+> Use Agent Teams to review this change. Give one teammate the API tests and another the UI tests. Keep both reviews read-only, track their shared tasks and combine the findings when both finish.
+
+The lead agent can create teammates, send messages and assign tasks. Open each member's conversation to inspect its work. Specify ownership and a completion condition for every task.
+
+## Coordinate edits
+
+Teammates share your project files. The feature does not create separate copies or automatic file locks. Give agents different files to edit, or ask them to review while one agent makes the combined change.
+
+More teammates create more model requests and use more local resources. Start with a small team and independent tasks.
+
+## Check and disable
+
+Review the roster, task states and final report. Decide how to handle failed or cancelled work. Disable Agent Teams in Plugins when you no longer need it, then check the available tools in a new task. Existing file changes remain.
+
+Use ordinary [delegation](/zylon-code/agents/delegation) for a simpler independent review, or [workflows](/zylon-code/tools/workflows) for a scripted sequence of tasks.
+
+<Frame caption="Agent Teams plugin and its components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-agent-teams-en.jpg" alt="Agent Teams plugin and its components, disabled in this example" />
+</Frame>

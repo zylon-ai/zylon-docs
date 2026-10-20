@@ -1,0 +1,33 @@
+---
+title: "Project instructions"
+description: "Keep persistent repository rules in AGENTS.md or compatible instruction files."
+noindex: true
+---
+
+Project instructions keep the repository's standing rules available to the agent. Standard, PTC and Creator read them automatically. Minimal does not read project instructions automatically.
+
+## Create AGENTS.md
+
+Add an `AGENTS.md` in the project root. Write rules that can be followed and checked:
+
+```markdown
+# Project instructions
+
+Use the package manager and lockfile already in this repository.
+Read the relevant implementation and tests before editing.
+Run the existing check that covers the changed behavior.
+Ask before installing dependencies or publishing changes.
+Report changed files, checks run and unresolved failures.
+```
+
+Add your project's actual test command and working directory after checking them. Ask the agent to identify the existing check for the area you want to change; it should report anything needed before it can run that check. Keep the file short enough for its important rules to stand out.
+
+## Add rules where they apply
+
+Zylon Code recognizes `AGENTS.md` and `CLAUDE.md`, plus additive `AGENTS.local.md` and `CLAUDE.local.md` files. Instructions in deeper folders can apply when the agent visits that area. Global instructions can also be configured for your application.
+
+Keep private local files out of Git if needed. Instructions become model context, so do not store secrets in them.
+
+## Check that they are loaded
+
+In a new Standard conversation, ask which project instructions apply and have the agent list their paths. Check its subsequent actions against the rules. Use [permissions](/zylon-code/configuration/permissions) for execution limits and [skills](/zylon-code/customization/skills) for task-specific procedures.

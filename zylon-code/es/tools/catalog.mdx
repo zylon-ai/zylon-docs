@@ -1,0 +1,40 @@
+---
+title: "Catálogo de herramientas"
+description: "Elige la función que necesitas y consulta cómo configurarla."
+noindex: true
+---
+
+Una herramienta permite al agente hacer algo más que responder: leer un archivo, ejecutar un comando o consultar un servicio conectado. Describe el resultado que quieres con tus propias palabras; no necesitas memorizar nombres de herramientas.
+
+Por ejemplo:
+
+> Lee los archivos de configuración de este proyecto y enumera los valores que faltan. Incluye la ruta del archivo en cada incidencia. No cambies nada.
+
+El agente elige entre las herramientas disponibles en la conversación. El modo seleccionado, los plugins activos, los permisos y las conexiones necesarias determinan cuáles puede utilizar.
+
+## Encuentra la función que necesitas
+
+| Qué quieres hacer | Guía y requisitos |
+| --- | --- |
+| Leer, buscar o editar archivos del proyecto | [Archivos y código](/zylon-code/es/tools/files-and-code). Para leer imágenes también hace falta un modelo compatible. |
+| Ejecutar comandos o gestionar procesos en segundo plano | [Shell y procesos en segundo plano](/zylon-code/es/tools/shell-and-jobs). La shell depende del sistema operativo y del modo. Para procesos interactivos, consulta [Terminales persistentes](/zylon-code/es/plugins/persistent-terminals). |
+| Crear un documento, una hoja de cálculo o una presentación | [Documentos](/zylon-code/es/tools/documents). Deben estar disponibles las bibliotecas o aplicaciones necesarias. |
+| Leer una URL o buscar en la web | [Herramientas web](/zylon-code/es/tools/web). La [búsqueda web](/zylon-code/es/plugins/web-search) requiere un proveedor configurado. |
+| Interactuar con una web o una aplicación de escritorio | Configura el [control del navegador](/zylon-code/es/plugins/browser-control) o el [control del ordenador](/zylon-code/es/plugins/computer-control). Este último también necesita permisos del sistema operativo. |
+| Pedir un plan o seguir el progreso | [Modo de planificación](/zylon-code/es/modes/plan-mode) y [Objetivos y listas de tareas](/zylon-code/es/everyday-use/goals-and-task-lists). La disponibilidad depende del modo. |
+| Repartir trabajo entre agentes | [Delegación](/zylon-code/es/agents/delegation). Las alternativas opcionales incluyen [Equipos de agentes](/zylon-code/es/plugins/agent-teams) y [agentes externos](/zylon-code/es/advanced/external-agents), que requieren su propia configuración. |
+| Utilizar instrucciones reutilizables | [Habilidades](/zylon-code/es/customization/skills). |
+| Coordinar una secuencia repetible o procesar un lote | [Flujos de trabajo](/zylon-code/es/tools/workflows) para un flujo solicitado expresamente, o [PTC](/zylon-code/es/modes/ptc) para un programa escrito por el agente. |
+| Crear una herramienta, un plugin o un modo | [Creador](/zylon-code/es/modes/creator). |
+| Utilizar un servicio externo | [Servicios MCP](/zylon-code/es/plugins/mcp). El servidor debe estar configurado y conectado. |
+| Trabajar en otra copia del repositorio Git | Activa [Worktrees de Git](/zylon-code/es/plugins/git-worktrees). |
+| Revisar cambios y archivos generados | [Revisar resultados](/zylon-code/es/everyday-use/reviewing-results) y el plugin opcional de [revisión de cambios](/zylon-code/es/plugins/diff). |
+| Localizar símbolos en el código | Configura [Servidores de lenguaje](/zylon-code/es/plugins/language-servers). |
+| Programar una tarea o repetirla | Las [tareas automatizadas](/zylon-code/es/plugins/automation-tasks) se incluyen en Estándar, PTC y Creador, pero no están disponibles para agentes delegados. El plugin opcional [Bucles Ralph](/zylon-code/es/plugins/ralph-loops) repite una tarea acotada cuando lo pides expresamente. |
+| Encontrar conversaciones anteriores | Activa [Búsqueda de sesiones](/zylon-code/es/plugins/session-search). |
+
+## Comprueba qué se ha hecho
+
+Despliega el resultado de una herramienta para consultar su salida y los posibles errores o cancelaciones. La respuesta final, por sí sola, no confirma que la herramienta haya terminado correctamente. Los resultados largos pueden abreviarse; pide la sección relevante cuando necesites más detalle.
+
+Si falta una herramienta, revisa el modo, el plugin y los requisitos de configuración en su guía. La [referencia de disponibilidad](/zylon-code/es/reference/availability) resume qué funciones se incluyen y cuáles necesitan preparación adicional. Ampliar los permisos no hace que una herramienta sin instalar o sin conexión esté disponible.

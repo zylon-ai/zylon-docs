@@ -1,0 +1,27 @@
+---
+title: "Conversaciones largas"
+description: "Gestiona el contexto, la compactación y la continuidad de tareas largas."
+noindex: true
+---
+
+El modelo solo puede trabajar con una cantidad limitada de información a la vez: su **ventana de contexto**. Los mensajes, las instrucciones, las herramientas disponibles y sus resultados ocupan parte de ese espacio. Los resultados largos pueden abreviarse; si necesitas comprobar un detalle, pide al agente que consulte el archivo o la sección correspondiente.
+
+## Compacta una conversación
+
+Estándar, PTC, Mínimo y Creador incluyen la opción **Compactar**, también disponible mediante `/compact`. Sustituye parte del contexto que recibe el modelo por un resumen. Los archivos del proyecto y el historial de la conversación se conservan, así que puedes volver a consultar los resultados originales.
+
+Ejecuta la compactación manual cuando el agente esté inactivo. Si el resumen falla o queda truncado, se conserva el historial original seleccionado: revisa el error y los [límites de contexto y de respuesta del modelo](/zylon-code/es/models/model-options) antes de repetirlo. La compactación también puede iniciarse automáticamente al llenarse el contexto.
+
+## Conserva lo importante
+
+Antes de continuar una tarea larga, pide:
+
+> Resume el objetivo, los archivos modificados, las decisiones tomadas, las comprobaciones realizadas, los fallos pendientes y el siguiente paso. Incluye las rutas necesarias para comprobar el estado del proyecto.
+
+Guarda las reglas permanentes en las [instrucciones del proyecto](/zylon-code/es/customization/project-instructions) y los procedimientos repetibles en [habilidades](/zylon-code/es/customization/skills). Un resumen ayuda a continuar, pero para comprobar una prueba o una modificación debes consultar su resultado original.
+
+## Empieza otra conversación
+
+Abre un chat nuevo cuando cambies a un objetivo independiente. Bifurcar conserva el historial, pero los archivos siguen siendo los mismos salvo que prepares otra copia del proyecto. Después de una interrupción o un reinicio, revisa su estado actual antes de continuar.
+
+Consulta [Recuperación](/zylon-code/es/troubleshooting/recovery) para saber qué revisar después de una interrupción.

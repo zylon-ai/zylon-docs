@@ -1,0 +1,50 @@
+---
+title: "Delega trabajo y revisa con independencia"
+description: "Asigna una responsabilidad clara a cada agente y comprueba el resultado conjunto con datos."
+noindex: true
+---
+
+Un segundo agente puede investigar otra parte del proyecto o revisar los cambios con una perspectiva nueva. También añade coordinación, consumo del modelo y otra posible fuente de errores. Empieza con uno y delega cuando haya una división del trabajo clara y útil.
+
+## Separa las responsabilidades
+
+Para el buscador, el agente principal puede implementar y otro revisar los requisitos y los cambios finales. Una buena petición de revisión es concreta:
+
+> Revisa el cambio de las consultas vacías sin editar archivos. Comprueba que las entradas vacías o con espacios devuelven todos los elementos en su orden original, que se conserva el filtrado habitual y que las pruebas detectan el fallo inicial. Examina el código actual y los resultados reales. Indica problemas que se puedan corregir con referencias a los archivos, o explica qué falta por verificar.
+
+El revisor necesita los criterios originales, no solo la afirmación de quien ha implementado de que todo está bien. Que dos agentes coincidan no demuestra que tengan razón: ambos pueden partir de la misma suposición incorrecta. Las pruebas y el comportamiento observado siguen siendo necesarios.
+
+## Ejecuta en paralelo lo que sea independiente
+
+Dos investigaciones de solo lectura suelen poder hacerse a la vez: una revisa la pantalla y otra las pruebas existentes. Para editar, hay que repartir mejor la responsabilidad. Asigna archivos distintos o deja que un solo agente aplique el cambio conjunto después de ambas investigaciones.
+
+Los [agentes secundarios](/zylon-code/es/agents/delegation) y los [Equipos de agentes](/zylon-code/es/plugins/agent-teams) ofrecen formas distintas de coordinarse en Zylon. Los equipos añaden una lista de miembros, mensajes y un tablero compartido. Ninguna opción garantiza archivos aislados ni evita automáticamente los conflictos. Los miembros pueden compartir el directorio del proyecto.
+
+Si una tarea necesita archivos de trabajo separados, consulta los [worktrees de Git](/zylon-code/es/plugins/git-worktrees). Decide cómo integrarás los cambios antes de empezar. Separar los archivos no demuestra que el resultado conjunto funcione.
+
+No pidas a varios agentes que reescriban la misma función al mismo tiempo. Una edición que parece correcta puede sobrescribir el trabajo de otro agente o dejar obsoletos sus resultados de pruebas. Comprueba la implementación conjunta después de integrar los cambios, sobre todo donde se relacionen entre sí.
+
+## Prepara cada tarea delegada
+
+Cada tarea delegada debe tener un resultado esperado, un alcance, la información relevante y una comprobación de finalización. Pide un informe breve con lo encontrado, los archivos modificados si estaba permitido, las pruebas ejecutadas y los bloqueos. El agente principal debe resolver las diferencias entre informes y comprobar la tarea completa.
+
+Cuando un paso dependa de otro, ordénalos en lugar de forzar el paralelismo:
+
+```text
+Confirmar el comportamiento esperado
+  → implementar el cambio acotado
+  → comprobar el recorrido del usuario
+  → revisar todos los cambios finales
+```
+
+Puedes describir esta secuencia con instrucciones normales. Para procedimientos habituales con muchos pasos dependientes, consulta los [flujos de trabajo](/zylon-code/es/tools/workflows).
+
+## Elige el modelo del revisor con criterio
+
+La guía de [modelos y límites de agentes](/zylon-code/es/agents/models-and-limits) explica qué admite tu configuración. Otro modelo puede aportar una perspectiva distinta, pero también importan el coste y la compatibilidad. Un modelo pequeño puede revisar bien una prueba concreta y tener dificultades con una revisión de arquitectura amplia; compruébalo antes de decidir solo por el tamaño.
+
+Delega para resolver una dificultad concreta. Si coordinar y leer lo mismo varias veces cuesta más que la propia tarea, vuelve a un agente con comprobaciones específicas.
+
+Después, aprende a [automatizar un procedimiento acotado](/zylon-code/es/hardening/automation).
+
+Lecturas: Walkinglabs sobre [dependencias y coordinación de agentes](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-14-graph-engineering/) y [los patrones de trabajo de Anthropic](https://www.anthropic.com/engineering/building-effective-agents).

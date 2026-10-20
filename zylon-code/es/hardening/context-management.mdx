@@ -1,0 +1,37 @@
+---
+title: "Elige el contexto que importa"
+description: "Aporta información relevante sin esconder la tarea entre archivos e historial que no necesita."
+noindex: true
+---
+
+La **ventana de contexto** es la cantidad de entrada y salida que un modelo puede manejar en una petición. Se mide en **tokens**, fragmentos de texto que no equivalen necesariamente a palabras completas. Las instrucciones, el historial, las definiciones de herramientas y los archivos leídos comparten ese espacio; el cálculo exacto depende del modelo y del proveedor.
+
+Que quepa más texto no significa que el modelo vaya a aprovechar todos los detalles por igual. Busca información suficiente y relevante para resolver la tarea, con una forma clara de consultar más cuando haga falta.
+
+## Dale un punto de partida
+
+Para el fallo de la búsqueda vacía, conviene aportar el síntoma, la pantalla o el endpoint afectado, cómo reproducirlo y la guía del proyecto. Rara vez hace falta adjuntar todo el repositorio.
+
+> El error aparece en la pantalla de búsqueda de elementos al enviar una consulta vacía. Empieza por el código que recibe esa consulta y sigue la llamada hasta la función de filtrado. Lee sus pruebas y docs/search.md. Si necesitas otro archivo, explica qué relación tiene con este comportamiento.
+
+La petición orienta al agente sin dar por hecho que conoces todas las dependencias. Puede buscar nombres de archivos, símbolos y llamadas, y después leer los apartados relevantes. Un fragmento pequeño puede ocultar una condición necesaria; antes de editarlo, debe consultar el código que lo rodea.
+
+## Prioriza las fuentes actuales
+
+Aporta el error exacto y la entrada que lo provoca. Un archivo actual o el resultado de una prueba ofrece más información que una explicación antigua del código en la conversación. Distingue los requisitos —«vacío significa todos los elementos»— de lo observado —«ahora la función lanza un error»—.
+
+Cuando utilices material externo, incluye un enlace o un fragmento relevante y explica para qué sirve. El modelo solo podrá consultar el contenido del enlace si una herramienta lo recupera o se lo proporcionas tú. Evita adjuntar secretos de clientes o archivos privados ajenos a la tarea; consulta [contexto y archivos adjuntos](/zylon-code/es/everyday-use/context-and-attachments).
+
+## Cuida las conversaciones largas
+
+La [compactación](/zylon-code/es/everyday-use/long-conversations) reduce el historial enviado al modelo. Ayuda a continuar dentro del contexto disponible, pero el resumen puede omitir detalles. Antes de retomar una tarea larga, recuerda el objetivo actual y pide al agente que compruebe los archivos y los últimos resultados.
+
+> Continúa con la corrección de las consultas vacías. Acordamos que deben devolver todos los elementos en su orden actual. Lee el resumen de la tarea y revisa los cambios antes de editar de nuevo. Vuelve a ejecutar la prueba específica si la implementación ha cambiado desde el resultado anotado.
+
+Abre otra conversación si el objetivo ha cambiado mucho o la actual está llena de soluciones descartadas. Lleva un [resumen breve y comprobable](/zylon-code/es/hardening/session-state), en lugar de copiar toda la conversación.
+
+No hay un porcentaje de contexto «seguro» que sirva para todos los modelos. Si los resultados empeoran al crecer la conversación, compara la misma tarea en otra nueva y centrada en el problema. Lo útil es comprobar si la información necesaria sigue siendo accesible y si las verificaciones funcionan.
+
+Después, prepara [el entorno y las herramientas](/zylon-code/es/hardening/environment-and-tools).
+
+Lecturas: Walkinglabs sobre [cómo mantener la continuidad](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-05-why-long-running-tasks-lose-continuity/).

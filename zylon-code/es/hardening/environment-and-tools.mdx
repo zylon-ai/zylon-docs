@@ -1,0 +1,41 @@
+---
+title: "Prepara el entorno y las herramientas"
+description: "Haz que las comprobaciones se puedan repetir y utiliza las capacidades que necesita la tarea."
+noindex: true
+---
+
+Antes de pedir al agente que cambie código, comprueba que el proyecto puede ejecutar sus pruebas. Puede necesitar una versión concreta de Node.js o Python, dependencias instaladas, una base de datos u otros servicios. La guía de preparación del proyecto debería indicar estos requisitos.
+
+## Comprueba el punto de partida
+
+Pide al agente que lea la guía de preparación del proyecto, examine el entorno disponible e identifique el comando de comprobación. Cuando sea posible, pídele que ejecute la prueba relevante antes de cambiar código.
+
+> Comprueba los requisitos documentados para las pruebas del buscador. Indica qué dependencias o servicios faltan antes de instalar o cambiar nada. Si el entorno está listo, ejecuta la prueba específica existente y distingue los fallos de preparación de las comprobaciones que no pasan.
+
+«No se encuentra el comando» indica un problema del entorno. Una comprobación que reproduce el error con consultas vacías aporta información sobre la aplicación. Un servicio que tarda demasiado en responder puede deberse a varias causas; examina la salida antes de elegir una solución.
+
+Anota lo útil del punto de partida: comando, directorio, versiones necesarias, resultado y fallos conocidos. No copies variables con secretos en la conversación ni en el resumen de la tarea. Si hace falta instalar una dependencia, sigue el procedimiento del proyecto y los permisos configurados.
+
+## Elige un modo adecuado
+
+Los [modos de Zylon](/zylon-code/es/modes/overview) determinan qué herramientas e instrucciones están disponibles. Empieza con uno que encaje con la tarea. Para un cambio pequeño de código suelen bastar las operaciones con archivos y los comandos de comprobación. La navegación web, el control del ordenador o la coordinación de equipos aportan valor cuando la tarea los necesita.
+
+Reducir las opciones disponibles puede facilitar el trabajo de un modelo pequeño, pero quitar una herramienta necesaria también puede impedir que termine. Consulta el catálogo real de la conversación; no des por hecho que todos los plugins instalados aportan herramientas a esa tarea.
+
+En las integraciones, conviene disponer de operaciones concretas —por ejemplo, consultar una incidencia por su identificador— en lugar de pedir al modelo que invente peticiones a una API general. [MCP](/zylon-code/es/plugins/mcp) puede aportar esas herramientas, pero cada servidor necesita su preparación, autorización y descripciones útiles.
+
+## Obtén información clara de cada acción
+
+Un resultado útil indica si la operación ha funcionado, qué ha cambiado y qué conviene revisar. No puedes cambiar el comportamiento de todas las herramientas, pero sí pedir al agente que muestre datos concretos y trate los errores de forma explícita.
+
+> Si falla una comprobación, incluye el comando y el error relevante. No la omitas sin avisar ni cambies la preparación de las pruebas para ocultar el fallo. Explica si el siguiente paso corrige el entorno, el código o la propia comprobación.
+
+A menudo es mejor buscar en un registro largo que pegarlo entero. Mantén el resumen breve e indica dónde consultar la salida completa. Si la salida está recortada, no se puede dar por hecho que la parte que falta terminó bien.
+
+## Utiliza los permisos como controles reales
+
+Elige [permisos](/zylon-code/es/configuration/permissions) adecuados y revisa las solicitudes de aprobación teniendo en cuenta la tarea. Las instrucciones y los límites de herramientas complementan los permisos; no los sustituyen. Ampliarlos para que una tarea funcione es una decisión sobre el acceso, no un atajo para depurar.
+
+Con el entorno listo, continúa con [las comprobaciones y la revisión de cambios](/zylon-code/es/hardening/verification-and-diffs).
+
+Lecturas: Walkinglabs sobre [la preparación inicial](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-06-why-initialization-needs-its-own-phase/) y [la información que recibe el agente durante el trabajo](https://walkinglabs.github.io/learn-harness-engineering/es/lectures/lecture-13-loop-engineering/).

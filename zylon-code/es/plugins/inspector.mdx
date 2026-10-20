@@ -1,0 +1,21 @@
+---
+title: "Herramientas de desarrollo"
+description: "Consulta los registros de las conversaciones y el entorno local con ayuda de soporte."
+noindex: true
+---
+
+El plugin opcional **Herramientas de desarrollo** permite investigar fallos y recoger información para soporte. Empieza desactivado. Actívalo en **Plugins → Plugins experimentales** cuando necesites ese acceso de diagnóstico.
+
+## Inspecciona una conversación
+
+Abre **Registro de sesión** desde el menú de pestaña nueva de la barra lateral. Sus vistas de registro sin procesar y mensajes agrupados permiten consultar la conversación guardada. Por ejemplo, si una herramienta falla, busca el error en el chat y consulta su entrada en Registro de sesión cuando soporte necesite más detalle. Empieza por el chat habitual o su vista de trayectoria si ya muestran la información que necesitas.
+
+**Ctrl/Cmd+Mayús+.** abre o contrae **NodeJS Inspector** en el panel inferior. Este depurador permite examinar el entorno local de la aplicación.
+
+<Warning>
+Activar Herramientas de desarrollo inicia un servicio de depuración y captura las peticiones de red del proceso local sin ocultar datos. Un depurador puede ejecutar código y mostrar credenciales, mensajes y archivos privados. Mantén el acceso local y revisa los diagnósticos antes de compartirlos.
+</Warning>
+
+## Termina la investigación
+
+Empieza por [Recuperación e informes para soporte](/zylon-code/es/troubleshooting/recovery), reproduce el fallo concreto y recoge solo lo necesario. Cierra el depurador y desactiva Herramientas de desarrollo al terminar. Desactivarlo no elimina los datos sensibles de un archivo que ya hayas exportado: prepara una copia sin credenciales ni datos privados antes de enviarla.

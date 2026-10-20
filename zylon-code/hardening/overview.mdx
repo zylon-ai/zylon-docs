@@ -1,0 +1,41 @@
+---
+title: "Hardening: make agent work more reliable"
+description: "Prepare the project, instructions and checks so the agent has less to guess."
+noindex: true
+---
+
+An agent can edit a file correctly and still solve the wrong problem. It can also understand the request but fail because a dependency is missing, a test is misleading or the useful information was buried in a long conversation. Improving the model alone does not fix all of these problems.
+
+**Hardening** means preparing the project and the way you work so the agent has less to guess and you can detect its mistakes. In this section, the term refers to making agent work more reliable: clear tasks, useful context, working tools, independent checks and a reliable way to resume work.
+
+## What is a harness?
+
+The **model** interprets your request and proposes actions. The **harness** is the environment that lets it work with your project: instructions, tools, permissions, conversation history and feedback from each action. Zylon Code provides these capabilities. You prepare the project instructions, choose the tools and permissions, and decide how to check the result.
+
+A prompt can ask the agent to run a test. A permission setting determines which operations it can perform. A test checks a particular behavior. These serve different purposes: writing “be careful” cannot replace either access controls or executable checks.
+
+## One example throughout this section
+
+Imagine a search screen that reports an error when the query is empty. The required behavior is to show all items for an empty or whitespace-only query, preserve their order and keep ordinary filtering working.
+
+We will use this example to show how to define the task, find the relevant code, verify the result and leave enough information for the next session. The file names and commands are illustrative; use the ones your project actually provides.
+
+| Part of the setup | What it prevents in this example |
+| --- | --- |
+| A precise task | Changing sorting or redesigning the search screen unnecessarily |
+| Relevant project context | Fixing a similarly named function that the screen does not use |
+| A working test command | Mistaking a missing runtime for a code defect |
+| A focused regression check | Declaring success without checking the empty query |
+| A reviewed diff and handoff | Losing track of unrelated edits or unfinished checks |
+
+## Start with the smallest useful setup
+
+You do not need a new plugin or a large instruction file to start. Use one bounded task, the relevant files, an existing verification command and a final report that distinguishes observations from assumptions. Add structure when a recurring failure shows what is missing.
+
+This is particularly useful when working with smaller models: reducing unnecessary choices can make a task easier to complete and review. It does not give a smaller model capabilities it lacks. Measure results on your own tasks, and change the model or involve a person when the work still stalls.
+
+The chapters follow the order of a real task. Read them once in sequence, then return to the technique you need. Begin with [writing a task brief](/zylon-code/hardening/task-briefs).
+
+## Sources and further reading
+
+This learning section draws on all 14 lectures in [Walkinglabs' Learn Harness Engineering course](https://walkinglabs.github.io/learn-harness-engineering/en/). It applies the ideas to Zylon Code rather than reproducing the course's examples. Start with [why agents fail](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-01-why-capable-agents-still-fail/) and [what a harness does](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-02-what-a-harness-actually-is/). Course demonstrations and numbers are illustrations, not performance guarantees for Zylon or your model.

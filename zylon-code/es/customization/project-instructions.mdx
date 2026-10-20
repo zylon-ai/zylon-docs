@@ -1,0 +1,33 @@
+---
+title: "Instrucciones del proyecto"
+description: "Guarda reglas permanentes del repositorio en AGENTS.md o archivos compatibles."
+noindex: true
+---
+
+Las instrucciones del proyecto mantienen sus reglas habituales a disposición del agente. Estándar, PTC y Creador las cargan automáticamente; Mínimo no incluye esa lectura.
+
+## Crea AGENTS.md
+
+Añade un `AGENTS.md` en la raíz del proyecto. Escribe reglas que se puedan seguir y comprobar:
+
+```markdown
+# Instrucciones del proyecto
+
+Utiliza el gestor de paquetes y el archivo de bloqueo del repositorio.
+Lee la implementación y las pruebas relevantes antes de editar.
+Ejecuta la comprobación existente que cubra el comportamiento modificado.
+Pregunta antes de instalar dependencias o publicar cambios.
+Indica los archivos modificados, las comprobaciones y los fallos pendientes.
+```
+
+Añade el comando de pruebas y su directorio real después de comprobarlos. Pide al agente que identifique la comprobación existente para la parte que quieras modificar y que indique qué necesita para ejecutarla. Mantén el archivo breve para que destaquen las reglas importantes.
+
+## Coloca cada regla donde corresponda
+
+Zylon Code reconoce `AGENTS.md` y `CLAUDE.md`, además de los archivos adicionales `AGENTS.local.md` y `CLAUDE.local.md`. Las instrucciones de una subcarpeta pueden aplicarse cuando el agente la consulta. También pueden configurarse instrucciones globales para la aplicación.
+
+Excluye de Git los archivos locales privados cuando corresponda. Las instrucciones pasan al contexto del modelo: no guardes secretos en ellas.
+
+## Comprueba que se cargan
+
+En una conversación Estándar nueva, pregunta qué instrucciones se aplican y pide sus rutas. Contrasta las acciones posteriores con las reglas. Utiliza [permisos](/zylon-code/es/configuration/permissions) para limitar la ejecución y [habilidades](/zylon-code/es/customization/skills) para procedimientos concretos.

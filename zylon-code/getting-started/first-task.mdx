@@ -1,0 +1,60 @@
+---
+title: "Your first task"
+description: "Turn meeting notes into a plan, review the result and learn the basic controls."
+noindex: true
+---
+
+Start with a small task you can check yourself. You will ask Zylon Code to turn two short documents into a workshop plan. Everything happens in the application: you do not need a terminal, a package manager or development tools.
+
+## 1. Open the example project
+
+Connect a model as described in [Connect to Zylon](/zylon-code/getting-started/connect-to-zylon). Download the [example documents](/files/zylon-code/first-task-desktop-en.zip), extract the archive and [select the extracted `first-task` folder in Zylon Code](/zylon-code/everyday-use/projects).
+
+The folder contains `brief.md`, which describes the task, and `notes.md`, which contains the meeting notes. These are ordinary text files. Open a conversation in that project with **New Session**, then choose **Standard** from the mode picker above the message box.
+
+## 2. Read before making changes
+
+Choose **Read Only** from the permissions menu in the message box, then send:
+
+```text
+Read brief.md and notes.md with the file-reading tools.
+Explain the expected result, identify the three preparation tasks and tell me
+which information is missing. Do not create or edit files, run commands,
+contact anyone or make reservations.
+```
+
+Expand the tool cards to check which files the agent read. Its reply should identify invitations, the room booking and slides. The slides have a deadline but no assigned owner. If the agent invents one, point to the notes and ask it to correct its answer.
+
+## 3. Create the plan
+
+To review the file in the application, enable [Zylon Diff Review](/zylon-code/plugins/diff) **before asking for the change**. You can also open the resulting file in the file panel.
+
+Select **Workspace Write** permissions, then send:
+
+```text
+Create plan.md using the file-writing tools and only the facts in brief.md
+and notes.md. Include the workshop date, budget and a table with three task
+rows and columns for task, owner and deadline. Write Pending where an owner is missing.
+Preserve the two original files. Do not run commands, install anything,
+contact anyone, book services or publish the plan.
+When finished, read plan.md again, compare it with the source documents
+and report the file created and any information still missing.
+```
+
+Review any approval request before accepting it. If the agent asks a question, answer through the displayed controls. You can [stop it or give it new instructions while it works](/zylon-code/everyday-use/conversations).
+
+## 4. Check the result
+
+Open `plan.md` and compare it with the original notes. It should contain:
+
+| Task | Owner | Deadline |
+| --- | --- | --- |
+| Prepare invitations | Marta | 10 November |
+| Book the room | Pablo | 12 November |
+| Prepare slides | Pending | 13 November |
+
+The workshop date should be **14 November** and the budget **no more than EUR 200**. Check that the original files remain unchanged. Creating this plan does not send invitations or book a room.
+
+If Diff Review was enabled, open **Pending changes** to inspect the new file or add a comment. The file is already saved: **Keep** marks it as reviewed; **Revert** deletes this newly created file after confirmation. Neither action creates a Git commit.
+
+Once you are comfortable with these steps, try a task in your own project. Explain the outcome, provide the relevant files and decide how you will check the result. Continue with the [interface tour](/zylon-code/getting-started/interface-tour); the [Hardening section](/zylon-code/hardening/overview) then shows how to apply these habits to more complex work.

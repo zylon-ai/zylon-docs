@@ -1,0 +1,53 @@
+---
+title: "Leave a handoff the next session can trust"
+description: "Record decisions, changes and evidence without relying on conversation memory."
+noindex: true
+---
+
+When work spans several sessions, the next agent needs to know what is true now. A long transcript is difficult to navigate; a vague “mostly done” note is not enough to continue safely.
+
+## Record the current state
+
+Keep a short task document when the work is large enough to need a handoff. An ordinary Markdown file, such as `docs/tasks/empty-search.md`, is sufficient. It is not updated or loaded automatically: ask the agent to maintain it and read it when continuing.
+
+```markdown
+# Empty-search fix
+
+Goal: empty and whitespace-only queries show all items in existing order.
+Decision: preserve the existing matching behavior for non-empty queries.
+Changed: src/search.mjs and tests/search.test.mjs.
+Checked: node --test tests/search.test.mjs; all cases passed after the edit.
+Not checked: the browser screen; the demo service was unavailable.
+Next: start the demo service and verify submitting an empty query in the screen.
+Existing work: README.md had unrelated edits before this task; preserve them.
+```
+
+Treat the recorded result as evidence about a particular version of the files. If the implementation has changed, recheck what matters. Notes are useful navigation, not a substitute for the current source or test output.
+
+## Track behavior instead of percentages
+
+For several features, a small table can distinguish pending, implemented, verified and blocked work. Add dependencies and the evidence used to verify each item.
+
+| Behavior | Status | Evidence or next action |
+| --- | --- | --- |
+| Empty query returns all items | Verified in function test | Focused test passed; screen still to check |
+| Screen submits an empty query | Blocked | Demo service unavailable |
+| Non-empty filtering is preserved | Verified in function test | Existing filtering cases passed |
+
+Record which check supports each status and what remains to be verified. Labels such as “90% complete” hide the missing requirement. If later edits break a behavior, update its status and check it again.
+
+## Leave a recoverable working state
+
+Before ending, ask the agent to inspect the diff, identify unfinished work and state which checks passed or failed. Explain whether temporary services or background jobs are still running. Preserve useful diagnostics and unrelated edits.
+
+“Clean state” means that someone can understand and resume the work. It does not require deleting incomplete changes, committing automatically or resetting the repository. Choose version-control actions according to your team's process and the task's authorization.
+
+Zylon's [goals and task lists](/zylon-code/everyday-use/goals-and-task-lists) help organize a conversation, while [session recovery](/zylon-code/troubleshooting/recovery) explains what the application persists. A repository handoff adds project-specific information that another conversation or person can inspect.
+
+Start the next session with:
+
+> Read docs/tasks/empty-search.md, inspect the current diff and confirm the remaining criterion. Do not repeat completed checks unless the relevant code or environment has changed. Continue with the browser verification, or report the concrete blocker.
+
+Continue with [diagnosing failures](/zylon-code/hardening/failure-recovery).
+
+Further reading: Walkinglabs on [session continuity](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-05-why-long-running-tasks-lose-continuity/) and [recoverable session endings](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-12-why-every-session-must-leave-a-clean-state/).

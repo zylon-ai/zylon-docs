@@ -1,0 +1,29 @@
+---
+title: "Network and offline operation"
+description: "Prepare deployment access, license verification, private certificates and dependencies."
+noindex: true
+---
+
+An internal model server can keep model requests on an approved network. Tools, accounts with other providers, plugins and project commands may still contact other services. Before working with sensitive data, check the installed desktop application on the network where it will be used.
+
+## License verification
+
+Startup checks the saved Zylon domain's license. After a successful check, the saved verification can temporarily allow use with that same domain during a network outage or server failure. It lasts five days by default and never extends beyond license expiry; your administrator can set a period from three to seven days. A denied or invalid license, a certificate failure or an expired verification blocks access. This grace period only covers the license check: models still need a reachable server.
+
+Initial setup and switching to a different domain require a successful verification. Keep the deployment's license endpoint and model endpoint reachable over your approved network. A local model does not remove Zylon Code's deployment-license requirement.
+
+## Private certificates
+
+The domain form in **Settings → General** can request confirmation for a valid certificate from an untrusted issuer. Compare its server address, SHA-256 fingerprint, issuer and validity dates with your administrator before accepting. Approval applies to the exact server origin (scheme, hostname and port) and certificate; a changed certificate needs confirmation again. Forgetting approval also clears the cached authorization. [Custom model providers](/zylon-code/models/providers) have their own discovery confirmation.
+
+For organization-wide certificate trust, ask your administrator to configure the approved certificate stores and launch environment. Keep hostname and certificate verification enabled. Opening the deployment in your browser does not confirm that the application's connection uses the same trust settings.
+
+## Proxies and dependencies
+
+If your network requires a proxy or corporate certificates, ask your administrator to prepare the installed application. Zylon Code supports HTTP and HTTPS proxies, but does not automatically use the operating system’s proxy settings. Your administrator must check the supported configuration and restart the application after changing it.
+
+Proxy configuration alone does not prevent direct network access. An invalid or unsupported address can leave a connection going directly to its destination; connections to this computer, such as `localhost`, also remain direct. For an isolated network, your administrator must restrict outbound access and check each enabled feature.
+
+Model services, optional plugin downloads, local MCP servers and project tools must be available through the network your organization allows. Ask your administrator to prepare any missing dependencies; installing Zylon Code does not install every optional integration.
+
+Check startup, a model response, tool use and reopening a conversation on the intended network. [Privacy](/zylon-code/configuration/privacy) explains where data may be sent; [Availability](/zylon-code/reference/availability) lists optional requirements.

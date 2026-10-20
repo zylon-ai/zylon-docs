@@ -124,9 +124,9 @@ Las tareas son ejecutadas por trabajadores de Zylon.
 
 Todas las APIs asíncronas tienen un endpoint relacionado que devuelve el estado de la tarea y su resultado, una vez que está disponible
 
-- /ingest/tasks/{task_id}
-- /delete/tasks/{task_id}
-- /summarize/tasks/{task_id}
-- /report/tasks/{task_id}
+- `/ingest/tasks/{task_id}`
+- `/delete/tasks/{task_id}`
+- `/summarize/tasks/{task_id}`
+- `/report/tasks/{task_id}`
 
 Las tareas asíncronas también pueden publicar actualizaciones en una cola amqp definida en la propiedad `callback` al crear la tarea.

@@ -1,0 +1,39 @@
+---
+title: "Subagente de Claude Code"
+description: "Delega una tarea acotada a Claude Code con su cuenta y sus ajustes propios."
+noindex: true
+---
+
+Subagente de Claude Code encarga una tarea independiente al agente de programación nativo de Claude Code. Devuelve la respuesta al agente de Zylon para que pueda utilizar sus conclusiones en la conversación principal. Sirve cuando quieres trabajar con las herramientas y los ajustes propios de Claude Code, en lugar de abrir otro chat de Zylon con un modelo de Claude.
+
+Si necesitas un agente al que seguir enviando mensajes dentro de Zylon Code, utiliza los [agentes de Zylon Code](/zylon-code/es/agents/delegation). Esta integración está pensada para un encargo completo de una sola ejecución.
+
+## Activa y prepara el acceso
+
+1. Abre **Plugins → Plugins experimentales → Más** y activa **Subagente de Claude Code**.
+2. Espera a que termine la descarga del entorno compatible, si hace falta, y reinicia si se indica. El proceso nativo solo arranca al delegar una tarea.
+3. Pide al administrador que prepare la autenticación nativa de Claude Code y unos permisos adecuados para trabajar sin preguntas interactivas, con el usuario que ejecuta Zylon Code. El plugin no ofrece un asistente para configurar esa cuenta.
+
+Hace falta el entorno incluido en el paquete. La integración no recurre a un ejecutable `claude` encontrado en el ordenador. El token de Zylon y la conexión de cuenta en Modelos no configuran este agente independiente.
+
+La [configuración del perfil](/zylon-code/es/advanced/profiles-and-yaml) permite fijar el modelo y el modo de permisos nativo. Si no se fija un modelo, se utiliza el de los ajustes nativos de Claude. El modelo elegido para el agente principal y su lista de modelos autorizados no se aplican a esta integración. La configuración propia del usuario y del proyecto puede influir en el trabajo; pide al administrador que revise el entorno previsto.
+
+Los permisos del agente principal no se copian automáticamente al entorno nativo. Si necesitas imponer solo lectura, configura también el acceso nativo adecuado; indicarlo en el encargo no basta. La ejecución no espera a que respondas a los diálogos nativos de permisos o aclaraciones.
+
+## Ejemplo: encuentra casos sin probar
+
+> Delega una tarea de solo lectura en Claude Code: lee el analizador de configuración y sus pruebas. Identifica casos que falten para claves desconocidas, valores vacíos y entradas mal formadas. Devuelve un informe breve con referencias a archivos y comprobaciones propuestas. No edites, instales dependencias ni crees más agentes. Espera el informe antes de implementar.
+
+`subagent_claude_code` inicia el trabajo en segundo plano y devuelve un identificador de agente. El agente principal recibe la respuesta final o un error resumido. El agente externo no tiene el historial del chat principal: incluye las rutas, los datos y las restricciones que necesite.
+
+## Comprueba el resultado
+
+Cada encargo utiliza una sesión nativa nueva. No admite mensajes de seguimiento ni reanudación; envía otro encargo completo si hace falta más trabajo. El resultado no incluye un chat local con toda la actividad nativa ni el detalle de sus cambios. Si permitiste ediciones, consulta los archivos y las pruebas relevantes por separado.
+
+El agente comparte el directorio del proyecto salvo que prepares otro. También cuenta para el [límite de agentes en paralelo](/zylon-code/es/agents/models-and-limits). Cancelar detiene el trabajo en curso sin restaurar los archivos modificados.
+
+Que el interruptor esté activado no confirma que la autenticación, los permisos o el entorno estén listos. Empieza con la revisión acotada anterior y examina cualquier fallo antes de permitir ediciones. Desactivar el plugin retira su herramienta, pero conserva el paquete descargado y los cambios existentes.
+
+<Frame caption="Componentes de Subagente de Claude Code, desactivados en este ejemplo">
+  <img src="/images/zylon-code/screenshots/plugins-claude-code-subagent-es.jpg" alt="Componentes de Subagente de Claude Code, desactivados en este ejemplo" />
+</Frame>

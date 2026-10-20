@@ -1,0 +1,47 @@
+---
+title: "Define a task the agent can finish"
+description: "Turn a vague request into an objective, a scope and observable completion criteria."
+noindex: true
+---
+
+“Fix search” leaves many decisions open. Should an empty query return nothing or everything? Should matching ignore case? Is a redesign allowed? If you have an answer, state it. Otherwise ask the agent to investigate and present the decision before implementing it.
+
+## Include five useful facts
+
+A good task brief describes the **outcome**, the **current behavior**, the **scope**, the **checks** and the **conditions for stopping**. A few sentences are enough for a small change.
+
+For the search example:
+
+```text
+Goal: an empty or whitespace-only search shows all items in their current order.
+Current behavior: submitting an empty query shows an error.
+Scope: search handling and its existing tests. Keep non-empty filtering unchanged.
+Evidence: reproduce the empty-query behavior, then add a focused regression check.
+Done: empty and whitespace queries work, ordinary filtering still passes,
+      and the final diff contains only changes needed for this behavior.
+Stop and ask if the product behavior is ambiguous or a public API must change.
+```
+
+“Done” must describe something observable. “Improve quality” is a direction; “show all items for an empty query, with the regression test passing” is a checkable outcome. Passing a test does not prove every requirement, so also identify anything that needs visual or human review.
+
+## Separate investigation from implementation
+
+When you do not know the relevant files, start with a [read-only task](/zylon-code/configuration/permissions):
+
+> Find the code path used by the search screen and the existing tests for it. Read the project instructions. Explain the likely cause of the empty-query error, name the smallest change and tell me how you would verify it. Do not edit files or install dependencies.
+
+Once the explanation matches what you know, request the change. Carry the decisions into the implementation prompt instead of relying on “do the thing we discussed” after a long exchange.
+
+> Implement the agreed empty-query behavior. Use the existing test setup and keep the change within search handling. Run the focused checks you identified. Report changed files, commands and results, and any requirement you could not verify. If the change requires unrelated refactoring, stop and explain why.
+
+## Give the agent useful freedom
+
+State constraints that matter: compatibility, permitted folders, existing work to preserve and actions that need your approval. Avoid prescribing every intermediate step when the agent can inspect the repository and choose a reasonable approach.
+
+If several outcomes are independent, request one complete outcome first. “Fix empty search, rewrite sorting, migrate the database and improve accessibility” makes both execution and review harder. A bounded change can include several files when those files are needed to complete the same behavior.
+
+Do not add contradictory rules such as “never ask questions” and “ask before any decision”. Name the decisions that require input, then let the agent proceed with routine implementation choices. A prompt is guidance; configure [permissions](/zylon-code/configuration/permissions) for actual access restrictions.
+
+Next, put the stable project facts in [project instructions](/zylon-code/hardening/project-instructions), so you do not have to repeat them in every task.
+
+Further reading: Walkinglabs on [task scope](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-07-why-agents-overreach-and-under-finish/) and [observable feature criteria](https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-08-why-feature-lists-are-harness-primitives/).

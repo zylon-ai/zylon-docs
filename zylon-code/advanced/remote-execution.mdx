@@ -1,0 +1,17 @@
+---
+title: "Remote execution over SSH"
+description: "Check whether your organization provides access to projects on a remote machine."
+noindex: true
+---
+
+The normal Desktop application works on folders on your computer. It does not offer a ready remote-project button for SSH execution.
+
+Your organization may provide a custom SSH integration for working with files and commands on another machine. Ask the administrator whether it is available and which instructions apply. Selecting a model hosted elsewhere does not move your project to that server.
+
+## If your organization supplies a remote integration
+
+Ask which project paths are remote, where model requests run and how permissions are enforced. Both the filesystem and command tools must use the same remote environment. The administrator also needs to prepare SSH authentication, trusted host keys and the matching remote runtime.
+
+Check a read-only file operation and a bounded command before editing. After disconnection, inspect remote state before retrying: the previous command may still have completed. Automatic reconnection and replay are not provided by this integration.
+
+For local projects, follow [Projects](/zylon-code/everyday-use/projects). For model connections hosted elsewhere, use [Other providers](/zylon-code/models/providers); those connections do not move your project files.

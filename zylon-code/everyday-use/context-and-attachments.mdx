@@ -1,0 +1,35 @@
+---
+title: "Context and attachments"
+description: "Point the agent to files, folders and connected services, or attach documents and images."
+noindex: true
+---
+
+Give the agent the files and constraints it needs for the task. Selecting a project tells it where to work; it does not include the full contents of every file in each model request.
+
+## Reference a file, folder or service
+
+Type `@` and choose a file or folder from the suggestions. The agent can read it using its tools and permissions. Enabled servers from [MCP Manager](/zylon-code/plugins/mcp) also appear in this menu.
+
+For example, select two real files and ask:
+
+> Compare @src/config.ts with @docs/config.md. List the mismatches with file and line references. Do not edit either file.
+
+A reference tells the agent which resource you mean; it does not grant extra access.
+
+## Attach content
+
+Use the attachment action, drag a file or paste supported content. Wait for any upload to finish before sending. You can retry or remove failed uploads.
+
+A reference points to the original file or folder, which must remain available. Uploading a file saves a read-only copy with the conversation for the agent to consult when needed.
+
+For images, choose a model that supports image input; see [model options](/zylon-code/models/model-options). If an image is rejected, follow the error instructions or remove it before sending the message again.
+
+## Choose useful context
+
+Name the relevant folder, explain the task and let the agent inspect what it needs. The content the agent reads and the results its tools return use up the model's limited context. [Long conversations](/zylon-code/everyday-use/long-conversations) explains how to manage it.
+
+Next, learn how to [review results](/zylon-code/everyday-use/reviewing-results).
+
+<Frame caption="Adding a folder reference and choosing a project file with @">
+  <img src="/images/zylon-code/screenshots/everyday-use-context-and-attachments-en.jpg" alt="Adding a folder reference and choosing a project file with @" />
+</Frame>

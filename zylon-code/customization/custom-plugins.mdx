@@ -1,0 +1,23 @@
+---
+title: "Create a custom plugin"
+description: "Create a feature with its own tools or interface, then install and test it."
+noindex: true
+---
+
+A custom plugin can add a tool, settings page or sidebar feature. Use a [skill](/zylon-code/customization/skills) for a repeatable instruction procedure; choose a plugin when you need new application behavior or UI.
+
+## Describe a small feature
+
+> Create a Project Checklist plugin. Store checklist items for the current project, show them in a sidebar page and let the agent list, add and complete items. Keep approval decisions in the user's controls. Include English and Spanish labels, installation steps and a way to test it.
+
+Explain which data should survive a restart, what the interface displays and what the agent may do. State which operations must remain under your control.
+
+## Build and install
+
+Start a [Creator](/zylon-code/modes/creator) conversation. Ask it to inspect the installed application APIs, create the plugin and package it as a local bundle. Creator handles local installation; the Plugins page lets you manage the features already offered by your application. Review the generated source, dependencies and installation scripts before authorizing installation. A package or runtime download may need Internet access or an internal registry. Ask the agent to report the package location, activation result and recovery steps; a generated folder alone does not mean the plugin is loaded.
+
+Test both the interface and the agent's tools. Check a meaningful error and disable/re-enable behavior. A new conversation may be needed when the feature changes a mode's tools.
+
+## Keep the feature usable
+
+Save the source, configuration and compatible application version. Zylon does not automatically maintain or translate generated and third-party plugins. Check compatibility before updating the application and keep clear instructions for removing the feature.

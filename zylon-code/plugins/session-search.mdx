@@ -1,0 +1,40 @@
+---
+title: "Session search"
+description: "Let the agent find and inspect earlier work in the same project."
+noindex: true
+---
+
+Session search lets the agent retrieve earlier work without you copying an entire conversation into a new task. It searches recorded conversations, then reads the matching messages or tool results. Use it to recover a decision, an error you investigated or the evidence behind a previous change.
+
+It is different from sidebar search, which finds chats by title or project. Enabling this plugin gives the agent content-search tools; it does not add all earlier chats to every model request.
+
+## Enable and choose the project
+
+Open **Plugins → Experimental plugins → More** and enable **Session search**. The experimental plugin starts disabled and supplies read-only tools in every mode, including Minimal.
+
+Access is restricted to authorized conversations with the same recorded project directory. If you open a copy or worktree as a separate project, its accessible history can be different. Without a recorded project directory, a conversation can inspect only itself.
+
+## Example: recover a decision before editing
+
+> Search earlier conversations in this project for the decision about empty search results. Read the matching discussion and tool evidence. Summarize what was agreed, identify the source conversation and check whether the current files still match it. Do not edit anything.
+
+A useful result follows three steps: find a relevant conversation, read the evidence and compare it with the current project. Exact filenames, error messages and distinctive terms help narrow a search.
+
+| Tool | What it retrieves |
+| --- | --- |
+| `session_search` | Matching earlier conversations with titles and excerpts; excludes the current chat. |
+| `session_event_search` | Matching messages and tool activity inside one authorized conversation. |
+| `session_event_read` | A complete conversation record, such as a message or tool result, with optional summaries of nearby records. |
+| `session_trace`, `session_event_trace` | Related conversations and links between conversation records. |
+
+You can describe the outcome naturally; the agent chooses these calls.
+
+## Use the evidence carefully
+
+An earlier discussion records what was known then. A test result may refer to an older implementation. Ask the agent to check current files before treating the result as a present-day fact. If search returns too much or reaches its result limit, narrow the query; an incomplete search does not prove a decision never existed.
+
+The search index stays local. Turning the plugin off removes the tools without deleting conversations. Use a [task handoff](/zylon-code/hardening/session-state) for the concise state you want the next conversation to read directly.
+
+<Frame caption="Session search components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-session-search-en.jpg" alt="Session search components, disabled in this example" />
+</Frame>

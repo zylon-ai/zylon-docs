@@ -1,0 +1,39 @@
+---
+title: "Claude Code subagent"
+description: "Delegate one bounded task to Claude Code with its native account and settings."
+noindex: true
+---
+
+Claude Code subagent delegates one self-contained task to the native Claude Code coding agent. It returns the answer to your Zylon agent so that the main conversation can use the findings. Use it when you want work performed with Claude Code's own tools and native settings, rather than another Zylon conversation using a Claude model.
+
+For a child you can continue messaging inside Zylon Code, use [Zylon Code agents](/zylon-code/agents/delegation). This integration is intended for a complete one-time assignment.
+
+## Enable and prepare access
+
+1. Open **Plugins → Experimental plugins → More** and enable **Claude Code subagent**.
+2. Wait for any compatible runtime download and follow a restart notice if shown. The native process starts only when a task is delegated.
+3. Have your administrator prepare native Claude Code authentication and a suitable non-interactive permission policy for the user running Zylon Code. There is no native account-setup wizard in this plugin.
+
+The packaged runtime is required. The integration does not fall back to a `claude` executable found on your computer. Your Zylon token and the account connection in Models do not configure this separate agent.
+
+The integration's [profile configuration](/zylon-code/advanced/profiles-and-yaml) can set a model and native permission mode. Otherwise its model comes from native Claude settings. The parent's selected model and allowed-model list do not choose it. Native project and user configuration can affect its work, so have the administrator check the intended environment.
+
+The parent's permissions are not automatically copied to the native runtime. A read-only task prompt must be matched by appropriate native access settings when you need that restriction enforced. The run does not wait for you to answer native permission or clarification dialogs.
+
+## Example: inspect missing test coverage
+
+> Delegate one read-only task to Claude Code: read the configuration parser and its tests. Identify missing cases for unknown keys, empty values and malformed input. Return a short report with file references and suggested checks. Do not edit, install dependencies or create more agents. Wait for the report before implementing anything.
+
+The `subagent_claude_code` call starts an asynchronous run and returns an agent ID. The parent receives its final answer or a safe failure diagnostic. The child has no parent-chat history, so include the necessary paths, facts and restrictions in the assignment.
+
+## Check the outcome
+
+A fresh native session handles each assignment. Follow-up messages and resume are not supported; send another complete assignment for additional work. The result does not include a local child chat with all native tool activity or diffs. If edits were permitted, check the actual files and relevant tests yourself.
+
+The delegated agent works in the selected project directory unless you prepared another one. It also counts toward the [subagent parallelism limit](/zylon-code/agents/models-and-limits). Cancellation stops ongoing work without restoring changed files.
+
+An enabled switch does not prove native authentication, permissions or the runtime are ready. Start with the bounded read-only check above and investigate a reported failure before allowing edits. Switching the plugin off removes its tool while retaining the downloaded package and existing file changes.
+
+<Frame caption="Claude Code subagent components, disabled in this example">
+  <img src="/images/zylon-code/screenshots/plugins-claude-code-subagent-en.jpg" alt="Claude Code subagent components, disabled in this example" />
+</Frame>

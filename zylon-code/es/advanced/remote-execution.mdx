@@ -1,0 +1,17 @@
+---
+title: "Ejecución remota por SSH"
+description: "Consulta si tu organización ofrece acceso a proyectos alojados en otro ordenador."
+noindex: true
+---
+
+La aplicación de escritorio habitual trabaja con carpetas de tu ordenador. No ofrece un botón de proyecto remoto listo para ejecutar por SSH.
+
+Tu organización puede ofrecer una integración SSH personalizada para trabajar con archivos y ejecutar tareas en otro ordenador. Pregunta al administrador si está disponible y cómo utilizarla. Elegir un modelo alojado en otro servidor no traslada allí tu proyecto.
+
+## Si tu organización ofrece una integración remota
+
+Pregunta qué rutas pertenecen al servidor, dónde se realizan las peticiones al modelo y cómo se aplican los permisos. Las herramientas de archivos y comandos deben utilizar el mismo entorno remoto. El administrador también tiene que preparar la autenticación SSH, las claves de confianza y un entorno remoto compatible.
+
+Comprueba una lectura y un comando acotado antes de editar. Si se pierde la conexión, consulta el estado remoto antes de reintentar: el comando anterior puede haber terminado. La integración no reconecta ni repite las operaciones automáticamente.
+
+Para proyectos locales, sigue [Proyectos](/zylon-code/es/everyday-use/projects). Para un modelo alojado en otro servidor, utiliza [Otros proveedores](/zylon-code/es/models/providers); esa conexión no traslada tus archivos.

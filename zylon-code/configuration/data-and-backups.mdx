@@ -1,0 +1,32 @@
+---
+title: "Data and backups"
+description: "Export conversations and keep a backup of application data and projects."
+noindex: true
+---
+
+Zylon Code normally stores its application data in `~/.zylon-code`, where `~` means your user folder. Project files stay in the folders you selected. If your organization configured a different data location, use that location for backups.
+
+| Data | What to back up |
+| --- | --- |
+| Code and deliverables | Your project folders. Git preserves tracked versions; include untracked and ignored files in your file backups when needed. |
+| Conversations and attachments | The application's data folder and session storage. |
+| Model and plugin settings | Configuration saved in the application's data folder. |
+| Credentials | The local credential file, normally `.credentials.yaml` inside the data folder. Protect backups that contain it. |
+
+## Export a conversation
+
+Choose **Export** or `/export` in a conversation. Complete the download dialog and check that the file was saved. Review it before sharing: it may contain prompts, paths and tool output. This export contains conversation data, not a backup of the project files.
+
+## Back up or move your data
+
+To find the default folder, use **Go → Go to Folder** in macOS Finder and enter `~/.zylon-code`. On Windows, enter `%USERPROFILE%\.zylon-code` in the File Explorer address bar. These are folder locations, not terminal commands. If your organization uses another location, ask your administrator for it.
+
+1. Quit Zylon Code completely.
+2. Copy the entire data folder, including hidden files, and back up your project folders separately.
+3. Keep the originals until you have verified that restored conversations, attachments and settings open correctly.
+
+If your organization supplies credentials through another store or the launch environment, follow its instructions for restoring them.
+
+Restoring settings does not grant a new license or renew an expired one. The app verifies the configured domain at startup. Review any saved private-certificate approval before using the restored connection.
+
+Follow the instructions supplied with an update when a data migration is needed. Avoid manually changing stored session formats. If conversations appear missing, check the application's data location before deleting or resetting anything. See [Recovery](/zylon-code/troubleshooting/recovery).

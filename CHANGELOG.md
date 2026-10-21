@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/zylon-ai/zylon-docs/compare/v1.0.0...v1.1.0) (2026-10-21)
+
+
+### Features
+
+* configure documentation version for airgap images ([eee0197](https://github.com/zylon-ai/zylon-docs/commit/eee019770aa1857d38d7ad75903c73e6611cf403))
+* select airgap documentation version ([a4e45a3](https://github.com/zylon-ai/zylon-docs/commit/a4e45a391d508ff20a7c4eae26bdfa2dcfd462d4))
+* select airgap images in manual workflow ([e2c179c](https://github.com/zylon-ai/zylon-docs/commit/e2c179cd7fa4662e75dd5fc1fe29865c7b20f149))
+
+
+### Fixes
+
+* preserve external airgap link aliases ([a921743](https://github.com/zylon-ai/zylon-docs/commit/a921743aea9e652b9d170535cbb2037384053086))
+
 ## 1.0.0 (2026-10-20)
 
 

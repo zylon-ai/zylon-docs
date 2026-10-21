@@ -27,3 +27,4 @@
 !offline/test/
 !offline/test/**
 **/.*
+!.env.airgap

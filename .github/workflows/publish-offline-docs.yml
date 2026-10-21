@@ -13,6 +13,11 @@ on:
         description: Existing stable docs release tag to retry, e.g. v1.0.0 (leave documentation_sha empty)
         required: false
         type: string
+      AIRGAP_VERSION:
+        description: Zylon manual version, e.g. 1.58; empty uses .env.airgap; unknown builds all versions
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -82,6 +87,29 @@ jobs:
             echo 'Grant this repository access to AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY before publishing.' >&2
             exit 1
           }
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Resolve the airgap documentation version and image variant
+        id: airgap
+        env:
+          REQUESTED_AIRGAP_VERSION: ${{ inputs.AIRGAP_VERSION }}
+          BASE_IMAGE_TAG: ${{ steps.image.outputs.tag }}
+        run: |
+          version=""
+          if [ -f offline/airgap.mjs ]; then
+            if [ -n "$REQUESTED_AIRGAP_VERSION" ]; then
+              version=$(AIRGAP_VERSION="$REQUESTED_AIRGAP_VERSION" node offline/airgap.mjs)
+            else
+              version=$(env -u AIRGAP_VERSION node offline/airgap.mjs)
+            fi
+          elif [ -n "$REQUESTED_AIRGAP_VERSION" ]; then
+            echo 'This documentation commit does not support AIRGAP_VERSION. Select a commit containing the airgap version selector.' >&2
+            exit 1
+          fi
+          tag="$BASE_IMAGE_TAG"
+          if [ -n "$REQUESTED_AIRGAP_VERSION" ]; then tag="$tag-airgap-${version:-all}"; fi
+          printf 'version=%s\ntag=%s\n' "$version" "$tag" >> "$GITHUB_OUTPUT"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -92,7 +120,7 @@ jobs:
       - name: Require the provisioned immutable repository and locate existing tags
         id: repository
         env:
-          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_TAG: ${{ steps.airgap.outputs.tag }}
         run: |
           test "$(aws sts get-caller-identity --query Account --output text)" = "$AWS_ACCOUNT_ID"
           mutability=$(aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --query 'repositories[0].imageTagMutability' --output text)
@@ -106,9 +134,11 @@ jobs:
           fi
       - name: Compile and validate the actual runtime image
         if: steps.repository.outputs.exists == 'false'
+        env:
+          AIRGAP_VERSION: ${{ steps.airgap.outputs.version }}
         run: |
-          docker build -f offline/Dockerfile -t zylon-docs:release .
-          bash offline/check-container.sh zylon-docs:release
+          docker build -f offline/Dockerfile --build-arg "AIRGAP_VERSION=$AIRGAP_VERSION" -t zylon-docs:release .
+          bash offline/check-container.sh zylon-docs:release "$AIRGAP_VERSION"
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
       - name: Set up QEMU
@@ -119,18 +149,22 @@ jobs:
       - name: Publish the independent documentation image
         if: steps.repository.outputs.exists == 'false'
         env:
-          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_TAG: ${{ steps.airgap.outputs.tag }}
           DOCS_SHA: ${{ steps.image.outputs.sha }}
+          AIRGAP_VERSION: ${{ steps.airgap.outputs.version }}
         run: |
           docker buildx build -f offline/Dockerfile \
             --platform linux/amd64,linux/arm64 --provenance=false \
+            --build-arg "AIRGAP_VERSION=$AIRGAP_VERSION" \
             --label "org.opencontainers.image.revision=$DOCS_SHA" \
             --label "org.opencontainers.image.version=$IMAGE_TAG" \
+            --label "ai.zylon.docs.airgap-version=$AIRGAP_VERSION" \
             --tag "$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" --push .
       - name: Verify both published platforms and their source revision
         env:
-          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_TAG: ${{ steps.airgap.outputs.tag }}
           DOCS_SHA: ${{ steps.image.outputs.sha }}
+          AIRGAP_VERSION: ${{ steps.airgap.outputs.version }}
         run: |
           image="$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker buildx imagetools inspect --raw "$image" > "$RUNNER_TEMP/docs-image.json"
@@ -150,6 +184,8 @@ jobs:
             test "$(docker image inspect "$platform_image" --format '{{ .Os }}/{{ .Architecture }}')" = "linux/$arch"
             revision=$(docker image inspect "$platform_image" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')
             test "$revision" = "$DOCS_SHA" || { echo "Published $arch image does not match the requested documentation commit." >&2; exit 1; }
+            airgap=$(docker image inspect "$platform_image" --format '{{ with index .Config.Labels "ai.zylon.docs.airgap-version" }}{{ . }}{{ end }}')
+            test "$airgap" = "$AIRGAP_VERSION" || { echo "Published $arch image has a different airgap documentation selection." >&2; exit 1; }
             if [[ "$IMAGE_TAG" != docs-* ]]; then
               version=$(docker image inspect "$platform_image" --format '{{ index .Config.Labels "org.opencontainers.image.version" }}')
               test "$version" = "$IMAGE_TAG" || { echo "Published $arch image has a different documentation version." >&2; exit 1; }
@@ -157,8 +193,10 @@ jobs:
           done < "$RUNNER_TEMP/docs-platforms.txt"
       - name: Report the published image digest
         env:
-          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          IMAGE_TAG: ${{ steps.airgap.outputs.tag }}
+          AIRGAP_VERSION: ${{ steps.airgap.outputs.version }}
         run: |
           digest=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids "imageTag=$IMAGE_TAG" --query 'imageDetails[0].imageDigest' --output text)
           [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
           printf '### Documentation image\n\n`%s/%s:%s`\n\nDigest: `%s`\n' "$REGISTRY" "$ECR_REPOSITORY" "$IMAGE_TAG" "$digest" >> "$GITHUB_STEP_SUMMARY"
+          printf '\nAirgap manual: `%s`\n' "${AIRGAP_VERSION:-all versions}" >> "$GITHUB_STEP_SUMMARY"

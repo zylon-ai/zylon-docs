@@ -62,3 +62,5 @@ Review the two landing pages, a nested plugin guide and an existing main-doc pag
 ## Offline documentation
 
 `offline/` renders the same registered MDX pages and local assets as a standalone site under `/docs`. It uses its own open-source renderer, navigation and local search; it does not ship the Mintlify application or require Enterprise export. External videos remain clearly marked online links. See [the offline build guide](offline/README.md) for build, container and verification steps.
+
+Release images default to the complete versioned site: `AIRGAP_VERSION` is empty in the root `.env.airgap` file. The manual publication workflow accepts an optional `AIRGAP_VERSION` input to generate a selected bilingual image without a version picker or version segments in article routes. Explicit manual selections use independent tags such as `1.1.0-airgap-1.58`, so they coexist with the base release image. Empty input uses the committed setting; unknown selections include all versions. Mintlify navigation and all source versions remain unchanged. See [airgap version selection](offline/README.md#select-an-airgap-version).

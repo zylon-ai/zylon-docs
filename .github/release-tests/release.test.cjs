@@ -78,7 +78,7 @@ function fixture(t) {
   git('commit', '-m', 'chore: release 1.0.0');
   git('tag', 'v1.0.0');
   const sha = git('rev-parse', 'HEAD');
-  const env = {...process.env, DOCS_SHA: '', RELEASE_TAG: '', RUNNER_TEMP: dir, GITHUB_OUTPUT: join(dir, 'output'), GITHUB_REPOSITORY: 'zylon-ai/zylon-docs', PATH: `${bin}:${process.env.PATH}`, RELEASE_JSON: JSON.stringify({tag_name: 'v1.0.0', draft: false, prerelease: false})};
+  const env = {...process.env, DOCS_SHA: '', RELEASE_TAG: '', BASE_IMAGE_TAG: '1.0.0', REQUESTED_AIRGAP_VERSION: '', RUNNER_TEMP: dir, GITHUB_OUTPUT: join(dir, 'output'), GITHUB_REPOSITORY: 'zylon-ai/zylon-docs', PATH: `${bin}:${process.env.PATH}`, RELEASE_JSON: JSON.stringify({tag_name: 'v1.0.0', draft: false, prerelease: false})};
   return {dir, bin, sha, git, run(step, overrides = {}) {
     writeFileSync(env.GITHUB_OUTPUT, '');
     const script = steps.find(item => item.id === step || item.name === step).run;
@@ -132,6 +132,43 @@ test('draft, prerelease and mismatched GitHub releases cannot publish images', t
   }
 });
 
+test('publisher defaults to all versions and manual selections receive independent immutable tags', t => {
+  const f = fixture(t);
+  const step = 'airgap';
+  assert.equal(f.run(step).output, 'version=\ntag=1.0.0\n');
+  const oldSnapshot = f.run(step, {REQUESTED_AIRGAP_VERSION: '1.58'});
+  assert.notEqual(oldSnapshot.status, 0);
+  assert.match(oldSnapshot.stderr, /does not support AIRGAP_VERSION/);
+  mkdirSync(join(f.dir, 'offline'));
+  for (const name of ['airgap.mjs', 'navigation.mjs']) {
+    writeFileSync(join(f.dir, 'offline', name), readFileSync(join(root, 'offline', name)));
+  }
+  writeFileSync(join(f.dir, 'docs.json'), JSON.stringify({navigation: {products: [{product: 'Zylon', versions: ['1.57', '1.58 (Upcoming release)'].map(version => ({version, languages: ['es', 'en'].map(language => ({language, pages: [`${language}/v${version.split(' ')[0]}/intro`]}))}))}]}}));
+  writeFileSync(join(f.dir, '.env.airgap'), 'AIRGAP_VERSION=\n');
+  assert.equal(f.run(step).output, 'version=\ntag=1.0.0\n');
+  const selected = f.run(step, {REQUESTED_AIRGAP_VERSION: '1.58'});
+  assert.equal(selected.status, 0, selected.stderr);
+  assert.equal(selected.output, 'version=1.58\ntag=1.0.0-airgap-1.58\n');
+  assert.equal(f.run(step, {REQUESTED_AIRGAP_VERSION: '1.57'}).output, 'version=1.57\ntag=1.0.0-airgap-1.57\n');
+  assert.equal(f.run(step, {REQUESTED_AIRGAP_VERSION: '1.58', BASE_IMAGE_TAG: `docs-${f.sha}`}).output, `version=1.58\ntag=docs-${f.sha}-airgap-1.58\n`);
+  for (const value of ['unknown', 'null']) {
+    assert.equal(f.run(step, {REQUESTED_AIRGAP_VERSION: value}).output, 'version=\ntag=1.0.0-airgap-all\n');
+  }
+});
+
+test('manual input overrides committed selection while an empty input follows the file', t => {
+  const f = fixture(t);
+  mkdirSync(join(f.dir, 'offline'));
+  for (const name of ['airgap.mjs', 'navigation.mjs']) {
+    writeFileSync(join(f.dir, 'offline', name), readFileSync(join(root, 'offline', name)));
+  }
+  writeFileSync(join(f.dir, 'docs.json'), JSON.stringify({navigation: {products: [{product: 'Zylon', versions: ['1.57', '1.58'].map(version => ({version, languages: ['es', 'en'].map(language => ({language, pages: [`${language}/v${version}/intro`]}))}))}]}}));
+  writeFileSync(join(f.dir, '.env.airgap'), 'AIRGAP_VERSION=1.57\n');
+  assert.equal(f.run('airgap', {AIRGAP_VERSION: 'unknown-ambient-value'}).output, 'version=1.57\ntag=1.0.0\n');
+  assert.equal(f.run('airgap', {REQUESTED_AIRGAP_VERSION: '1.58'}).output, 'version=1.58\ntag=1.0.0-airgap-1.58\n');
+  assert.equal(f.run('airgap', {REQUESTED_AIRGAP_VERSION: 'null'}).output, 'version=\ntag=1.0.0-airgap-all\n');
+});
+
 test('existing images must contain both platforms with the requested revision and version', t => {
   const f = fixture(t);
   writeFileSync(join(f.bin, 'docker'), `#!/usr/bin/env python3
@@ -144,7 +181,9 @@ elif args[0] == 'pull':
 elif args[:2] == ['image', 'inspect']:
     assert '@sha256:' in args[2], 'Inspection must use the child manifest digest'
     arch = 'amd64' if args[2].endswith('a' * 64) else 'arm64'
-    if 'revision' in args[-1]:
+    if 'airgap-version' in args[-1]:
+        print(os.environ.get('PUBLISHED_AIRGAP_VERSION', ''))
+    elif 'revision' in args[-1]:
         print(os.environ['REVISION_' + arch])
     elif 'version' in args[-1]:
         print(os.environ['IMAGE_VERSION'])
@@ -153,11 +192,16 @@ elif args[:2] == ['image', 'inspect']:
 else:
     raise SystemExit('Unexpected Docker call: ' + repr(args))
 `, {mode: 0o755});
-  const input = {REGISTRY: 'example.invalid', ECR_REPOSITORY: 'zylon-docs', IMAGE_TAG: '1.0.0', DOCS_SHA: f.sha, PLATFORMS: 'amd64,arm64', REVISION_amd64: f.sha, REVISION_arm64: f.sha, IMAGE_VERSION: '1.0.0'};
+  const input = {REGISTRY: 'example.invalid', ECR_REPOSITORY: 'zylon-docs', IMAGE_TAG: '1.0.0', DOCS_SHA: f.sha, PLATFORMS: 'amd64,arm64', REVISION_amd64: f.sha, REVISION_arm64: f.sha, IMAGE_VERSION: '1.0.0', AIRGAP_VERSION: ''};
   const step = 'Verify both published platforms and their source revision';
   assert.equal(f.run(step, input).status, 0);
   for (const invalid of [{PLATFORMS: 'amd64'}, {ARCH_arm64: 'amd64'}, {REVISION_arm64: 'wrong'}, {REVISION_amd64: 'wrong'}, {IMAGE_VERSION: '1.58.0-beta5'}]) {
     assert.notEqual(f.run(step, {...input, ...invalid}).status, 0, JSON.stringify(invalid));
   }
   assert.equal(f.run(step, {...input, IMAGE_TAG: `docs-${f.sha}`, IMAGE_VERSION: ''}).status, 0);
+  assert.equal(f.run(step, {...input, AIRGAP_VERSION: '1.58', PUBLISHED_AIRGAP_VERSION: '1.58'}).status, 0);
+  assert.notEqual(f.run(step, {...input, AIRGAP_VERSION: '1.58', PUBLISHED_AIRGAP_VERSION: '1.57'}).status, 0);
+  const variant = {...input, IMAGE_TAG: '1.0.0-airgap-1.58', IMAGE_VERSION: '1.0.0-airgap-1.58', AIRGAP_VERSION: '1.58', PUBLISHED_AIRGAP_VERSION: '1.58'};
+  assert.equal(f.run(step, variant).status, 0);
+  assert.notEqual(f.run(step, {...variant, IMAGE_VERSION: '1.0.0'}).status, 0);
 });

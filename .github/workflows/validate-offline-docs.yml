@@ -29,11 +29,26 @@ jobs:
   build-and-run:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - airgap-version: ''
+            expected-version: ''
+          - airgap-version: '1.57'
+            expected-version: '1.57'
+          - airgap-version: '1.58'
+            expected-version: '1.58'
+          - airgap-version: 'unknown-version'
+            expected-version: ''
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Compile all documentation and run behavior tests in the image build
-        run: docker build -f offline/Dockerfile -t zylon-docs:ci .
+        env:
+          AIRGAP_VERSION: ${{ matrix.airgap-version }}
+        run: docker build -f offline/Dockerfile --build-arg "AIRGAP_VERSION=$AIRGAP_VERSION" -t zylon-docs:ci .
       - name: Verify offline image with no network and a read-only filesystem
-        run: bash offline/check-container.sh zylon-docs:ci
+        env:
+          EXPECTED_VERSION: ${{ matrix.expected-version }}
+        run: bash offline/check-container.sh zylon-docs:ci "$EXPECTED_VERSION"

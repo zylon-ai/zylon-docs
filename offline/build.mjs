@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { createRenderer, rewriteHtml, verifyAssets, localUrl } from './render.mjs';
 import { readNavigation, outputFile, routePath } from './navigation.mjs';
 import { pageHtml, redirectHtml, plainText } from './template.mjs';
+import { readAirgapVersion, projectAirgap } from './airgap.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 async function write(path, content) { await mkdir(dirname(path), { recursive: true }); await writeFile(path, content); }
@@ -25,18 +26,21 @@ async function copyPublic(source, destination) {
 }
 
 /** Build from a known source tree. Output is disposable and must not contain the source. */
-export async function buildSite({ source = resolve(HERE, '..'), output = resolve(HERE, 'dist'), base = '/docs', progress = () => {} } = {}) {
+export async function buildSite({ source = resolve(HERE, '..'), output = resolve(HERE, 'dist'), base = '/docs', progress = () => {}, airgapVersion } = {}) {
   source = resolve(source); output = resolve(output);
   if (base !== '/docs') throw new Error('This deployment serves the fixed /docs base path');
   const outputFromSource = relative(output, source);
   if (!outputFromSource || !outputFromSource.startsWith('..')) throw new Error('Build output cannot contain the source tree');
-  const config = JSON.parse(await readFile(join(source, 'docs.json'), 'utf8'));
-  const navigation = readNavigation(config), renderer = createRenderer(source), rendered = [], titles = new Map();
+  const original = JSON.parse(await readFile(join(source, 'docs.json'), 'utf8'));
+  const selection = projectAirgap(original, airgapVersion === undefined ? await readAirgapVersion(source, process.env.AIRGAP_VERSION) : airgapVersion);
+  const config = selection.config;
+  const navigation = readNavigation(config), renderer = createRenderer(source, { omitUpcomingRelease: Boolean(selection.version) }), rendered = [], titles = new Map();
   for (const [index, page] of navigation.pages.entries()) {
-    const filename = join(source, page.route.slice(1) + '.mdx');
+    const sourceRoute = selection.sources.get(page.route) ?? page.route;
+    const filename = join(source, sourceRoute.slice(1) + '.mdx');
     const { data, html: raw } = await renderer(filename);
     let html;
-    try { html = rewriteHtml(raw, base, page.route); await verifyAssets(html, source, base); }
+    try { html = rewriteHtml(raw, base, sourceRoute, selection.rewriteUrl); await verifyAssets(html, source, base); }
     catch (error) { throw new Error(`${page.route}: ${error.message}`, { cause: error }); }
     titles.set(page.route, data.title ?? plainText(raw.match(/<h1[^>]*>(.*?)<\/h1>/s)?.[1] ?? page.route.split('/').pop()));
     rendered.push({ page, data, html });
@@ -80,7 +84,7 @@ export async function buildSite({ source = resolve(HERE, '..'), output = resolve
     if (!favicon.startsWith('/')) throw new Error('Favicon must be a local absolute path');
     await copyPublic(join(source, favicon.slice(1)), join(staging, favicon.slice(1)));
     await write(join(staging, '404.html'), '<!doctype html><html><head><meta charset="utf-8"><title>Not found</title></head><body><h1>Page not found / Página no encontrada</h1><a href="/docs/">Documentation / Documentación</a></body></html>\n');
-    const report = { pages: rendered.length, redirects: redirects.length, collections: navigation.contexts.map(context => ({ product: context.product, version: context.version, language: context.language, pages: context.pages.length, hidden: context.hidden })), base };
+    const report = { pages: rendered.length, redirects: redirects.length, airgapVersion: selection.version, collections: navigation.contexts.map(context => ({ product: context.product, version: context.version, language: context.language, pages: context.pages.length, hidden: context.hidden, home: context.home })), base };
     await write(join(staging, '_offline/build.json'), JSON.stringify(report, null, 2) + '\n');
     await rm(output, { recursive: true, force: true });
     await mkdir(dirname(output), { recursive: true });

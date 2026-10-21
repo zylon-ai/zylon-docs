@@ -3,6 +3,7 @@
 set -euo pipefail
 
 image=${1:?Usage: bash offline/check-container.sh IMAGE}
+expected_airgap_version=${2:-}
 scratch=$(mktemp -d)
 container=
 cleanup() {
@@ -38,6 +39,31 @@ fetch /docs/ > "$scratch/home.html"
 grep -q 'url=/docs/es/' "$scratch/home.html"
 
 fetch /docs/_offline/build.json > "$scratch/build.json"
+python3 - "$scratch/build.json" "$expected_airgap_version" <<'PY'
+import json, sys
+assert json.load(open(sys.argv[1]))['airgapVersion'] == sys.argv[2], 'Unexpected airgap documentation selection'
+PY
+python3 - "$scratch/build.json" > "$scratch/homes.txt" <<'PY'
+import json, sys
+report = json.load(open(sys.argv[1]))
+for context in report['collections']:
+    if context['product'] == 'Zylon':
+        print('/docs' + context['home'])
+PY
+while IFS= read -r route; do
+  fetch "$route" > "$scratch/main.html"
+  python3 - "$scratch/build.json" "$scratch/main.html" <<'PY'
+import json, re, sys
+report = json.load(open(sys.argv[1]))
+html = open(sys.argv[2]).read()
+if report['airgapVersion']:
+    assert not re.search(r'(?:mobile-)?version-picker|/docs/(?:en|es)/v[0-9]', html)
+    assert 'language-picker' in html
+else:
+    assert 'version-picker' in html
+PY
+done < "$scratch/homes.txt"
+
 python3 - "$scratch/build.json" > "$scratch/collections.txt" <<'PY'
 import json,sys
 with open(sys.argv[1]) as file: report=json.load(file)
@@ -79,7 +105,7 @@ for route in /docs /docs/zylon-code/getting-started/first-task; do
   if grep -Ei '^[[:space:]]*Location: (https?:)?//' "$scratch/headers.txt"; then exit 1; fi
 done
 
-for route in /docs/docs.json /docs/.codex/private.json /docs/.git/config /docs/offline/package.json /docs/snippets/note.mdx /docsmith; do
+for route in /docs/docs.json /docs/.env.airgap /docs/.codex/private.json /docs/.git/config /docs/offline/package.json /docs/snippets/note.mdx /docsmith; do
   if fetch "$route" > /dev/null 2>&1; then printf 'Unexpected public source path: %s\n' "$route" >&2; exit 1; fi
 done
 printf 'Offline image passed: health, EN/ES deep routes, scoped search, local assets, relative redirects and source exclusions\n'

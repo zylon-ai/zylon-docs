@@ -55,7 +55,7 @@ function containedPath(root, from, specifier) {
 }
 
 /** Interpret only default MDX imports; imports in fenced code are ordinary examples. */
-export function createRenderer(source) {
+export function createRenderer(source, { omitUpcomingRelease = false } = {}) {
   const root = resolve(source), cache = new Map();
   async function load(file, parents = []) {
     if (parents.includes(file)) throw new Error(`Cyclic MDX import: ${file}`);
@@ -69,7 +69,8 @@ export function createRenderer(source) {
             if (declaration.type !== 'ImportDeclaration' || declaration.specifiers.length !== 1
               || declaration.specifiers[0].type !== 'ImportDefaultSpecifier') throw new Error(`Unsupported module declaration in ${file}`);
             const specifier = declaration.source.value;
-            imported[declaration.specifiers[0].local.name] = (await load(containedPath(root, file, specifier), [...parents, file])).Component;
+            const { Component } = await load(containedPath(root, file, specifier), [...parents, file]);
+            imported[declaration.specifiers[0].local.name] = omitUpcomingRelease && specifier.endsWith('/upcoming-release.mdx') ? () => null : Component;
           }
         }
         tree.children = tree.children.filter(child => child.type !== 'mdxjsEsm');
@@ -99,8 +100,8 @@ export function localUrl(value, base = '/docs', route = '/') {
 }
 
 /** Reject network-loaded resources, including CSS URLs; only explicit links may leave the site. */
-export function rewriteHtml(html, base = '/docs', route = '/') {
-  const rewritten = html.replace(/\b(href|src|poster)="([^"\n]*)"/g, (_match, attr, value) => `${attr}="${localUrl(value, base, route)}"`);
+export function rewriteHtml(html, base = '/docs', route = '/', mapUrl = value => value) {
+  const rewritten = html.replace(/\b(href|src|poster)="([^"\n]*)"/g, (_match, attr, value) => `${attr}="${mapUrl(localUrl(value, base, route))}"`);
   if (/\b(?:src|poster)="(?:https?:)?\/\//i.test(rewritten) || /\bsrcset="[^"\n]*(?:https?:)?\/\//i.test(rewritten) || /url\(['"]?(?:https?:)?\/\//i.test(rewritten)) {
     throw new Error('Offline page retains an external resource');
   }

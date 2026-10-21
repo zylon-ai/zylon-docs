@@ -132,6 +132,23 @@ test('draft, prerelease and mismatched GitHub releases cannot publish images', t
   }
 });
 
+test('publisher resolves committed airgap selection and keeps older snapshots compatible', t => {
+  const f = fixture(t);
+  const step = 'Resolve the committed airgap documentation version';
+  assert.equal(f.run(step).output, 'version=\n');
+  mkdirSync(join(f.dir, 'offline'));
+  for (const name of ['airgap.mjs', 'navigation.mjs']) {
+    writeFileSync(join(f.dir, 'offline', name), readFileSync(join(root, 'offline', name)));
+  }
+  writeFileSync(join(f.dir, 'docs.json'), JSON.stringify({navigation: {products: [{product: 'Zylon', versions: ['1.57', '1.58 (Upcoming release)'].map(version => ({version, languages: ['es', 'en'].map(language => ({language, pages: [`${language}/v${version.split(' ')[0]}/intro`]}))}))}]}}));
+  writeFileSync(join(f.dir, '.env.airgap'), 'AIRGAP_VERSION=1.58\n');
+  const selected = f.run(step, {AIRGAP_VERSION: undefined});
+  assert.equal(selected.status, 0, selected.stderr);
+  assert.equal(selected.output, 'version=1.58\n');
+  assert.equal(f.run(step, {AIRGAP_VERSION: 'unknown'}).output, 'version=\n');
+  assert.equal(f.run(step, {AIRGAP_VERSION: ''}).output, 'version=\n');
+});
+
 test('existing images must contain both platforms with the requested revision and version', t => {
   const f = fixture(t);
   writeFileSync(join(f.bin, 'docker'), `#!/usr/bin/env python3
@@ -144,7 +161,9 @@ elif args[0] == 'pull':
 elif args[:2] == ['image', 'inspect']:
     assert '@sha256:' in args[2], 'Inspection must use the child manifest digest'
     arch = 'amd64' if args[2].endswith('a' * 64) else 'arm64'
-    if 'revision' in args[-1]:
+    if 'airgap-version' in args[-1]:
+        print(os.environ.get('PUBLISHED_AIRGAP_VERSION', ''))
+    elif 'revision' in args[-1]:
         print(os.environ['REVISION_' + arch])
     elif 'version' in args[-1]:
         print(os.environ['IMAGE_VERSION'])
@@ -153,11 +172,13 @@ elif args[:2] == ['image', 'inspect']:
 else:
     raise SystemExit('Unexpected Docker call: ' + repr(args))
 `, {mode: 0o755});
-  const input = {REGISTRY: 'example.invalid', ECR_REPOSITORY: 'zylon-docs', IMAGE_TAG: '1.0.0', DOCS_SHA: f.sha, PLATFORMS: 'amd64,arm64', REVISION_amd64: f.sha, REVISION_arm64: f.sha, IMAGE_VERSION: '1.0.0'};
+  const input = {REGISTRY: 'example.invalid', ECR_REPOSITORY: 'zylon-docs', IMAGE_TAG: '1.0.0', DOCS_SHA: f.sha, PLATFORMS: 'amd64,arm64', REVISION_amd64: f.sha, REVISION_arm64: f.sha, IMAGE_VERSION: '1.0.0', AIRGAP_VERSION: ''};
   const step = 'Verify both published platforms and their source revision';
   assert.equal(f.run(step, input).status, 0);
   for (const invalid of [{PLATFORMS: 'amd64'}, {ARCH_arm64: 'amd64'}, {REVISION_arm64: 'wrong'}, {REVISION_amd64: 'wrong'}, {IMAGE_VERSION: '1.58.0-beta5'}]) {
     assert.notEqual(f.run(step, {...input, ...invalid}).status, 0, JSON.stringify(invalid));
   }
   assert.equal(f.run(step, {...input, IMAGE_TAG: `docs-${f.sha}`, IMAGE_VERSION: ''}).status, 0);
+  assert.equal(f.run(step, {...input, AIRGAP_VERSION: '1.58', PUBLISHED_AIRGAP_VERSION: '1.58'}).status, 0);
+  assert.notEqual(f.run(step, {...input, AIRGAP_VERSION: '1.58', PUBLISHED_AIRGAP_VERSION: '1.57'}).status, 0);
 });

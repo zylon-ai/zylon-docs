@@ -62,3 +62,5 @@ Review the two landing pages, a nested plugin guide and an existing main-doc pag
 ## Offline documentation
 
 `offline/` renders the same registered MDX pages and local assets as a standalone site under `/docs`. It uses its own open-source renderer, navigation and local search; it does not ship the Mintlify application or require Enterprise export. External videos remain clearly marked online links. See [the offline build guide](offline/README.md) for build, container and verification steps.
+
+Release images select their Zylon manual through `AIRGAP_VERSION` in the root `.env.airgap` file, initially `1.58`. A matching version produces a bilingual image without a version selector or version segments in article routes. Empty or unknown settings retain the complete versioned site. This affects the offline build only; Mintlify navigation and all source versions remain unchanged. Commit the setting before creating a documentation release; see [airgap version selection](offline/README.md#select-an-airgap-version).

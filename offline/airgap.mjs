@@ -62,7 +62,8 @@ export function projectAirgap(config, requested) {
   const product = projected.navigation.products.find(candidate => candidate.product === 'Zylon');
   const remapPages = value => {
     if (Array.isArray(value)) return value.map(remapPages);
-    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, remapPages(item)]));
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) =>
+      [key, ['pages', 'groups', 'tabs'].includes(key) ? remapPages(item) : item]));
     return typeof value === 'string' && aliases.has('/' + value) ? aliases.get('/' + value).slice(1) : value;
   };
   product.languages = remapPages(selected.languages);

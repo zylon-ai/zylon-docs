@@ -1,11 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, lstat, readlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createRenderer, rewriteHtml, localUrl } from '../render.mjs';
 import { readNavigation, matchingRoute } from '../navigation.mjs';
 import { buildSite } from '../build.mjs';
+import { buildRuntime } from '../build-runtime.mjs';
 import { readAirgapVersion, projectAirgap } from '../airgap.mjs';
 
 async function fixture(t) {
@@ -176,15 +177,24 @@ test('selected airgap builds contain one version at language-only routes, links 
   await f.file('source/en/v1/legacy.mdx', 'Only in version one');
   await f.file('source/zylon-code/task.mdx', `[Main manual](/en/v1/reference#details)`);
   f.config.redirects.push({ source: '/en/v1', destination: '/en/v1/intro' });
+  f.config.redirects.push({ source: '/es', destination: '/es/v1/intro' }, { source: '/en', destination: '/en/v1/intro' });
+  f.config.navigation.products[0].versions[1].languages[1].tabs[0].tab = 'es';
   f.config.redirects.push({ source: '/online', destination: 'https://example.test/manual' });
   const before = JSON.stringify(f.config);
   await f.file('source/docs.json', before);
   const report = await buildSite({ ...f, airgapVersion: '2' });
   assert.equal(report.pages, 10);
   assert.equal(report.airgapVersion, '2');
+  assert.deepEqual(report.collections.filter(context => context.product === 'Zylon').map(context => context.language), ['es', 'en']);
   assert.equal(JSON.stringify(f.config), before);
   const main = await readFile(join(f.output, 'en/intro/index.html'), 'utf8');
   assert.match(main, /Selected version/);
+  assert.match(main, /<html lang="en"/);
+  assert.equal(projectAirgap(f.config, '2').config.navigation.products[0].languages[1].tabs[0].tab, 'es');
+  const spanish = await readFile(join(f.output, 'es/intro/index.html'), 'utf8');
+  assert.match(spanish, /<html lang="es"/);
+  assert.match(spanish, /Español/);
+  assert.match(main, /English/);
   assert.doesNotMatch(main, /Preview notice/);
   assert.doesNotMatch(main, /(?:mobile-)?version-picker|\/docs\/(?:en|es)\/v[12]\//);
   assert.match(main, /language-picker/);
@@ -201,6 +211,7 @@ test('selected airgap builds contain one version at language-only routes, links 
   for (const route of ['en/v1', 'en/v2', 'es/v1', 'es/v2', '.env.airgap']) await assert.rejects(access(join(f.output, route)));
   const index = JSON.parse(await readFile(join(f.output, '_offline/search/zylon/current/en.json'), 'utf8'));
   assert.deepEqual(index.map(record => record.href), ['/docs/en/intro', '/docs/en/reference']);
+  assert.ok(JSON.parse(await readFile(join(f.output, '_offline/search/zylon/current/es.json'), 'utf8')).length > 0);
   await buildSite(f);
   assert.match(await readFile(join(f.output, 'en/v2/intro/index.html'), 'utf8'), /Preview notice/);
 });
@@ -226,4 +237,43 @@ test('single-page version collections keep the original article filename when fl
   assert.equal(report.pages, 6);
   assert.match(await readFile(join(f.output, 'en/intro/index.html'), 'utf8'), /href="\/docs\/es\/intro"/);
   await assert.rejects(access(join(f.output, 'en/v2')));
+});
+
+
+test('runtime package retains complete and selected manuals with shared assets and a baked default', async t => {
+  const f = await fixture(t);
+  await f.file('source/.env.airgap', 'AIRGAP_VERSION=2\n');
+  const result = await buildRuntime({ ...f, airgapVersion: '2' });
+  assert.deepEqual(result, { versions: ['1', '2'], defaultVersion: '2' });
+  assert.equal(await readFile(join(f.output, 'default-version'), 'utf8'), '2\n');
+  assert.equal(await readFile(join(f.output, 'versions.txt'), 'utf8'), '1\n2\n');
+  assert.match(await readFile(join(f.output, 'all/docs/en/v1/intro/index.html'), 'utf8'), /version-picker/);
+  for (const version of result.versions) {
+    const root = join(f.output, 'versions', version, 'docs');
+    assert.doesNotMatch(await readFile(join(root, 'en/intro/index.html'), 'utf8'), /version-picker/);
+    assert.equal(JSON.parse(await readFile(join(root, '_offline/build.json'), 'utf8')).airgapVersion, version);
+    assert.match(await readFile(join(root, 'zylon-code/es/task/index.html'), 'utf8'), /noindex,nofollow/);
+    for (const asset of ['images', 'files', 'logo', 'favicon.png', '_offline/site.css', '_offline/site.js', '_offline/fonts']) {
+      assert.equal((await lstat(join(root, asset))).isSymbolicLink(), true);
+      assert.ok(!(await readlink(join(root, asset))).startsWith('/'));
+    }
+    assert.equal(await readFile(join(root, 'files/sample.zip'), 'utf8'), 'download');
+    assert.ok((await readFile(join(root, '_offline/fonts/inter-latin.woff2'))).length > 0);
+    assert.equal((await lstat(join(root, '_offline/search'))).isSymbolicLink(), false);
+    for (const route of ['en/v1', 'en/v2', '.env.airgap', 'docs.json', 'versions', 'all']) await assert.rejects(access(join(root, route)));
+  }
+  await buildRuntime({ ...f, airgapVersion: '' });
+  assert.equal(await readFile(join(f.output, 'default-version'), 'utf8'), '\n');
+});
+
+
+test('ambiguous or nonnumeric runtime versions fail without replacing a previous package', async t => {
+  const f = await fixture(t);
+  await f.file('output/last-success.txt', 'retained');
+  for (const label of ['1 (Upcoming release)', 'development']) {
+    f.config.navigation.products[0].versions[1].version = label;
+    await f.file('source/docs.json', JSON.stringify(f.config));
+    await assert.rejects(buildRuntime(f), /distinct numeric documentation versions/);
+    assert.equal(await readFile(join(f.output, 'last-success.txt'), 'utf8'), 'retained');
+  }
 });

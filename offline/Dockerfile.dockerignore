@@ -22,6 +22,7 @@
 !offline/package-lock.json
 !offline/*.mjs
 !offline/nginx.conf
+!offline/entrypoint.sh
 !offline/assets/
 !offline/assets/**
 !offline/test/

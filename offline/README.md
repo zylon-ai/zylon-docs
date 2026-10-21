@@ -14,13 +14,13 @@ npm --prefix offline run build
 
 ## Select an airgap version
 
-The root `.env.airgap` file controls which Zylon manual is included in the image. It is committed alongside the documentation, so release-please publishes a reproducible selection from the tagged commit. It contains no credentials:
+The root `.env.airgap` file sets the default Zylon manual included in release images. It is committed alongside the documentation and contains no credentials. The default is empty, so automatic releases include all versions:
 
 ```dotenv
-AIRGAP_VERSION=1.58
+AIRGAP_VERSION=
 ```
 
-Use an available version from `docs.json`, such as `1.57` or `1.58`. A numeric version also matches a navigation label such as `1.58 (Upcoming release)`. Empty, `null` and unknown values build the complete site with the usual version picker and default version. The repository starts configured for `1.58`.
+Use an available version from `docs.json`, such as `1.57` or `1.58`, when selecting a manual. A numeric version also matches a navigation label such as `1.58 (Upcoming release)`. Empty, `null` and unknown settings build the complete site with the usual version picker and default version.
 
 A valid selection builds only that Zylon version, in both languages. Articles use `/docs/es/...` and `/docs/en/...`, without a version segment, version picker or versioned redirect directories. Article links, language links, sidebar entries and search indexes use the same routes. Links to another version's article use the selected equivalent; when that article is absent from the selected version, they open its language's home. Upcoming-release notice snippets are omitted in this deployed-version build; the complete build retains them. Source MDX and `docs.json` remain unchanged. Unversioned products, including the hidden Zylon Code manual, retain their routes and search isolation. Shared public assets remain bundled.
 
@@ -36,7 +36,20 @@ bash offline/check-container.sh zylon-docs:all-local
 
 `docker build` without that argument reads `.env.airgap`. A generic root `.env` is not read or copied; keep secrets outside the documentation build context. The setting is applied at build time. Changing a running container's environment does not rebuild the static site.
 
-For releases, edit `.env.airgap` in the documentation commit and use the existing release-please flow. The publisher resolves the setting from that exact commit, uses it for native acceptance and both platform builds, and verifies the `ai.zylon.docs.airgap-version` image label on both platforms. The registry tag remains the independent documentation release version; `AIRGAP_VERSION` identifies the Zylon manual inside it. Historical snapshot commits without this configuration keep their original full-site build. To change an already published selection, create a new documentation commit and release rather than overwrite an immutable image.
+For automatic releases, the publisher reads `.env.airgap` from the tagged commit. An empty setting publishes the complete site under the documentation release tag, for example `zylon-docs:1.1.0`.
+
+To generate a selected image manually, open **Actions > Publish offline documentation image > Run workflow**. Provide either an existing stable `release_tag` or an exact `documentation_sha`, then fill in the optional **AIRGAP_VERSION** input. Empty input uses the committed file. A nonempty input overrides it for that run and creates a separate immutable image tag:
+
+| Source and manual input | Image tag | Included manual |
+| --- | --- | --- |
+| `release_tag=v1.1.0`, empty input and default file | `1.1.0` | All versions |
+| `release_tag=v1.1.0`, `AIRGAP_VERSION=1.58` | `1.1.0-airgap-1.58` | 1.58 only |
+| `documentation_sha=<full-sha>`, `AIRGAP_VERSION=1.57` | `docs-<full-sha>-airgap-1.57` | 1.57 only |
+| Any supported source, unknown or `null` input | `<base-tag>-airgap-all` | All versions |
+
+These are tag-format examples; a `release_tag` must already exist as a published release, and its commit must include the airgap selector. Historical snapshots without the selector remain supported with an empty input; a nonempty input for such a snapshot fails explicitly.
+
+The native acceptance check and both platform builds receive the same resolved selection. The publisher verifies the `ai.zylon.docs.airgap-version` image label on both platforms and reports the chosen tag, selection and digest in the job summary. Manual variants coexist with the base image and with other selected versions. An existing tag is reused only if its source and selection match; it is never overwritten. Use the reported variant tag in the deployment's image configuration.
 
 Serve `offline/dist` at `/docs`, rather than opening the files with `file://`. The browser loads its local search index using a same-origin request. The first language in each canonical navigation array is the entry default; Spanish comes first. The product picker stays in the header and the language picker stays at the sidebar footer. The complete build also retains version switching in the header. Main-product tabs select their own sidebar. All top-level Zylon Code groups remain expanded. Hidden Zylon Code has its own direct routes and scoped search, and is omitted from the main product's navigation/search. Its unlisted status is not authentication.
 

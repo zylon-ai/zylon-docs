@@ -47,7 +47,7 @@ export function projectAirgap(config, requested) {
     const target = new URL(aliases.get(original.pathname.replace(/\/$/, '')) ?? value, original.origin);
     if (original.search) target.search = original.search;
     if (original.hash) target.hash = original.hash;
-    return target.pathname + target.search + target.hash;
+    return target.origin === original.origin ? target.pathname + target.search + target.hash : target.href;
   };
   // Include section/index aliases so article links resolve directly to the selected overview.
   for (const redirect of config.redirects ?? []) aliases.set(redirect.source, mapPath(redirect.destination));
@@ -55,7 +55,8 @@ export function projectAirgap(config, requested) {
   const rewriteUrl = value => {
     if (!value.startsWith('/') || value.startsWith('//')) return value;
     const base = value.startsWith('/docs/') ? '/docs' : '';
-    return base + mapPath(value.slice(base.length));
+    const target = mapPath(value.slice(base.length));
+    return target.startsWith('/') && !target.startsWith('//') ? base + target : target;
   };
   const projected = structuredClone(config);
   const product = projected.navigation.products.find(candidate => candidate.product === 'Zylon');

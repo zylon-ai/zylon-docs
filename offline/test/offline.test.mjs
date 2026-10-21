@@ -171,11 +171,12 @@ test('empty, null and unknown airgap versions retain the normal full build', asy
 test('selected airgap builds contain one version at language-only routes, links and search', async t => {
   const f = await fixture(t);
   await f.file('source/snippets/upcoming-release.mdx', '<Warning>Preview notice</Warning>');
-  await f.file('source/en/v2/intro.mdx', `---\ntitle: Selected version\n---\n\nimport UpcomingRelease from '/snippets/upcoming-release.mdx'\n\n<UpcomingRelease />\n\n[Older peer](/en/v1/reference#details)\n\n[Selected peer](./reference.mdx?mode=full#details)\n\n[Language](/es/v2/intro)\n\n[Alias](/old#explicit)\n\n[Unavailable article](/en/v1/legacy)\n`);
+  await f.file('source/en/v2/intro.mdx', `---\ntitle: Selected version\n---\n\nimport UpcomingRelease from '/snippets/upcoming-release.mdx'\n\n<UpcomingRelease />\n\n[Older peer](/en/v1/reference#details)\n\n[Selected peer](./reference.mdx?mode=full#details)\n\n[Language](/es/v2/intro)\n\n[Alias](/old#explicit)\n\n[Unavailable article](/en/v1/legacy)\n\n[Online reference](/online#reference)\n`);
   f.config.navigation.products[0].versions[0].languages[1].tabs[0].pages.push('en/v1/legacy');
   await f.file('source/en/v1/legacy.mdx', 'Only in version one');
   await f.file('source/zylon-code/task.mdx', `[Main manual](/en/v1/reference#details)`);
   f.config.redirects.push({ source: '/en/v1', destination: '/en/v1/intro' });
+  f.config.redirects.push({ source: '/online', destination: 'https://example.test/manual' });
   const before = JSON.stringify(f.config);
   await f.file('source/docs.json', before);
   const report = await buildSite({ ...f, airgapVersion: '2' });
@@ -192,6 +193,7 @@ test('selected airgap builds contain one version at language-only routes, links 
   assert.match(main, /href="\/docs\/en\/reference\?mode=full#details"/);
   assert.match(main, /href="\/docs\/en\/intro#explicit"/);
   assert.match(main, /href="\/docs\/en\/intro"/);
+  assert.match(main, /href="https:\/\/example.test\/manual#reference"/);
   assert.match(await readFile(join(f.output, 'old/index.html'), 'utf8'), /url=\/docs\/en\/intro#hello/);
   assert.match(await readFile(join(f.output, 'index.html'), 'utf8'), /url=\/docs\/es\/intro/);
   assert.match(await readFile(join(f.output, 'zylon-code/task/index.html'), 'utf8'), /href="\/docs\/en\/reference#details"/);

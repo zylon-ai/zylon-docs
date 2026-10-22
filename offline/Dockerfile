@@ -17,13 +17,14 @@ COPY snippets ./snippets
 COPY images ./images
 COPY files ./files
 COPY logo ./logo
-RUN npm --prefix offline test && npm --prefix offline run build
+RUN npm --prefix offline test && node offline/build-runtime.mjs
 
 FROM nginxinc/nginx-unprivileged:1.28-alpine
 COPY --chown=101:101 offline/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build --chown=101:101 /source/offline/dist /usr/share/nginx/html/docs
+COPY --from=build --chown=101:101 /source/offline/runtime-dist /usr/share/zylon-docs
+COPY --chmod=755 offline/entrypoint.sh /usr/local/bin/zylon-docs-entrypoint
 USER 101
 EXPOSE 8080
-ENTRYPOINT ["nginx"]
+ENTRYPOINT ["zylon-docs-entrypoint"]
 CMD ["-g", "daemon off;"]
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1

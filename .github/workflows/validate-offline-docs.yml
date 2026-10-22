@@ -52,3 +52,11 @@ jobs:
         env:
           EXPECTED_VERSION: ${{ matrix.expected-version }}
         run: bash offline/check-container.sh zylon-docs:ci "$EXPECTED_VERSION"
+      - name: Select manuals from the same image through the pod environment
+        if: matrix.airgap-version == '1.58'
+        run: |
+          bash offline/check-container.sh zylon-docs:ci 1.57 1.57
+          bash offline/check-container.sh zylon-docs:ci 1.58 1.58
+          bash offline/check-container.sh zylon-docs:ci '' ''
+          bash offline/check-container.sh zylon-docs:ci '' null
+          bash offline/check-container.sh zylon-docs:ci '' unknown-version

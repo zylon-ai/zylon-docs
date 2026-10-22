@@ -4,6 +4,9 @@ set -euo pipefail
 
 image=${1:?Usage: bash offline/check-container.sh IMAGE}
 expected_airgap_version=${2:-}
+runtime_env=()
+# The optional third argument distinguishes an explicit empty override from an unset variable.
+if [ "$#" -ge 3 ]; then runtime_env=(--env "AIRGAP_VERSION=$3"); fi
 scratch=$(mktemp -d)
 container=
 cleanup() {
@@ -17,7 +20,7 @@ cleanup() {
 trap cleanup EXIT
 container=$(docker run -d --network none --read-only --user 101:101 \
   --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,uid=101,gid=101,mode=0770 \
-  --cap-drop ALL --security-opt no-new-privileges "$image")
+  --cap-drop ALL --security-opt no-new-privileges ${runtime_env[@]+"${runtime_env[@]}"} "$image")
 
 fetch() { docker exec "$container" wget -q -O - "http://127.0.0.1:8080$1"; }
 ready=false
@@ -48,14 +51,17 @@ import json, sys
 report = json.load(open(sys.argv[1]))
 for context in report['collections']:
     if context['product'] == 'Zylon':
-        print('/docs' + context['home'])
+        assert context['language'] in ['en', 'es'], 'Invalid manual language metadata'
+        print('/docs' + context['home'] + ' ' + context['language'])
 PY
-while IFS= read -r route; do
+while read -r route language; do
   fetch "$route" > "$scratch/main.html"
-  python3 - "$scratch/build.json" "$scratch/main.html" <<'PY'
+  python3 - "$scratch/build.json" "$scratch/main.html" "$language" <<'PY'
 import json, re, sys
 report = json.load(open(sys.argv[1]))
 html = open(sys.argv[2]).read()
+assert f'<html lang="{sys.argv[3]}"' in html, 'Manual language does not match its locale'
+assert 'Español' in html and 'English' in html, 'Missing language choices'
 if report['airgapVersion']:
     assert not re.search(r'(?:mobile-)?version-picker|/docs/(?:en|es)/v[0-9]', html)
     assert 'language-picker' in html
@@ -105,7 +111,16 @@ for route in /docs /docs/zylon-code/getting-started/first-task; do
   if grep -Ei '^[[:space:]]*Location: (https?:)?//' "$scratch/headers.txt"; then exit 1; fi
 done
 
-for route in /docs/docs.json /docs/.env.airgap /docs/.codex/private.json /docs/.git/config /docs/offline/package.json /docs/snippets/note.mdx /docsmith; do
+for route in /versions.txt /default-version /docs/all/docs/ /docs/versions/1.57/docs/ /docs/versions/1.58/docs/ /docs/docs.json /docs/.env.airgap /docs/.codex/private.json /docs/.git/config /docs/offline/package.json /docs/snippets/note.mdx /docsmith; do
   if fetch "$route" > /dev/null 2>&1; then printf 'Unexpected public source path: %s\n' "$route" >&2; exit 1; fi
 done
+if [ -n "$expected_airgap_version" ]; then
+  for version in 1.57 1.58; do
+    for language in en es; do
+      if fetch "/docs/$language/v$version/overview" > /dev/null 2>&1; then
+        printf 'Unexpected versioned route in selected manual\n' >&2; exit 1
+      fi
+    done
+  done
+fi
 printf 'Offline image passed: health, EN/ES deep routes, scoped search, local assets, relative redirects and source exclusions\n'

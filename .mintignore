@@ -1,3 +1,6 @@
 # Local audit state and evidence are not documentation pages.
 .codex/**
 offline/**
+
+# Repository maintenance instructions are not published articles.
+README.md

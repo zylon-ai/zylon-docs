@@ -3,13 +3,11 @@ title: "API migration 1.57 -> 1.58"
 description: "Migrate existing Workspace API integrations to the 1.58 routes, request bodies, and response models."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 Zylon 1.58 unifies artifact routes and separates workspace memberships from accounts. Use this guide to update integrations built against 1.57. It covers changes to existing Workspace APIs, plus the new [server tool content blocks](#server-tool-content-blocks) returned in chat messages by both the Workspace and ZylonGPT APIs.
 
 <Warning>
+**Breaking changes: migrate integrations before upgrading.**
+
 The legacy artifact, integration, and member routes are deprecated in 1.58, with removal planned for 1.59. Other accepted aliases have their own compatibility notes below. Use the current 1.58 routes for new or maintained integrations.
 
 **If your integration depends on user identity, creator IDs, or creator filters, migrate the affected calls to the current API and update your identity mappings.** A working legacy URL does not restore the 1.57 identity model. Creator fields now identify accounts; membership routes still use workspace-member IDs. Follow the [saved user-ID migration](#migrate-saved-user-ids) before relying on existing lookups, comparisons, or filters.

@@ -3,7 +3,7 @@ set -e
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 
-# Demo tracks the upcoming release. Never overwrite the frozen 1.57 specs.
+# Update the 1.58 specs. Never overwrite the frozen 1.57 specs.
 cd "$script_dir/v1.58/api-reference" || exit 1
 
 host=$1

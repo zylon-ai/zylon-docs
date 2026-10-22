@@ -76,6 +76,19 @@ test('navigation keeps hidden product direct access and matches both version and
   assert.equal(matchingRoute(navigation, code, { product: 'Zylon' }), '/en/v1/intro');
 });
 
+test('promoting a later default updates offline entry points and cross-product navigation', async t => {
+  const f = await fixture(t);
+  for (const version of f.config.navigation.products[0].versions) version.default = version.version === '2';
+  await f.file('source/docs.json', JSON.stringify(f.config));
+  const navigation = readNavigation(f.config);
+  assert.equal(navigation.home, '/es/v2/intro');
+  const code = navigation.pages.find(page => page.route === '/zylon-code/task');
+  assert.equal(matchingRoute(navigation, code, { product: 'Zylon' }), '/en/v2/intro');
+  await buildSite(f);
+  assert.match(await readFile(join(f.output, 'index.html'), 'utf8'), /url=\/docs\/es\/v2\/intro/);
+  assert.match(await readFile(join(f.output, 'old/index.html'), 'utf8'), /url=\/docs\/en\/v1\/intro#hello/);
+});
+
 test('real build emits every collection, /docs links, redirects and private-free scoped search', async t => {
   const f = await fixture(t), result = await buildSite(f);
   assert.equal(result.pages, 16);
@@ -170,8 +183,7 @@ test('empty, null and unknown airgap versions retain the normal full build', asy
 
 test('selected airgap builds contain one version at language-only routes, links and search', async t => {
   const f = await fixture(t);
-  await f.file('source/snippets/upcoming-release.mdx', '<Warning>Preview notice</Warning>');
-  await f.file('source/en/v2/intro.mdx', `---\ntitle: Selected version\n---\n\nimport UpcomingRelease from '/snippets/upcoming-release.mdx'\n\n<UpcomingRelease />\n\n[Older peer](/en/v1/reference#details)\n\n[Selected peer](./reference.mdx?mode=full#details)\n\n[Language](/es/v2/intro)\n\n[Alias](/old#explicit)\n\n[Unavailable article](/en/v1/legacy)\n\n[Online reference](/online#reference)\n`);
+  await f.file('source/en/v2/intro.mdx', `---\ntitle: Selected version\n---\n\nimport Notice from '/snippets/note.mdx'\n\n<Notice />\n\n[Older peer](/en/v1/reference#details)\n\n[Selected peer](./reference.mdx?mode=full#details)\n\n[Language](/es/v2/intro)\n\n[Alias](/old#explicit)\n\n[Unavailable article](/en/v1/legacy)\n\n[Online reference](/online#reference)\n`);
   f.config.navigation.products[0].versions[0].languages[1].tabs[0].pages.push('en/v1/legacy');
   await f.file('source/en/v1/legacy.mdx', 'Only in version one');
   await f.file('source/zylon-code/task.mdx', `[Main manual](/en/v1/reference#details)`);
@@ -185,7 +197,7 @@ test('selected airgap builds contain one version at language-only routes, links 
   assert.equal(JSON.stringify(f.config), before);
   const main = await readFile(join(f.output, 'en/intro/index.html'), 'utf8');
   assert.match(main, /Selected version/);
-  assert.doesNotMatch(main, /Preview notice/);
+  assert.match(main, /Shared warning/);
   assert.doesNotMatch(main, /(?:mobile-)?version-picker|\/docs\/(?:en|es)\/v[12]\//);
   assert.match(main, /language-picker/);
   assert.match(main, /href="\/docs\/es\/intro"/);
@@ -202,13 +214,13 @@ test('selected airgap builds contain one version at language-only routes, links 
   const index = JSON.parse(await readFile(join(f.output, '_offline/search/zylon/current/en.json'), 'utf8'));
   assert.deepEqual(index.map(record => record.href), ['/docs/en/intro', '/docs/en/reference']);
   await buildSite(f);
-  assert.match(await readFile(join(f.output, 'en/v2/intro/index.html'), 'utf8'), /Preview notice/);
+  assert.match(await readFile(join(f.output, 'en/v2/intro/index.html'), 'utf8'), /Shared warning/);
 });
 
 test('annotated version labels accept their numeric version and each selection uses its own source', async t => {
   const f = await fixture(t);
-  f.config.navigation.products[0].versions[1].version = '2 (Upcoming release)';
-  for (const input of ['2', '2 (Upcoming release)', ' 2 ']) {
+  f.config.navigation.products[0].versions[1].version = '2 (Archived)';
+  for (const input of ['2', '2 (Archived)', ' 2 ']) {
     const selected = projectAirgap(f.config, input);
     assert.equal(selected.version, '2');
     assert.equal(selected.sources.get('/en/intro'), '/en/v2/intro');

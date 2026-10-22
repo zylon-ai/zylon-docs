@@ -3,13 +3,11 @@ title: "Migración de API 1.57 -> 1.58"
 description: "Adapta tus integraciones de la API de Workspace a las rutas, cuerpos y respuestas de la versión 1.58."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 Zylon 1.58 unifica las rutas de artefactos y separa las membresías del espacio de trabajo de las cuentas. Usa esta guía para actualizar integraciones creadas para 1.57. Abarca cambios en APIs existentes de Workspace y los nuevos [bloques de herramientas de servidor](#bloques-de-herramientas-de-servidor) que devuelven los mensajes de chat, tanto en la API de Workspace como en la de ZylonGPT.
 
 <Warning>
+**Cambios incompatibles: migra las integraciones antes de actualizar.**
+
 Las rutas antiguas de artefactos, integraciones y miembros quedan obsoletas en 1.58 y su retirada está prevista para 1.59. Otros alias aceptados tienen sus propias notas de compatibilidad más abajo. Usa las rutas actuales de 1.58 para integraciones nuevas o mantenidas.
 
 **Si tu integración depende de la identidad del usuario, IDs de creador o filtros de creador, migra las llamadas afectadas a la API actual y actualiza tus mapeos de identidad.** Que una URL antigua funcione no restaura el modelo de identidad de 1.57. Los campos de creador ahora identifican cuentas; las rutas de membresía siguen usando IDs de miembro. Sigue la [migración de IDs de usuario guardados](#migrar-ids-de-usuario-guardados) antes de confiar en búsquedas, comparaciones o filtros existentes.

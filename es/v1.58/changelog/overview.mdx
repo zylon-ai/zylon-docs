@@ -2,28 +2,20 @@
 title: "Registro de cambios"
 ---
 
-import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
-
-<UpcomingRelease />
-
-<Update label="1.58.0" description="TBD">
-  <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
-    Próxima versión
-  </span>
-
+<Update label="1.58.0" description="22 de octubre de 2026">
   <Danger>
     **⚠️ Acción requerida antes de actualizar a la versión 1.58.X**
 
     Usa Zylon CLI **2.9.0 o posterior**. Cuando termine la instalación y todos los pods estén listos, previsualiza el backfill de Skills y Documentos con `backfill-projections --dry-run`, ejecuta el backfill y después aplica `configure --max-pods 200`. Cambiar el límite de pods interrumpe brevemente todos los servicios de Zylon. Sigue la [guía de actualización a 1.58](/es/v1.58/changelog/guides/1-58-0) completa.
 
-    **Las integraciones afectadas deben migrar su uso de la API.** Los campos de creador identifican ahora **cuentas**; las operaciones de pertenencia siguen usando **IDs de miembros del workspace**. Migra las llamadas afectadas y actualiza los mapas de IDs guardados aunque las URLs legacy sigan funcionando. Revisa la [guía de migración de API de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
+    **Los cambios incompatibles en la API requieren migrar las integraciones afectadas.** Han cambiado las rutas y los cuerpos de contenido de artefactos, y los mensajes de Workspace y ZylonGPT usan nuevos bloques de respuesta de herramientas del servidor. Los campos de creador identifican ahora **cuentas**; las operaciones de pertenencia siguen usando **IDs de miembros del workspace**. Migra las llamadas afectadas y actualiza los mapas de IDs guardados aunque las URLs legacy sigan funcionando. Revisa la [guía de migración de API de 1.57 a 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
   </Danger>
 
   ## 💼 Workspace
   ### ✨ Novedades
 
   - **Ejecución de código — Beta**: Habilitada por defecto en los despliegues estándar de 1.58. Ejecuta código en un sandbox aislado para analizar archivos, realizar cálculos y generar hojas de cálculo, gráficos e informes. Si un operador la desactiva en Workspace, el chat y las demás herramientas disponibles siguen funcionando, pero el asistente no puede ejecutar código ni completar los pasos de una Skill que lo requieran. Consulta [Ejecución de código](/es/v1.58/user-manual/tools/code-execution) y la [configuración del operador](/es/v1.58/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
-  - **Creador y editor de Skills**: Crea Skills reutilizables con el chat o edita sus instrucciones directamente. Para crear una con el chat, instala primero **Skill Creator** desde la biblioteca de tu organización en tu proyecto y elige **Skills > New Skill > Create with Chat**. Sigue la [guía paso a paso](/es/v1.58/user-manual/skills/creating-a-skill), que también explica cómo instalar y usar la Skill generada.
+  - **Creador y editor de Skills**: Crea Skills reutilizables con el chat, edita sus instrucciones y archivos de apoyo, y reutiliza paquetes de Skills compatibles con Anthropic. Para crear una con el chat, instala primero **Skill Creator** desde la biblioteca de tu organización en tu proyecto y elige **Skills > New Skill > Create with Chat**. Sigue la [guía paso a paso](/es/v1.58/user-manual/skills/creating-a-skill), que también explica cómo instalar y usar la Skill generada.
   - **Archivos generados en Documentos AI**: Los archivos creados mediante ejecución de código pueden guardarse como artefactos del proyecto y usarse con la experiencia existente de previsualización y descarga.
   - **Cronología de ejecución de herramientas**: Consulta pasos desplegables, descripciones, tiempo empleado, salida de comandos y errores.
   - **Indicadores de chats sin leer**: Identifica en el menú lateral los chats que contienen respuestas del asistente sin leer.
@@ -35,6 +27,9 @@ import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
   - **Gestor de conectores**: Consulta y filtra conectores entre organizaciones, identifica su proyecto y creador y revoca credenciales conservando los archivos importados.
   - **System Monitor**: Consulta en directo el uso de CPU, RAM, disco, GPU y VRAM, además de las colas de modelos, solicitudes de inferencia activas y velocidad de generación de tokens. Requiere habilitar System Monitor. Consulta [System Monitor](/es/v1.58/operator-manual/backoffice/system-monitor).
   - **Soporte de idiomas**: Añadidas preferencias de idioma en Backoffice y traducciones al español.
+  - **Cuotas y límites de uso**: Los operadores pueden configurar límites de solicitudes y tokens para cuentas y gateways, consultar el uso y reiniciar cuotas. Requiere la opción `features.quotas.enabled`, desactivada por defecto.
+  - **Administración de conectores del proyecto**: Los propietarios y administradores de un proyecto pueden gestionar los conectores creados por otros miembros. Los administradores de la organización también deben pertenecer al proyecto para gestionar sus conectores.
+  - **Descargas y configuración de Zylon Code**: Los gateways de Backoffice ofrecen instaladores de escritorio e instrucciones de conexión cuando el despliegue proporciona los archivos de instalación de Zylon Code.
 
   ## 🔌 APIs para desarrolladores
   ### ✨ Novedades
@@ -47,16 +42,23 @@ import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
   ## 🛠️ Plataforma
   ### ✨ Novedades
 
+  - **Qwen3.8 en `baseline-96g`**: El preset ahora usa `nvidia/Qwen3.8-27B-NVFP4`. Descarga el nuevo modelo antes de actualizar o selecciona el preset de compatibilidad documentado para mantener el modelo anterior. Consulta la [guía de actualización a 1.58](/es/v1.58/changelog/guides/1-58-0) y los [presets de IA](/es/v1.58/operator-manual/ai-presets/presets).
+  - **Nuevo sistema de licencias**: Añadido el nuevo sistema de licencias de Zylon, que sustituye las licencias basadas en Replicated.
+  - **Documentación offline**: Los operadores pueden servir la documentación incluida en el despliegue en `/docs` activando `zylonDocs.enabled`; está desactivada por defecto.
   - **Verificación de artefactos**: Las descargas de la CLI se comprueban con los checksums de la versión.
   - **Backup y restauración más seguros**: Las cargas de trabajo se detienen de forma ordenada antes de copiar o reemplazar los datos, y después se reanuda la programación. Consulta [backup y restauración](/es/v1.58/operator-manual/operations/backup).
-  - **n8n actualizado**: Actualizado el despliegue de n8n incluido y corregida la compatibilidad del ingress MCP.
+  - **n8n actualizado**: Actualizado el despliegue de n8n incluido a 2.39.9 y corregida la compatibilidad del ingress MCP.
 
   ### 🐛 Correcciones
 
   - Los resultados de búsqueda de archivos enlazados identifican el proyecto de destino accesible.
+  - Las herramientas de conocimiento proporcionan al asistente archivos que puede abrir e inspeccionar, con mejoras en el tratamiento de nombres e IDs de artefactos.
+  - Las sincronizaciones de conectores evitan trabajos simultáneos en el mismo árbol de carpetas, y la ingesta de artefactos incorpora un límite de tamaño configurable.
   - Mejorada la recuperación ante fallos del lector de documentos, la extracción de PDF y el procesamiento de hojas de cálculo y tablas.
   - Mejoradas la validación de conexiones MCP y la renovación de credenciales OAuth durante las conversaciones.
   - Mejorados el tratamiento de archivos generados, los errores de archivos ausentes y la aplicación de las políticas de descarga de la organización.
+  - Corregida la selección de contexto del chat y las peticiones que desactivan herramientas explícitamente, y mejorados los títulos de chat generados.
+  - La carga de Skills explica los conflictos con nombres reservados, y las Skills de usuario existentes ya no bloquean la instalación de las Skills predeterminadas.
 </Update>
 
 <Update label="1.57.0" description="August 17, 2026">

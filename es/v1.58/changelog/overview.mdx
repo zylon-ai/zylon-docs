@@ -14,9 +14,10 @@ title: "Registro de cambios"
   ## 💼 Workspace
   ### ✨ Novedades
 
-  - **Ejecución de código — Beta**: Habilitada por defecto en los despliegues estándar de 1.58. Ejecuta código en un sandbox aislado para analizar archivos, realizar cálculos y generar hojas de cálculo, gráficos e informes. Si un operador la desactiva en Workspace, el chat y las demás herramientas disponibles siguen funcionando, pero el asistente no puede ejecutar código ni completar los pasos de una Skill que lo requieran. Consulta [Ejecución de código](/es/v1.58/user-manual/tools/code-execution) y la [configuración del operador](/es/v1.58/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
+  - **Ejecución de código — Beta**: Ejecuta código en un entorno aislado para analizar archivos, realizar cálculos y generar hojas de cálculo, gráficos e informes. Está habilitada por defecto en los despliegues estándar de 1.58. Si un operador la desactiva en Workspace, el chat y las demás herramientas disponibles siguen funcionando, pero el asistente no puede ejecutar código ni completar los pasos de una Skill que lo requieran. Consulta [Ejecución de código](/es/v1.58/user-manual/tools/code-execution) y la [configuración del operador](/es/v1.58/operator-manual/configuration/features/feat-code-execution#cuando-está-desactivada).
   - **Creador y editor de Skills**: Crea Skills reutilizables con el chat, edita sus instrucciones y archivos de apoyo, y reutiliza paquetes de Skills compatibles con Anthropic. Para crear una con el chat, instala primero **Skill Creator** desde la biblioteca de tu organización en tu proyecto y elige **Skills > New Skill > Create with Chat**. Sigue la [guía paso a paso](/es/v1.58/user-manual/skills/creating-a-skill), que también explica cómo instalar y usar la Skill generada.
-  - **Archivos generados en Documentos AI**: Los archivos creados mediante ejecución de código pueden guardarse como artefactos del proyecto y usarse con la experiencia existente de previsualización y descarga.
+  - **Archivos generados en Documentos AI**: Los archivos creados en el chat pueden guardarse en el proyecto, previsualizarse y descargarse desde Documentos AI.
+  - **Búsqueda en texto generado por IA**: Encuentra documentos de texto creados por el asistente buscando palabras de su contenido. Consulta [Buscar en el espacio de trabajo](/es/v1.58/user-manual/search-workspace-content).
   - **Cronología de ejecución de herramientas**: Consulta pasos desplegables, descripciones, tiempo empleado, salida de comandos y errores.
   - **Indicadores de chats sin leer**: Identifica en el menú lateral los chats que contienen respuestas del asistente sin leer.
   - **Modo oscuro y preferencias compartidas**: Ampliado el soporte de temas en Workspace y Backoffice, con preferencias de cuenta compartidas entre ambos.
@@ -24,12 +25,10 @@ title: "Registro de cambios"
   ## 🛠️ Backoffice
   ### ✨ Novedades
 
-  - **Gestor de conectores**: Consulta y filtra conectores entre organizaciones, identifica su proyecto y creador y revoca credenciales conservando los archivos importados.
+  - **Gestor de conectores**: Busca y consulta los conectores de las organizaciones, comprueba a qué proyecto pertenecen y quién los creó, y revoca sus credenciales sin eliminar los archivos importados.
   - **System Monitor**: Consulta en directo el uso de CPU, RAM, disco, GPU y VRAM, además de las colas de modelos, solicitudes de inferencia activas y velocidad de generación de tokens. Requiere habilitar System Monitor. Consulta [System Monitor](/es/v1.58/operator-manual/backoffice/system-monitor).
   - **Soporte de idiomas**: Añadidas preferencias de idioma en Backoffice y traducciones al español.
   - **Cuotas y límites de uso**: Los operadores pueden configurar límites de solicitudes y tokens para cuentas y gateways, consultar el uso y reiniciar cuotas. Requiere la opción `features.quotas.enabled`, desactivada por defecto.
-  - **Administración de conectores del proyecto**: Los propietarios y administradores de un proyecto pueden gestionar los conectores creados por otros miembros. Los administradores de la organización también deben pertenecer al proyecto para gestionar sus conectores.
-  - **Descargas y configuración de Zylon Code**: Los gateways de Backoffice ofrecen instaladores de escritorio e instrucciones de conexión cuando el despliegue proporciona los archivos de instalación de Zylon Code.
 
   ## 🔌 APIs para desarrolladores
   ### ✨ Novedades
@@ -37,13 +36,12 @@ title: "Registro de cambios"
   - **APIs unificadas**: Consolidadas las rutas de artefactos y separados los perfiles de cuenta de las pertenencias al workspace. Las rutas legacy de artefactos, integraciones y miembros quedan obsoletas en 1.58, con eliminación prevista para 1.59. Consulta la [guía de migración de API](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) para los límites de compatibilidad y ejemplos.
   - **Tokens de API de solo lectura**: Elige permisos de lectura o de lectura y escritura al crear tokens de Workspace y gateway. Consulta [gestión de tokens](/es/v1.58/developer-manual/get-started/token-management).
   - **Respuestas de herramientas actualizadas**: Las herramientas integradas usan `server_tool_use` y bloques de resultado tipados. Las herramientas personalizadas mantienen su flujo de herramientas del cliente. Consulta los [ejemplos de migración](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#bloques-de-herramientas-de-servidor).
-  - **Omnisearch ampliado**: Añadidos filtros de recurso, proyecto, tipo de artefacto y fecha, además de búsqueda en texto generado por IA. Consulta la [API de búsqueda](/es/v1.58/developer-manual/build-with-zylon/workspace-api/general/search).
+  - **Filtros de la API de búsqueda**: Acota las búsquedas por tipo de recurso, proyectos incluidos o excluidos, tipo de artefacto y fecha de creación. Consulta la [API de búsqueda](/es/v1.58/developer-manual/build-with-zylon/workspace-api/general/search).
 
   ## 🛠️ Plataforma
   ### ✨ Novedades
 
   - **Qwen3.8 en `baseline-96g`**: El preset ahora usa `nvidia/Qwen3.8-27B-NVFP4`. Descarga el nuevo modelo antes de actualizar o selecciona el preset de compatibilidad documentado para mantener el modelo anterior. Consulta la [guía de actualización a 1.58](/es/v1.58/changelog/guides/1-58-0) y los [presets de IA](/es/v1.58/operator-manual/ai-presets/presets).
-  - **Nuevo sistema de licencias**: Añadido el nuevo sistema de licencias de Zylon, que sustituye las licencias basadas en Replicated.
   - **Documentación offline**: Los operadores pueden servir la documentación incluida en el despliegue en `/docs` activando `zylonDocs.enabled`; está desactivada por defecto.
   - **Verificación de artefactos**: Las descargas de la CLI se comprueban con los checksums de la versión.
   - **Backup y restauración más seguros**: Las cargas de trabajo se detienen de forma ordenada antes de copiar o reemplazar los datos, y después se reanuda la programación. Consulta [backup y restauración](/es/v1.58/operator-manual/operations/backup).
@@ -51,14 +49,12 @@ title: "Registro de cambios"
 
   ### 🐛 Correcciones
 
-  - Los resultados de búsqueda de archivos enlazados identifican el proyecto de destino accesible.
-  - Las herramientas de conocimiento proporcionan al asistente archivos que puede abrir e inspeccionar, con mejoras en el tratamiento de nombres e IDs de artefactos.
-  - Las sincronizaciones de conectores evitan trabajos simultáneos en el mismo árbol de carpetas, y la ingesta de artefactos incorpora un límite de tamaño configurable.
-  - Mejorada la recuperación ante fallos del lector de documentos, la extracción de PDF y el procesamiento de hojas de cálculo y tablas.
-  - Mejoradas la validación de conexiones MCP y la renovación de credenciales OAuth durante las conversaciones.
-  - Mejorados el tratamiento de archivos generados, los errores de archivos ausentes y la aplicación de las políticas de descarga de la organización.
-  - Corregida la selección de contexto del chat y las peticiones que desactivan herramientas explícitamente, y mejorados los títulos de chat generados.
-  - La carga de Skills explica los conflictos con nombres reservados, y las Skills de usuario existentes ya no bloquean la instalación de las Skills predeterminadas.
+  - **Búsqueda de archivos más clara**: Los resultados muestran el proyecto desde el que puedes abrir cada archivo enlazado.
+  - **Sincronización más fluida**: Las carpetas conectadas se sincronizan de forma más fiable y los operadores pueden ajustar el límite de tamaño de los archivos importados.
+  - **Conexiones más fiables**: Mejoradas las comprobaciones de conexión de MCP y la renovación de credenciales durante las conversaciones.
+  - **Mejor gestión de archivos**: Mejor lectura de documentos, errores más claros si falta un archivo y descargas que respetan las políticas de tu organización.
+  - **Mejoras en el chat**: Las conversaciones usan el contexto del proyecto adecuado, respetan la desactivación de herramientas y reciben títulos automáticos más claros.
+  - **Gestión de Skills más sencilla**: Mensajes más claros sobre conflictos con nombres de Skills integradas. Las Skills existentes ya no impiden instalar las predeterminadas.
 </Update>
 
 <Update label="1.57.0" description="August 17, 2026">

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.1](https://github.com/zylon-ai/zylon-docs/compare/v1.1.0...v1.1.1) (2026-10-23)
+
+
+### Fixes
+
+* **docs:** polish 1.58 project guidance wording ([3fef4df](https://github.com/zylon-ai/zylon-docs/commit/3fef4dff6974db0726a783af742751bc5b21674b))
+* **docs:** polish 1.58 project guidance wording ([4a18c8b](https://github.com/zylon-ai/zylon-docs/commit/4a18c8b8f64516b272aef5ba9b6ecda9b79724e0))
+
+
+### Documentation
+
+* publish Zylon 1.58 documentation ([#114](https://github.com/zylon-ai/zylon-docs/issues/114)) ([84ba5f0](https://github.com/zylon-ai/zylon-docs/commit/84ba5f0dd7ecfa166e8e91fa6bfaed4090885b14))
+
 ## [1.1.0](https://github.com/zylon-ai/zylon-docs/compare/v1.0.0...v1.1.0) (2026-10-21)
 
 

@@ -3,10 +3,6 @@ title: "Token Management"
 description: "Choose the right token flow: Backoffice cross-API token or Workspace-only token."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 Use this page to pick the right token flow for your integration.
 
 ## Which token do I need?
@@ -83,7 +79,7 @@ Use this page to pick the right token flow for your integration.
     2. Select the target gateway.
     3. Click **New API Key**.
     4. Enter a token name.
-    5. Choose **Read & Write** when configuring Zylon Code or other coding tools.
+    5. Choose **Read & Write** when configuring coding tools.
     6. Set the expiry date and create the key.
     7. Copy the token secret shown in the modal.
 
@@ -123,6 +119,6 @@ When a token has multiple scopes, their grants are combined. The effective permi
 
 `Read.All` does not require `gateway_id` at creation. Without that gateway context, the token can use its other read grants but cannot call ZylonGPT.
 
-Gateway token creation also accepts `Read.All` and `ReadWrite.All`. The Backoffice form offers **Read** and **Read & Write**; it selects `ReadWrite.All` by default for coding tools such as Zylon Code. The token is associated with the selected gateway, and creation checks the account’s gateway access. For backward compatibility, the gateway token endpoint maps an explicit empty scope list to `ReadWrite.All`.
+Gateway token creation also accepts `Read.All` and `ReadWrite.All`. The Backoffice form offers **Read** and **Read & Write**; it selects `ReadWrite.All` by default for coding tools. The token is associated with the selected gateway, and creation checks the account’s gateway access. For backward compatibility, the gateway token endpoint maps an explicit empty scope list to `ReadWrite.All`.
 
 For the ZylonGPT read-only endpoint list and read-write requirements, see the [ZylonGPT API overview](/en/v1.58/developer-manual/build-with-zylon/zylon-gpt-api/overview).

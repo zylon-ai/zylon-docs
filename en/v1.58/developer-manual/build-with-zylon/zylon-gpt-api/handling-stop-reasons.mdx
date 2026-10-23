@@ -3,10 +3,6 @@ title: "Handling stop reasons"
 description: "Know why a response stopped and how to handle ZylonGPT errors."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 Message responses distinguish the model's `stop_reason` from the overall `interaction_stop_reason` and error details. Check each field when deciding whether to continue, run a tool, or retry.
 
 For details about `stop_reason` in the response schema, see [Messages](/en/v1.58/developer-manual/build-with-zylon/working-with-messages).

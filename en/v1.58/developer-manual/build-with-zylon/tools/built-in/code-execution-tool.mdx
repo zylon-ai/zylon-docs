@@ -3,10 +3,6 @@ title: "Code Execution tool"
 description: "Run bash commands and edit files in a sandboxed container to analyze data, generate files, and iterate on solutions."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 The code execution tool lets the assistant run bash commands and create, view, and edit files inside a sandboxed container, directly within a `/messages` request. Use it to analyze uploaded data, run calculations, transform documents, or produce files such as charts, spreadsheets, and reports.
 
 It follows the same model as the [Anthropic code execution tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool): the server runs every command, so you never execute code or send `tool_result` blocks yourself.

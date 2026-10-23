@@ -3,10 +3,6 @@ title: "Code Execution"
 description: "Let the assistant run code and work with files in isolated sandboxes."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 <Note>**Feature in Beta**</Note>
 
 Code execution lets the assistant run bash commands and create, edit, and present files inside an isolated sandbox. Each chat thread (or API `container`) gets its own sandbox, created on demand by the bundled OpenSandbox service on the same Kubernetes cluster.

@@ -3,17 +3,13 @@ title: "Actualización a 1.58"
 description: "Pasos para actualizar tu instalación de Zylon a la versión 1.58."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/es/upcoming-release.mdx";
-
-<UpcomingRelease />
+import ApiMigrationWarning from "/snippets/v1.58/es/api-migration-warning.mdx";
 
 <Warning>
   **Se requiere Zylon CLI 2.9.0 o posterior.** Los comandos de esta guía no están disponibles en versiones anteriores de la CLI.
 </Warning>
 
-<Warning>
-Si mantienes una integración por API, revisa la [guía de migración de API 1.57 → 1.58](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58) antes de actualizar. Los IDs de creador ahora identifican cuentas; las operaciones de miembros siguen usando IDs de miembro del espacio de trabajo. Para clientes que dependan de esos IDs, migra las llamadas afectadas a la API actual y [actualiza los mapeos de IDs guardados](/es/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58#migrar-ids-de-usuario-guardados). Las URLs antiguas no conservan todo el contrato de identidad de 1.57.
-</Warning>
+<ApiMigrationWarning />
 
 ## Qué ha cambiado
 

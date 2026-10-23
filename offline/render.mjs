@@ -55,7 +55,7 @@ function containedPath(root, from, specifier) {
 }
 
 /** Interpret only default MDX imports; imports in fenced code are ordinary examples. */
-export function createRenderer(source, { omitUpcomingRelease = false } = {}) {
+export function createRenderer(source) {
   const root = resolve(source), cache = new Map();
   async function load(file, parents = []) {
     if (parents.includes(file)) throw new Error(`Cyclic MDX import: ${file}`);
@@ -70,7 +70,7 @@ export function createRenderer(source, { omitUpcomingRelease = false } = {}) {
               || declaration.specifiers[0].type !== 'ImportDefaultSpecifier') throw new Error(`Unsupported module declaration in ${file}`);
             const specifier = declaration.source.value;
             const { Component } = await load(containedPath(root, file, specifier), [...parents, file]);
-            imported[declaration.specifiers[0].local.name] = omitUpcomingRelease && specifier.endsWith('/upcoming-release.mdx') ? () => null : Component;
+            imported[declaration.specifiers[0].local.name] = Component;
           }
         }
         tree.children = tree.children.filter(child => child.type !== 'mdxjsEsm');

@@ -3,10 +3,6 @@ title: "Audit Log"
 description: "Configure gateway chat-content capture, internal log storage, and external delivery."
 ---
 
-import UpcomingRelease from "/snippets/v1.58/en/upcoming-release.mdx";
-
-<UpcomingRelease />
-
 `features.audit.enabled` controls whether gateway chat logs capture request messages and response content. It is enabled by default. Workspace, Backoffice, and security events are still emitted when this flag is disabled.
 
 Chat-content capture, internal storage, and external delivery are separate settings. Storage is enabled by default; syslog and HTTP delivery are disabled by default.

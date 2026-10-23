@@ -34,7 +34,7 @@ export async function buildSite({ source = resolve(HERE, '..'), output = resolve
   const original = JSON.parse(await readFile(join(source, 'docs.json'), 'utf8'));
   const selection = projectAirgap(original, airgapVersion === undefined ? await readAirgapVersion(source, process.env.AIRGAP_VERSION) : airgapVersion);
   const config = selection.config;
-  const navigation = readNavigation(config), renderer = createRenderer(source, { omitUpcomingRelease: Boolean(selection.version) }), rendered = [], titles = new Map();
+  const navigation = readNavigation(config), renderer = createRenderer(source), rendered = [], titles = new Map();
   for (const [index, page] of navigation.pages.entries()) {
     const sourceRoute = selection.sources.get(page.route) ?? page.route;
     const filename = join(source, sourceRoute.slice(1) + '.mdx');

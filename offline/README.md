@@ -20,9 +20,9 @@ The root `.env.airgap` file sets the default Zylon manual included in release im
 AIRGAP_VERSION=
 ```
 
-Use an available version from `docs.json`, such as `1.57` or `1.58`, when selecting a manual. A numeric version also matches a navigation label such as `1.58 (Upcoming release)`. Empty, `null` and unknown settings build the complete site with the usual version picker and default version.
+Use an available version from `docs.json`, such as `1.57` or `1.58`, when selecting a manual. Empty, `null` and unknown settings build the complete site with the usual version picker and 1.58 as the default version.
 
-A valid selection builds only that Zylon version, in both languages. Articles use `/docs/es/...` and `/docs/en/...`, without a version segment, version picker or versioned redirect directories. Article links, language links, sidebar entries and search indexes use the same routes. Links to another version's article use the selected equivalent; when that article is absent from the selected version, they open its language's home. Upcoming-release notice snippets are omitted in this deployed-version build; the complete build retains them. Source MDX and `docs.json` remain unchanged. Unversioned products, including the hidden Zylon Code manual, retain their routes and search isolation. Shared public assets remain bundled.
+A valid selection builds only that Zylon version, in both languages. Articles use `/docs/es/...` and `/docs/en/...`, without a version segment, version picker or versioned redirect directories. Article links, language links, sidebar entries and search indexes use the same routes. Links to another version's article use the selected equivalent; when that article is absent from the selected version, they open its language's home. Source MDX and `docs.json` remain unchanged. Unversioned products, including the hidden Zylon Code manual, retain their routes and search isolation. Shared public assets remain bundled.
 
 For a local build, `AIRGAP_VERSION` in the process environment overrides the file, including an explicitly empty value. For Docker, use the build argument:
 

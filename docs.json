@@ -418,6 +418,7 @@
                               "es/v1.58/operator-manual/configuration/features/feat-database",
                               "es/v1.58/operator-manual/configuration/features/feat-code-execution",
                               "es/v1.58/operator-manual/configuration/features/feat-audit",
+                              "es/v1.58/operator-manual/configuration/features/feat-quotas",
                               "es/v1.58/operator-manual/configuration/features/feat-system-monitor",
                               "es/v1.58/operator-manual/configuration/features/log-delivery-storage",
                               "es/v1.58/operator-manual/configuration/features/feat-project-custom-instructions",
@@ -892,6 +893,7 @@
                               "en/v1.58/operator-manual/configuration/features/feat-database",
                               "en/v1.58/operator-manual/configuration/features/feat-code-execution",
                               "en/v1.58/operator-manual/configuration/features/feat-audit",
+                              "en/v1.58/operator-manual/configuration/features/feat-quotas",
                               "en/v1.58/operator-manual/configuration/features/feat-system-monitor",
                               "en/v1.58/operator-manual/configuration/features/log-delivery-storage",
                               "en/v1.58/operator-manual/configuration/features/feat-project-custom-instructions",
@@ -1455,6 +1457,7 @@
                         "pages": [
                           "es/v1.57/operator-manual/backoffice/system-monitor",
                           "es/v1.57/operator-manual/configuration/features/feat-code-execution",
+                          "es/v1.57/operator-manual/configuration/features/feat-quotas",
                           "es/v1.57/operator-manual/configuration/features/feat-system-monitor"
                         ]
                       }
@@ -1953,6 +1956,7 @@
                         "pages": [
                           "en/v1.57/operator-manual/backoffice/system-monitor",
                           "en/v1.57/operator-manual/configuration/features/feat-code-execution",
+                          "en/v1.57/operator-manual/configuration/features/feat-quotas",
                           "en/v1.57/operator-manual/configuration/features/feat-system-monitor"
                         ]
                       }
@@ -2387,6 +2391,10 @@
       "destination": "/en/v1.58/operator-manual/configuration/features/feat-code-execution"
     },
     {
+      "source": "/en/operator-manual/configuration/features/feat-quotas",
+      "destination": "/en/v1.58/operator-manual/configuration/features/feat-quotas"
+    },
+    {
       "source": "/en/operator-manual/configuration/features/feat-system-monitor",
       "destination": "/en/v1.58/operator-manual/configuration/features/feat-system-monitor"
     },
@@ -2413,6 +2421,10 @@
     {
       "source": "/es/operator-manual/configuration/features/feat-code-execution",
       "destination": "/es/v1.58/operator-manual/configuration/features/feat-code-execution"
+    },
+    {
+      "source": "/es/operator-manual/configuration/features/feat-quotas",
+      "destination": "/es/v1.58/operator-manual/configuration/features/feat-quotas"
     },
     {
       "source": "/es/operator-manual/configuration/features/feat-system-monitor",

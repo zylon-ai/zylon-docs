@@ -28,7 +28,13 @@ title: "Changelog"
   - **Connector Manager**: Search and inspect connectors across organizations, view their project and creator, and revoke credentials while preserving imported files.
   - **System Monitor**: View live CPU, RAM, disk, GPU, and VRAM usage alongside model queues, active inference requests, and token-generation rates. Requires System Monitor enablement. See [System Monitor](/en/v1.58/operator-manual/backoffice/system-monitor).
   - **Language support**: Added Backoffice language preferences and Spanish translations.
-  - **Quotas and rate limits**: Operators can configure request and token limits for accounts and gateways, inspect usage, and reset quotas. Requires the `features.quotas.enabled` setting, which is disabled by default.
+  - **Quotas and rate limits** <Badge color="orange" size="xs">Beta</Badge>: Operators can configure request and token limits for accounts and gateways, inspect usage, and reset quotas. Requires the `features.quotas.enabled` setting, which is disabled by default. See [Quotas and rate limits](/en/v1.58/operator-manual/configuration/features/feat-quotas) for configuration and usage.
+
+  <Warning>
+  **Quotas and rate limits — Beta**
+
+  This feature is in Beta and may have limitations or unexpected behavior. Test and validate it in your deployment before deciding to leave it enabled.
+  </Warning>
 
   ## 🔌 Developer APIs
   ### ✨ Features

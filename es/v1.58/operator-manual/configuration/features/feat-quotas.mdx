@@ -1,0 +1,41 @@
+---
+title: "Cuotas y límites de uso"
+description: "Habilita la gestión de cuotas en Backoffice (Beta) y configura límites de solicitudes y tokens."
+---
+
+import BetaFeature from "/snippets/v1.58/es/beta-feature.mdx";
+
+<BetaFeature />
+
+Habilita la gestión de cuotas en Backoffice para configurar límites de solicitudes y tokens para cuentas y gateways, consultar el consumo y restablecer las cuotas.
+
+### Configuración
+
+| Clave | Predeterminado | Valores | Descripción |
+| --- | --- | --- | --- |
+| `features.quotas.enabled` | `false` | `true`, `false` | Habilita la gestión de cuotas y límites de uso en Backoffice. Requiere un backend compatible con cuotas. |
+
+### Ejemplo
+
+Añade lo siguiente a tu archivo de configuración de Zylon:
+
+```yaml
+features:
+  quotas:
+    enabled: true
+```
+
+Ejecuta `sudo zylon-cli sync` después de cambiar la configuración.
+
+Cuando está habilitada, la gestión de cuotas está disponible en **Backoffice > Plataforma > Cuotas**. Cuando está deshabilitada, la opción de navegación se oculta y no se puede acceder directamente a las páginas de cuotas.
+
+### Gestionar cuotas
+
+1. Abre **Backoffice > Plataforma > Cuotas**.
+2. Crea una cuota con un nombre y los límites de solicitudes o tokens que necesites.
+3. Asígnala a las cuentas o gateways que deban usar esos límites.
+4. Consulta el consumo y restablece las cuotas cuando sea necesario.
+
+<Note>
+  El ajuste habilita la interfaz de gestión. Define los límites y asigna la cuota en Backoffice; habilitar el ajuste por sí solo no define una política de cuotas.
+</Note>

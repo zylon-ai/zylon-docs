@@ -59,6 +59,18 @@ Product screenshots live in `images/zylon-code/screenshots/`, with a localized i
 
 Review the two landing pages, a nested plugin guide and an existing main-doc page. Site search is unavailable in local preview; check hosted search and sitemap exclusion after a preview deployment. Optional provider instructions require separate testing with their runtime and credentials.
 
+## Beta feature warnings
+
+Mark Beta features in cards and changelog entries with `<Badge color="orange" size="xs">Beta</Badge>`. Place the localized warning card at the top of the feature page, following the former upcoming-release notice pattern:
+
+```mdx
+import BetaFeature from "/snippets/v1.58/en/beta-feature.mdx";
+
+<BetaFeature />
+```
+
+Use `/snippets/v1.58/es/beta-feature.mdx` on Spanish pages. Inside `<Update>` entries, paste the snippet's `<Warning>` markup directly and name the affected feature in its bold heading; Mintlify compiles those entries separately. Native badges and warning cards render in Mintlify and the offline bundle.
+
 ## Offline documentation
 
 `offline/` renders the same registered MDX pages and local assets as a standalone site under `/docs`. It uses its own open-source renderer, navigation and local search; it does not ship the Mintlify application or require Enterprise export. External videos remain clearly marked online links. See [the offline build guide](offline/README.md) for build, container and verification steps.

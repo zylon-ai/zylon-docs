@@ -75,9 +75,6 @@ export async function buildSite({ source = resolve(HERE, '..'), output = resolve
       await write(join(staging, '_offline/search', context.id + '.json'), JSON.stringify(records));
     }
     await cp(join(HERE, 'assets'), join(staging, '_offline'), { recursive: true });
-    for (const asset of ['feature-status.css', 'feature-status.js']) {
-      await cp(join(HERE, '..', asset), join(staging, '_offline', asset));
-    }
     for (const directory of ['images', 'files', 'logo']) {
       try { await lstat(join(source, directory)); } catch (error) { if (error.code === 'ENOENT') continue; throw error; }
       await copyPublic(join(source, directory), join(staging, directory));

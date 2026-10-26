@@ -61,13 +61,15 @@ Review the two landing pages, a nested plugin guide and an existing main-doc pag
 
 ## Beta feature warnings
 
-Place this badge beside a Beta feature in a page or changelog entry:
+Mark Beta features in cards and changelog entries with `<Badge color="orange" size="xs">Beta</Badge>`. Place the localized warning card at the top of the feature page, following the former upcoming-release notice pattern:
 
 ```mdx
-<button type="button" className="feature-status-badge" data-feature-status="beta" lang="en" aria-haspopup="dialog" aria-label="Beta: read the feature warning">Beta</button>
+import BetaFeature from "/snippets/v1.58/en/beta-feature.mdx";
+
+<BetaFeature />
 ```
 
-On Spanish pages, use `lang="es"` and `aria-label="Beta: leer la advertencia de la característica"`. Clicking the badge opens a localized warning; readers can close it with the button, Escape, or the backdrop. `feature-status.js` and `feature-status.css` supply the shared behavior and styling for Mintlify and the offline bundle. Use inline HTML so badges also render inside Mintlify's separately compiled `<Update>` entries. Keep a visible `<Warning>` on the feature's configuration page as well. Inside linked cards, use a plain `<Badge color="orange" size="xs">Beta</Badge>` and link to the feature page so buttons are not nested inside links.
+Use `/snippets/v1.58/es/beta-feature.mdx` on Spanish pages. Inside `<Update>` entries, paste the snippet's `<Warning>` markup directly and name the affected feature in its bold heading; Mintlify compiles those entries separately. Native badges and warning cards render in Mintlify and the offline bundle.
 
 ## Offline documentation
 

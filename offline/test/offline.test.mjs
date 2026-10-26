@@ -95,12 +95,6 @@ test('real build emits every collection, /docs links, redirects and private-free
   const main = await readFile(join(f.output, 'en/v1/intro/index.html'), 'utf8');
   assert.doesNotMatch(main, /Zylon Code/);
   assert.match(main, /href="\/docs\/_offline\/site.css"/);
-  assert.match(main, /href="\/docs\/_offline\/feature-status.css"/);
-  assert.match(main, /src="\/docs\/_offline\/feature-status.js"/);
-  for (const asset of ['feature-status.css', 'feature-status.js']) {
-    assert.equal(await readFile(join(f.output, '_offline', asset), 'utf8'),
-      await readFile(new URL('../../' + asset, import.meta.url), 'utf8'));
-  }
   assert.match(main, /href="\/docs\/es\/v1\/intro"/);
   assert.match(main, /src="\/docs\/images\/example.svg"/);
   assert.doesNotMatch(main, /(?:src|poster)="https?:/);
@@ -246,15 +240,18 @@ test('single-page version collections keep the original article filename when fl
   await assert.rejects(access(join(f.output, 'en/v2')));
 });
 
-test('quota pages and changelog entries render localized beta triggers', async () => {
+test('quota pages and changelog entries show localized inline Beta warnings', async () => {
   const root = join(import.meta.dirname, '../..'), render = createRenderer(root);
-  for (const language of ['en', 'es']) {
+  for (const [language, message] of [
+    ['en', 'This feature is in Beta'],
+    ['es', 'Esta característica está en Beta'],
+  ]) {
     for (const page of ['operator-manual/configuration/features/feat-quotas', 'changelog/overview']) {
       const { html } = await render(join(root, language, 'v1.58', page + '.mdx'));
-      assert.ok(html.includes(`lang="${language}"`));
-      assert.match(html, /data-feature-status="beta"/);
-      assert.match(html, /aria-haspopup="dialog"/);
-      assert.match(html, /aria-label="Beta: [^"]+"/);
+      const warnings = html.match(/<aside class="callout warning">[\s\S]*?<\/aside>/g) ?? [];
+      assert.ok(warnings.some(warning => warning.includes(message) && warning.includes('<strong>')));
+      assert.doesNotMatch(html, /data-feature-status|aria-haspopup="dialog"/);
+      if (page === 'changelog/overview') assert.match(html, /class="badge">Beta<\/span>/);
     }
   }
 });

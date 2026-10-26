@@ -8,7 +8,7 @@ COPY offline/test ./test
 WORKDIR /source
 ARG AIRGAP_VERSION
 # Explicit sources: local audit state, Git metadata and arbitrary root files never enter the build.
-COPY docs.json zylon-code.mdx favicon.png feature-status.js feature-status.css ./
+COPY docs.json zylon-code.mdx favicon.png ./
 COPY .env.airgap ./
 COPY en ./en
 COPY es ./es

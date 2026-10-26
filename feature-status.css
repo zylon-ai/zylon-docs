@@ -1,0 +1,50 @@
+/* Shared by Mintlify and the offline bundle; scope all rules to feature status UI. */
+.feature-status-badge {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  border: 1px solid #f5c66b;
+  border-radius: 999px;
+  background: #fff4d6;
+  color: #854d0e;
+  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.feature-status-badge:hover { background: #fde6ad; }
+.feature-status-badge:focus-visible,
+.feature-status-dialog button:focus-visible { outline: 2px solid #b45309; outline-offset: 3px; }
+.feature-status-dialog {
+  box-sizing: border-box;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  border: 1px solid #d4d4d8;
+  border-radius: 16px;
+  padding: 24px;
+  background: #fff;
+  color: #27272a;
+  box-shadow: 0 24px 80px #0004;
+  font-family: inherit;
+}
+.feature-status-dialog::backdrop { background: #0008; }
+.feature-status-dialog h2 { margin: 0 0 12px; font-size: 20px; line-height: 1.4; font-weight: 650; }
+.feature-status-dialog p { margin: 0 0 24px; font-size: 15px; line-height: 1.65; }
+.feature-status-dialog form { margin: 0; text-align: right; }
+.feature-status-dialog button {
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background: #f4f4f5;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.dark .feature-status-dialog,
+[data-theme="dark"] .feature-status-dialog { background: #18181b; color: #fafafa; border-color: #52525b; }
+.dark .feature-status-dialog button,
+[data-theme="dark"] .feature-status-dialog button { background: #27272a; border-color: #52525b; }

@@ -1,0 +1,43 @@
+---
+title: "Quotas and rate limits"
+description: "Enable experimental quota management in Backoffice and configure request and token limits."
+---
+
+<button type="button" className="feature-status-badge" data-feature-status="experimental" lang="en" aria-haspopup="dialog" aria-label="Experimental: read the feature warning" title="Read the experimental feature warning">Experimental</button>
+
+<Warning>
+  Quotas and rate limits are experimental. Behavior and configuration may change between releases. Test them in your environment before relying on them in production.
+</Warning>
+
+Enable quota management in Backoffice to configure request and token limits for accounts and gateways, inspect usage, and reset quotas.
+
+### Configuration
+
+| Key | Default | Values | Description |
+| --- | --- | --- | --- |
+| `features.quotas.enabled` | `false` | `true`, `false` | Enables quota and rate limit management in Backoffice. Requires a backend with quota support. |
+
+### Example
+
+Add the following to your Zylon configuration file:
+
+```yaml
+features:
+  quotas:
+    enabled: true
+```
+
+Run `sudo zylon-cli sync` after changing the configuration.
+
+When enabled, quota management is available under **Backoffice > Platform > Quotas**. When disabled, the navigation item is hidden and direct visits to quota pages are unavailable.
+
+### Manage quotas
+
+1. Open **Backoffice > Platform > Quotas**.
+2. Create a quota with a name and the request or token limits you need.
+3. Attach it to the accounts or gateways that should use those limits.
+4. Inspect usage and reset quotas when needed.
+
+<Note>
+  The feature flag enables the management interface. Set the limits and attach the quota in Backoffice; enabling the flag alone does not define a quota policy.
+</Note>

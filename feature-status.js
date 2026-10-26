@@ -1,17 +1,17 @@
 /** Open localized feature warnings; delegation also covers Mintlify page navigation. */
 document.addEventListener('click', event => {
-  const selector = 'button[data-feature-status="experimental"]';
+  const selector = 'button[data-feature-status="beta"]';
   const trigger = event.target.closest(selector);
   if (!trigger) return;
   const triggerIndex = [...document.querySelectorAll(selector)].indexOf(trigger);
 
   const warning = trigger.lang === 'es' ? {
-    title: 'Característica experimental',
-    message: 'Esta característica está en desarrollo activo y puede presentar limitaciones o un comportamiento inesperado. Su funcionamiento y configuración pueden cambiar entre versiones. Pruébala en tu entorno antes de depender de ella en producción.',
+    title: 'Característica en Beta',
+    message: 'Esta característica está en Beta y puede presentar limitaciones o un comportamiento inesperado. Su funcionamiento y configuración pueden cambiar entre versiones. Pruébala en tu entorno antes de depender de ella en producción.',
     close: 'Entendido',
   } : {
-    title: 'Experimental feature',
-    message: 'This feature is under active development and may have limitations or unexpected behavior. Its behavior and configuration may change between releases. Test it in your environment before relying on it in production.',
+    title: 'Beta feature',
+    message: 'This feature is in Beta and may have limitations or unexpected behavior. Its behavior and configuration may change between releases. Test it in your environment before relying on it in production.',
     close: 'Got it',
   };
   const dialog = document.createElement('dialog');

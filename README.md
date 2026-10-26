@@ -59,15 +59,15 @@ Product screenshots live in `images/zylon-code/screenshots/`, with a localized i
 
 Review the two landing pages, a nested plugin guide and an existing main-doc page. Site search is unavailable in local preview; check hosted search and sitemap exclusion after a preview deployment. Optional provider instructions require separate testing with their runtime and credentials.
 
-## Experimental feature warnings
+## Beta feature warnings
 
-Place this badge beside an experimental feature in a page or changelog entry:
+Place this badge beside a Beta feature in a page or changelog entry:
 
 ```mdx
-<button type="button" className="feature-status-badge" data-feature-status="experimental" lang="en" aria-haspopup="dialog" aria-label="Experimental: read the feature warning">Experimental</button>
+<button type="button" className="feature-status-badge" data-feature-status="beta" lang="en" aria-haspopup="dialog" aria-label="Beta: read the feature warning">Beta</button>
 ```
 
-On Spanish pages, use `lang="es"` and `aria-label="Experimental: leer la advertencia de la característica"`. Clicking the badge opens a localized warning; readers can close it with the button, Escape, or the backdrop. `feature-status.js` and `feature-status.css` supply the shared behavior and styling for Mintlify and the offline bundle. Use inline HTML so badges also render inside Mintlify's separately compiled `<Update>` entries. Keep a visible `<Warning>` on the feature's configuration page as well. Inside linked cards, use a plain `<Badge color="orange" size="xs">Experimental</Badge>` and link to the feature page so buttons are not nested inside links.
+On Spanish pages, use `lang="es"` and `aria-label="Beta: leer la advertencia de la característica"`. Clicking the badge opens a localized warning; readers can close it with the button, Escape, or the backdrop. `feature-status.js` and `feature-status.css` supply the shared behavior and styling for Mintlify and the offline bundle. Use inline HTML so badges also render inside Mintlify's separately compiled `<Update>` entries. Keep a visible `<Warning>` on the feature's configuration page as well. Inside linked cards, use a plain `<Badge color="orange" size="xs">Beta</Badge>` and link to the feature page so buttons are not nested inside links.
 
 ## Offline documentation
 

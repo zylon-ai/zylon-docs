@@ -246,15 +246,15 @@ test('single-page version collections keep the original article filename when fl
   await assert.rejects(access(join(f.output, 'en/v2')));
 });
 
-test('quota pages and changelog entries render localized experimental triggers', async () => {
+test('quota pages and changelog entries render localized beta triggers', async () => {
   const root = join(import.meta.dirname, '../..'), render = createRenderer(root);
   for (const language of ['en', 'es']) {
     for (const page of ['operator-manual/configuration/features/feat-quotas', 'changelog/overview']) {
       const { html } = await render(join(root, language, 'v1.58', page + '.mdx'));
       assert.ok(html.includes(`lang="${language}"`));
-      assert.match(html, /data-feature-status="experimental"/);
+      assert.match(html, /data-feature-status="beta"/);
       assert.match(html, /aria-haspopup="dialog"/);
-      assert.match(html, /aria-label="Experimental: [^"]+"/);
+      assert.match(html, /aria-label="Beta: [^"]+"/);
     }
   }
 });

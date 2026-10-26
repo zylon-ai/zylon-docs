@@ -364,6 +364,7 @@
                           "es/v1.58/operator-manual/backoffice/roles-and-permissions",
                           "es/v1.58/operator-manual/backoffice/accessing-the-backoffice",
                           "es/v1.58/operator-manual/backoffice/platform-backoffice",
+                          "es/v1.58/operator-manual/backoffice/quotas",
                           "es/v1.58/operator-manual/backoffice/guardrails",
                           "es/v1.58/operator-manual/backoffice/usage-dashboard",
                           "es/v1.58/operator-manual/backoffice/system-monitor"
@@ -839,6 +840,7 @@
                           "en/v1.58/operator-manual/backoffice/roles-and-permissions",
                           "en/v1.58/operator-manual/backoffice/accessing-the-backoffice",
                           "en/v1.58/operator-manual/backoffice/platform-backoffice",
+                          "en/v1.58/operator-manual/backoffice/quotas",
                           "en/v1.58/operator-manual/backoffice/guardrails",
                           "en/v1.58/operator-manual/backoffice/usage-dashboard",
                           "en/v1.58/operator-manual/backoffice/system-monitor"
@@ -1456,6 +1458,7 @@
                         "hidden": true,
                         "pages": [
                           "es/v1.57/operator-manual/backoffice/system-monitor",
+                          "es/v1.57/operator-manual/backoffice/quotas",
                           "es/v1.57/operator-manual/configuration/features/feat-code-execution",
                           "es/v1.57/operator-manual/configuration/features/feat-quotas",
                           "es/v1.57/operator-manual/configuration/features/feat-system-monitor"
@@ -1955,6 +1958,7 @@
                         "hidden": true,
                         "pages": [
                           "en/v1.57/operator-manual/backoffice/system-monitor",
+                          "en/v1.57/operator-manual/backoffice/quotas",
                           "en/v1.57/operator-manual/configuration/features/feat-code-execution",
                           "en/v1.57/operator-manual/configuration/features/feat-quotas",
                           "en/v1.57/operator-manual/configuration/features/feat-system-monitor"
@@ -2370,6 +2374,14 @@
     }
   },
   "redirects": [
+    {
+      "source": "/es/operator-manual/backoffice/quotas",
+      "destination": "/es/v1.58/operator-manual/backoffice/quotas"
+    },
+    {
+      "source": "/en/operator-manual/backoffice/quotas",
+      "destination": "/en/v1.58/operator-manual/backoffice/quotas"
+    },
     {
       "source": "/en/changelog/guides/1-58-0",
       "destination": "/en/v1.58/changelog/guides/1-58-0"

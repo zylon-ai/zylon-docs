@@ -1,0 +1,160 @@
+---
+title: Cuotas
+description: Define límites de solicitudes y tokens para cuentas y gateways, consulta el consumo y gestiona las asignaciones.
+icon: gauge-high
+---
+
+import BetaFeature from "/snippets/v1.58/es/beta-feature.mdx";
+
+<BetaFeature />
+
+## Resumen
+
+Las **cuotas** permiten a los Operadores controlar cuántas solicitudes de IA o tokens pueden utilizar las cuentas y los gateways durante un periodo. Úsalas para limitar los picos de actividad, establecer asignaciones diarias o mensuales o reducir la prioridad de los chats que superen un límite.
+
+Abre **Backoffice > Platform > Quotas** con acceso de **Operator**. Si no aparece Quotas, pide al administrador de la plataforma que [habilite la gestión de cuotas](/es/v1.58/operator-manual/configuration/features/feat-quotas).
+
+La página tiene dos pestañas:
+
+- **Usage** muestra el consumo actual de cada cuenta o gateway con una cuota asignada.
+- **Specs** muestra las cuotas guardadas. Abre una cuota para consultar sus límites, editarla o gestionar sus asignaciones.
+
+Las capturas muestran la interfaz en inglés. Los nombres de los controles se mantienen en ese idioma para facilitar su identificación.
+
+![Pestaña Specs de Quotas con una cuota de ejemplo guardada](/images/operator-manual/backoffice/quotas/specs.jpg)
+
+## Cómo funcionan las cuotas
+
+Una cuota es un conjunto reutilizable de límites. **Crearla no aplica ningún límite hasta que la asignes a una cuenta o gateway.**
+
+Cada asignación dispone de su propio saldo. Por ejemplo, si asignas una cuota de 100.000 tokens al día a dos cuentas, **cada cuenta** dispone de 100.000 tokens al día; no comparten un único saldo.
+
+Cuando una cuenta hace una solicitud a un gateway, se aplican las cuotas de **ambos**. La cuota de un gateway controla el tráfico conjunto que pasa por él. Las cuotas se asignan a cuentas o gateways, no a tokens de API individuales.
+
+### Métricas y periodos de restablecimiento
+
+Cada límite tiene **Metric**, **Window** y **Max**. Puedes combinar límites de solicitudes y tokens en una misma cuota.
+
+| Ajuste | Opciones disponibles |
+| --- | --- |
+| **Metric** | **Requests** (solicitudes) o **Tokens** |
+| **Window** | **Per minute**, **Per hour**, **Per day** o **Per month** |
+| **Max** | Un número entero igual o superior a cero |
+
+Los límites por minuto y hora ayudan a controlar la frecuencia de las solicitudes. Los límites por día y mes establecen asignaciones más amplias. Los contadores se restablecen al inicio de cada minuto, hora, día o mes natural en **UTC**, según el periodo elegido. No son periodos móviles que empiecen con la primera solicitud.
+
+### Qué ocurre al alcanzar un límite
+
+Elige el comportamiento en **When a limit is reached**:
+
+| Comportamiento | Resultado |
+| --- | --- |
+| **Block requests** | Opción predeterminada. Rechaza las solicitudes hasta que se restablezca el límite afectado. |
+| **Deprioritize requests** | Las solicitudes continúan y el consumo sigue aumentando. Los chats se ejecutan con prioridad baja. Los embeddings continúan sin cambiar de prioridad. |
+
+Una cuota que bloquea tiene prioridad sobre otra que reduce la prioridad. Alcanzar cualquier límite de bloqueo aplicable puede impedir una solicitud, aunque otra cuota permita continuar.
+
+<Warning>
+**Max = 0 no significa ilimitado.** Con **Block requests**, bloquea por completo esa métrica. Con **Deprioritize requests**, aplica inmediatamente la prioridad baja a los chats.
+</Warning>
+
+![Formulario New Quota con Deprioritize requests y la explicación de su comportamiento](/images/operator-manual/backoffice/quotas/deprioritize.jpg)
+
+## Crear una cuota
+
+1. Abre **Quotas** y haz clic en **New Quota**.
+2. Introduce un **Name** y una **Description** opcional que expliquen la asignación prevista.
+3. Elige **Block requests** o **Deprioritize requests**.
+4. Define **Metric**, **Window** y **Max** para el primer límite.
+5. Pulsa **Add limit** para añadir más límites. Usa el icono de papelera para quitar una fila.
+6. Pulsa **Create Quota**. Desplázate hacia abajo en el formulario si el botón queda fuera de la zona visible.
+
+Por ejemplo, combina **60 Requests / Per minute** con **100000 Tokens / Per day** para controlar los picos y establecer una asignación diaria de tokens. Son valores de ejemplo; elige límites adecuados para tus usuarios y su carga de trabajo.
+
+![Formulario New Quota con límites de solicitudes y tokens](/images/operator-manual/backoffice/quotas/create-quota.jpg)
+
+La cuota guardada se abre en un panel de detalles. Revisa los límites antes de asignarla. Una cuota sin asignaciones no afecta al tráfico.
+
+![Detalles de la cuota guardada con límites y pestañas Accounts y Gateways](/images/operator-manual/backoffice/quotas/quota-details.jpg)
+
+## Asignar una cuota
+
+1. En **Specs**, abre la cuota con la flecha de detalles.
+2. En **Attached to**, elige **Accounts** o **Gateways**.
+3. Busca y selecciona la cuenta o el gateway.
+4. Pulsa **Attach**.
+5. Comprueba que aparece en la tabla con sus contadores de consumo. Repite el proceso para otras cuentas o gateways.
+
+![Gateway seleccionado en el panel de detalles antes de pulsar Attach](/images/operator-manual/backoffice/quotas/attach-gateway.jpg)
+
+Cada cuenta o gateway aparece en su propia fila. El ejemplo utiliza un gateway de demostración vacío, por lo que sus contadores empiezan en cero.
+
+![Gateway de demostración con contadores de solicitudes y tokens tras asignarle la cuota](/images/operator-manual/backoffice/quotas/attached-gateway.jpg)
+
+<Note>
+Los cambios de cuotas pueden tardar unos **30 segundos** en aplicarse. Espera antes de comprobar su efecto sobre las solicitudes.
+</Note>
+
+## Consultar el consumo
+
+Abre **Usage** para comparar el consumo actual con cada límite. Cada fila representa una cuota asignada a una cuenta o gateway. Pulsa el nombre de la cuota para abrir sus detalles.
+
+![Pestaña Usage con el gateway de demostración y su consumo actual](/images/operator-manual/backoffice/quotas/usage.jpg)
+
+- Usa **Filter by quota**, **Filter by account** o **Filter by gateway** para acotar los resultados.
+- Activa **Only near limit (80% or more, this page)** para ver las asignaciones que se acercan a un límite o ya lo han alcanzado. Solo comprueba la **página actual**; revisa las demás páginas si la lista es más larga.
+- Pulsa **Refresh** para actualizar los datos o activa **Auto-refresh** para renovarlos cada 30 segundos. **Updated at** indica la última actualización.
+- Sitúa el puntero sobre una barra de consumo para ver los valores exactos y la hora de restablecimiento. Esta hora se muestra en tu zona horaria local.
+
+![Filtro de proximidad al límite activado sin coincidencias en la página actual](/images/operator-manual/backoffice/quotas/near-limit.jpg)
+
+**No quotas attached yet** indica que no hay asignaciones que mostrar. **Nothing on this page is near its limit** indica que el filtro no ha encontrado coincidencias en esa página; no significa que todas las cuotas de otras páginas estén por debajo del límite.
+
+## Restablecer contadores
+
+Restablece los contadores cuando quieras renovar una asignación antes de su restablecimiento habitual.
+
+1. Abre la cuota y selecciona **Accounts** o **Gateways**.
+2. Pulsa el icono **Reset counters** de la fila correspondiente. También está disponible en **Usage**.
+3. Revisa los nombres de la cuota y de la cuenta o gateway en la confirmación y pulsa **Reset**.
+
+Para restablecer todas las asignaciones de la cuota, usa **Reset all counters** en su panel de detalles. Esta acción no está disponible si la cuota no tiene asignaciones.
+
+![Confirmación de restablecimiento con el nombre de la cuota y del único gateway afectado](/images/operator-manual/backoffice/quotas/reset-counters.jpg)
+
+<Warning>
+El restablecimiento pone a cero los contadores seleccionados y vuelve a dejar disponible esa asignación. Conserva los límites y las asignaciones de la cuota. **Reset all counters** afecta a todas las cuentas y gateways que la tengan asignada.
+</Warning>
+
+## Editar o retirar una cuota
+
+### Editar los límites
+
+Abre la cuota, pulsa **Edit**, modifica el nombre, la descripción, el comportamiento o los límites y pulsa **Save**. Los cambios afectan a todas las cuentas y gateways que tengan esa cuota asignada; revisa la lista antes de guardar.
+
+![Editor de cuotas con ambos límites y el botón Save tras desplazarse hacia abajo](/images/operator-manual/backoffice/quotas/edit-quota.jpg)
+
+### Retirar la cuota de una cuenta o gateway
+
+En **Accounts** o **Gateways**, pulsa el icono **Detach** de la fila y confirma. La cuota deja de aplicarse a esa cuenta o gateway, pero se conserva junto con las demás asignaciones. Las otras cuotas que tenga asignadas siguen aplicándose.
+
+![Confirmación para retirar la cuota del gateway de demostración](/images/operator-manual/backoffice/quotas/detach-gateway.jpg)
+
+### Eliminar la cuota
+
+Pulsa **Delete** en el panel de detalles o el icono de papelera de la cuota en **Specs**. Revisa la confirmación antes de eliminarla.
+
+![Confirmación Delete Quota que explica que se retiran todas las asignaciones](/images/operator-manual/backoffice/quotas/delete-quota.jpg)
+
+<Warning>
+Eliminar una cuota la retira de **todas las cuentas y gateways**. Esta acción no se puede deshacer. Usa **Detach** si solo quieres que deje de aplicarse a una cuenta o gateway.
+</Warning>
+
+## Notas y limitaciones
+
+- Una cuota debe tener al menos un límite. Cada combinación de métrica y periodo solo puede aparecer una vez, lo que permite hasta ocho límites diferentes por cuota.
+- Los máximos deben ser números enteros iguales o superiores a cero. No se admiten valores vacíos, negativos ni decimales.
+- El consumo de tokens se contabiliza después de una respuesta, por lo que puede superar el máximo configurado. Úsalo como control de consumo, no como un tope exacto de gasto.
+- **Deprioritize requests** no detiene el consumo al alcanzar el máximo ni reduce la prioridad de los embeddings.
+- Las cuotas miden solicitudes y tokens. No definen un presupuesto monetario ni un límite para crear cuentas, almacenar datos o subir archivos.
+- Esta página explica las asignaciones de cuotas. Usa el [Panel de Uso](/es/v1.58/operator-manual/backoffice/usage-dashboard) para consultar la actividad de IA y el consumo histórico.

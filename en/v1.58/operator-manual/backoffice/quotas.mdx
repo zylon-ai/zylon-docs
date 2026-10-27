@@ -1,0 +1,158 @@
+---
+title: Quotas
+description: Set request and token limits for accounts and gateways, monitor usage, and manage allowances.
+icon: gauge-high
+---
+
+import BetaFeature from "/snippets/v1.58/en/beta-feature.mdx";
+
+<BetaFeature />
+
+## Overview
+
+**Quotas** let Operators control how many AI requests or tokens accounts and gateways can use within a period. Use them to limit bursts of activity, set daily or monthly allowances, or give over-limit chats a lower priority.
+
+Open **Backoffice > Platform > Quotas** with **Operator** access. If Quotas is missing, ask your platform administrator to [enable quota management](/en/v1.58/operator-manual/configuration/features/feat-quotas).
+
+The page has two tabs:
+
+- **Usage** shows current consumption for each attached account or gateway.
+- **Specs** lists saved quotas. Open a quota to review its limits, edit it, or manage its attachments.
+
+![Quotas Specs tab with a saved example quota](/images/operator-manual/backoffice/quotas/specs.jpg)
+
+## How quotas work
+
+A quota is a reusable set of limits. **Creating it does not apply any limits until you attach it to an account or gateway.**
+
+Each attachment gets its own allowance. For example, attaching a quota of 100,000 tokens per day to two accounts gives **each account** 100,000 tokens per day; they do not share a single allowance.
+
+When an account calls a gateway, the quotas attached to **both** apply. A gateway quota controls the combined traffic through that gateway. Quotas are attached to accounts or gateways, rather than individual API tokens.
+
+### Metrics and reset periods
+
+Each limit has a **Metric**, **Window**, and **Max**. You can combine request and token limits in one quota.
+
+| Setting | Available choices |
+| --- | --- |
+| **Metric** | **Requests** or **Tokens** |
+| **Window** | **Per minute**, **Per hour**, **Per day**, or **Per month** |
+| **Max** | A whole number of zero or more |
+
+Minute and hour limits help control request rates. Day and month limits set longer allowances. Counters reset at the start of each **UTC** minute, hour, day, or calendar month, according to the selected window. These are calendar boundaries, not a rolling period starting with the first request.
+
+### When a limit is reached
+
+Choose how the quota handles requests in **When a limit is reached**:
+
+| Behavior | Result |
+| --- | --- |
+| **Block requests** | The default. Requests are rejected until the affected limit resets. |
+| **Deprioritize requests** | Requests continue and usage keeps counting. Chats run at low priority. Embeddings continue without a priority change. |
+
+A blocking quota takes precedence over a quota that deprioritizes requests. Reaching any applicable blocking limit can therefore prevent a request, even if another quota allows it to continue.
+
+<Warning>
+**Max = 0 is not unlimited.** With **Block requests**, it blocks that metric completely. With **Deprioritize requests**, it applies the lower chat priority immediately.
+</Warning>
+
+![New Quota form showing Deprioritize requests and its explanation](/images/operator-manual/backoffice/quotas/deprioritize.jpg)
+
+## Create a quota
+
+1. Open **Quotas** and click **New Quota**.
+2. Enter a **Name** and an optional **Description** that explain the intended allowance.
+3. Choose **Block requests** or **Deprioritize requests**.
+4. Set the first limit's **Metric**, **Window**, and **Max**.
+5. Click **Add limit** for each additional limit. Use the trash icon to remove an unwanted row.
+6. Click **Create Quota**. Scroll down in the form if the button is below the visible area.
+
+For example, combine **60 Requests / Per minute** with **100000 Tokens / Per day** to control bursts and set a daily token allowance. These are example values; choose limits appropriate for your users and workload.
+
+![New Quota form with request and token limits entered](/images/operator-manual/backoffice/quotas/create-quota.jpg)
+
+The saved quota opens in a details panel. Review the limits before attaching it. A quota with no attachments has no effect on traffic.
+
+![Saved quota details with limits and separate Accounts and Gateways tabs](/images/operator-manual/backoffice/quotas/quota-details.jpg)
+
+## Attach a quota
+
+1. In **Specs**, open the quota using its details arrow.
+2. Under **Attached to**, select **Accounts** or **Gateways**.
+3. Search for and select the account or gateway.
+4. Click **Attach**.
+5. Check that the target appears in the table with its usage counters. Repeat for other targets as needed.
+
+![Gateway selected in the quota details panel before clicking Attach](/images/operator-manual/backoffice/quotas/attach-gateway.jpg)
+
+Each account or gateway appears on its own row. The example below uses an empty demonstration gateway, so its counters start at zero.
+
+![Attached demonstration gateway with separate request and token counters](/images/operator-manual/backoffice/quotas/attached-gateway.jpg)
+
+<Note>
+Quota changes can take about **30 seconds** to take effect. Allow time for a change to apply before checking its effect on requests.
+</Note>
+
+## Monitor usage
+
+Open **Usage** to compare current consumption with each limit. Each row represents one quota attached to one account or gateway. Click the quota name to open its details.
+
+![Quotas Usage tab showing the demonstration gateway and its current consumption](/images/operator-manual/backoffice/quotas/usage.jpg)
+
+- Use **Filter by quota**, **Filter by account**, or **Filter by gateway** to narrow the results.
+- Enable **Only near limit (80% or more, this page)** to focus on attachments approaching or at a limit. This checks the **current page only**; check other pages when reviewing a larger list.
+- Click **Refresh** for an updated reading, or enable **Auto-refresh** to refresh every 30 seconds. **Updated at** shows when usage was last refreshed.
+- Hover over a usage bar to see exact values and the reset time. The reset time is displayed in your local time.
+
+![Near-limit filter enabled with no matching attachments on the current page](/images/operator-manual/backoffice/quotas/near-limit.jpg)
+
+**No quotas attached yet** means there are no attachments to show. **Nothing on this page is near its limit** means the near-limit filter found no matches on that page; it does not mean every quota on other pages is below its limit.
+
+## Reset counters
+
+Reset counters when you want to restore an allowance before its normal reset time.
+
+1. Open the quota and select the **Accounts** or **Gateways** tab.
+2. Click the target row's **Reset counters** icon. The same action is available from **Usage**.
+3. Check the quota and target names in the confirmation, then click **Reset**.
+
+To reset every attachment of the quota, use **Reset all counters** in its details panel instead. This action is unavailable when the quota has no attachments.
+
+![Reset confirmation naming the quota and the single affected gateway](/images/operator-manual/backoffice/quotas/reset-counters.jpg)
+
+<Warning>
+A reset clears the selected usage counters and makes that allowance available again. It keeps the quota's limits and attachments. **Reset all counters** affects every account and gateway attached to that quota.
+</Warning>
+
+## Edit or remove a quota
+
+### Edit limits
+
+Open the quota, click **Edit**, update the name, description, behavior, or limits, then click **Save**. Changes affect every target attached to that quota, so check the attachment list before saving.
+
+![Quota editor showing both limits and the Save button after scrolling down](/images/operator-manual/backoffice/quotas/edit-quota.jpg)
+
+### Detach one account or gateway
+
+In the quota's **Accounts** or **Gateways** tab, click the target row's **Detach** icon and confirm. This removes that quota from the selected target while keeping the quota and its other attachments. Other quotas attached to the same target still apply.
+
+![Detach confirmation for the demonstration gateway](/images/operator-manual/backoffice/quotas/detach-gateway.jpg)
+
+### Delete the quota
+
+Click **Delete** in the details panel, or the quota's trash icon in **Specs**. Review the confirmation before deleting.
+
+![Delete Quota confirmation explaining that all attachments are removed](/images/operator-manual/backoffice/quotas/delete-quota.jpg)
+
+<Warning>
+Deleting a quota detaches it from **all accounts and gateways**. This action cannot be undone. Detach a single target instead if you only want to stop applying the quota there.
+</Warning>
+
+## Notes and limitations
+
+- A quota must contain at least one limit. Each metric and window combination can appear only once, giving up to eight different limits per quota.
+- Limits use whole numbers of zero or more; empty, negative, or fractional maximums are invalid.
+- Token usage is counted after a response, so consumption can exceed the configured maximum. Treat a token limit as usage control rather than an exact spending cap.
+- **Deprioritize requests** does not stop consumption at the maximum and does not lower embedding priority.
+- Quotas measure requests and tokens. They do not define a monetary budget or a limit on account creation, storage, or file uploads.
+- This page describes quota allowances. Use the [Usage Dashboard](/en/v1.58/operator-manual/backoffice/usage-dashboard) to review broader AI activity and historical usage.

@@ -70,3 +70,8 @@
   background: var(--zylon-code);
   border-color: var(--zylon-border);
 }
+
+/* Mintlify sets this variable inline and paints it with an !important rule. */
+.dark .code-block-background {
+  --shiki-dark-bg: var(--zylon-code) !important;
+}

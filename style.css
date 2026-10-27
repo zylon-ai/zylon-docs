@@ -1,0 +1,72 @@
+/* Dark theme mirrors zylon-frontend/packages/ui-v2/styles.css (.dark).
+   Mintlify loads this file globally; keep every override scoped to .dark. */
+.dark {
+  --zylon-surface: oklch(0.268 0.007 56.043);
+  --zylon-paper: oklch(0.2 0.004 56.043);
+  --zylon-code: oklch(0.18 0.006 56.043);
+  --zylon-text: oklch(0.985 0.001 106.423);
+  --zylon-body: oklch(0.985 0.001 106.423 / 72%);
+  --zylon-muted: oklch(0.709 0.01 56.259);
+  --zylon-border: oklch(1 0 0 / 10%);
+  /* Palm uses primary-light for some dark navigation and component states. */
+  --primary: var(--primary-dark);
+  --primary-light: var(--primary-dark);
+}
+
+.dark #navbar {
+  background-color: rgb(var(--background-dark));
+}
+
+.dark #sidebar-content,
+.dark #navbar > div:first-child,
+.dark #footer {
+  border-color: var(--zylon-border);
+}
+
+/* Palm renders its background glow as inline gradients on decorative spans. */
+.dark span.pointer-events-none[style*="radial-gradient"] {
+  display: none;
+}
+
+.dark #page-title,
+.dark #content :is(h1, h2, h3, h4, strong),
+.dark .card :is(h2, h3) {
+  color: var(--zylon-text);
+}
+
+.dark #content {
+  color: var(--zylon-body);
+  --tw-prose-body: var(--zylon-body);
+  --tw-prose-headings: var(--zylon-text);
+  --tw-prose-bold: var(--zylon-text);
+  --tw-prose-links: var(--zylon-text);
+}
+
+.dark #table-of-contents {
+  color: var(--zylon-muted);
+}
+
+.dark #search-bar-entry {
+  background: var(--zylon-surface);
+  color: var(--zylon-muted);
+  --tw-ring-color: var(--zylon-border);
+}
+
+.dark .card {
+  background: var(--zylon-paper);
+  border-color: var(--zylon-border);
+}
+
+.dark .card p {
+  color: var(--zylon-body);
+}
+
+.dark .card:hover {
+  background: var(--zylon-surface);
+  border-color: oklch(1 0 0 / 20%);
+}
+
+.dark .code-block {
+  background: var(--zylon-code);
+  border-color: var(--zylon-border);
+}

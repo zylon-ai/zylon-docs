@@ -5,7 +5,7 @@
   "colors": {
     "primary": "#796ABF",
     "light": "#796ABF",
-    "dark": "#E8C468"
+    "dark": "#E7E5E4"
   },
   "description": "Zylon is an enterprise AI platform delivering private generative AI and on-premise AI software for regulated industries, enabling secure deployment inside enterprise infrastructure without external cloud dependencies.",
   "favicon": "/favicon.png",
@@ -16,7 +16,11 @@
     "default": "light"
   },
   "background": {
-    "decoration": "gradient"
+    "decoration": "gradient",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#1C1917"
+    }
   },
   "contextual": {
     "options": [

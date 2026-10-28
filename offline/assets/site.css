@@ -34,17 +34,18 @@
   scroll-padding-top: 140px;
 }
 :root[data-theme="dark"] {
+  /* Match the default .dark tokens in zylon-frontend/packages/ui-v2/styles.css. */
   color-scheme: dark;
-  --bg: #101011;
-  --header: #151516;
-  --surface: #19191b;
-  --text: #ececee;
-  --body: #b8b8bd;
-  --muted: #98989f;
-  --line: #2a2a2e;
-  --accent: #e8c468;
-  --accent-bg: #262319;
-  --code: #19191c;
+  --bg: oklch(0.216 0.006 56.043);
+  --header: oklch(0.216 0.006 56.043);
+  --surface: oklch(0.268 0.007 56.043);
+  --text: oklch(0.985 0.001 106.423);
+  --body: oklch(0.985 0.001 106.423 / 72%);
+  --muted: oklch(0.709 0.01 56.259);
+  --line: oklch(1 0 0 / 10%);
+  --accent: oklch(0.923 0.003 48.717);
+  --accent-bg: oklch(1 0 0 / 10%);
+  --code: oklch(0.18 0.006 56.043);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--body); }
@@ -206,7 +207,9 @@ button { background: transparent; border: 0; }
   min-height: calc(100vh - var(--header-height));
   background: radial-gradient(ellipse 760px 300px at 55% 0, #f0eef8ad, transparent);
 }
-[data-theme="dark"] .content-shell { background: radial-gradient(ellipse 760px 300px at 55% 0, #24201888, transparent); }
+[data-theme="dark"] .content-shell { background: none; }
+[data-theme="dark"] .search-trigger { border-color: var(--line); background: var(--surface); }
+[data-theme="dark"] .nav-page.active { background: var(--accent-bg); border-radius: 8px; }
 .layout { display: grid; grid-template-columns: minmax(0, 672px) 264px; gap: 88px; max-width: 1024px; margin: 0 auto; }
 .article { min-width: 0; padding-bottom: 80px; line-height: 28px; }
 .article-header { margin-bottom: 32px; }

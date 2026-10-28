@@ -14,6 +14,12 @@ mint dev --port 3010
 
 Review the docs at `http://localhost:3010` and edit them in your favorite editor.
 
+## Theme maintenance
+
+Dark mode follows the default warm stone `.dark` palette in `zylon-frontend/packages/ui-v2/styles.css`: neutral primary accents, warm surfaces and soft white borders. Keep the hosted settings in `docs.json` and dark-only overrides in `style.css` aligned with `offline/assets/site.css`. The frontend's optional `.retro` palette is separate. Light mode keeps its existing purple accents.
+
+Mintlify [loads custom CSS automatically](https://www.mintlify.com/docs/customize/custom-scripts); keep hosted overrides scoped to `.dark` and check the rendered hooks when upgrading Mintlify. Preview both renderers at desktop, tablet and mobile sizes in both themes, including cards, code, callouts, search, collection menus and mobile navigation. Verify English/Spanish, 1.57/1.58 and Zylon Code pages; capture before/after dark screenshots and compare light mode for regressions. Hosted search results need a deployed preview; the offline search can be checked locally.
+
 ## Documentation versions
 
 Mintlify's native version selector keeps both releases available in English and Spanish:

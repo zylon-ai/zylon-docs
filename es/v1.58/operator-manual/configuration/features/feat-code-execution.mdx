@@ -97,6 +97,44 @@ opensandbox:
 
 La imagen incluye Python 3 con las librerías de datos más habituales (pandas, numpy, matplotlib, openpyxl, python-docx, pypdf, entre otras) y herramientas de línea de comandos como `unzip`, `rg` y `sqlite3`.
 
+### Enlaces a aplicaciones del sandbox
+
+Cuando el asistente arranca una aplicación web o un servidor HTTP dentro del sandbox, como un panel o un gráfico interactivo, puede compartir un enlace a ella en el chat. Estos enlaces se sirven desde un subdominio dedicado de tu dominio de Zylon:
+
+```
+https://sandbox-exec.<tu_dominio_zylon>/<id-del-sandbox>/<puerto>/
+```
+
+El enlace se abre directamente en el navegador del usuario, así que el subdominio necesita un registro DNS y, con certificados manuales, su propio certificado SSL. Consulta [Subdominios](/es/v1.58/operator-manual/configuration/network/ports-and-dns#subdominios).
+
+Los enlaces a aplicaciones del sandbox están desactivados por defecto.
+
+#### Activar los enlaces a aplicaciones del sandbox
+
+Después de configurar el subdominio, añade lo siguiente a `/etc/zylon/zylon-conf.yaml` y ejecuta `sudo zylon-cli sync`:
+
+```yaml
+features:
+    codeExecution:
+        tools:
+            presentServer: true
+```
+
+#### Desactivar los enlaces a aplicaciones del sandbox
+
+Para que el asistente deje de compartir enlaces a aplicaciones que se ejecutan en el sandbox, vuelve a poner `presentServer` en `false` (el valor por defecto) y ejecuta `sudo zylon-cli sync`. El asistente puede seguir ejecutando código y presentando archivos.
+
+```yaml
+features:
+    codeExecution:
+        tools:
+            presentServer: false
+```
+
+<Note>
+Esta opción solo controla si el asistente comparte enlaces. El ingress `sandbox-exec` forma parte del gateway del sandbox y sigue desplegado.
+</Note>
+
 ### Resolución de problemas
 
 Comprueba los sandboxes que están en ejecución:
@@ -112,5 +150,11 @@ sudo kubectl logs -n opensandbox deploy/opensandbox-server --tail=200
 ```
 
 Si la ejecución de código no está disponible en el chat del Workspace, comprueba `features.codeExecution.enabled` y ejecuta `sudo zylon-cli sync` después de cambiarlo.
+
+Si un enlace a una aplicación del sandbox no carga o muestra un aviso de certificado, comprueba el [registro DNS](/es/v1.58/operator-manual/configuration/network/ports-and-dns#subdominios) de `sandbox-exec.<tu_dominio_zylon>` y, con certificados manuales, el [secret `zylon-tls-sandbox-exec`](/es/v1.58/operator-manual/configuration/network/ports-and-dns#certificados-ssl-para-subdominios) del namespace `opensandbox`. Para ver el host y el secret que espera el ingress del sandbox, ejecuta lo siguiente y revisa la línea `TLS` (`zylon-tls-sandbox-exec terminates sandbox-exec.<tu_dominio_zylon>`):
+
+```bash
+sudo kubectl describe ingress opensandbox-ingress-gateway -n opensandbox
+```
 
 El error `code_execution provider is not configured.` significa que falta el proveedor de ejecución de código de GPT. Comprueba la configuración del proveedor de GPT y el servicio OpenSandbox; este error no es el resultado esperado de desactivar únicamente el flag del Workspace.

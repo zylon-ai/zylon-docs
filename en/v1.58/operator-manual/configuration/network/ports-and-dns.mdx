@@ -59,3 +59,49 @@ zylon.company.com. 1800 IN A** 32.41.12.123
 **# DNS configuration for an A Record, using the IP directly 
 zylon.otacv.com. 1800 IN A** 32.41.12.123
 ```
+
+### Subdomains
+
+Some Zylon features are served from their own subdomain of your Zylon domain:
+
+| Subdomain | Used by |
+|---|---|
+| `n8n.zylon.company.com` | [n8n](/en/v1.58/operator-manual/configuration/n8n) |
+| `sandbox-exec.zylon.company.com` | [Sandbox app links](/en/v1.58/operator-manual/configuration/features/feat-code-execution#sandbox-app-links) from code execution |
+
+For each feature you use, create a DNS record for its subdomain that points to the same machine as your Zylon domain. A wildcard record such as `*.zylon.company.com` covers all of them.
+
+```bash
+# DNS configuration for the subdomains, using the IP directly
+n8n.zylon.company.com. 1800 IN A 32.41.12.123
+sandbox-exec.zylon.company.com. 1800 IN A 32.41.12.123
+```
+
+#### SSL certificates for subdomains
+
+<Warning>
+This section is only necessary if you are not using Let's Encrypt certificates
+</Warning>
+
+With Let's Encrypt, the certificates for the subdomains are issued automatically. With manual SSL certificates, each subdomain needs its own Kubernetes secret, with a certificate that covers the subdomain, either by name or with a wildcard such as `*.zylon.company.com`. Prepare the `tls.crt` and `tls.key` files in the same way as for your Zylon domain.
+
+- **n8n:** follow [n8n SSL certificates configuration](/en/v1.58/operator-manual/configuration/n8n#ssl-certificates-configuration-optional).
+- **Sandbox app links:** create the `zylon-tls-sandbox-exec` secret in the `opensandbox` namespace, not in `zylon`:
+
+```bash
+# Create the sandbox SSL secret
+sudo k0s kubectl create secret tls zylon-tls-sandbox-exec --key tls.key --cert tls.crt -n opensandbox
+
+# Verify the secret was created correctly
+sudo k0s kubectl describe secret zylon-tls-sandbox-exec -n opensandbox
+```
+
+After creating the secret, reload the configuration:
+
+```bash
+sudo zylon-cli sync
+```
+
+<Tip>
+Certificate renewal must be done manually: delete the secret and create it again with the updated certificate files.
+</Tip>

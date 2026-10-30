@@ -97,6 +97,44 @@ opensandbox:
 
 The image includes Python 3 with common data libraries (pandas, numpy, matplotlib, openpyxl, python-docx, pypdf, and others) and command-line tools such as `unzip`, `rg`, and `sqlite3`.
 
+### Sandbox app links
+
+When the assistant starts a web app or HTTP server inside the sandbox, such as a dashboard or an interactive chart, it can share a link to it in the chat. These links are served from a dedicated subdomain of your Zylon domain:
+
+```
+https://sandbox-exec.<your_zylon_domain>/<sandbox-id>/<port>/
+```
+
+The link opens directly in the user's browser, so the subdomain needs a DNS record and, with manual certificates, its own SSL certificate. See [Subdomains](/en/v1.58/operator-manual/configuration/network/ports-and-dns#subdomains).
+
+Sandbox app links are turned off by default.
+
+#### Enable sandbox app links
+
+After setting up the subdomain, add the following to `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync`:
+
+```yaml
+features:
+    codeExecution:
+        tools:
+            presentServer: true
+```
+
+#### Disable sandbox app links
+
+To stop the assistant from sharing links to apps running in the sandbox, set `presentServer` back to `false` (the default) and run `sudo zylon-cli sync`. The assistant can still run code and present files.
+
+```yaml
+features:
+    codeExecution:
+        tools:
+            presentServer: false
+```
+
+<Note>
+This setting only controls whether the assistant shares links. The `sandbox-exec` ingress is part of the sandbox gateway and stays deployed.
+</Note>
+
 ### Troubleshooting
 
 Check the sandboxes that are running:
@@ -112,5 +150,11 @@ sudo kubectl logs -n opensandbox deploy/opensandbox-server --tail=200
 ```
 
 If code execution is unavailable in Workspace chat, check `features.codeExecution.enabled` and run `sudo zylon-cli sync` after changing it.
+
+If a sandbox app link doesn't load or shows a certificate warning, check the [DNS record](/en/v1.58/operator-manual/configuration/network/ports-and-dns#subdomains) for `sandbox-exec.<your_zylon_domain>` and, with manual certificates, the [`zylon-tls-sandbox-exec` secret](/en/v1.58/operator-manual/configuration/network/ports-and-dns#ssl-certificates-for-subdomains) in the `opensandbox` namespace. To see the host and the secret the sandbox ingress expects, run the following and check the `TLS` line (`zylon-tls-sandbox-exec terminates sandbox-exec.<your_zylon_domain>`):
+
+```bash
+sudo kubectl describe ingress opensandbox-ingress-gateway -n opensandbox
+```
 
 The error `code_execution provider is not configured.` means the GPT code-execution provider is missing. Check the GPT provider configuration and OpenSandbox service; this error is not the expected result of disabling the Workspace flag alone.

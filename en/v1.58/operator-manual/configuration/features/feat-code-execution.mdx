@@ -107,6 +107,8 @@ https://sandbox-exec.<your_zylon_domain>/<sandbox-id>/<port>/
 
 The link opens directly in the user's browser, so the subdomain needs a DNS record and, with manual certificates, its own SSL certificate. See [Subdomains](/en/v1.58/operator-manual/configuration/network/ports-and-dns#subdomains).
 
+A link works only while its sandbox is running. When the sandbox shuts down after `sessionTTLSeconds` of inactivity, the app stops and the link no longer opens; the user's next message starts a new sandbox, and the assistant shares a new link if it starts the app again. Browser traffic to the link doesn't count as activity.
+
 Sandbox app links are turned off by default.
 
 #### Enable sandbox app links

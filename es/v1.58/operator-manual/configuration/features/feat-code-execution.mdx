@@ -107,6 +107,8 @@ https://sandbox-exec.<tu_dominio_zylon>/<id-del-sandbox>/<puerto>/
 
 El enlace se abre directamente en el navegador del usuario, así que el subdominio necesita un registro DNS y, con certificados manuales, su propio certificado SSL. Consulta [Subdominios](/es/v1.58/operator-manual/configuration/network/ports-and-dns#subdominios).
 
+Un enlace solo funciona mientras su sandbox está en marcha. Cuando el sandbox se apaga tras `sessionTTLSeconds` de inactividad, la aplicación se detiene y el enlace deja de abrirse; el siguiente mensaje del usuario arranca un sandbox nuevo, y el asistente comparte un enlace nuevo si vuelve a arrancar la aplicación. El tráfico del navegador hacia el enlace no cuenta como actividad.
+
 Los enlaces a aplicaciones del sandbox están desactivados por defecto.
 
 #### Activar los enlaces a aplicaciones del sandbox

@@ -86,9 +86,12 @@ This section is only necessary if you are not using Let's Encrypt certificates
 With Let's Encrypt, the certificates for the subdomains are issued automatically. With manual SSL certificates, each subdomain needs its own Kubernetes secret, with a certificate that covers the subdomain, either by name or with a wildcard such as `*.zylon.company.com`. Prepare the `tls.crt` and `tls.key` files in the same way as for your Zylon domain.
 
 - **n8n:** follow [n8n SSL certificates configuration](/en/v1.58/operator-manual/configuration/n8n#ssl-certificates-configuration-optional).
-- **Sandbox app links:** create the `zylon-tls-sandbox-exec` secret in the `opensandbox` namespace, not in `zylon`:
+- **Sandbox app links:** create the `zylon-tls-sandbox-exec` secret in the `opensandbox` namespace, not in `zylon`. Do this after Zylon is installed and after running `sudo zylon-cli sync` for any pending configuration changes. You don't need to sync again afterwards: the sandbox ingress picks up the secret within a few seconds.
 
 ```bash
+# Remove a previous sandbox SSL secret, if there is one
+sudo k0s kubectl delete secret zylon-tls-sandbox-exec -n opensandbox --ignore-not-found
+
 # Create the sandbox SSL secret
 sudo k0s kubectl create secret tls zylon-tls-sandbox-exec --key tls.key --cert tls.crt -n opensandbox
 
@@ -96,12 +99,6 @@ sudo k0s kubectl create secret tls zylon-tls-sandbox-exec --key tls.key --cert t
 sudo k0s kubectl describe secret zylon-tls-sandbox-exec -n opensandbox
 ```
 
-After creating the secret, reload the configuration:
-
-```bash
-sudo zylon-cli sync
-```
-
 <Tip>
-Certificate renewal must be done manually: delete the secret and create it again with the updated certificate files.
+Certificate renewal must be done manually: run the same commands with the updated certificate files. If a sandbox app link shows a certificate warning after a `zylon-cli sync` or an upgrade, check that the secret still exists and create it again if it doesn't.
 </Tip>

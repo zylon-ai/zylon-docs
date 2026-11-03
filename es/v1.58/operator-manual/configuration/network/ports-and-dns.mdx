@@ -86,9 +86,12 @@ Esta sección es necesaria únicamente si no estás utilizando certificados de L
 Con Let's Encrypt, los certificados de los subdominios se emiten automáticamente. Con certificados SSL manuales, cada subdominio necesita su propio secret de Kubernetes, con un certificado que cubra el subdominio, ya sea por nombre o con un comodín como `*.zylon.company.com`. Prepara los archivos `tls.crt` y `tls.key` de la misma forma que para tu dominio de Zylon.
 
 - **n8n:** sigue la [configuración de certificados SSL de n8n](/es/v1.58/operator-manual/configuration/n8n#configuración-de-certificados-ssl-opcional).
-- **Enlaces a aplicaciones del sandbox:** crea el secret `zylon-tls-sandbox-exec` en el namespace `opensandbox`, no en `zylon`:
+- **Enlaces a aplicaciones del sandbox:** crea el secret `zylon-tls-sandbox-exec` en el namespace `opensandbox`, no en `zylon`. Hazlo cuando Zylon ya esté instalado y después de ejecutar `sudo zylon-cli sync` para aplicar los cambios de configuración pendientes. No hace falta volver a sincronizar: el ingress del sandbox detecta el secret en unos segundos.
 
 ```bash
+# Eliminar el secret SSL anterior del sandbox, si existe
+sudo k0s kubectl delete secret zylon-tls-sandbox-exec -n opensandbox --ignore-not-found
+
 # Crear el secret SSL del sandbox
 sudo k0s kubectl create secret tls zylon-tls-sandbox-exec --key tls.key --cert tls.crt -n opensandbox
 
@@ -96,12 +99,6 @@ sudo k0s kubectl create secret tls zylon-tls-sandbox-exec --key tls.key --cert t
 sudo k0s kubectl describe secret zylon-tls-sandbox-exec -n opensandbox
 ```
 
-Después de crear el secret, recarga la configuración:
-
-```bash
-sudo zylon-cli sync
-```
-
 <Tip>
-La renovación de certificados se debe hacer manualmente: elimina el secret y vuelve a crearlo con los archivos de certificado actualizados.
+La renovación de certificados se debe hacer manualmente: ejecuta los mismos comandos con los archivos de certificado actualizados. Si un enlace a una aplicación del sandbox muestra un aviso de certificado después de un `zylon-cli sync` o una actualización, comprueba que el secret sigue existiendo y vuelve a crearlo si no está.
 </Tip>

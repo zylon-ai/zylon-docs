@@ -111,7 +111,7 @@ Sandbox app links are turned off by default.
 
 #### Enable sandbox app links
 
-After setting up the subdomain, add the following to `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync`:
+Add the following to `/etc/zylon/zylon-conf.yaml` and run `sudo zylon-cli sync`:
 
 ```yaml
 features:
@@ -119,6 +119,8 @@ features:
         tools:
             presentServer: true
 ```
+
+Then make sure the subdomain is set up: a DNS record and, with manual certificates, the sandbox SSL secret, created after the sync. See [Subdomains](/en/v1.58/operator-manual/configuration/network/ports-and-dns#subdomains).
 
 #### Disable sandbox app links
 

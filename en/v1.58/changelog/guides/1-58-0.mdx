@@ -61,7 +61,7 @@ Follow the steps for your installation type.
       <Step title="Install 1.58">
         ```bash
         sudo zylon-cli list-versions
-        sudo zylon-cli install 1.58.X
+        sudo zylon-cli install 1.58.1
         ```
       </Step>
     </Steps>
@@ -114,7 +114,7 @@ Follow the steps for your installation type.
       <Step title="Install 1.58">
         ```bash
         sudo zylon-cli list-versions
-        sudo zylon-cli install 1.58.X
+        sudo zylon-cli install 1.58.1
         ```
       </Step>
       <Step title="Re-enable offline mode">
@@ -172,10 +172,10 @@ Follow the steps for your installation type.
         sudo zylon-cli list-versions
 
         # Use --from if your current version is known (smaller bundle)
-        sudo zylon-cli export 1.58.X --from CURRENT_VERSION
+        sudo zylon-cli export 1.58.1 --from CURRENT_VERSION
 
         # Otherwise export a full bundle
-        sudo zylon-cli export 1.58.X
+        sudo zylon-cli export 1.58.1
         ```
       </Step>
       <Step title="Transfer artifacts to the offline machine">
@@ -209,7 +209,7 @@ Follow the steps for your installation type.
         # Import the Zylon bundle, check the new version is available, then install it
         sudo zylon-cli import zylon-*.tar
         sudo zylon-cli list-versions --offline
-        sudo zylon-cli install 1.58.X --airgap
+        sudo zylon-cli install 1.58.1 --airgap
         ```
       </Step>
     </Steps>

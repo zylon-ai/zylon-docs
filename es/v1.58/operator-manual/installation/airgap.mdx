@@ -260,6 +260,10 @@ En tu máquina online, asegura acceso de firewall a estos dominios:
     Esto crea `zylon-<version>-<os>-<arch>.tar` en tu directorio actual. Adicionalmente, generará
     los comandos para ejecutar en la máquina offline para la instalación para importar e instalar Zylon. Almacena estos comandos de forma segura.
 
+    El bundle incluye el controlador NVIDIA (por defecto, la última versión de la rama `615`). Para incluir otro controlador, añade
+    `--driver-version` (y `--cuda-version` si es necesario) tanto a `download` como a `export`, y usa las mismas banderas al instalar.
+    Consulta [elegir el controlador NVIDIA](/es/v1.58/operator-manual/troubleshooting/nvidia-drivers#elegir-el-controlador-nvidia).
+
     <Note>
       La exportación puede tomar tiempo significativo. El archivo tar resultante puede ser de 60-80GB.
     </Note>
@@ -521,6 +525,7 @@ Las actualizaciones en entornos airgap siguen un flujo de trabajo similar de dos
     ```
 
     La bandera `--from` crea un bundle diferencial que contiene solo cambios entre versiones, reduciendo significativamente el tamaño del bundle y tiempo de transferencia.
+    El controlador NVIDIA se incluye siempre en los bundles diferenciales.
 
     <Note>
       Los bundles diferenciales típicamente son 5-20 GB vs. 60-80 GB para bundles completos.

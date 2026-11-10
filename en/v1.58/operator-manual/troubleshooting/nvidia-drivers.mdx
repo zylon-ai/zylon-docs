@@ -14,6 +14,31 @@ In particular, during kernel updates or changes to the system configuration, Nvi
 
 Here are some common ways to diagnose if that is the case and how to fix it.
 
+### Selecting the NVIDIA driver version
+
+The Zylon CLI chooses the NVIDIA driver when it runs, not from the Zylon version. By default it installs the **open GPU kernel modules** of the **`615` driver branch** (its latest release), and checks that the driver supports **CUDA 13.4 or newer**. Only the driver is installed on the host; the CUDA libraries are provided by the Zylon containers.
+
+You can change the selection with two flags, available in `install`, `install-drivers`, `download` and `export`:
+
+- `--driver-version`: a driver branch (e.g. `615`, its latest release is used) or an exact release (e.g. `615.78.08`). Default: `615`.
+- `--cuda-version`: minimum CUDA version the driver must support, as reported by `nvidia-smi`. Default: `13.4`.
+
+```bash
+# Default: latest 615 release, CUDA 13.4 or newer
+sudo zylon-cli install <version>
+
+# Pin an exact driver release
+sudo zylon-cli install-drivers --driver-version 615.78.08
+```
+
+The drivers are reinstalled when the installed driver is on a different branch, is an older release, supports a lower CUDA version, or uses the proprietary kernel modules instead of the open ones. Once a release of the branch has been downloaded, it is reused; run with `--force` to check for a newer release.
+
+<Note>
+  The open GPU kernel modules require an NVIDIA Turing (e.g. T4, RTX 20xx) or newer GPU. All the GPUs listed in the [hardware requirements](/en/v1.58/operator-manual/installation/hardware-requirements) are supported.
+</Note>
+
+In airgap installations, the driver is included in the bundle created by `zylon-cli export`. If you export with a non-default `--driver-version` or `--cuda-version`, use the same flags when installing on the offline machine (the install command printed by `export` already includes them).
+
 ### 1 - Check the Zylon Status page
 
 Navigate to the Zylon Status page at `https://<your_zylon_domain>/status`. Check for any error in the AI Service section and in particular `zylon-triton`.

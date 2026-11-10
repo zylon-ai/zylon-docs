@@ -46,6 +46,9 @@ Your firewall must allow access to these domains:
   If your security policies restrict access to public container registries, consider moving to an airgap installation using [Zylon Airgap Installation Guide](/en/v1.58/operator-manual/installation/airgap).
 </Info>
 
+**NVIDIA Drivers (Only applicable if you select a driver release that is not available in Zylon's artifact repository):**
+- `download.nvidia.com` - NVIDIA driver downloads
+
 **AI Models & Dependencies (Only applicable if you need custom AI models):**
 - `huggingface.co` - AI model repository
 - `xet.huggingface.co` - Hugging Face XET protocol
@@ -214,7 +217,7 @@ Your firewall must allow access to these domains:
 
     - System dependencies (gcc, git, etc.)
     - Kubernetes distribution ([k0s](https://k0sproject.io/))
-    - NVIDIA drivers and CUDA (if applicable)
+    - NVIDIA drivers, open kernel modules, `615` branch by default (see [selecting the NVIDIA driver version](/en/v1.58/operator-manual/troubleshooting/nvidia-drivers#selecting-the-nvidia-driver-version))
     - Container runtime and tools (kubectl, helm)
     - Zylon container images
     - SSL certificate generation (if using Let's Encrypt)

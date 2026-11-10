@@ -2,7 +2,7 @@
 title: Requisitos de hardware
 ---
 
-Zylon solo tiene un requisito estricto con respecto al hardware: **debe tener acceso a una GPU con capacidades NVIDIA CUDA y suficiente VRAM para ejecutar el nivel de preset `baseline-96g`**. En la práctica, eso significa planificar **80GB a 96GB de VRAM o más**, según la configuración de GPU. Dependiendo del hardware, algunos modelos de IA pueden estar restringidos, por lo que para asegurar la compatibilidad apunta a las versiones de CUDA más nuevas compatibles (12.6+).
+Zylon solo tiene un requisito estricto con respecto al hardware: **debe tener acceso a una GPU con capacidades NVIDIA CUDA y suficiente VRAM para ejecutar el nivel de preset `baseline-96g`**. En la práctica, eso significa planificar **80GB a 96GB de VRAM o más**, según la configuración de GPU. Dependiendo del hardware, algunos modelos de IA pueden estar restringidos. El CLI de Zylon instala el controlador NVIDIA con los módulos de kernel abiertos de GPU (rama `615`, CUDA 13.4 o superior), lo que requiere una GPU NVIDIA Turing o posterior.
 
 Nuestras especificaciones recomendadas para la mejor experiencia son:
 

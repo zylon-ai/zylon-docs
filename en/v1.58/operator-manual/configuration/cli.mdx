@@ -76,6 +76,8 @@ Usage: `sudo zylon-cli download --help`
 - `--airgap`: Enable airgap mode (installs everything)
 - `--arch`: Target CPU architecture
 - `--binaries`: Install portable binaries
+- `--cuda-version`: Minimum CUDA version the installed NVIDIA driver must support (default: `13.4`)
+- `--driver-version`: NVIDIA driver (open kernel modules) to install: a branch (e.g. `615`, latest release is used) or an exact version (e.g. `615.78.08`) (default: `615`)
 - `--drivers`: Install NVIDIA drivers
 - `--force`: Force reinstallation of existing components
 - `--images`: Install container images
@@ -92,6 +94,8 @@ Usage: `sudo zylon-cli export --help`
 **Flags:**
 
 - `--arch`: Target architecture
+- `--cuda-version`: Minimum CUDA version the installed NVIDIA driver must support (default: `13.4`)
+- `--driver-version`: NVIDIA driver (open kernel modules) to install: a branch (e.g. `615`, latest release is used) or an exact version (e.g. `615.78.08`) (default: `615`)
 - `--from`: Base version for incremental export (exports only differences)
 - `--models`: AI models (can be specified multiple times or comma-separated) (default: `[]`)
 - `--no-binaries`: Exclude portable binaries
@@ -138,6 +142,8 @@ Usage: `sudo zylon-cli install --help`
 **Flags:**
 
 - `--airgap`: Enable airgap mode (installs everything)
+- `--cuda-version`: Minimum CUDA version the installed NVIDIA driver must support (default: `13.4`)
+- `--driver-version`: NVIDIA driver (open kernel modules) to install: a branch (e.g. `615`, latest release is used) or an exact version (e.g. `615.78.08`) (default: `615`)
 - `--force`: Force reinstallation of existing components
 - `--images`: Install container images
 - `--models`: AI models (can be specified multiple times or comma-separated) (default: `[]`)
@@ -156,9 +162,28 @@ Install NVIDIA drivers
 
 Usage: `sudo zylon-cli install-drivers --help`
 
+Uninstalls the current NVIDIA drivers and installs the selected NVIDIA driver with the open GPU kernel modules. By default it installs the latest release of the `615` branch, which must support CUDA `13.4` or newer. A reboot is usually required after the old drivers are removed; re-run the command after rebooting to complete the installation.
+
 **Flags:**
 
-- `-f, --force`: Force install drivers
+- `--cuda-version`: Minimum CUDA version the installed NVIDIA driver must support (default: `13.4`)
+- `--driver-version`: NVIDIA driver (open kernel modules) to install: a branch (e.g. `615`, latest release is used) or an exact version (e.g. `615.78.08`) (default: `615`)
+- `-f, --force`: Force install drivers. It also checks NVIDIA for a newer release of the selected branch instead of reusing the one already downloaded
+
+**Examples:**
+
+```bash
+# Install the default driver (latest 615 release, CUDA 13.4 or newer)
+sudo zylon-cli install-drivers
+
+# Reinstall the drivers, e.g. after a kernel update broke them
+sudo zylon-cli install-drivers --force
+
+# Pin an exact driver release
+sudo zylon-cli install-drivers --driver-version 615.78.08
+```
+
+The same `--driver-version` and `--cuda-version` flags are available in `install`, `download` and `export`. See [Nvidia Drivers](/en/v1.58/operator-manual/troubleshooting/nvidia-drivers#selecting-the-nvidia-driver-version) for details.
 
 ## list-versions
 List the currently installed Zylon version

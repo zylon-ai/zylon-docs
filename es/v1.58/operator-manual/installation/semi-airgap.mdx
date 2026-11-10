@@ -46,6 +46,9 @@ Tu firewall debe permitir acceso a estos dominios:
   Si tus políticas de seguridad restringen el acceso a registros de contenedores públicos, considera cambiar a una instalación airgap usando la [Guía de Instalación Airgap de Zylon](/es/v1.58/operator-manual/installation/airgap).
 </Info>
 
+**Controladores NVIDIA (Solo aplicable si seleccionas una versión del controlador que no está disponible en el repositorio de artefactos de Zylon):**
+- `download.nvidia.com` - Descargas de controladores NVIDIA
+
 **Modelos de IA y Dependencias (Solo aplicable si necesitas modelos de IA personalizados):**
 - `huggingface.co` - Repositorio de modelos de IA
 - `xet.huggingface.co` - Protocolo XET de Hugging Face
@@ -214,7 +217,7 @@ Tu firewall debe permitir acceso a estos dominios:
 
     - Dependencias del sistema (gcc, git, etc.)
     - Distribución de Kubernetes ([k0s](https://k0sproject.io/))
-    - Controladores NVIDIA y CUDA (si aplica)
+    - Controladores NVIDIA, módulos de kernel abiertos, rama `615` por defecto (consulta [elegir el controlador NVIDIA](/es/v1.58/operator-manual/troubleshooting/nvidia-drivers#elegir-el-controlador-nvidia))
     - Runtime de contenedores y herramientas (kubectl, helm)
     - Imágenes de contenedores de Zylon
     - Generación de certificados SSL (si usas Let's Encrypt)

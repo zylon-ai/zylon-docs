@@ -260,6 +260,10 @@ In your online machine, ensure firewall access to these domains:
     This creates `zylon-<version>-<os>-<arch>.tar` in your current directory. Additionally, it will generate
     the commands to run on the offline machine for installation to import and install Zylon. Store these commands safely.
 
+    The bundle includes the NVIDIA driver (latest `615` release by default). To bundle a different driver, add
+    `--driver-version` (and `--cuda-version` if needed) to both `download` and `export`, and use the same flags when installing.
+    See [selecting the NVIDIA driver version](/en/v1.58/operator-manual/troubleshooting/nvidia-drivers#selecting-the-nvidia-driver-version).
+
     <Note>
       Export can take significant time. The resulting tar file may be 60-80GB.
     </Note>
@@ -521,6 +525,7 @@ Updates in airgap environments follow a similar two-machine workflow. The proces
     ```
 
     The `--from` flag creates a differential bundle containing only changes between versions, significantly reducing bundle size and transfer time.
+    The NVIDIA driver is always included in differential bundles.
 
     <Note>
       Differential bundles are typically 5-20 GB vs. 60-80 GB for full bundles.

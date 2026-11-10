@@ -76,6 +76,8 @@ Uso: `sudo zylon-cli download --help`
 - `--airgap`: Habilitar modo airgap (instala todo)
 - `--arch`: Arquitectura de CPU de destino
 - `--binaries`: Instalar binarios portátiles
+- `--cuda-version`: Versión mínima de CUDA que debe soportar el controlador NVIDIA instalado (predeterminado: `13.4`)
+- `--driver-version`: Controlador NVIDIA (módulos de kernel abiertos) a instalar: una rama (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`) (predeterminado: `615`)
 - `--drivers`: Instalar controladores NVIDIA
 - `--force`: Forzar reinstalación de componentes existentes
 - `--images`: Instalar imágenes de contenedor
@@ -92,6 +94,8 @@ Uso: `sudo zylon-cli export --help`
 **Banderas:**
 
 - `--arch`: Arquitectura de destino
+- `--cuda-version`: Versión mínima de CUDA que debe soportar el controlador NVIDIA instalado (predeterminado: `13.4`)
+- `--driver-version`: Controlador NVIDIA (módulos de kernel abiertos) a instalar: una rama (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`) (predeterminado: `615`)
 - `--from`: Versión base para exportación incremental (exporta solo las diferencias)
 - `--models`: Modelos de IA (se puede especificar varias veces o separados por comas) (predeterminado: `[]`)
 - `--no-binaries`: Excluir binarios portátiles
@@ -138,6 +142,8 @@ Uso: `sudo zylon-cli install --help`
 **Banderas:**
 
 - `--airgap`: Habilitar modo airgap (instala todo)
+- `--cuda-version`: Versión mínima de CUDA que debe soportar el controlador NVIDIA instalado (predeterminado: `13.4`)
+- `--driver-version`: Controlador NVIDIA (módulos de kernel abiertos) a instalar: una rama (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`) (predeterminado: `615`)
 - `--force`: Forzar reinstalación de componentes existentes
 - `--images`: Instalar imágenes de contenedor
 - `--models`: Modelos de IA (se puede especificar varias veces o separados por comas) (predeterminado: `[]`)
@@ -156,9 +162,28 @@ Instalar controladores NVIDIA
 
 Uso: `sudo zylon-cli install-drivers --help`
 
+Desinstala los controladores NVIDIA actuales e instala el controlador NVIDIA seleccionado con los módulos de kernel abiertos de GPU. Por defecto instala la última versión de la rama `615`, que debe soportar CUDA `13.4` o superior. Normalmente es necesario reiniciar después de eliminar los controladores anteriores; vuelve a ejecutar el comando tras reiniciar para completar la instalación.
+
 **Banderas:**
 
-- `-f, --force`: Forzar instalación de controladores
+- `--cuda-version`: Versión mínima de CUDA que debe soportar el controlador NVIDIA instalado (predeterminado: `13.4`)
+- `--driver-version`: Controlador NVIDIA (módulos de kernel abiertos) a instalar: una rama (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`) (predeterminado: `615`)
+- `-f, --force`: Forzar instalación de controladores. También comprueba si NVIDIA tiene una versión más reciente de la rama seleccionada en lugar de reutilizar la ya descargada
+
+**Ejemplos:**
+
+```bash
+# Instalar el controlador predeterminado (última versión de la rama 615, CUDA 13.4 o superior)
+sudo zylon-cli install-drivers
+
+# Reinstalar los controladores, p. ej. después de que una actualización del kernel los rompa
+sudo zylon-cli install-drivers --force
+
+# Fijar una versión exacta del controlador
+sudo zylon-cli install-drivers --driver-version 615.78.08
+```
+
+Las mismas banderas `--driver-version` y `--cuda-version` están disponibles en `install`, `download` y `export`. Consulta [Controladores Nvidia](/es/v1.58/operator-manual/troubleshooting/nvidia-drivers#elegir-el-controlador-nvidia) para más detalles.
 
 ## list-versions
 Listar la versión de Zylon actualmente instalada

@@ -14,6 +14,31 @@ En particular, durante las actualizaciones del kernel o cambios en la configurac
 
 Aquí hay algunas formas comunes de diagnosticar si ese es el caso y cómo solucionarlo.
 
+### Elegir el controlador NVIDIA
+
+El CLI de Zylon elige el controlador NVIDIA en el momento de la instalación, no a partir de la versión de Zylon. Por defecto instala los **módulos de kernel abiertos de GPU** de la **rama `615` del controlador** (su última versión) y comprueba que el controlador soporte **CUDA 13.4 o superior**. En el host solo se instala el controlador; las bibliotecas de CUDA las proporcionan los contenedores de Zylon.
+
+Puedes cambiar la selección con dos banderas, disponibles en `install`, `install-drivers`, `download` y `export`:
+
+- `--driver-version`: una rama del controlador (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`). Predeterminado: `615`.
+- `--cuda-version`: versión mínima de CUDA que debe soportar el controlador, según `nvidia-smi`. Predeterminado: `13.4`.
+
+```bash
+# Predeterminado: última versión de la rama 615, CUDA 13.4 o superior
+sudo zylon-cli install <version>
+
+# Fijar una versión exacta del controlador
+sudo zylon-cli install-drivers --driver-version 615.78.08
+```
+
+Los controladores se reinstalan cuando el controlador instalado está en otra rama, es una versión anterior, soporta una versión de CUDA inferior o usa los módulos de kernel propietarios en lugar de los abiertos. Una vez descargada una versión de la rama, se reutiliza; ejecuta con `--force` para buscar una versión más reciente.
+
+<Note>
+  Los módulos de kernel abiertos de GPU requieren una GPU NVIDIA Turing (p. ej. T4, RTX 20xx) o posterior. Todas las GPU indicadas en los [requisitos de hardware](/es/v1.58/operator-manual/installation/hardware-requirements) son compatibles.
+</Note>
+
+En instalaciones airgap, el controlador se incluye en el bundle creado por `zylon-cli export`. Si exportas con un `--driver-version` o `--cuda-version` distinto del predeterminado, usa las mismas banderas al instalar en la máquina offline (el comando de instalación que muestra `export` ya las incluye).
+
 ### 1 - Verificar la página de Estado de Zylon
 
 Navega a la página de Estado de Zylon en `https://<your_zylon_domain>/status`. Verifica si hay algún error en la sección de Servicio de IA y en particular `zylon-triton`.

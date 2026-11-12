@@ -16,6 +16,32 @@ Las capturas muestran la interfaz en inglés con datos sintéticos de ejemplo. L
 
 ![Activity explorer con solicitudes sintéticas](/images/operator-manual/backoffice/activity-registry.png)
 
+## Habilitar Activity Registry
+
+Activity Registry está deshabilitado por defecto y es independiente de AI Usage. En la configuración del despliegue, habilita el explorador y mantén activos Audit Log y el almacenamiento interno:
+
+```yaml
+features:
+  audit:
+    enabled: true
+  activityRegistry:
+    enabled: true
+
+logging:
+  storage:
+    enabled: true
+```
+
+| Ajuste | Predeterminado | Función |
+| --- | --- | --- |
+| `features.audit.enabled` | `true` | Habilita la función Audit que requieren AI Usage y Activity explorer. |
+| `features.activityRegistry.enabled` | `false` | Habilita Activity explorer y los enlaces **View requests** de los informes de Usage. |
+| `logging.storage.enabled` | `true` | Almacena los logs que utilizan ambas pantallas. |
+
+Aplica la configuración con `sudo zylon-cli sync`. En despliegues gestionados con Helm, actualiza estos valores del chart mediante vuestro proceso habitual de despliegue. El frontend y el backend deben incluir los cambios de API correspondientes a Usage y Activity.
+
+AI Usage sigue disponible cuando Activity Registry está deshabilitado, siempre que Audit Log esté habilitado. Activar el explorador no recupera datos que nunca se recopilaron o que ya se eliminaron. Consulta [Entrega y almacenamiento de logs](/es/operator-manual/configuration/features/log-delivery-storage) para configurar el almacenamiento y la retención.
+
 ## Encontrar solicitudes
 
 1. Abre **Activity explorer** o elige **View requests** en un informe de Usage para conservar su alcance seleccionado.

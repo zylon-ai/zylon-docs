@@ -10,6 +10,8 @@ Cada característica puede definir su propio conjunto de claves para controlar e
 features:
   audit:
     enabled: true
+  activityRegistry:
+    enabled: false
   database:
     enabled: true
   mcp:
@@ -24,6 +26,9 @@ features:
 
 
 <CardGroup cols={2}>
+  <Card title="Registro de actividad" icon="list-check" href="/es/operator-manual/backoffice/activity-registry#habilitar-activity-registry">
+    Habilita la inspección de solicitudes junto a AI Usage. Deshabilitado por defecto; requiere Audit Log y almacenamiento.
+  </Card>
   <Card title="Registro de auditoría" icon="list" href="/es/operator-manual/configuration/features/feat-audit">
     Almacena eventos y trazas del Registro de Auditoría
   </Card>

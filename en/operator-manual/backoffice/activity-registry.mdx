@@ -14,6 +14,32 @@ This explorer lists gateway **chat requests**. It is not a registry of every pla
 
 ![Activity explorer with synthetic example requests](/images/operator-manual/backoffice/activity-registry.png)
 
+## Enable Activity Registry
+
+Activity Registry is disabled by default and is separate from AI Usage. In your deployment configuration, enable the explorer and keep Audit Log and internal storage enabled:
+
+```yaml
+features:
+  audit:
+    enabled: true
+  activityRegistry:
+    enabled: true
+
+logging:
+  storage:
+    enabled: true
+```
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `features.audit.enabled` | `true` | Enables the Audit feature required by AI Usage and Activity explorer. |
+| `features.activityRegistry.enabled` | `false` | Enables Activity explorer and the **View requests** links from Usage reports. |
+| `logging.storage.enabled` | `true` | Persists the log data used by both screens. |
+
+Apply the configuration with `sudo zylon-cli sync`. For Helm-managed deployments, update these chart values through your normal Helm deployment process. The frontend and backend must include the matching Usage and Activity API changes.
+
+AI Usage remains available when Activity Registry is disabled, provided Audit Log is enabled. Enabling the explorer does not recover data that was never collected or has already been deleted. See [Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage) for storage and retention settings.
+
 ## Find requests
 
 1. Open **Activity explorer**, or choose **View requests** from a Usage report to carry its selected scope into the explorer.

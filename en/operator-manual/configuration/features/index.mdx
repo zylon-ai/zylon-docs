@@ -10,6 +10,8 @@ Each feature can define its own set of keys to control behavior.
 features:
   audit:
     enabled: true
+  activityRegistry:
+    enabled: false
   database:
     enabled: true
   mcp:
@@ -27,6 +29,9 @@ features:
 </Tip>
 
 <CardGroup cols={2}>
+  <Card title="Activity Registry" icon="list-check" href="/en/operator-manual/backoffice/activity-registry#enable-activity-registry">
+    Enable individual request inspection alongside AI Usage. Disabled by default; requires Audit Log and storage.
+  </Card>
   <Card title="Audit log" icon="list" href="/en/operator-manual/configuration/features/feat-audit">
     Store Audit Log events & traces
   </Card>

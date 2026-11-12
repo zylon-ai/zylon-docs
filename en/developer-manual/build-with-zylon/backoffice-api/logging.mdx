@@ -9,7 +9,7 @@ This page covers manual retrieval only. For external syslog or HTTP delivery, se
 
 These endpoints are read-only. The documented API exposes `GET` operations for listing stored logs and usage data; it does not expose per-record update, patch, or delete operations.
 
-## Authentication and permissions
+## Prerequisites
 
 | Requirement | Value |
 | --- | --- |
@@ -31,21 +31,19 @@ For operator-facing guidance on governance, evidence preservation, and SIEM deli
 | --- | --- |
 | `GET /v1/platform/logs` | List stored platform logs across gateway, workspace, security, and backoffice event families. |
 | `GET /v1/platform/gateway/{gatewayId}/logs` | List stored logs for one gateway. |
-| `GET /v1/platform/usage` | Return limited AI usage data for usage charts and token/tool analysis. |
+| `GET /v1/platform/logs/{logId}` | Retrieve one retained log with optional recorded details. |
+| `GET /v1/platform/usage` | Return aggregate chat usage, rankings, daily operations, and scoped user options. |
 
 ## Pagination
 
-The two log list endpoints return a page envelope:
+The two log list endpoints return a page envelope. Cursor and total-count fields are omitted when unavailable:
 
 <Accordion title="Page envelope">
 ```json
 {
   "data": [],
-  "next_cursor": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
-  "previous_cursor": null,
-  "has_next_page": true,
-  "has_previous_page": false,
-  "total_count": null
+  "has_next_page": false,
+  "has_previous_page": false
 }
 ```
 </Accordion>
@@ -69,20 +67,30 @@ Logs are ordered by `start_timestamp` descending. The backend adds log ID orderi
 
 `GET /v1/platform/logs` and `GET /v1/platform/gateway/{gatewayId}/logs` support these query parameters:
 
-| Parameter | Description |
-| --- | --- |
-| `gatewayId` | Match logs for one gateway. On the gateway route, the path value overrides this query value. |
-| `tokenId` or `token_id` | Match logs created through one API token. |
-| `event` | Match one event family: `zylon.gateway.http`, `zylon.gateway.chat`, `zylon.gateway.embed`, `zylon.gateway.ingest`, `zylon.workspace`, `zylon.security`, or `zylon.backoffice`. |
-| `action` | Match one action, such as `ws.project.create`, `ws.interaction.create`, `backoffice.api_token.create`, or `security.auth.invalid_token`. |
-| `organizationId` | Match one organization. |
-| `projectId` | Match project-linked workspace or security logs. |
-| `start_date` | Unix epoch milliseconds. Matches logs with `start_timestamp >= start_date`. |
-| `end_date` | Unix epoch milliseconds. Matches logs with `end_timestamp <= end_date`. |
-| `include` | Comma-separated list of heavier fields: `InputPayload`, `Payload`, `Data`, `ChatRequestParameters`, `ChatRequestMessages`, `ChatResponse`. |
+<Accordion title="Endpoint parameters">
+All query parameters below are optional.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `gateway_id` or `gatewayId` | String list | One or more gateway IDs. On the gateway route, the path gateway overrides this selection. |
+| `token_id` or `tokenId` | String list | API token IDs, `none` for records without a key, or a mixture of both. |
+| `account_id` or `accountId` | String list | Account IDs, `none` for unattributed records, or a mixture of both. |
+| `has_error` | Boolean | `true` selects recorded errors; `false` selects records with no error. Omit to include both. |
+| `event` | String | One event family from the table below. |
+| `action` | String | One serialized action, such as `ws.project.create` or `security.auth.invalid_token`. |
+| `organizationId` | String | Match one organization. |
+| `projectId` | String | Match project-linked workspace or security logs. |
+| `start_date` | Integer | Unix epoch milliseconds; log start must be at or after this value. |
+| `end_date` | Integer | Unix epoch milliseconds; log end must be at or before this value. |
+| `include` | String | Case-sensitive comma-separated values: `InputPayload`, `Payload`, `Data`, `ChatRequestParameters`, `ChatRequestMessages`, `ChatResponse`. |
+</Accordion>
+
+For gateway, token, and account selections, comma-separated values and repeated parameters are combined, trimmed, and deduplicated. Each selection accepts at most 100 distinct values. An omitted selection is unrestricted; an explicitly empty token/account selection is rejected. `none` is supported only for tokens and accounts, and counts toward the limit. Values within a selection are combined with OR; different filters are combined with AND.
+
+The legacy `status=success` and `status=error` values are aliases for `has_error=false` and `has_error=true`; `has_error` takes precedence when both are present. Unlike Usage, log-list date filters have no default reporting window or 90-day cap.
 
 <Note>
-Without `include`, `input_payload` and `payload` are returned as empty objects and `data` is omitted. Use `include=Data` for structured per-event data. Add chat-specific include values only when needed.
+Without `include`, `input_payload`, `payload`, and structured `data` are omitted. Empty payload objects are also omitted when requested. Use `include=Data` for structured per-event data. Chat content requires both `Data` and the corresponding chat-specific include value; for example, `include=Data,ChatRequestMessages`.
 </Note>
 
 <Note>
@@ -102,6 +110,7 @@ Retrieving very large chat logs can take time, especially when the requested sco
 | `zylon.gateway.chat` | Gateway chat usage logs. |
 | `zylon.gateway.embed` | Gateway embedding usage logs. |
 | `zylon.gateway.ingest` | Gateway ingestion usage logs. |
+| `zylon.gateway.file.upload`, `zylon.gateway.file.download` | Gateway file transfer logs. |
 | `zylon.workspace` | Workspace audit logs for projects, users, files, chats, integrations, and hard delete activity. |
 | `zylon.security` | Authentication and authorization security logs. |
 | `zylon.backoffice` | Backoffice account, API token, and log retrieval audit logs. |
@@ -158,7 +167,7 @@ This event list covers documented application events. Helm-level logging configu
 
 ## Log record schema
 
-Each item returned by the log list endpoints is a `ZylonLogDTO`.
+List entries and the single-log endpoint use the same log record shape. Nullable context and error fields are omitted when absent. Recorded JSON objects can still contain their own null values.
 
 | Field | Notes |
 | --- | --- |
@@ -169,7 +178,7 @@ Each item returned by the log list endpoints is a `ZylonLogDTO`.
 | `event` | Event family. |
 | `action` | Action name when available. |
 | `organization_id` | Organization context when available. |
-| `user_id` | Workspace user context when available. |
+| `ws_member_id` | Workspace member context when available. |
 | `account_id`, `account_email` | Account context when available. |
 | `token_id` | API token context when available. |
 | `start_timestamp`, `end_timestamp` | ISO timestamps. |
@@ -212,10 +221,9 @@ curl "https://{BASE_URL}/v1/platform/logs?event=zylon.workspace&action=ws.projec
       "event": "zylon.workspace",
       "action": "ws.project.create",
       "organization_id": "01985a4d-3c21-7000-8003-0e10dd81d901",
-      "user_id": "01985a4e-9811-7000-8004-d8f56e017c11",
+      "ws_member_id": "01985a4e-9811-7000-8004-d8f56e017c11",
       "account_id": "01985a4f-a802-7000-8005-cd0c96f1a221",
       "account_email": "operator@example.com",
-      "token_id": null,
       "start_timestamp": "2026-05-19T09:21:43.120Z",
       "end_timestamp": "2026-05-19T09:21:43.120Z",
       "ip_address": "203.0.113.10",
@@ -235,7 +243,6 @@ curl "https://{BASE_URL}/v1/platform/logs?event=zylon.workspace&action=ws.projec
     }
   ],
   "next_cursor": "01985a54-2f4d-7000-8001-4d7f7a6d9a10",
-  "previous_cursor": null,
   "has_next_page": false,
   "has_previous_page": false,
   "total_count": 1
@@ -262,61 +269,150 @@ curl "https://{BASE_URL}/v1/platform/gateway/{GATEWAY_ID}/logs?event=zylon.gatew
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-## List AI usage logs
+## Retrieve one log
+
+```http
+GET /v1/platform/logs/{logId}
+```
+
+Returns one retained log record, with the same Backoffice permission check and include behavior as the list endpoints. This API can retrieve any supported event family; the Activity explorer UI specifically lists chat requests.
+
+<Accordion title="Endpoint parameters">
+| Type | Name | Required | Notes |
+| --- | --- | --- | --- |
+| Path | `logId` | Yes | ID of the retained log. |
+| Query | `include` | No | Same case-sensitive include values as the log lists. Omit for metadata only. |
+</Accordion>
+
+```bash
+curl "https://{BASE_URL}/v1/platform/logs/{LOG_ID}?include=Data,ChatRequestParameters,ChatRequestMessages,ChatResponse" \
+  -H "Authorization: Bearer {API_TOKEN}"
+```
+
+The `200` response is one log object, without a page envelope. An invalid log ID or include value returns `400`; a valid ID with no retained record returns `404`.
+
+### Recorded chat details
+
+With `include=Data`, chat records include this structured data when it was stored:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `type` | String | `chat`. |
+| `id` | String | Chat log ID. |
+| `model` | String | Recorded model identifier. |
+| `request_length`, `request_tokens` | Integer | Recorded input length and token count. |
+| `response_length`, `response_tokens` | Integer, nullable | Recorded output length and token count. |
+| `model_latency`, `response_latency`, `response_ttf` | Number, nullable | Model latency, response latency, and time to first response block, in seconds. |
+| `response_tps` | Number, nullable | Recorded output tokens per second. |
+| `tools_used` | String array | Recorded tool names; repeated calls can repeat a name. Does not establish successful execution. |
+| `request_parameters` | Object, nullable | Stored configuration, only with `Data,ChatRequestParameters`. |
+| `request_messages` | Object, nullable | Stored messages, only with `Data,ChatRequestMessages`. |
+| `response` | Object, nullable | Stored response, only with `Data,ChatResponse`. |
+
+Nullable fields may be absent, and include values do not recover content that was never recorded. Configuration, message, and response objects retain the recorded JSON shape; they are not a fixed set of effective model defaults. The API returns stored objects, while the Backoffice request-details dialog displays a selected projection of them. Do not assume the UI's field filtering also applies to direct API retrieval.
+
+## Retrieve aggregate AI usage
 
 ```http
 GET /v1/platform/usage
 ```
 
-Returns a non-paginated list of limited AI usage records. This endpoint is optimized for usage charts. It returns data related to AI usage only: token consumption, tools used, and usage events for chat, embedding, and ingestion activity.
+Returns one aggregate object for the selected scope, rather than a list of log records. Totals, daily chat series, rankings, tools, and user options share a consistent view of stored data. Later writes or backfills appear on a subsequent request.
 
-It does not return full log payloads, request prompts, full responses, security events, workspace audit records, or backoffice events. Use the log list endpoints with `include` when you need full stored log records.
+Chat totals include recorded failed requests unless an error filter excludes them. Additional ingestion, file-search, and embedding counts are returned separately. The endpoint does not return prompts, responses, configuration, or other log payloads. Use the log endpoints with explicit includes to retrieve individual records.
 
 ### Usage filters
 
-| Parameter | Description |
-| --- | --- |
-| `gatewayId` | Comma-separated gateway IDs. |
-| `tokenId` | Match one API token. |
+<Accordion title="Endpoint parameters">
+All query parameters are optional. This endpoint has no pagination, `include`, event/action, organization, or project filters.
 
-### Usage response schema
+| Parameter | Type | Default / notes |
+| --- | --- | --- |
+| `start_date` | Integer | Epoch milliseconds. Defaults to 30 days before the effective `end_date`. |
+| `end_date` | Integer | Epoch milliseconds. Defaults to the current time. |
+| `gateway_id` | String list | Gateway IDs; omitted means all gateways. The alias `gatewayId` is accepted. |
+| `token_id` | String list | API token IDs and/or `none`. The alias `tokenId` is accepted. |
+| `account_id` | String list | Account IDs and/or `none`. The alias `accountId` is accepted. |
+| `has_error` | Boolean | Strict `true` or `false`; omitted includes both outcomes. |
+</Accordion>
 
-| Field | Notes |
-| --- | --- |
-| `id` | Log ID. |
-| `gateway_id` | Gateway ID. |
-| `token_id` | API token ID when available. |
-| `start_timestamp` | ISO timestamp. |
-| `event` | Usage event family. |
-| `data` | Usage payload. Chat data includes request tokens, response tokens, and tools used. Ingest data includes artifact ID. Embed records currently return usage event metadata without an extra data payload. |
+The ID lists use the same comma/repeated-parameter, deduplication, 100-selection, and `none` rules as log lists. IDs must have the correct node type. The legacy `status=success|error` alias is also accepted.
 
-### Example request
+The date window must be increasing, nonnegative, and no longer than 90 days. Dates must be integer epoch milliseconds, with `end_date` at most `253402300799999`. Invalid dates, IDs, boolean values, or empty token/account selections return `400`. A record is in scope only when its start is at or after `start_date` and its end is at or before `end_date`.
 
 ```bash
-curl "https://{BASE_URL}/v1/platform/usage?gatewayId={GATEWAY_ID}&tokenId={TOKEN_ID}" \
+curl "https://{BASE_URL}/v1/platform/usage?gateway_id={GATEWAY_ID}&token_id={TOKEN_ID},none&start_date=1767225600000&end_date=1769817600000&has_error=false" \
   -H "Authorization: Bearer {API_TOKEN}"
 ```
 
-### Example response
+### Usage response schema
+
+All counts and token totals are integers. All array sections are present, including `[]` when empty. Nullable values are omitted when unavailable.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `totals` | Object | Chat summary described below. |
+| `daily` | Object array | Daily chat summary; ascending UTC dates with recorded activity. |
+| `users` | Object array | At most 100 account groups, ranked by total tokens. |
+| `users_by_requests` | Object array | At most 100 account groups, ranked by request count. |
+| `keys` | Object array | At most 100 key groups, ranked by total tokens. |
+| `tools` | Object array | Recorded tool calls, descending by calls then tool name. |
+| `ancillary_daily` | Object array | Daily ingestion, file-search, and embedding counts. |
+| `user_options` | Object array | At most 1,000 recorded account options matching the other filters; the selected `account_id` filter is intentionally ignored here. |
+| `start_date`, `end_date` | Integer | Effective query boundaries in epoch milliseconds. |
+| `rank_limit` | Integer | `100`. |
+| `users_truncated`, `users_by_requests_truncated`, `keys_truncated`, `user_options_truncated` | Boolean | Whether the corresponding array has more matching groups than were returned. |
+
+<Accordion title="Totals and daily fields">
+| Field | Type | Notes |
+| --- | --- | --- |
+| `requests` | Integer | Recorded chat requests, including failures. |
+| `requests_without_recorded_error` | Integer | Requests with no recorded error; does not establish response quality. |
+| `input_tokens`, `output_tokens` | Integer | Sums of available recorded token values. Missing output tokens add zero. |
+| `output_tokens_known_requests` | Integer | Requests with recorded output tokens. Present in `totals` only. |
+| `attributed_users` | Integer | Distinct non-null account IDs. Daily values are not additive across days. |
+| `average_response_latency`, `average_response_ttf` | Number, nullable | Average seconds over records that have the corresponding timing. |
+| `date` | String | `YYYY-MM-DD` in UTC. Present in `daily` only. |
+</Accordion>
+
+<Accordion title="Rankings, tools, user options, and daily operations">
+| Array | Entry fields |
+| --- | --- |
+| `users`, `users_by_requests` | Nullable strings `account_id`, `account_email`; integer `requests`, `input_tokens`, `output_tokens`. An absent account ID represents unattributed usage. |
+| `keys` | Nullable string `token_id`; integer `requests`, `input_tokens`, `output_tokens`. An absent key ID represents usage without a recorded key. |
+| `tools` | String `name`; integer `calls`. Repeated recorded tool calls count separately. |
+| `user_options` | Nullable strings `account_id`, `account_email`, taken from matching historical logs rather than the current account directory. |
+| `ancillary_daily` | String `date` (`YYYY-MM-DD`, UTC); integer `files_ingested`, `file_searches`, `embeddings`. |
+</Accordion>
+
+Rankings are capped independently; their truncation does not reduce totals. Tool counts have no ranking cap and do not prove successful execution. Ingestion counts deduplicate recorded artifact IDs per day, falling back to ingest/log IDs; file-search counts come from recorded search tool calls; embedding counts come from embedding events. Daily series omit dates without matching records rather than filling them with zeroes.
 
 <Accordion title="Example response">
 ```json
-[
-  {
-    "id": "01985a64-7e31-7000-8001-4f52b1dd2a89",
-    "gateway_id": "01985a50-6a8f-7000-8002-2149efc07b20",
-    "token_id": "01985a62-bbe7-7000-8007-828344268abc",
-    "start_timestamp": "2026-05-19T09:30:12.004Z",
-    "event": "zylon.gateway.chat",
-    "data": {
-      "type": "chat",
-      "id": "01985a64-7e31-7000-8001-4f52b1dd2a89",
-      "request_tokens": 14,
-      "response_tokens": 5,
-      "tools_used": []
-    }
-  }
-]
+{
+  "totals": {
+    "requests": 0,
+    "requests_without_recorded_error": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "output_tokens_known_requests": 0,
+    "attributed_users": 0
+  },
+  "daily": [],
+  "users": [],
+  "users_by_requests": [],
+  "keys": [],
+  "tools": [],
+  "ancillary_daily": [],
+  "user_options": [],
+  "start_date": 1767225600000,
+  "end_date": 1769817600000,
+  "rank_limit": 100,
+  "users_truncated": false,
+  "users_by_requests_truncated": false,
+  "keys_truncated": false,
+  "user_options_truncated": false
+}
 ```
 </Accordion>
 
@@ -326,7 +422,9 @@ curl "https://{BASE_URL}/v1/platform/usage?gatewayId={GATEWAY_ID}&tokenId={TOKEN
 | --- | --- |
 | Missing or invalid authentication | Request is rejected by authentication middleware. |
 | Authenticated account without at least the `operator` role | Request is rejected by the permission check. |
-| Invalid UUID, enum value, or pagination combination | Request is rejected before logs are returned. |
+| Invalid node ID or pagination combination | Request is rejected before logs are returned. |
+| Usage window over 90 days, invalid Usage date/error filters, or empty token/account selections | `400`. |
+| Invalid detail ID/include, or a retained log that does not exist | `400` for an invalid detail query; `404` when the valid ID is not found. |
 | Internal storage disabled | New logs are not persisted to Zylon log storage. Manual retrieval returns only already stored records. |
 | Per-record modification or deletion | Not supported by the documented Logging API. Stored log retention is controlled by cleanup configuration. |
 
@@ -340,10 +438,13 @@ When using these endpoints for a manual export, preserve evidence outside the re
 - number of records exported;
 - incident, ticket, or legal hold reference.
 
-Log retrieval calls are also logged as Backoffice actions: `/v1/platform/gateway/{gatewayId}/logs` emits `backoffice.gateway_logs.read`, and `/v1/platform/logs` emits `backoffice.logs.read`. Preserve those events together with the exported response when a review, incident, or legal hold requires evidence of who accessed log records.
+Log retrieval calls are also logged as Backoffice actions: `/v1/platform/gateway/{gatewayId}/logs` emits `backoffice.gateway_logs.read`, and `/v1/platform/logs` and `/v1/platform/logs/{logId}` emit `backoffice.logs.read`. Preserve those events together with the exported response when a review, incident, or legal hold requires evidence of who accessed log records.
 
 ## Related documentation
 
 - [Backoffice API overview](/en/developer-manual/build-with-zylon/backoffice-api/overview)
 - [Auditability & AI Governance: Logging, Evidence, and SIEM Delivery](/en/operator-manual/backoffice/log-delivery-storage)
 - [Configuration: Log Delivery and Storage](/en/operator-manual/configuration/features/log-delivery-storage)
+
+- [AI Usage](/en/operator-manual/backoffice/usage-dashboard)
+- [Activity Registry](/en/operator-manual/backoffice/activity-registry)

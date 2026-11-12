@@ -9,6 +9,8 @@ Utiliza **Sistema de archivos** para importar archivos y carpetas del recurso Sa
 
 El operador debe [habilitar y configurar el conector](/es/v1.58/operator-manual/knowledge-base/file-system). Configura el servidor, el puerto y el recurso compartido exportado; no introduces una dirección de servidor ni una ruta de carpeta en el formulario de acceso.
 
+**Solo se admite SMB2.** Pide al operador que confirme que el servidor permite SMB2; las conexiones SMB1 y SMB3 no están soportadas. Consulta los [requisitos de protocolo y seguridad](/es/v1.58/operator-manual/knowledge-base/file-system#compatibilidad-de-protocolo-y-seguridad).
+
 Necesitas una cuenta Samba que pueda listar las carpetas y leer los archivos que quieres importar. **El usuario puede ser una cuenta Samba local como `zylon`; no tiene que ser un correo electrónico.** Utiliza la contraseña Samba de esa cuenta, que puede ser distinta de tu contraseña de Zylon.
 
 <Warning>

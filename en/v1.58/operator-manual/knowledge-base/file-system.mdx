@@ -15,7 +15,7 @@ Have the following ready:
 - The **exported share name**, as shown in the Samba server's configuration or share list.
 - A Samba account allowed to connect to the share, list and traverse its folders, and read the required files. Both Samba share permissions and underlying filesystem permissions must allow access.
 - DNS resolution and network access **from the Zylon backend pods** to the Samba server. Access from your laptop or from a shell on the Samba server does not establish this.
-- A server compatible with the connector's [protocol and security requirements](#protocol-and-security-compatibility).
+- **An SMB2-compatible server. Only SMB2 is supported**; check the connector's [protocol and security requirements](#protocol-and-security-compatibility).
 
 ## Distinguish the server, share, and subfolder
 
@@ -93,15 +93,36 @@ The chart translates these settings into the following backend runtime variables
 
 ## Check connectivity and permissions
 
+Keep SMB on your private network; it does not need public internet exposure. Allow the configured TCP port through the Samba server's firewall and any Kubernetes egress/network policies for the backend's actual source network. If a VPN connects the networks, its routes and firewall rules must cover backend-to-Samba traffic. A VPN on a user's laptop alone does not provide that route. Resolve DNS problems in the backend/cluster environment; changing a workstation's hosts file does not fix pod DNS.
+
 Run checks from the backend pod network, or have your Kubernetes administrator use an approved diagnostic environment with equivalent DNS, routing, and network policies. A successful check on the Kubernetes host alone may not prove pod connectivity. The commands below require the corresponding diagnostic tools; they do not require a filesystem mount.
 
 ```bash
 getent hosts files.example.com
 nc -vz files.example.com 445
-smbclient '//files.example.com/zylon-samba' -p 445 -U zylon
+```
+
+If you need to discover the exported share name, list the server's shares with the same account and SMB2 limit:
+
+```bash
+smbclient -L files.example.com -p 445 -U zylon \
+  --option='client min protocol=SMB2_10' \
+  --option='client max protocol=SMB2_10'
+```
+
+Use the exported share name from that list for `external.samba.name`. If the server restricts share enumeration, ask its administrator to confirm the name. Listing shares does not verify access to their files. Connect directly to the share below to check its folders.
+
+Connect directly to the configured share:
+
+```bash
+smbclient '//files.example.com/zylon-samba' -p 445 -U zylon \
+  --option='client min protocol=SMB2_10' \
+  --option='client max protocol=SMB2_10'
 ```
 
 Replace the hostname, share, port, and example username `zylon` with your own. Let `smbclient` prompt for the password; do not include it in the command.
+
+The example restricts this diagnostic connection to SMB2.1 (`SMB2_10`), within the supported SMB2 family. Without an explicit dialect limit, a successful test could use unsupported SMB3 instead.
 
 At the `smbclient` prompt, check the target folder:
 
@@ -116,9 +137,16 @@ Expected result: the account can connect to the share and list the target folder
 
 A successful `smbclient` test establishes access with that client, not full compatibility with Zylon. Modern SMB clients can support encryption or authentication methods that Zylon's connector does not.
 
+### Optional checks from macOS or Windows
+
+These checks help confirm the share name and account from a workstation. They use the standard SMB port `445` and do not replace the backend-network and SMB2 checks above. For a custom port, use `smbclient -p` from the diagnostic environment.
+
+- **macOS:** in Finder, press **Command-K**, enter `smb://files.example.com/zylon-samba`, and sign in with the Samba account. Confirm that you can browse the target folder.
+- **Windows:** open **File Explorer → This PC → Map network drive**, choose an available drive letter, and enter `\\files.example.com\zylon-samba` as the folder. Select **Connect using different credentials**, enter the Samba account when prompted, and browse the target folder.
+
 ## Protocol and security compatibility
 
-- The connector is configured to negotiate **SMB 2.1 through SMB 3.1.1**. SMB1 and SMB 2.0.2 are outside that range.
+- **Only SMB2 is supported. SMB1 and SMB3 are not supported.** The server must allow SMB2; a server restricted to SMB3 is not compatible. The chart setting `protocol: "samba"` selects the integration, not the SMB dialect.
 - **Mandatory SMB3 transport encryption is not supported by the current connector client.** Check the server's global and share-level encryption policy, including `server smb encrypt` (called `smb encrypt` in some Samba versions). Requiring encryption can prevent access despite correct credentials. See the [Samba encryption reference](https://www.samba.org/samba/docs/4.21/man-html/smb.conf.5.html#SERVERSMBENCRYPT).
 - SMB signing and SMB encryption are different requirements. Report both policies when investigating compatibility; a signing requirement alone does not establish that encryption is required.
 - This connector uses direct SMB. It does not offer TLS certificate, custom CA, client-certificate, or SMB-over-QUIC configuration. HTTPS certificates for Zylon or the NAS web interface do not configure this connection.
@@ -137,13 +165,20 @@ Credentials belong to the connector and are reused for its reads and syncs. They
 
 See the [File System user guide](/en/v1.58/user-manual/connectors/file-system) for importing and updating content, and [scheduled synchronization](/en/v1.58/operator-manual/configuration/cron-tasks/sync) for optional automatic updates.
 
+## Large shares
+
+For large document repositories, check that the Samba server has sufficient disk I/O and that the network between it and the backend has enough bandwidth for listing, import, and synchronization. Zylon reads SMB directly; it does not require a Linux mount or mount-specific cache options.
+
 ## Troubleshooting
+
+On the Samba server, have its administrator review the effective share, access, and `server min protocol` / `server max protocol` settings with `testparm -s`, and inspect the configured Samba logs at the time of failure. Confirm that the account is enabled for Samba as well as permitted by share and filesystem permissions; the existence of a local operating-system account alone is not sufficient. If the server permits only SMB1 or SMB3, review SMB2 compatibility with the administrator and Zylon support before changing server-wide policy.
 
 | Symptom | What to check |
 | --- | --- |
 | File System is absent from Add files | Confirm the integration is enabled and the updated deployment configuration has been applied. |
 | The form reports invalid user or password | This message can also result from a connection failure. Check backend DNS, port, exact share name, actual Samba credentials, permissions, and security compatibility before assuming the password is wrong. |
 | The account works on the server or a laptop, but not in Zylon | Repeat the access check from the backend network with the same account. Local filesystem access is different from SMB access. Check domain/authentication requirements and encryption policy. |
+| Protocol negotiation fails, or the server requires SMB3 | Only SMB2 is supported. Check the server's allowed dialects and repeat the SMB2-limited diagnostic connection above. Do not infer SMB3 support from a successful connection in another client. |
 | A known folder is missing or appears empty | Confirm the correct share and access to every parent folder. Check whether it is marked hidden: the connector filters hidden entries. Some SMB listing errors can leave folders without visible children; inspect backend and Samba diagnostics. |
 | `Server requires encryption, not yet supported.` appears in backend diagnostics | The server requires SMB encryption that the current client cannot provide. Review compatibility with Zylon support. |
 | The wrong root opens | Check `external.samba.host` and `external.samba.name`. Select subfolders in Workspace rather than adding them to `name`. |

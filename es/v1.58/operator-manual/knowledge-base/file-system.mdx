@@ -15,7 +15,7 @@ Necesitas:
 - El **nombre del recurso compartido exportado**, tal como aparece en la configuración de Samba o en su lista de recursos.
 - Una cuenta Samba que pueda conectarse al recurso, listar y recorrer sus carpetas y leer los archivos necesarios. Deben permitirlo tanto los permisos del recurso Samba como los del sistema de archivos subyacente.
 - Resolución DNS y acceso de red **desde los pods del backend de Zylon** hasta el servidor Samba. Acceder desde tu ordenador o desde una consola en el propio servidor Samba no demuestra ese acceso.
-- Un servidor compatible con los [requisitos de protocolo y seguridad](#compatibilidad-de-protocolo-y-seguridad) del conector.
+- **Un servidor compatible con SMB2. Solo se admite SMB2**; revisa los [requisitos de protocolo y seguridad](#compatibilidad-de-protocolo-y-seguridad) del conector.
 
 ## Distingue servidor, recurso compartido y subcarpeta
 
@@ -93,15 +93,36 @@ El chart traduce estos parámetros a las siguientes variables de ejecución del 
 
 ## Comprueba conectividad y permisos
 
+Mantén SMB en la red privada; no es necesario exponerlo a internet. Permite el puerto TCP configurado en el firewall del servidor Samba y en las políticas de salida/red de Kubernetes para la red de origen real del backend. Si las redes se conectan mediante una VPN, sus rutas y reglas de firewall deben cubrir el tráfico del backend a Samba. Una VPN en el ordenador de un usuario no proporciona por sí sola esa ruta. Resuelve los problemas DNS en el entorno del backend o del clúster; cambiar el archivo hosts de un ordenador no corrige el DNS de los pods.
+
 Ejecuta las comprobaciones desde la red de los pods del backend, o pide al administrador de Kubernetes que utilice un entorno de diagnóstico autorizado con DNS, rutas y políticas de red equivalentes. Una prueba correcta desde el host de Kubernetes no demuestra necesariamente acceso desde los pods. Los comandos siguientes requieren las herramientas de diagnóstico correspondientes; no necesitan montar el recurso en el sistema de archivos.
 
 ```bash
 getent hosts files.example.com
 nc -vz files.example.com 445
-smbclient '//files.example.com/zylon-samba' -p 445 -U zylon
+```
+
+Si necesitas descubrir el nombre del recurso exportado, lista los recursos del servidor con la misma cuenta y el mismo límite de SMB2:
+
+```bash
+smbclient -L files.example.com -p 445 -U zylon \
+  --option='client min protocol=SMB2_10' \
+  --option='client max protocol=SMB2_10'
+```
+
+Utiliza el nombre del recurso exportado de esa lista en `external.samba.name`. Si el servidor restringe la enumeración de recursos, pide al administrador que confirme el nombre. Listar los recursos no verifica el acceso a sus archivos. Conecta directamente al recurso a continuación para comprobar sus carpetas.
+
+Conecta directamente al recurso configurado:
+
+```bash
+smbclient '//files.example.com/zylon-samba' -p 445 -U zylon \
+  --option='client min protocol=SMB2_10' \
+  --option='client max protocol=SMB2_10'
 ```
 
 Sustituye el host, el recurso, el puerto y el usuario de ejemplo `zylon` por los de tu instalación. Deja que `smbclient` solicite la contraseña; no la incluyas en el comando.
+
+El ejemplo limita esta conexión de diagnóstico a SMB2.1 (`SMB2_10`), dentro de la familia SMB2 admitida. Sin un límite explícito, una prueba correcta podría utilizar SMB3, que no está soportado.
 
 En el intérprete de `smbclient`, comprueba la carpeta de destino:
 
@@ -116,9 +137,16 @@ Resultado esperado: la cuenta se conecta al recurso y puede listar la carpeta de
 
 Una prueba correcta con `smbclient` demuestra acceso con ese cliente, no compatibilidad completa con Zylon. Los clientes SMB actuales pueden admitir cifrado o métodos de autenticación que el conector de Zylon no admite.
 
+### Comprobaciones opcionales desde macOS o Windows
+
+Estas pruebas ayudan a confirmar el nombre del recurso y la cuenta desde un ordenador. Utilizan el puerto SMB estándar `445` y no sustituyen las comprobaciones anteriores desde la red del backend y con SMB2. Para un puerto personalizado, utiliza `smbclient -p` desde el entorno de diagnóstico.
+
+- **macOS:** en Finder, pulsa **Comando-K**, introduce `smb://files.example.com/zylon-samba` y accede con la cuenta Samba. Confirma que puedes explorar la carpeta de destino.
+- **Windows:** abre **Explorador de archivos → Este equipo → Conectar a unidad de red**, elige una letra de unidad disponible e introduce `\\files.example.com\zylon-samba` como carpeta. Marca **Conectar con otras credenciales**, introduce la cuenta Samba cuando se solicite y explora la carpeta de destino.
+
 ## Compatibilidad de protocolo y seguridad
 
-- El conector está configurado para negociar **SMB 2.1 a SMB 3.1.1**. SMB1 y SMB 2.0.2 quedan fuera de ese intervalo.
+- **Solo se admite SMB2. SMB1 y SMB3 no están soportados.** El servidor debe permitir SMB2; un servidor restringido a SMB3 no es compatible. El parámetro `protocol: "samba"` del chart selecciona la integración, no la versión de SMB.
 - **El cliente actual del conector no admite cifrado de transporte SMB3 obligatorio.** Comprueba la política global y la del recurso compartido, incluido `server smb encrypt` (llamado `smb encrypt` en algunas versiones de Samba). Exigir cifrado puede impedir el acceso aunque las credenciales sean correctas. Consulta la [referencia de cifrado de Samba](https://www.samba.org/samba/docs/4.21/man-html/smb.conf.5.html#SERVERSMBENCRYPT).
 - La firma SMB y el cifrado SMB son requisitos distintos. Indica ambas políticas al investigar compatibilidad; exigir firma no demuestra por sí solo que se exija cifrado.
 - Este conector utiliza SMB directo. No ofrece configuración de certificados TLS, CA personalizada, certificados de cliente ni SMB sobre QUIC. Los certificados HTTPS de Zylon o de la interfaz web del NAS no configuran esta conexión.
@@ -137,13 +165,20 @@ Las credenciales pertenecen al conector y se reutilizan para sus lecturas y sinc
 
 Consulta la [guía de usuario de Sistema de archivos](/es/v1.58/user-manual/connectors/file-system) para importar y actualizar contenido, y la [sincronización programada](/es/v1.58/operator-manual/configuration/cron-tasks/sync) para configurar actualizaciones automáticas opcionales.
 
+## Recursos compartidos grandes
+
+Para repositorios grandes de documentos, comprueba que el servidor Samba dispone de suficiente capacidad de E/S de disco y que la red entre este y el backend tiene ancho de banda suficiente para listar, importar y sincronizar. Zylon lee SMB directamente; no necesita un montaje Linux ni opciones de caché de montaje.
+
 ## Solución de problemas
+
+Pide al administrador de Samba que revise la configuración efectiva del recurso, el acceso y los parámetros `server min protocol` / `server max protocol` mediante `testparm -s`, y que consulte los registros de Samba configurados a la hora del fallo. Confirma que la cuenta está habilitada para Samba y que los permisos del recurso y del sistema de archivos permiten el acceso; no basta con que exista una cuenta local del sistema operativo. Si el servidor solo permite SMB1 o SMB3, revisa la compatibilidad con SMB2 con el administrador y soporte de Zylon antes de cambiar la política global del servidor.
 
 | Síntoma | Qué comprobar |
 | --- | --- |
 | Sistema de archivos no aparece en Añadir archivos | Confirma que la integración está habilitada y que se ha aplicado la nueva configuración al despliegue. |
 | El formulario indica usuario o contraseña inválidos | El mensaje también puede deberse a un fallo de conexión. Comprueba DNS desde el backend, puerto, nombre exacto del recurso, credenciales Samba, permisos y compatibilidad de seguridad antes de asumir que la contraseña es incorrecta. |
 | La cuenta funciona en el servidor o en un ordenador, pero no en Zylon | Repite la comprobación desde la red del backend con la misma cuenta. Acceso local al sistema de archivos no equivale a acceso SMB. Revisa los requisitos de dominio/autenticación y la política de cifrado. |
+| Falla la negociación de protocolo o el servidor exige SMB3 | Solo se admite SMB2. Revisa las versiones permitidas en el servidor y repite la prueba anterior limitada a SMB2. Una conexión correcta con otro cliente no demuestra soporte de SMB3 en Zylon. |
 | Una carpeta conocida no aparece o parece vacía | Confirma el recurso y el acceso a todas las carpetas padre. Comprueba si está marcada como oculta: el conector filtra las entradas ocultas. Algunos errores al listar por SMB pueden dejar carpetas sin hijos visibles; revisa los diagnósticos del backend y de Samba. |
 | Aparece `Server requires encryption, not yet supported.` en los diagnósticos del backend | El servidor exige un cifrado SMB que el cliente actual no puede proporcionar. Revisa la compatibilidad con soporte de Zylon. |
 | Se abre una raíz distinta de la esperada | Revisa `external.samba.host` y `external.samba.name`. Selecciona las subcarpetas en Workspace en lugar de añadirlas a `name`. |

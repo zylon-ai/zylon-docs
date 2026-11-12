@@ -9,6 +9,8 @@ Use **File System** to import files and folders from the Samba/SMB share configu
 
 Your operator must [enable and configure the connector](/en/v1.58/operator-manual/knowledge-base/file-system). They configure the server, port, and exported share; you do not enter a server address or folder path in the login form.
 
+**Only SMB2 is supported.** Ask your operator to confirm that the server allows SMB2; SMB1 and SMB3 connections are not supported. See the [protocol and security requirements](/en/v1.58/operator-manual/knowledge-base/file-system#protocol-and-security-compatibility).
+
 You need a Samba account that can list the folders and read the files you want to import. **The username can be a local Samba account such as `zylon`; it does not have to be an email address.** Use that account's Samba password, which may differ from your Zylon password.
 
 <Warning>

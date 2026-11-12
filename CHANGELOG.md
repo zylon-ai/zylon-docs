@@ -1,5 +1,50 @@
 # Changelog
 
+## [1.2.0](https://github.com/zylon-ai/zylon-docs/compare/v1.1.1...v1.2.0) (2026-11-12)
+
+
+### Features
+
+* **docs:** add Beta notices and Quotas setup ([e91c5f3](https://github.com/zylon-ai/zylon-docs/commit/e91c5f372adf55124a7d682538112267676afd60))
+* **docs:** add experimental Quotas guidance ([8c4c9bb](https://github.com/zylon-ai/zylon-docs/commit/8c4c9bbadc5a244ef32185025ef4650e8c66a9bc))
+
+
+### Fixes
+
+* **docs:** align dark mode with the frontend theme ([f4143e4](https://github.com/zylon-ai/zylon-docs/commit/f4143e45a4d1aba8f43289127fb469d8bcb86dfd))
+* **docs:** align dark mode with the frontend theme ([eed6be8](https://github.com/zylon-ai/zylon-docs/commit/eed6be88788e3dd06a58b03c173f46f0a14bbc8a))
+* **docs:** align painted code surfaces in dark mode ([c706250](https://github.com/zylon-ai/zylon-docs/commit/c706250fa6d7fd5cc1c5b5a51fe8f1b001c1beef))
+* **docs:** clarify knowledge base roles and folder creation ([79f2d62](https://github.com/zylon-ai/zylon-docs/commit/79f2d626c88fcb5f1404faac21005dbf61fdb1ef))
+* **docs:** clarify project sharing and knowledge base access ([9a0f1ef](https://github.com/zylon-ai/zylon-docs/commit/9a0f1ef15ada6f88b392d7428881b3dc58c301de))
+* **docs:** explain how to expand knowledge base folders ([d4b827b](https://github.com/zylon-ai/zylon-docs/commit/d4b827bbce5dbce7304139d0985403681915b91a))
+* **docs:** explain how to expand knowledge base folders ([7325843](https://github.com/zylon-ai/zylon-docs/commit/7325843ff41c504565ec49bb6d7d77dbc21d2231))
+* use lowercase Qwen model ID in download commands ([89acb53](https://github.com/zylon-ai/zylon-docs/commit/89acb5318cfebe988b23821f42442aea20d77d4a))
+
+
+### Documentation
+
+* add Quotas operator walkthrough ([90947e8](https://github.com/zylon-ai/zylon-docs/commit/90947e80d2a664e19ae6555a3b881889db04ceb8))
+* add Quotas operator walkthrough ([6d406ae](https://github.com/zylon-ai/zylon-docs/commit/6d406ae203e990902cb8094219f39f167e3220f0))
+* align Quick Start project button with Workspace ([a8eff90](https://github.com/zylon-ai/zylon-docs/commit/a8eff901d80f510c327c2d0b21511ce02560b944))
+* align quick-start project button with Workspace ([7458a90](https://github.com/zylon-ai/zylon-docs/commit/7458a90c128764d97256a882bb488c0147bb2d64))
+* clarify Beta validation guidance ([f5b7ead](https://github.com/zylon-ai/zylon-docs/commit/f5b7eada649ee564dbea7863b244d0d6b19cf3d0))
+* clarify project membership permissions ([0e19cdb](https://github.com/zylon-ai/zylon-docs/commit/0e19cdb80e5753112559466b60e12a49a85774b3))
+* clarify who can manage project members ([39ca1a5](https://github.com/zylon-ai/zylon-docs/commit/39ca1a519ca3d516366d6014bec9ea194d0ea901))
+* create the sandbox SSL secret after syncing ([26142bd](https://github.com/zylon-ai/zylon-docs/commit/26142bdbd2c65ecc9db6030060c665333ecb00fa))
+* create the sandbox SSL secret after syncing ([192dd7b](https://github.com/zylon-ai/zylon-docs/commit/192dd7b7954884b094a44f8f984501e08248d502))
+* document install-time NVIDIA driver selection ([6722cb4](https://github.com/zylon-ai/zylon-docs/commit/6722cb413180b7b431a677ed369e989c15272965))
+* document subdomain DNS and sandbox app link certificates ([7830f79](https://github.com/zylon-ai/zylon-docs/commit/7830f79338b1fc4e56d56cdc3100ee25d54d1669))
+* explain how project owners can rename projects ([cf56c07](https://github.com/zylon-ai/zylon-docs/commit/cf56c077731b8c0585eaa65f1980572212c2c080))
+* explain how project owners can rename projects ([4a4b25d](https://github.com/zylon-ai/zylon-docs/commit/4a4b25d85e1b7d476bc22440998dd7ba34b9b079))
+* explain knowledge base folder rename and deletion ([53d0212](https://github.com/zylon-ai/zylon-docs/commit/53d02121867d4d77910c1d28b783550e781f5919))
+* explain knowledge base folder rename and deletion ([6bdc30f](https://github.com/zylon-ai/zylon-docs/commit/6bdc30f20bac507f6a913d0d685adc39c9101b40))
+* explain sandbox inactivity shutdown and live app link lifetime ([dea2a8e](https://github.com/zylon-ai/zylon-docs/commit/dea2a8e701720b068ffb7b40a0bb524a3f85a030))
+* explain sandbox inactivity shutdown and live app link lifetime ([5ec5ea0](https://github.com/zylon-ai/zylon-docs/commit/5ec5ea09a0c3ab1f317768514336c57931289426))
+* pin 1.58 upgrade guide install commands to 1.58.1 ([2c9dcfc](https://github.com/zylon-ai/zylon-docs/commit/2c9dcfc97cba72d329fc05fbe9ebd93720b2198a))
+* rename Quotas status to Beta ([a89b60a](https://github.com/zylon-ai/zylon-docs/commit/a89b60a47d4e565eb938764b022e92fd274a5de4))
+* sandbox-exec subdomain DNS and TLS for code execution ([f394536](https://github.com/zylon-ai/zylon-docs/commit/f3945363f06aedd0bda3c8599ce86840613c87ac))
+* show Beta warnings as inline cards ([4db4d04](https://github.com/zylon-ai/zylon-docs/commit/4db4d04e48e5dc558d97b0b1f5a47b6f26face56))
+
 ## [1.1.1](https://github.com/zylon-ai/zylon-docs/compare/v1.1.0...v1.1.1) (2026-10-23)
 
 

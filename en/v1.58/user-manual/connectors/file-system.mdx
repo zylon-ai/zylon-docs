@@ -3,19 +3,46 @@ title: File System Connector
 description: Import folders and files from an SMB server and keep them in sync on demand.
 ---
 
-You can import **files and folders** from a SMB based file system that you have access to. After importing, use the **Update** buttom (within the 3 dots menu) to **sync** with the source:
+Use **File System** to import files and folders from the Samba/SMB share configured for your Zylon installation.
 
-- Detects **content changes** in files.
-- Adds **new files** and **removes** deleted ones.
-- Reflects **moves/renames** so the structure mirrors the structure of the File System.
+## Before connecting
 
-> Everyone with access to the Project will have access to the files and folders you connect to the project, independently of the original permissions in the File System.
+Your operator must [enable and configure the connector](/en/v1.58/operator-manual/knowledge-base/file-system). They configure the server, port, and exported share; you do not enter a server address or folder path in the login form.
 
-![](/images/user-manual/file_system.png)
-![](/images/user-manual/file_system_login.png)
-![](/images/user-manual/file_system_picker.png)
+**Only SMB2 is supported.** Ask your operator to confirm that the server allows SMB2; SMB1 and SMB3 connections are not supported. See the [protocol and security requirements](/en/v1.58/operator-manual/knowledge-base/file-system#protocol-and-security-compatibility).
 
+You need a Samba account that can list the folders and read the files you want to import. **The username can be a local Samba account such as `zylon`; it does not have to be an email address.** Use that account's Samba password, which may differ from your Zylon password.
 
-<Info>
-Check how to enable the connector in the [Operator Manual](/en/v1.58/operator-manual/knowledge-base/file-system)
-</Info> 
+<Warning>
+  Everyone with access to the project can access the files and folders imported into its Knowledge Base, independently of the original SMB permissions. Select content appropriate for the project's members.
+</Warning>
+
+## Import files or folders
+
+1. Open the project's **Knowledge Base** and choose **Add files → From File System**.
+2. If a connection is required, enter your Samba **Username** and **Password** and choose **Log in**. If a suitable connector already exists, select it to open its folder picker.
+3. Browse the configured share. Expand folders to find the content you need, select the files or folders, and choose **Upload**.
+4. Wait for processing to finish and confirm that the content appears in the Knowledge Base.
+
+For example, if the share is `zylon-samba` and the folder is `Departments/HR policies`, open `Departments` and select `HR policies` in the picker. The operator's `external.samba.name` remains `zylon-samba`; a subfolder is not a different share.
+
+![File System source in the Add files menu](/images/user-manual/file_system.png)
+![File System folder picker](/images/user-manual/file_system_picker.png)
+
+## If you cannot connect or find a folder
+
+- **Invalid user or password:** check the Samba credentials. The same message can also indicate a server connection or compatibility problem, so ask your operator to check the [connection troubleshooting guide](/en/v1.58/operator-manual/knowledge-base/file-system#troubleshooting) if the account is known to work.
+- **Folder missing or empty:** check that you are browsing the correct share and that the Samba account can list every parent folder and read the required files. Hidden entries are excluded. Ask the operator to investigate listing errors if the folder still appears empty.
+- **Access works in another client:** this does not guarantee access from Zylon's backend or support for the server's encryption/authentication requirements. Share the error and time of the attempt with your operator, never the password.
+
+After the operator resolves the connection problem, cancel and reopen the File System flow and retry. Check the Knowledge Base before repeating an upload so you can identify content already imported.
+
+## Update imported content
+
+After importing, use **Update** in the item's three-dot menu to sync with the source:
+
+- Detect content changes in files.
+- Add new files and remove deleted ones.
+- Reflect moves and renames in the folder structure.
+
+Updates use the connector's stored Samba credentials. Your operator can also configure [scheduled synchronization](/en/v1.58/operator-manual/configuration/cron-tasks/sync).

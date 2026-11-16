@@ -29,7 +29,8 @@
           "type": "revert",
           "section": "Reverts"
         }
-      ]
+      ],
+      "versioning": "always-bump-minor"
     }
   }
 }

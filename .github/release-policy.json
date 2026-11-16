@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "trunk": "main",
+  "adoption-version": "1.1.1",
+  "config": "release-please-config.json",
+  "maintenance-config": "release-please-maintenance.json",
+  "manifest": ".release-please-manifest.json",
+  "workflow": ".github/workflows/release-please.yml",
+  "bootstrap-files": [
+    ".github/workflows/release-please.yml",
+    ".github/workflows/forward-port.yml",
+    ".github/workflows/release-policy-check.yml",
+    ".github/scripts/release_policy.py",
+    ".github/release-policy.json",
+    ".github/scripts/test_release_policy.py"
+  ],
+  "metadata": [
+    ".release-please-manifest.json",
+    "CHANGELOG.md",
+    "release-please-config.json",
+    "release-please-maintenance.json",
+    "version.txt"
+  ],
+  "mixed-version-files": []
+}

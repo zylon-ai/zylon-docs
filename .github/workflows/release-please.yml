@@ -2,14 +2,14 @@ name: Release documentation
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: release-please-documentation
+  group: release-please-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -20,10 +20,15 @@ jobs:
         env:
           CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
         run: test -n "$CI_GITHUB_TOKEN"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate release-line ownership
+        run: python3 .github/scripts/release_policy.py validate
       - uses: googleapis/release-please-action@v4.4.1
         with:
           # A PAT allows the resulting release event and release PR to run CI.
           token: ${{ secrets.CI_GITHUB_TOKEN }}
-          target-branch: main
-          config-file: release-please-config.json
+          target-branch: ${{ github.ref_name }}
+          config-file: ${{ startsWith(github.ref_name, 'release/') && 'release-please-maintenance.json' || 'release-please-config.json' }}
           manifest-file: .release-please-manifest.json

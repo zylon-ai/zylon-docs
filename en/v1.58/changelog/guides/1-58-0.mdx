@@ -6,7 +6,7 @@ description: "Steps to upgrade your Zylon installation to version 1.58."
 import ApiMigrationWarning from "/snippets/v1.58/en/api-migration-warning.mdx";
 
 <Warning>
-  **Zylon CLI 2.9.0 or later is required.** The commands used in this guide are not available in earlier CLI versions.
+  **Zylon CLI 2.11.1 or later is required.** The commands used in this guide are not available in earlier CLI versions.
 </Warning>
 
 <ApiMigrationWarning />
@@ -52,7 +52,7 @@ Follow the steps for your installation type.
         ```
 
         ```bash
-        sudo zylon-cli version  # It should show 2.9.0 or later
+        sudo zylon-cli version  # It should show 2.11.1 or later
         ```
       </Step>
       <Step title="Download the NVIDIA driver (required)">
@@ -104,7 +104,7 @@ Follow the steps for your installation type.
         ```
 
         ```bash
-        sudo zylon-cli version  # It should show 2.9.0 or later
+        sudo zylon-cli version  # It should show 2.11.1 or later
         ```
       </Step>
       <Step title="Re-enable internet access">
@@ -185,7 +185,7 @@ Follow the steps for your installation type.
         ```
 
         ```bash
-        sudo zylon-cli version  # It should show 2.9.0 or later
+        sudo zylon-cli version  # It should show 2.11.1 or later
         ```
       </Step>
       <Step title="Online machine: prepare the CLI transfer package">
@@ -227,7 +227,7 @@ Follow the steps for your installation type.
         cd /tmp
         sudo tar -xzf zylon-update.tar.gz -C /
         sudo chmod +x /usr/local/bin/zylon-cli /usr/local/bin/zylon-forge-cli
-        sudo zylon-cli version  # It should show 2.9.0 or later
+        sudo zylon-cli version  # It should show 2.11.1 or later
         ```
       </Step>
       <Step title="Offline machine: import the new 96g model (only for `baseline-96g`)">

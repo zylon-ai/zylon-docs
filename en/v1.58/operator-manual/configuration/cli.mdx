@@ -164,11 +164,13 @@ Usage: `sudo zylon-cli install-drivers --help`
 
 Uninstalls the current NVIDIA drivers and installs the selected NVIDIA driver with the open GPU kernel modules. By default it installs the latest release of the `615` branch, which must support CUDA `13.4` or newer. A reboot is usually required after the old drivers are removed; re-run the command after rebooting to complete the installation.
 
+`install-drivers` does not download the driver: it installs one that is already downloaded. On online and semi-airgap installations, download it first with `sudo zylon-cli download <version> --drivers`, where `<version>` is your installed Zylon version, adding the same `--driver-version` and `--cuda-version` flags, if any. On airgap installations, the driver comes from the imported bundle.
+
 **Flags:**
 
 - `--cuda-version`: Minimum CUDA version the installed NVIDIA driver must support (default: `13.4`)
 - `--driver-version`: NVIDIA driver (open kernel modules) to install: a branch (e.g. `615`, latest release is used) or an exact version (e.g. `615.78.08`) (default: `615`)
-- `-f, --force`: Force install drivers. It also checks NVIDIA for a newer release of the selected branch instead of reusing the one already downloaded
+- `-f, --force`: Force install drivers. It also checks NVIDIA for a newer release of the selected branch instead of reusing the one already downloaded. On online and semi-airgap installations, run `download <version> --drivers --force` first so that release is downloaded
 
 **Examples:**
 
@@ -177,9 +179,11 @@ Uninstalls the current NVIDIA drivers and installs the selected NVIDIA driver wi
 sudo zylon-cli install-drivers
 
 # Reinstall the drivers, e.g. after a kernel update broke them
+sudo zylon-cli download <version> --drivers --force  # Online and semi-airgap only
 sudo zylon-cli install-drivers --force
 
 # Pin an exact driver release
+sudo zylon-cli download <version> --drivers --driver-version 615.78.08  # Online and semi-airgap only
 sudo zylon-cli install-drivers --driver-version 615.78.08
 ```
 

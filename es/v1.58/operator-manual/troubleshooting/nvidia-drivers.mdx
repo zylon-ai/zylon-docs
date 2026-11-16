@@ -27,11 +27,14 @@ Puedes cambiar la selección con dos banderas, disponibles en `install`, `instal
 # Predeterminado: última versión de la rama 615, CUDA 13.4 o superior
 sudo zylon-cli install <version>
 
-# Fijar una versión exacta del controlador
+# Fijar una versión exacta del controlador en una instalación existente (online y semi-airgap)
+sudo zylon-cli download <version> --drivers --driver-version 615.78.08
 sudo zylon-cli install-drivers --driver-version 615.78.08
 ```
 
 Los controladores se reinstalan cuando el controlador instalado está en otra rama, es una versión anterior, soporta una versión de CUDA inferior o usa los módulos de kernel propietarios en lugar de los abiertos. Una vez descargada una versión de la rama, se reutiliza; ejecuta con `--force` para buscar una versión más reciente.
+
+`install` y `download` descargan el controlador seleccionado cuando hace falta. `install-drivers` no: solo instala un controlador ya descargado, así que en instalaciones online y semi-airgap ejecuta antes `sudo zylon-cli download <version> --drivers`, con las mismas banderas. `<version>` es tu versión instalada de Zylon.
 
 <Note>
   Los módulos de kernel abiertos de GPU requieren una GPU NVIDIA Turing (p. ej. T4, RTX 20xx) o posterior. Todas las GPU indicadas en los [requisitos de hardware](/es/v1.58/operator-manual/installation/hardware-requirements) son compatibles.
@@ -88,6 +91,7 @@ Este es el error más común, generalmente causado por una actualización del ke
 Ejecuta los siguientes comandos:
 
 ```bash
+sudo zylon-cli download <version> --drivers --force # Solo online y semi-airgap: descarga la última versión del controlador (<version> es tu versión instalada de Zylon)
 sudo zylon-cli install-drivers --force # Reinstalar controladores Nvidia
 helm uninstall gpu-operator -n nvidia # Desinstalar operador GPU
 sudo reboot # Reiniciar el sistema para limpiar cualquier información de GPU en caché

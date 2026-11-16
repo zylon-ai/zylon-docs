@@ -13,7 +13,11 @@ import ApiMigrationWarning from "/snippets/v1.58/en/api-migration-warning.mdx";
 
 ## What changed
 
-1.58 requires two manual steps that the CLI does not run on its own. Run both once 1.58 is installed and all pods are ready:
+1.58 requires reinstalling the NVIDIA drivers before installing:
+
+- **NVIDIA driver reinstall.** After updating the CLI, download the 1.58 driver (`sudo zylon-cli download 1.58.1 --drivers`, or import the bundle in full airgap) and reinstall the drivers with `sudo zylon-cli install-drivers --force`.
+
+It also requires two manual steps that the CLI does not run on its own. Run both once 1.58 is installed and all pods are ready:
 
 - **Skill and Document backfill.** Existing Skills and Documents must be backfilled with `zylon-cli backfill-projections`.
 - **Higher pod limit on the node.** The Kubernetes node must allow up to 200 pods. New installations get this limit automatically; existing installations apply it with `zylon-cli configure --max-pods 200`. This restarts k0s, so all Zylon services will be briefly unavailable.
@@ -50,6 +54,22 @@ Follow the steps for your installation type.
         ```bash
         sudo zylon-cli version  # It should show 2.9.0 or later
         ```
+      </Step>
+      <Step title="Download the NVIDIA driver (required)">
+        `install-drivers` only installs a driver that is already downloaded, so download the one used by 1.58 first. This does not change the running installation:
+
+        ```bash
+        sudo zylon-cli download 1.58.1 --drivers
+        ```
+      </Step>
+      <Step title="Reinstall the NVIDIA drivers (required)">
+        Reinstall the NVIDIA drivers with the updated CLI:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        If the command asks for a reboot after removing the old drivers, reboot and run it again to complete the installation. Check that `nvidia-smi` reports the GPU before continuing.
       </Step>
       <Step title="Download the new 96g model (only for `baseline-96g`)">
         Skip this step if you do not use the `baseline-96g` preset.
@@ -103,6 +123,22 @@ Follow the steps for your installation type.
         ```bash
         sudo zylon-cli preflight --network -v
         ```
+      </Step>
+      <Step title="Download the NVIDIA driver (required)">
+        `install-drivers` only installs a driver that is already downloaded, so download the one used by 1.58 first. This does not change the running installation:
+
+        ```bash
+        sudo zylon-cli download 1.58.1 --drivers
+        ```
+      </Step>
+      <Step title="Reinstall the NVIDIA drivers (required)">
+        Reinstall the NVIDIA drivers with the updated CLI:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        If the command asks for a reboot after removing the old drivers, reboot and run it again to complete the installation. Check that `nvidia-smi` reports the GPU before continuing.
       </Step>
       <Step title="Download the new 96g model (only for `baseline-96g`)">
         Skip this step if you do not use the `baseline-96g` preset.
@@ -204,11 +240,24 @@ Follow the steps for your installation type.
         sudo zylon-cli models list --installed
         ```
       </Step>
-      <Step title="Offline machine: import and install">
+      <Step title="Offline machine: import the bundle">
         ```bash
-        # Import the Zylon bundle, check the new version is available, then install it
+        # Import the Zylon bundle (it includes the NVIDIA driver) and check the new version is available
         sudo zylon-cli import zylon-*.tar
         sudo zylon-cli list-versions --offline
+        ```
+      </Step>
+      <Step title="Offline machine: reinstall the NVIDIA drivers (required)">
+        Reinstall the NVIDIA drivers with the updated CLI:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        If the command asks for a reboot after removing the old drivers, reboot and run it again to complete the installation. Check that `nvidia-smi` reports the GPU before continuing.
+      </Step>
+      <Step title="Offline machine: install 1.58">
+        ```bash
         sudo zylon-cli install 1.58.1 --airgap
         ```
       </Step>

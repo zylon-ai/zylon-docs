@@ -46,8 +46,8 @@ Tu firewall debe permitir acceso a estos dominios:
   Si tus políticas de seguridad restringen el acceso a registros de contenedores públicos, considera cambiar a una instalación airgap usando la [Guía de Instalación Airgap de Zylon](/es/v1.58/operator-manual/installation/airgap).
 </Info>
 
-**Controladores NVIDIA (Solo aplicable si seleccionas una versión del controlador que no está disponible en el repositorio de artefactos de Zylon):**
-- `download.nvidia.com` - Descargas de controladores NVIDIA
+**Controladores NVIDIA (Obligatorio salvo que fijes con `--driver-version` una versión exacta disponible en el repositorio de artefactos de Zylon):**
+- `download.nvidia.com` - Busca la última versión de la rama del controlador seleccionada y descarga las versiones que no están en el repositorio de artefactos de Zylon
 
 **Modelos de IA y Dependencias (Solo aplicable si necesitas modelos de IA personalizados):**
 - `huggingface.co` - Repositorio de modelos de IA

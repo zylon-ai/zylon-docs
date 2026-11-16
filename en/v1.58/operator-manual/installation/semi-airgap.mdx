@@ -46,8 +46,8 @@ Your firewall must allow access to these domains:
   If your security policies restrict access to public container registries, consider moving to an airgap installation using [Zylon Airgap Installation Guide](/en/v1.58/operator-manual/installation/airgap).
 </Info>
 
-**NVIDIA Drivers (Only applicable if you select a driver release that is not available in Zylon's artifact repository):**
-- `download.nvidia.com` - NVIDIA driver downloads
+**NVIDIA Drivers (Required unless you pin an exact `--driver-version` available in Zylon's artifact repository):**
+- `download.nvidia.com` - Finds the latest release of the selected driver branch, and downloads releases that are not in Zylon's artifact repository
 
 **AI Models & Dependencies (Only applicable if you need custom AI models):**
 - `huggingface.co` - AI model repository

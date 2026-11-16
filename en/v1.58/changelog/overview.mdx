@@ -6,7 +6,7 @@ title: "Changelog"
   <Danger>
     **⚠️ Action required before updating to version 1.58.X**
 
-    Use Zylon CLI **2.9.0 or later**. After installation completes and all pods are ready, preview the Skill and Document backfill with `backfill-projections --dry-run`, run the backfill, then apply `configure --max-pods 200`. Changing the pod limit briefly interrupts all Zylon services. Follow the complete [1.58 upgrade guide](/en/v1.58/changelog/guides/1-58-0).
+    Use Zylon CLI **2.9.0 or later**. After updating the CLI, reinstall the NVIDIA drivers with `sudo zylon-cli install-drivers --force` before installing 1.58. After installation completes and all pods are ready, preview the Skill and Document backfill with `backfill-projections --dry-run`, run the backfill, then apply `configure --max-pods 200`. Changing the pod limit briefly interrupts all Zylon services. Follow the complete [1.58 upgrade guide](/en/v1.58/changelog/guides/1-58-0).
 
     **API breaking changes require migration for affected integrations.** Artifact routes and content payloads have changed, and Workspace and ZylonGPT messages use new server-tool response blocks. Creator fields now identify **accounts**; membership operations still use **workspace-member IDs**. Migrate affected calls and update saved ID mappings even if legacy URLs still work. Review the [1.57 → 1.58 API migration guide](/en/v1.58/developer-manual/build-with-zylon/workspace-api/api-migration-1-57-to-1-58).
   </Danger>

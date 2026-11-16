@@ -164,11 +164,13 @@ Uso: `sudo zylon-cli install-drivers --help`
 
 Desinstala los controladores NVIDIA actuales e instala el controlador NVIDIA seleccionado con los módulos de kernel abiertos de GPU. Por defecto instala la última versión de la rama `615`, que debe soportar CUDA `13.4` o superior. Normalmente es necesario reiniciar después de eliminar los controladores anteriores; vuelve a ejecutar el comando tras reiniciar para completar la instalación.
 
+`install-drivers` no descarga el controlador: instala uno que ya esté descargado. En instalaciones online y semi-airgap, descárgalo primero con `sudo zylon-cli download <version> --drivers`, donde `<version>` es tu versión instalada de Zylon, añadiendo las mismas banderas `--driver-version` y `--cuda-version`, si las usas. En instalaciones airgap, el controlador viene del bundle importado.
+
 **Banderas:**
 
 - `--cuda-version`: Versión mínima de CUDA que debe soportar el controlador NVIDIA instalado (predeterminado: `13.4`)
 - `--driver-version`: Controlador NVIDIA (módulos de kernel abiertos) a instalar: una rama (p. ej. `615`, se usa su última versión) o una versión exacta (p. ej. `615.78.08`) (predeterminado: `615`)
-- `-f, --force`: Forzar instalación de controladores. También comprueba si NVIDIA tiene una versión más reciente de la rama seleccionada en lugar de reutilizar la ya descargada
+- `-f, --force`: Forzar instalación de controladores. También comprueba si NVIDIA tiene una versión más reciente de la rama seleccionada en lugar de reutilizar la ya descargada. En instalaciones online y semi-airgap, ejecuta antes `download <version> --drivers --force` para que esa versión esté descargada
 
 **Ejemplos:**
 
@@ -177,9 +179,11 @@ Desinstala los controladores NVIDIA actuales e instala el controlador NVIDIA sel
 sudo zylon-cli install-drivers
 
 # Reinstalar los controladores, p. ej. después de que una actualización del kernel los rompa
+sudo zylon-cli download <version> --drivers --force  # Solo online y semi-airgap
 sudo zylon-cli install-drivers --force
 
 # Fijar una versión exacta del controlador
+sudo zylon-cli download <version> --drivers --driver-version 615.78.08  # Solo online y semi-airgap
 sudo zylon-cli install-drivers --driver-version 615.78.08
 ```
 

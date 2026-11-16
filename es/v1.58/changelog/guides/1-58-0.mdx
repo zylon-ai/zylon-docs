@@ -13,7 +13,11 @@ import ApiMigrationWarning from "/snippets/v1.58/es/api-migration-warning.mdx";
 
 ## Qué ha cambiado
 
-1.58 requiere dos pasos manuales que la CLI no ejecuta por sí sola. Ejecuta ambos cuando 1.58 esté instalado y todos los pods estén listos:
+1.58 requiere reinstalar los controladores NVIDIA antes de instalar:
+
+- **Reinstalación de los controladores NVIDIA.** Después de actualizar la CLI, descarga el controlador de 1.58 (`sudo zylon-cli download 1.58.1 --drivers`, o importa el bundle en airgap completo) y reinstala los controladores con `sudo zylon-cli install-drivers --force`.
+
+También requiere dos pasos manuales que la CLI no ejecuta por sí sola. Ejecuta ambos cuando 1.58 esté instalado y todos los pods estén listos:
 
 - **Backfill de Skills y Documentos.** Las Skills y los Documentos existentes deben procesarse con `zylon-cli backfill-projections`.
 - **Límite de pods más alto en el nodo.** El nodo de Kubernetes debe permitir hasta 200 pods. Las instalaciones nuevas lo aplican automáticamente; las existentes lo aplican con `zylon-cli configure --max-pods 200`. Esto reinicia k0s, por lo que todos los servicios de Zylon estarán brevemente no disponibles.
@@ -50,6 +54,22 @@ Sigue los pasos según tu tipo de instalación.
         ```bash
         sudo zylon-cli version  # Debería mostrar 2.9.0 o posterior
         ```
+      </Step>
+      <Step title="Descarga el controlador NVIDIA (obligatorio)">
+        `install-drivers` solo instala un controlador que ya esté descargado, así que primero descarga el que usa 1.58. Esto no modifica la instalación en ejecución:
+
+        ```bash
+        sudo zylon-cli download 1.58.1 --drivers
+        ```
+      </Step>
+      <Step title="Reinstala los controladores NVIDIA (obligatorio)">
+        Reinstala los controladores NVIDIA con la CLI actualizada:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        Si el comando pide reiniciar tras eliminar los controladores anteriores, reinicia y vuelve a ejecutarlo para completar la instalación. Comprueba que `nvidia-smi` muestra la GPU antes de continuar.
       </Step>
       <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
         Omite este paso si no usas el preset `baseline-96g`.
@@ -103,6 +123,22 @@ Sigue los pasos según tu tipo de instalación.
         ```bash
         sudo zylon-cli preflight --network -v
         ```
+      </Step>
+      <Step title="Descarga el controlador NVIDIA (obligatorio)">
+        `install-drivers` solo instala un controlador que ya esté descargado, así que primero descarga el que usa 1.58. Esto no modifica la instalación en ejecución:
+
+        ```bash
+        sudo zylon-cli download 1.58.1 --drivers
+        ```
+      </Step>
+      <Step title="Reinstala los controladores NVIDIA (obligatorio)">
+        Reinstala los controladores NVIDIA con la CLI actualizada:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        Si el comando pide reiniciar tras eliminar los controladores anteriores, reinicia y vuelve a ejecutarlo para completar la instalación. Comprueba que `nvidia-smi` muestra la GPU antes de continuar.
       </Step>
       <Step title="Descarga el nuevo modelo de 96g (solo para `baseline-96g`)">
         Omite este paso si no usas el preset `baseline-96g`.
@@ -203,11 +239,24 @@ Sigue los pasos según tu tipo de instalación.
         sudo zylon-cli models list --installed
         ```
       </Step>
-      <Step title="Máquina offline: importa e instala">
+      <Step title="Máquina offline: importa el bundle">
         ```bash
-        # Importa el bundle de Zylon, verifica la versión y luego instala
+        # Importa el bundle de Zylon (incluye el controlador NVIDIA) y verifica la versión
         sudo zylon-cli import zylon-*.tar
         sudo zylon-cli list-versions --offline
+        ```
+      </Step>
+      <Step title="Máquina offline: reinstala los controladores NVIDIA (obligatorio)">
+        Reinstala los controladores NVIDIA con la CLI actualizada:
+
+        ```bash
+        sudo zylon-cli install-drivers --force
+        ```
+
+        Si el comando pide reiniciar tras eliminar los controladores anteriores, reinicia y vuelve a ejecutarlo para completar la instalación. Comprueba que `nvidia-smi` muestra la GPU antes de continuar.
+      </Step>
+      <Step title="Máquina offline: instala 1.58">
+        ```bash
         sudo zylon-cli install 1.58.1 --airgap
         ```
       </Step>

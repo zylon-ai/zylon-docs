@@ -27,11 +27,14 @@ You can change the selection with two flags, available in `install`, `install-dr
 # Default: latest 615 release, CUDA 13.4 or newer
 sudo zylon-cli install <version>
 
-# Pin an exact driver release
+# Pin an exact driver release on an existing installation (online and semi-airgap)
+sudo zylon-cli download <version> --drivers --driver-version 615.78.08
 sudo zylon-cli install-drivers --driver-version 615.78.08
 ```
 
 The drivers are reinstalled when the installed driver is on a different branch, is an older release, supports a lower CUDA version, or uses the proprietary kernel modules instead of the open ones. Once a release of the branch has been downloaded, it is reused; run with `--force` to check for a newer release.
+
+`install` and `download` download the selected driver when needed. `install-drivers` does not: it only installs a driver that is already downloaded, so on online and semi-airgap installations run `sudo zylon-cli download <version> --drivers` first, with the same flags. `<version>` is your installed Zylon version.
 
 <Note>
   The open GPU kernel modules require an NVIDIA Turing (e.g. T4, RTX 20xx) or newer GPU. All the GPUs listed in the [hardware requirements](/en/v1.58/operator-manual/installation/hardware-requirements) are supported.
@@ -88,6 +91,7 @@ This is the most common error, usually caused by a kernel update during an unatt
 Run the following commands:
 
 ```bash
+sudo zylon-cli download <version> --drivers --force # Online and semi-airgap only: download the latest driver release (<version> is your installed Zylon version)
 sudo zylon-cli install-drivers --force # Reinstall Nvidia drivers
 helm uninstall gpu-operator -n nvidia # Uninstall GPU operator
 sudo reboot # Reboot the system to clear any cached GPU info

@@ -23,9 +23,11 @@ const github = {
   getFileJson: async path => json(path),
 };
 
-async function candidate(message, previous) {
-  const manifest = await Manifest.fromManifest(github, 'main');
-  const strategy = await buildStrategy({...manifest.repositoryConfig['.'], github, targetBranch: 'main', path: '.'});
+async function candidate(message, previous, maintenance = false) {
+  const branch = maintenance ? 'release/1.0' : 'main';
+  const config = maintenance ? 'release-please-maintenance.json' : 'release-please-config.json';
+  const manifest = await Manifest.fromManifest(github, branch, config);
+  const strategy = await buildStrategy({...manifest.repositoryConfig['.'], github, targetBranch: branch, path: '.'});
   const commits = parseConventionalCommits([{sha: 'a'.repeat(40), message, files: ['zylon-code.mdx']}], quiet);
   const release = previous ? {tag: new TagName(Version.parse(previous)), sha: 'b'.repeat(40), notes: ''} : undefined;
   return strategy.buildReleasePullRequest(commits, release);
@@ -33,7 +35,7 @@ async function candidate(message, previous) {
 
 test('release configuration conforms to the pinned release-please schema', () => {
   const ajv = new Ajv({strict: false});
-  for (const [schema, path] of [[configSchema, 'release-please-config.json'], [manifestSchema, '.release-please-manifest.json']]) {
+  for (const [schema, path] of [[configSchema, 'release-please-config.json'], [configSchema, 'release-please-maintenance.json'], [manifestSchema, '.release-please-manifest.json']]) {
     const validate = ajv.compile(schema);
     assert.equal(validate(json(path)), true, JSON.stringify(validate.errors));
   }
@@ -46,15 +48,22 @@ test('first docs release starts at 1.0.0 and writes its version file', async () 
 });
 
 for (const [message, expected] of [
-  ['docs: clarify permissions', '1.0.1'],
-  ['fix: repair offline search', '1.0.1'],
+  ['docs: clarify permissions', '1.1.0'],
+  ['fix: repair offline search', '1.1.0'],
   ['feat: add offline collection', '1.1.0'],
-  ['feat!: remove an offline route', '2.0.0'],
+  ['feat!: remove an offline route', '1.1.0'],
 ]) {
   test(`${message} proposes ${expected}`, async () => {
     const pr = await candidate(message, '1.0.0');
     assert.equal(pr.version.toString(), expected);
     assert.match(pr.body.toString(), /clarify permissions|repair offline search|add offline collection|remove an offline route/);
+  });
+}
+
+for (const message of ['docs: clarify permissions', 'fix: repair offline search']) {
+  test(`maintenance ${message} stays in the component patch line`, async () => {
+    const pr = await candidate(message, '1.0.3', true);
+    assert.equal(pr.version.toString(), '1.0.4');
   });
 }
 

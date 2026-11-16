@@ -12,7 +12,8 @@
     ".github/workflows/release-policy-check.yml",
     ".github/scripts/release_policy.py",
     ".github/release-policy.json",
-    ".github/scripts/test_release_policy.py"
+    ".github/scripts/test_release_policy.py",
+    ".github/workflows/release-hooks.yml"
   ],
   "metadata": [
     ".release-please-manifest.json",
@@ -21,5 +22,6 @@
     "release-please-maintenance.json",
     "version.txt"
   ],
-  "mixed-version-files": []
+  "mixed-version-files": [],
+  "template-repository": "zylon-ai/zylon-base-template"
 }

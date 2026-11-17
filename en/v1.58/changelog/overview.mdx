@@ -22,6 +22,17 @@ title: "Changelog"
   - **Unread chat indicators**: Identify chats containing unread assistant responses directly from the sidebar.
   - **Dark mode and shared preferences**: Expanded theme support across Workspace and Backoffice, with account preferences shared between both.
 
+  ### 🐛 Bug Fixes
+
+  - **Citations in follow-ups**: Fixed citations in follow-up messages.
+  - **File System integrations**: Fixed an issue that blocked the creation of new File System (Samba) integrations.
+  - **File synchronization**: Fixed an issue that prevented some file types, such as Markdown, Word, and Excel, from syncing.
+  - **Database connector**: Responses once again show the SQL query used to retrieve the data, and text in the results displays correctly.
+  - **Integration permissions**: Users with the Editor role can edit integrations again.
+  - **Large messages**: When a message is too large to send, the chat shows an error instead of loading indefinitely.
+  - **Attachments in new chats**: Attachments are kept if a new chat can't be started, so you don't need to add them again.
+  - **Interface polish**: Improved tooltip colors.
+
   ## 🛠️ Backoffice
   ### ✨ Features
 
@@ -35,6 +46,10 @@ title: "Changelog"
 
   This feature is in Beta and may have limitations or unexpected behavior. Test and validate it in your deployment before deciding to leave it enabled.
   </Warning>
+
+  ### 🐛 Bug Fixes
+
+  - **Translations and wording**: Improved Backoffice translations and clarified quota descriptions.
 
   ## 🔌 Developer APIs
   ### ✨ Features
@@ -52,6 +67,7 @@ title: "Changelog"
   - **Artifact verification**: CLI downloads are checked against release checksums.
   - **Safer backup and restore**: Workloads shut down cleanly before data is copied or replaced, and scheduling resumes afterward. See [backup and restore](/en/v1.58/operator-manual/operations/backup).
   - **Updated n8n**: Upgraded the bundled n8n deployment to 2.39.9 and fixed MCP ingress compatibility.
+  - **Salamandra model support**: Added support for [Salamandra 7B Instruct](https://huggingface.co/BSC-LT/salamandra-7b-instruct-2606), a model well suited to Spanish, Catalan, Galician, Basque, and other European languages. Available through the `experimental.salamandra-48g` preset; it does not support tools or reasoning. See [experimental presets](/en/v1.58/operator-manual/ai-presets/presets#experimental-presets).
 
   ### 🐛 Bug Fixes
 

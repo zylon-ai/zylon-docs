@@ -22,6 +22,17 @@ title: "Registro de cambios"
   - **Indicadores de chats sin leer**: Identifica en el menú lateral los chats que contienen respuestas del asistente sin leer.
   - **Modo oscuro y preferencias compartidas**: Ampliado el soporte de temas en Workspace y Backoffice, con preferencias de cuenta compartidas entre ambos.
 
+  ### 🐛 Correcciones
+
+  - **Citas en preguntas de seguimiento**: Corregidas las citas en los mensajes de seguimiento.
+  - **Integraciones de sistema de archivos**: Corregido un error que impedía crear nuevas integraciones de sistema de archivos (Samba).
+  - **Sincronización de archivos**: Corregido un error que impedía sincronizar algunos tipos de archivo, como Markdown, Word y Excel.
+  - **Conector de bases de datos**: Las respuestas vuelven a mostrar la consulta SQL utilizada para obtener los datos, y el texto de los resultados se muestra correctamente.
+  - **Permisos de integraciones**: Los usuarios con rol de Editor vuelven a poder editar integraciones.
+  - **Mensajes demasiado grandes**: Si un mensaje es demasiado grande para enviarse, el chat muestra un error en lugar de quedarse cargando indefinidamente.
+  - **Adjuntos en chats nuevos**: Los adjuntos se conservan si no se puede iniciar un chat nuevo, así que no hace falta volver a añadirlos.
+  - **Mejoras visuales**: Mejorados los colores de los tooltips.
+
   ## 🛠️ Backoffice
   ### ✨ Novedades
 
@@ -35,6 +46,10 @@ title: "Registro de cambios"
 
   Esta característica está en Beta y puede presentar limitaciones o un comportamiento inesperado. Pruébala y valida su funcionamiento en tu despliegue antes de decidir si la mantienes habilitada.
   </Warning>
+
+  ### 🐛 Correcciones
+
+  - **Traducciones y textos**: Mejoradas las traducciones de Backoffice y aclaradas las descripciones de las cuotas.
 
   ## 🔌 APIs para desarrolladores
   ### ✨ Novedades
@@ -52,6 +67,7 @@ title: "Registro de cambios"
   - **Verificación de artefactos**: Las descargas de la CLI se comprueban con los checksums de la versión.
   - **Backup y restauración más seguros**: Las cargas de trabajo se detienen de forma ordenada antes de copiar o reemplazar los datos, y después se reanuda la programación. Consulta [backup y restauración](/es/v1.58/operator-manual/operations/backup).
   - **n8n actualizado**: Actualizado el despliegue de n8n incluido a 2.39.9 y corregida la compatibilidad del ingress MCP.
+  - **Soporte del modelo Salamandra**: Añadido soporte para [Salamandra 7B Instruct](https://huggingface.co/BSC-LT/salamandra-7b-instruct-2606), un modelo especialmente adecuado para español, catalán, gallego, euskera y otras lenguas europeas. Disponible a través del preset `experimental.salamandra-48g`; no admite herramientas ni razonamiento. Consulta los [presets experimentales](/es/v1.58/operator-manual/ai-presets/presets#presets-experimentales).
 
   ### 🐛 Correcciones
 

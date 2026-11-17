@@ -15,7 +15,7 @@ import ApiMigrationWarning from "/snippets/v1.58/en/api-migration-warning.mdx";
 
 1.58 requires reinstalling the NVIDIA drivers before installing:
 
-- **NVIDIA driver reinstall.** After updating the CLI, download the 1.58 driver (`sudo zylon-cli download 1.58.2 --drivers`, or import the bundle in full airgap) and reinstall the drivers with `sudo zylon-cli install-drivers --force`.
+- **NVIDIA driver reinstall.** After updating the CLI, download the 1.58 driver (`sudo zylon-cli download 1.58.3 --drivers`, or import the bundle in full airgap) and reinstall the drivers with `sudo zylon-cli install-drivers --force`.
 
 It also requires two manual steps that the CLI does not run on its own. Run both once 1.58 is installed and all pods are ready:
 
@@ -59,7 +59,7 @@ Follow the steps for your installation type.
         `install-drivers` only installs a driver that is already downloaded, so download the one used by 1.58 first. This does not change the running installation:
 
         ```bash
-        sudo zylon-cli download 1.58.2 --drivers
+        sudo zylon-cli download 1.58.3 --drivers
         ```
       </Step>
       <Step title="Reinstall the NVIDIA drivers (required)">
@@ -81,7 +81,7 @@ Follow the steps for your installation type.
       <Step title="Install 1.58">
         ```bash
         sudo zylon-cli list-versions
-        sudo zylon-cli install 1.58.2
+        sudo zylon-cli install 1.58.3
         ```
       </Step>
     </Steps>
@@ -128,7 +128,7 @@ Follow the steps for your installation type.
         `install-drivers` only installs a driver that is already downloaded, so download the one used by 1.58 first. This does not change the running installation:
 
         ```bash
-        sudo zylon-cli download 1.58.2 --drivers
+        sudo zylon-cli download 1.58.3 --drivers
         ```
       </Step>
       <Step title="Reinstall the NVIDIA drivers (required)">
@@ -150,7 +150,7 @@ Follow the steps for your installation type.
       <Step title="Install 1.58">
         ```bash
         sudo zylon-cli list-versions
-        sudo zylon-cli install 1.58.2
+        sudo zylon-cli install 1.58.3
         ```
       </Step>
       <Step title="Re-enable offline mode">
@@ -208,10 +208,10 @@ Follow the steps for your installation type.
         sudo zylon-cli list-versions
 
         # Use --from if your current version is known (smaller bundle)
-        sudo zylon-cli export 1.58.2 --from CURRENT_VERSION
+        sudo zylon-cli export 1.58.3 --from CURRENT_VERSION
 
         # Otherwise export a full bundle
-        sudo zylon-cli export 1.58.2
+        sudo zylon-cli export 1.58.3
         ```
       </Step>
       <Step title="Transfer artifacts to the offline machine">
@@ -258,7 +258,7 @@ Follow the steps for your installation type.
       </Step>
       <Step title="Offline machine: install 1.58">
         ```bash
-        sudo zylon-cli install 1.58.2 --airgap
+        sudo zylon-cli install 1.58.3 --airgap
         ```
       </Step>
     </Steps>

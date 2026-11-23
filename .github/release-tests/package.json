@@ -6,7 +6,7 @@
   },
   "devDependencies": {
     "ajv": "8.17.1",
-    "release-please": "17.3.0",
+    "release-please": "17.6.0",
     "yaml": "2.8.1"
   }
 }

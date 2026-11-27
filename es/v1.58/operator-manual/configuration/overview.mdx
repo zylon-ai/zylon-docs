@@ -24,6 +24,17 @@ Configure su instancia de Zylon para satisfacer los requisitos específicos de s
   </Step>
 </Steps>
 
+### Tamaño máximo de los artefactos de documentos
+
+Para instalaciones gestionadas con Helm, `features.maxArtifactSizeMB` establece el tamaño máximo por documento en MiB. El valor predeterminado del chart es `"250"` (250 MiB o 262.144.000 bytes). Para cambiarlo, añada un valor positivo como cadena de texto al archivo `values.yaml` de Helm, por ejemplo:
+
+```yaml
+features:
+  maxArtifactSizeMB: "500"
+```
+
+Aplique los valores mediante el proceso habitual de despliegue o actualización de Helm.
+
 ---
 
 ## Configuración Principal

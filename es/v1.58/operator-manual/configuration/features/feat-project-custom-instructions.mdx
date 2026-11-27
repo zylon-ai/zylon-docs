@@ -1,22 +1,26 @@
 ---
-title: "Instrucciones personalizadas de proyecto"
+title: "Personalización del espacio de trabajo"
 ---
 
-Los usuarios pueden personalizar las instrucciones del proyecto desde el dialogo de configuracion del proyecto, como se explica en [Añadir instrucciones personalizadas](/es/v1.58/user-manual/adding-custom-instructions).
+Configure los límites de Workspace para los documentos subidos y las instrucciones personalizadas de proyecto.
 
-Estas instrucciones se aplican a nivel de proyecto e influyen en como responde Zylon en los chats.
+Los usuarios pueden personalizar las instrucciones del proyecto desde el dialogo de configuracion del proyecto, como se explica en [Añadir instrucciones personalizadas](/es/v1.58/user-manual/adding-custom-instructions). Estas instrucciones se aplican a nivel de proyecto e influyen en como responde Zylon en los chats.
 
 ### Configuración
 
-Use la siguiente clave para controlar la longitud maxima de las instrucciones:
+Use las siguientes claves en el archivo `values.yaml` de Helm para controlar el tamaño máximo de los documentos y la longitud maxima de las instrucciones:
 
 ```yaml
 features:
+  maxArtifactSizeMB: "250"
   maxInstructionsLength: 4000
 ```
+
+Aplique los valores mediante el proceso habitual de despliegue o actualización de Helm.
 
 ### Detalles de configuración
 
 | Clave | Valor predeterminado | Valores | Descripción |
 | --- | --- | --- | --- |
+| `maxArtifactSizeMB` | `"250"` | Entero positivo, como cadena de texto | Tamaño máximo por documento en MiB. El valor predeterminado es 250 MiB o 262.144.000 bytes |
 | `maxInstructionsLength` | `4000` | Entero positivo | Longitud maxima de instrucciones aceptada tanto por la UI de Workspace como por la API |

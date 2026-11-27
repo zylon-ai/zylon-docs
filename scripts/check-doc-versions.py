@@ -137,10 +137,8 @@ def main():
             if legacy not in SECTION_LANDINGS:
                 legacy = relative
             old = "/" + lang + "/" + legacy
-            if "version-availability" in path.read_text():
-                assert redirects.get(old) == old.replace("/" + lang + "/", "/" + lang + "/v1.58/", 1), old
-            else:
-                assert redirects.get(old, "").startswith("/" + lang + "/v1.57/"), old
+            # Unversioned bookmarks follow the default release.
+            assert redirects.get(old) == "/" + lang + "/v" + DEFAULT_RELEASE + "/" + relative, old
 
     entries = ", ".join(f"{release}: {counts[release]}" for release in RELEASES)
     print(f"OK: navigation entries ({entries}); default {DEFAULT_RELEASE}; "
